@@ -97,6 +97,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : lancement.
 - Étude : taille maximale des pièces jointes, compatibilité opérateurs, comportement si MMS impossible.
+- Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md#5-mms-todo-24).
 
 ### <a id="q-14"></a>Q-14 — Notes vocales
 

@@ -74,8 +74,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : prototype qui enregistre une position toutes les 3 minutes pendant 8 heures, écran éteint, sur au moins trois marques de téléphones (dont Samsung et Xiaomi) ; positions manquantes et batterie consommée notées.
 - [ ] **TODO-2.3**: Autorisations Android et versions visées ([Q-31](06-questions-ouvertes.md#q-31)). Dépend de : TODO-2.1, TODO-2.2.
   - Critères d'acceptation : liste des autorisations (localisation en arrière-plan, SMS, appareil photo, micro, notifications), version minimale d'Android choisie, parcours de demande des autorisations dessiné.
-- [ ] **TODO-2.4**: MMS : taille, opérateurs, repli ([Q-13](06-questions-ouvertes.md#q-13), RG-SMS-05). Dépend de : TODO-2.1.
+- [~] **TODO-2.4**: MMS : taille, opérateurs, repli ([Q-13](06-questions-ouvertes.md#q-13), RG-SMS-05). Dépend de : TODO-2.1.
   - Critères d'acceptation : MMS avec photo envoyé et reçu chez les quatre opérateurs français ; taille maximale et comportement en cas d'échec écrits.
+  - Fait : [étude documentaire](etudes/sms-mms-android.md#5-mms-todo-24) (API, taille lue sur le téléphone, repères 300/600 Ko non officiels). Reste : essai chez les quatre opérateurs ; choix de la taille et du comportement en cas d'échec par l'utilisateur.
 - [ ] **TODO-2.5**: Notes vocales : format, durée, transcription ([Q-14](06-questions-ouvertes.md#q-14), RG-JRN-04). Dépend de : aucune.
   - Critères d'acceptation : format et durée maximale choisis ; transcription en français essayée hors connexion et en ligne, avec le taux d'erreur constaté.
 - [ ] **TODO-2.6**: Fonctionnement hors connexion de chaque écran Android ([Q-29](06-questions-ouvertes.md#q-29)). Dépend de : TODO-3.1.
