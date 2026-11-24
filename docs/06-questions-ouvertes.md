@@ -8,41 +8,17 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 ## 1. Questions fonctionnelles
 
-### <a id="q-01"></a>Q-01 — Lieu d'arrivée et distance
-
-- Priorité : bloquant.
-- Question : comment sont déterminés le lieu de départ, le lieu d'arrivée et la distance d'une navigation (RG-NAV-16) ?
-- Proposition : lieux = nom du lieu le plus proche de la première et de la dernière position (géocodage inverse), sinon coordonnées ; distance = somme des distances entre positions successives.
-
-### <a id="q-04"></a>Q-04 — Refus des SMS par un suiveur
-
-- Priorité : lancement.
-- Question : un suiveur peut-il refuser de recevoir les SMS ordinaires d'un navigateur (RG-SMS-01) ? Faut-il son consentement préalable ?
-- Proposition : oui, option « recevoir les SMS » dans son profil, activée par défaut lorsqu'il renseigne un numéro.
-
-### <a id="q-06"></a>Q-06 — Validité d'une invitation
-
-- Priorité : lancement.
-- Question : durée de validité, usage unique ou multiple, renvoi, annulation par le navigateur.
-- Proposition : 7 jours, usage unique, renvoyable et annulable.
-
-### <a id="q-24"></a>Q-24 — Modifier les informations d'une navigation
-
-- Priorité : lancement.
-- Question : en dehors du nom (RG-NAV-17), quelles informations le navigateur peut-il modifier (destination, bateau, heures) ?
-- Proposition : nom et destination seulement.
-
-### <a id="q-32"></a>Q-32 — Prévenir avant la clôture automatique
-
-- Priorité : lancement.
-- Question : comment prévenir le navigateur que sa navigation sera clôturée au bout des 24 heures suivant l'épuisement du quota (RG-ECO-05) ?
-- Proposition : avertissement à l'épuisement, puis 1 heure avant la clôture, sur l'écran de navigation ; SMS de fin envoyé si les paramètres le prévoient.
-
 ### <a id="q-33"></a>Q-33 — Notifications push sur iPhone
 
 - Priorité : avant l'application iPhone.
 - Question : en plus du SOS (RG-IOS-06), quels événements déclenchent une notification push au suiveur (début et fin de navigation, nouvelle photo, retard de position) ? Peut-il les régler ?
 - Proposition : début, fin et SOS ; chaque type désactivable sauf le SOS.
+
+### <a id="q-34"></a>Q-34 — Changer les heures d'une navigation
+
+- Priorité : bloquant pour RG-NAV-22.
+- Question : si le navigateur change les heures de début ou de fin (RG-NAV-22), le quota est-il recalculé, et que deviennent les positions et événements hors de la nouvelle plage ?
+- Proposition : le quota reste calculé sur les heures réellement enregistrées par le téléphone ; les positions et événements hors plage sont gardés mais masqués du tracé.
 
 ### <a id="q-16"></a>Q-16 — Notifications
 
@@ -107,11 +83,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant pour la fonction Vocal.
 - Étude : format audio, durée et taille maximales, stockage serveur, moteur de transcription (sur le téléphone, utilisable hors connexion, ou sur le serveur).
 - Étude documentaire : [notes-vocales.md](etudes/notes-vocales.md) (choix possibles §6).
-
-### <a id="q-15"></a>Q-15 — Photos
-
-- Priorité : lancement.
-- Question : taille maximale, compression, nombre de photos par navigation.
 
 ### <a id="q-29"></a>Q-29 — Fonctionnement hors connexion
 

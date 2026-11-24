@@ -14,6 +14,12 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.2**: SMS SOS non désactivables, SOS depuis l'accueil, invitation par téléphone depuis le Web, droits des suiveurs (2026-11-24, D-26 à D-29).
 - [x] **TODO-1.3**: Suiveurs et contacts SOS : une seule liste, les deux cases cochées par défaut (2026-11-24, D-30).
 - [x] **TODO-1.18**: Application iPhone ajoutée : navigateur et suiveur, aucun SMS, SOS par Internet, après Android, abonnement App Store (2026-11-24, D-31 à D-34).
+- [x] **TODO-1.4**: Lieux et distance d'une navigation (2026-11-24, D-35).
+- [x] **TODO-1.5**: Refus des SMS par un suiveur (2026-11-24, D-36).
+- [x] **TODO-1.6**: Invitation sans expiration, annulable (2026-11-24, D-37).
+- [x] **TODO-1.7**: Informations modifiables d'une navigation (2026-11-24, D-38).
+- [x] **TODO-1.8**: Avertissement avant la clôture automatique (2026-11-24, D-39).
+- [x] **TODO-1.11**: Photos : 20 par navigation, environ 1 Mo (2026-11-24, D-40).
 
 ## 9. Évolutions futures
 

@@ -43,12 +43,13 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 ### 2.4 Informations et historique
 
-- <a id="rg-nav-16"></a>**RG-NAV-16** — Une navigation porte au minimum : nom, bateau, date et heure de début et de fin, lieu de départ, lieu d'arrivée, destination si saisie, durée, distance parcourue. Calcul du lieu d'arrivée et de la distance : [Q-01](06-questions-ouvertes.md#q-01).
-- <a id="rg-nav-17"></a>**RG-NAV-17** — Le nom est généré au démarrage (« <nom du bateau> — <destination> » si une destination est saisie, sinon « <nom du bateau> — <date> ») et peut être modifié ensuite par le navigateur, sur le Web et sur l'application mobile ([D-15](07-decisions.md#d-15)). Modification des autres informations : [Q-24](06-questions-ouvertes.md#q-24).
+- <a id="rg-nav-16"></a>**RG-NAV-16** — Une navigation porte au minimum : nom, bateau, date et heure de début et de fin, lieu de départ, lieu d'arrivée, destination si saisie, durée, distance parcourue. Lieu de départ et lieu d'arrivée : nom du lieu le plus proche de la première et de la dernière position (géocodage inverse), sinon leurs coordonnées. Distance : somme des distances entre positions successives ([D-35](07-decisions.md#d-35)).
+- <a id="rg-nav-17"></a>**RG-NAV-17** — Le nom est généré au démarrage (« <nom du bateau> — <destination> » si une destination est saisie, sinon « <nom du bateau> — <date> ») et peut être modifié ensuite par le navigateur, sur le Web et sur l'application mobile ([D-15](07-decisions.md#d-15)). Autres informations modifiables : [RG-NAV-22](#rg-nav-22).
 - <a id="rg-nav-18"></a>**RG-NAV-18** — Les navigations terminées sont conservées sans limite de durée.
 - <a id="rg-nav-19"></a>**RG-NAV-19** — Une navigation peut être exportée en PDF depuis le Web par son navigateur et par ses suiveurs ([RG-PAR-08](#rg-par-08)).
 - <a id="rg-nav-20"></a>**RG-NAV-20** — Le navigateur peut supprimer depuis le Web une navigation terminée. Elle passe dans la corbeille, restaurable pendant 30 jours, puis est supprimée définitivement. Une navigation en cours ne peut pas être supprimée. Pendant son séjour dans la corbeille, les suiveurs n'y ont plus accès ([D-17](07-decisions.md#d-17)).
 - <a id="rg-nav-21"></a>**RG-NAV-21** — Le temps d'une navigation supprimée reste décompté du quota.
+- <a id="rg-nav-22"></a>**RG-NAV-22** — Après la navigation, le navigateur peut modifier, sur le Web et sur l'application mobile, son nom, sa destination, son bateau (parmi les siens) et ses heures de début et de fin ([D-38](07-decisions.md#d-38)). Effet d'un changement d'heures sur le quota et sur les positions hors de la nouvelle plage : [Q-34](06-questions-ouvertes.md#q-34).
 
 ## 3. Journal de bord
 
@@ -59,6 +60,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-jrn-05"></a>**RG-JRN-05** — Depuis le Web, le navigateur peut ajouter à une navigation terminée des textes, photos, notes vocales et informations complémentaires.
 - <a id="rg-jrn-06"></a>**RG-JRN-06** — Le navigateur peut modifier et supprimer, depuis le Web ou l'application mobile, les notes écrites, photos, notes vocales et ajouts complémentaires, quelle que soit leur origine ([D-16](07-decisions.md#d-16)).
 - <a id="rg-jrn-07"></a>**RG-JRN-07** — Les événements de début, de fin, de position et d'alerte SOS ne sont jamais modifiables ni supprimables par le navigateur. Ils ne disparaissent qu'avec la suppression de la navigation entière ([D-16](07-decisions.md#d-16)).
+- <a id="rg-jrn-08"></a>**RG-JRN-08** — Une navigation compte au plus 20 photos, ajouts depuis le Web compris ; chaque photo est compressée à environ 1 Mo ([D-40](07-decisions.md#d-40)).
 
 ## 4. GPS et positions
 
@@ -75,7 +77,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 ## 6. SMS ordinaires
 
-- <a id="rg-sms-01"></a>**RG-SMS-01** — Les SMS ordinaires d'une navigation sont envoyés aux suiveurs de cette navigation ayant renseigné un numéro de téléphone ([D-08](07-decisions.md#d-08)). Possibilité pour un suiveur de refuser ces SMS : [Q-04](06-questions-ouvertes.md#q-04).
+- <a id="rg-sms-01"></a>**RG-SMS-01** — Les SMS ordinaires d'une navigation sont envoyés aux suiveurs de cette navigation ayant renseigné un numéro de téléphone ([D-08](07-decisions.md#d-08)). Un suiveur peut refuser ces SMS avec l'option « Recevoir les SMS » de son profil, activée par défaut dès qu'il renseigne un numéro ([D-36](07-decisions.md#d-36)).
 - <a id="rg-sms-02"></a>**RG-SMS-02** — Un interrupteur général active ou désactive tous les SMS ordinaires. Une préférence par type précise lesquels partent : début, positions automatiques, positions manuelles, notes écrites, photos, notes vocales, fin. Ces réglages ne s'appliquent jamais aux SMS SOS ([RG-SOS-14](#rg-sos-14)).
 - <a id="rg-sms-03"></a>**RG-SMS-03** — Les SMS prévus par les paramètres partent sans confirmation supplémentaire.
 - <a id="rg-sms-04"></a>**RG-SMS-04** — Si le GPS est indisponible pour un SMS ordinaire qui doit contenir une position, le SMS indique « GPS NON DISPONIBLE » au lieu d'une position ancienne.
@@ -126,7 +128,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-par-02"></a>**RG-PAR-02** — Un accès a l'un de ces deux périmètres, choisi par le navigateur : *navigation* (une seule navigation, en cours ou terminée) ou *navigateur* (toutes ses navigations présentes et futures, tous bateaux confondus). Le navigateur peut changer le périmètre à tout moment ([D-04](07-decisions.md#d-04)).
 - <a id="rg-par-03"></a>**RG-PAR-03** — Le navigateur invite depuis le Web ou depuis l'application mobile, par e-mail ou par numéro de téléphone, en choisissant le périmètre ([D-10](07-decisions.md#d-10)). L'invité est ajouté à la liste de contacts ([RG-CTC-04](#rg-ctc-04)).
 - <a id="rg-par-04"></a>**RG-PAR-04** — Une invitation par e-mail est envoyée par le serveur. Une invitation par téléphone est envoyée en SMS par la carte SIM du téléphone Android. Depuis le Web ou un iPhone, une invitation par téléphone n'envoie pas de SMS : le Web affiche le lien d'invitation, que le navigateur transmet lui-même ([D-28](07-decisions.md#d-28)).
-- <a id="rg-par-05"></a>**RG-PAR-05** — Le lien d'invitation mène à la connexion ou à la création d'un compte ; l'accès est accordé dès que l'invité est connecté. Un « lien de partage » est un lien d'invitation, jamais un accès public ([D-09](07-decisions.md#d-09)). Durée de validité : [Q-06](06-questions-ouvertes.md#q-06).
+- <a id="rg-par-05"></a>**RG-PAR-05** — Le lien d'invitation mène à la connexion ou à la création d'un compte ; l'accès est accordé dès que l'invité est connecté. Un « lien de partage » est un lien d'invitation, jamais un accès public ([D-09](07-decisions.md#d-09)). Une invitation n'expire pas ; le navigateur peut l'annuler tant qu'elle n'est pas acceptée ([D-37](07-decisions.md#d-37)).
 - <a id="rg-par-06"></a>**RG-PAR-06** — Le navigateur peut retirer un suiveur d'une navigation seulement, ou globalement de toutes ses navigations présentes et futures. Le retrait prend effet immédiatement.
 - <a id="rg-par-07"></a>**RG-PAR-07** — Un suiveur voit en lecture seule, pour les navigations auxquelles il a accès : dernière position, positions successives, tracé, dates et heures, notes, photos, notes vocales, événements, alertes SOS.
 - <a id="rg-par-08"></a>**RG-PAR-08** — Un suiveur voit aussi la fiche du bateau, la liste des autres suiveurs du navigateur et la liste de ses contacts SOS, et peut exporter en PDF les navigations auxquelles il a accès. Il ne modifie rien ([D-29](07-decisions.md#d-29)).
@@ -142,7 +144,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-eco-02"></a>**RG-ECO-02** — Est décompté le temps entre le début et la fin de chaque navigation du compte en tant que navigateur, à la minute. Chaque minute redevient disponible 7 jours après avoir été consommée. Il n'y a pas de remise à zéro à date fixe.
 - <a id="rg-eco-03"></a>**RG-ECO-03** — Le temps passé comme suiveur n'est jamais décompté.
 - <a id="rg-eco-04"></a>**RG-ECO-04** — Quota épuisé et pas d'abonnement actif : le démarrage d'une nouvelle navigation est refusé ; l'application l'explique et propose de s'abonner ou d'attendre que des minutes redeviennent disponibles (avec l'heure à laquelle elles le redeviennent).
-- <a id="rg-eco-05"></a>**RG-ECO-05** — Quota épuisé pendant une navigation en cours : la navigation continue au plus 24 heures après l'épuisement, puis elle est clôturée automatiquement. Le SOS reste disponible. Si le compte souscrit un abonnement entre-temps, la clôture automatique est annulée ([D-20](07-decisions.md#d-20)). Prévenance avant clôture : [Q-32](06-questions-ouvertes.md#q-32).
+- <a id="rg-eco-05"></a>**RG-ECO-05** — Quota épuisé pendant une navigation en cours : la navigation continue au plus 24 heures après l'épuisement, puis elle est clôturée automatiquement. Le SOS reste disponible. Si le compte souscrit un abonnement entre-temps, la clôture automatique est annulée ([D-20](07-decisions.md#d-20)). L'application prévient le navigateur à l'épuisement du quota, puis 1 heure avant la clôture, à l'écran et par une notification du téléphone ([D-39](07-decisions.md#d-39)).
 - <a id="rg-eco-06"></a>**RG-ECO-06** — Un abonnement actif lève la limite du quota pour le compte. Formules et tarifs : [Q-17](06-questions-ouvertes.md#q-17).
 - <a id="rg-eco-07"></a>**RG-ECO-07** — L'abonnement se souscrit sur Android (Google Play), sur iPhone (achat intégré de l'App Store, [D-34](07-decisions.md#d-34)) ou sur le Web. Le serveur tient un seul état d'abonnement par compte, quel que soit le canal ([D-21](07-decisions.md#d-21)).
 - <a id="rg-eco-08"></a>**RG-ECO-08** — Le suivi des navigations des autres et la consultation de l'historique (positions, traces, notes, notes vocales, photos, alertes SOS, journaux) sont gratuits, sans limite, avec ou sans abonnement.

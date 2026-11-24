@@ -136,7 +136,7 @@ Page d'accueil après connexion ([D-23](07-decisions.md#d-23)) :
 - carte : dernière position, positions successives, tracé, dates et heures, événements ;
 - journal de bord chronologique avec photos et notes vocales lisibles (RG-JRN-02, RG-JRN-03) ;
 - alertes SOS de la navigation ;
-- pour le navigateur seulement : renommer (RG-NAV-17), ajouter et modifier des éléments du journal (RG-JRN-05, RG-JRN-06), supprimer (RG-NAV-20), gérer les suiveurs de la navigation.
+- pour le navigateur seulement : renommer et modifier destination, bateau et heures (RG-NAV-17, RG-NAV-22), ajouter et modifier des éléments du journal (RG-JRN-05, RG-JRN-06), supprimer (RG-NAV-20), gérer les suiveurs de la navigation.
 
 Pendant une navigation en cours, la page se met à jour à mesure que les positions arrivent sur le serveur.
 

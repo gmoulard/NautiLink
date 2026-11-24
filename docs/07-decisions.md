@@ -49,3 +49,14 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-32"></a>D-32 | SOS depuis un iPhone | Sans SMS, comment prévenir les contacts SOS ? | Par Internet seulement : alerte au serveur, e-mails, notifications push ; avertissement clair au démarrage. Pas de prestataire SMS. | RG-IOS-03, RG-IOS-04 |
 | <a id="d-33"></a>D-33 | Calendrier de l'iPhone | — | Construite après l'application Android et le Web. | [01 §3](01-cahier-des-charges.md#3-périmètre) |
 | <a id="d-34"></a>D-34 | Abonnement sur iPhone | — | Achat intégré de l'App Store, reconnu sur tous les supports. | RG-ECO-07, RG-IOS-07 |
+
+## 2026-11-24 — Décisions du lot 1 (navigations et partage)
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-35"></a>D-35 | Lieux et distance | Ancienne question 01. | Géocodage inverse de la première et de la dernière position, sinon coordonnées ; distance = somme des segments. | RG-NAV-16 |
+| <a id="d-36"></a>D-36 | Refus des SMS par un suiveur | Ancienne question 04. | Oui, option « Recevoir les SMS » activée par défaut. | RG-SMS-01 |
+| <a id="d-37"></a>D-37 | Validité d'une invitation | Ancienne question 06. | Sans expiration, annulable par le navigateur. | RG-PAR-05 |
+| <a id="d-38"></a>D-38 | Informations modifiables | Ancienne question 24. | Nom, destination, bateau, heures de début et de fin. | RG-NAV-17, RG-NAV-22 |
+| <a id="d-39"></a>D-39 | Avant la clôture automatique | Ancienne question 32. | Avertissement à l'épuisement et 1 h avant, à l'écran et par notification. | RG-ECO-05 |
+| <a id="d-40"></a>D-40 | Photos | Ancienne question 15. | 20 photos par navigation au plus, environ 1 Mo chacune. | RG-JRN-08 |

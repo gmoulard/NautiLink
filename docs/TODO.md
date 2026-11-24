@@ -10,7 +10,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 
 | Lot | Titre | Actions | Dépend de | État |
 |-----|-------|---------|-----------|------|
-| LOT-1 | Décisions sur les navigations et le partage | TODO-1.4, TODO-1.5, TODO-1.6, TODO-1.7, TODO-1.8, TODO-1.11 | aucun | [!] |
+| LOT-1 | Décisions sur les navigations et le partage | TODO-1.4, TODO-1.5, TODO-1.6, TODO-1.7, TODO-1.8, TODO-1.11, TODO-1.19 | aucun | [!] |
 | LOT-2 | Décisions sur les notifications, le quota et l'abonnement | TODO-1.12, TODO-1.13, TODO-1.14, TODO-10.1 | aucun | [!] |
 | LOT-3 | Décisions sur l'administration, les données et la conformité | TODO-1.15, TODO-1.16, TODO-1.17 | aucun | [!] |
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10 | aucun | [~] |
@@ -36,21 +36,11 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 Pour chaque action : critères d'acceptation communs — choix de l'utilisateur tracé en `D-nn`, règle écrite dans les règles métier, question retirée des questions ouvertes.
 
-- [!] **TODO-1.4**: Lieu de départ, lieu d'arrivée et distance d'une navigation ([Q-01](06-questions-ouvertes.md#q-01), RG-NAV-16). Dépend de : aucune.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.5**: Un suiveur peut-il refuser les SMS ordinaires ([Q-04](06-questions-ouvertes.md#q-04), RG-SMS-01). Dépend de : aucune.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.6**: Validité d'une invitation ([Q-06](06-questions-ouvertes.md#q-06), RG-PAR-05). Dépend de : aucune.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.7**: Informations modifiables d'une navigation en dehors du nom ([Q-24](06-questions-ouvertes.md#q-24), RG-NAV-17). Dépend de : aucune.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.8**: Prévenir avant la clôture automatique pour quota épuisé ([Q-32](06-questions-ouvertes.md#q-32), RG-ECO-05). Dépend de : aucune.
+- [!] **TODO-1.19**: Changer les heures d'une navigation : effet sur le quota et les positions ([Q-34](06-questions-ouvertes.md#q-34), RG-NAV-22). Dépend de : aucune.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
 - [!] **TODO-1.9**: Reprise après fermeture forcée ou redémarrage du téléphone ([Q-08](06-questions-ouvertes.md#q-08), RG-NAV-12). Dépend de : TODO-2.2.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur, éclairée par l'étude TODO-2.2.
 - [!] **TODO-1.10**: Nouvelles tentatives et affichage des échecs d'envoi des SMS, SOS compris ([Q-11](06-questions-ouvertes.md#q-11), RG-SMS-07). Dépend de : TODO-2.1.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.11**: Taille et nombre des photos ([Q-15](06-questions-ouvertes.md#q-15)). Dépend de : aucune.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
 - [!] **TODO-1.12**: Liste des notifications par e-mail, fréquence, désinscription ([Q-16](06-questions-ouvertes.md#q-16), RG-NOT-02). Dépend de : aucune.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
