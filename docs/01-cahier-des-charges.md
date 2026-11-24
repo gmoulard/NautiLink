@@ -53,7 +53,7 @@ flowchart LR
 ```
 
 - Le circuit Internet et le circuit SMS sont indépendants ; le GPS ne dépend d'aucun des deux (RG-COM-01, RG-COM-02, RG-GPS-01).
-- Android stocke localement positions, événements, paramètres et contacts SOS, et les synchronise dès que possible (RG-GPS-03, RG-GPS-04, RG-PRM-02, RG-CTC-03).
+- Android stocke localement positions, événements, paramètres et contacts, et les synchronise dès que possible (RG-GPS-03, RG-GPS-04, RG-PRM-02, RG-CTC-03).
 - Le serveur est la référence pour les paramètres, les accès et le quota (RG-PRM-01, RG-ECO-09).
 
 ## 5. Application Android
@@ -72,7 +72,7 @@ Trois boutons :
 
 L'accueil affiche aussi le bouton rouge **Envoyer un SOS** (RG-SOS-15).
 
-L'accueil donne aussi accès aux paramètres généraux, aux contacts SOS, aux suiveurs, au quota et à l'abonnement, à l'historique des alertes SOS et à l'assistance.
+L'accueil donne aussi accès aux paramètres généraux, aux contacts (suiveurs et contacts SOS), au quota et à l'abonnement, à l'historique des alertes SOS et à l'assistance.
 
 ### 5.3 Écran de démarrage
 
@@ -99,8 +99,7 @@ Chaque note, photo et note vocale est enregistrée dans le journal et transmise 
 ### 5.5 Autres écrans
 
 - **Paramètres généraux** (RG-PRM-01, RG-SMS-02) ;
-- **Contacts SOS** (RG-CTC-02) ;
-- **Suiveurs et invitations** (RG-PAR-03, RG-PAR-06) ;
+- **Contacts** : liste unique, cases « Suiveur » et « Contact SOS », invitations, périmètre, retrait (RG-CTC-01 à RG-CTC-05, RG-PAR-02 à RG-PAR-06) ;
 - **Quota et abonnement**, souscription Google Play (RG-ECO-07, RG-ECO-09) ;
 - **Historique des alertes SOS** (RG-SOS-13) ;
 - **Assistance** : contact de l'équipe NautiLink.
@@ -130,8 +129,8 @@ Pendant une navigation en cours, la page se met à jour à mesure que les positi
 ### 6.3 Gestion du compte
 
 - **Bateaux** : création et modification des fiches (RG-BAT-01), téléphone associé (RG-BAT-02) ;
-- **Suiveurs** : liste, invitations, périmètre, retrait (RG-PAR-02 à RG-PAR-06) ;
-- **Paramètres généraux** et **contacts SOS** (RG-PRM-01, RG-CTC-02) ;
+- **Contacts** : liste unique, cases « Suiveur » et « Contact SOS », invitations, périmètre, retrait (RG-CTC-01 à RG-CTC-05, RG-PAR-02 à RG-PAR-06) ;
+- **Paramètres généraux** (RG-PRM-01) ;
 - **Quota et abonnement**, souscription Web (RG-ECO-07, RG-ECO-09) ;
 - **Corbeille** : navigations supprimées, restauration (RG-NAV-20) ;
 - **Historique des alertes SOS** (RG-SOS-13) ;

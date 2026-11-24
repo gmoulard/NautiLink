@@ -112,17 +112,19 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-sos-12"></a>**RG-SOS-12** — Chaque alerte est conservée avec sa date et son heure, la position transmise et le statut d'envoi de chaque SMS. Le statut distingue « accepté pour envoi » et « livraison confirmée » lorsque le téléphone fournit l'accusé de réception.
 - <a id="rg-sos-13"></a>**RG-SOS-13** — L'historique des alertes est consultable sur Android et sur le Web.
 
-## 8. Contacts SOS
+## 8. Contacts : suiveurs et contacts SOS
 
-- <a id="rg-ctc-01"></a>**RG-CTC-01** — Un contact SOS comprend un nom, un numéro de téléphone et un e-mail facultatif.
-- <a id="rg-ctc-02"></a>**RG-CTC-02** — Le navigateur ajoute, modifie et supprime ses contacts SOS depuis le Web et depuis Android ([D-03](07-decisions.md#d-03)).
-- <a id="rg-ctc-03"></a>**RG-CTC-03** — La liste est synchronisée par le serveur au lancement de l'application Android et à chaque modification lorsque Internet est disponible. Android en garde une copie locale.
+- <a id="rg-ctc-01"></a>**RG-CTC-01** — Le navigateur a une seule liste de contacts. Un contact comprend un nom, un numéro de téléphone et un e-mail (au moins l'un des deux), et deux cases : « Suiveur » et « Contact SOS ». Par défaut, les deux cases sont cochées : suiveurs et contacts SOS sont les mêmes personnes, et le navigateur peut décocher l'une ou l'autre pour chaque contact ([D-30](07-decisions.md#d-30)).
+- <a id="rg-ctc-04"></a>**RG-CTC-04** — Cocher « Suiveur » envoie une invitation avec le périmètre choisi (RG-PAR-03) ; le contact devient suiveur quand il a accepté. Décocher « Suiveur » retire le suiveur de toutes les navigations (RG-PAR-06). Inviter un suiveur l'ajoute à la liste avec les deux cases cochées.
+- <a id="rg-ctc-05"></a>**RG-CTC-05** — « Contact SOS » demande un numéro de téléphone : pour un contact sans numéro, la case est décochée et ne peut pas être cochée.
+- <a id="rg-ctc-02"></a>**RG-CTC-02** — Le navigateur ajoute, modifie et supprime ses contacts, et coche ou décoche leurs cases, depuis le Web et depuis Android ([D-03](07-decisions.md#d-03)).
+- <a id="rg-ctc-03"></a>**RG-CTC-03** — La liste des contacts est synchronisée par le serveur au lancement de l'application Android et à chaque modification lorsque Internet est disponible. Android en garde une copie locale.
 
 ## 9. Partage et suiveurs
 
 - <a id="rg-par-01"></a>**RG-PAR-01** — Le partage est réservé aux utilisateurs ayant un compte NautiLink. Aucun accès anonyme.
 - <a id="rg-par-02"></a>**RG-PAR-02** — Un accès a l'un de ces deux périmètres, choisi par le navigateur : *navigation* (une seule navigation, en cours ou terminée) ou *navigateur* (toutes ses navigations présentes et futures, tous bateaux confondus). Le navigateur peut changer le périmètre à tout moment ([D-04](07-decisions.md#d-04)).
-- <a id="rg-par-03"></a>**RG-PAR-03** — Le navigateur invite depuis le Web ou depuis Android, par e-mail ou par numéro de téléphone, en choisissant le périmètre ([D-10](07-decisions.md#d-10)).
+- <a id="rg-par-03"></a>**RG-PAR-03** — Le navigateur invite depuis le Web ou depuis Android, par e-mail ou par numéro de téléphone, en choisissant le périmètre ([D-10](07-decisions.md#d-10)). L'invité est ajouté à la liste de contacts ([RG-CTC-04](#rg-ctc-04)).
 - <a id="rg-par-04"></a>**RG-PAR-04** — Une invitation par e-mail est envoyée par le serveur. Une invitation par téléphone est envoyée en SMS par la carte SIM du téléphone Android. Depuis le Web, une invitation par téléphone n'envoie pas de SMS : le Web affiche le lien d'invitation, que le navigateur transmet lui-même ([D-28](07-decisions.md#d-28)).
 - <a id="rg-par-05"></a>**RG-PAR-05** — Le lien d'invitation mène à la connexion ou à la création d'un compte ; l'accès est accordé dès que l'invité est connecté. Un « lien de partage » est un lien d'invitation, jamais un accès public ([D-09](07-decisions.md#d-09)). Durée de validité : [Q-06](06-questions-ouvertes.md#q-06).
 - <a id="rg-par-06"></a>**RG-PAR-06** — Le navigateur peut retirer un suiveur d'une navigation seulement, ou globalement de toutes ses navigations présentes et futures. Le retrait prend effet immédiatement.
@@ -131,7 +133,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 ## 10. Paramètres
 
-- <a id="rg-prm-01"></a>**RG-PRM-01** — Les paramètres généraux (interrupteur SMS, préférences par type, fréquence par défaut, contacts SOS) sont modifiables depuis Android et depuis le Web et synchronisés par le serveur.
+- <a id="rg-prm-01"></a>**RG-PRM-01** — Les paramètres généraux (interrupteur SMS, préférences par type, fréquence par défaut) sont modifiables depuis Android et depuis le Web et synchronisés par le serveur.
 - <a id="rg-prm-02"></a>**RG-PRM-02** — Android récupère les paramètres généraux au lancement et à chaque modification lorsque Internet est disponible ; il utilise la dernière version reçue hors connexion.
 
 ## 11. Modèle économique

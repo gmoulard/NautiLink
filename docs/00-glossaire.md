@@ -20,12 +20,13 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Événement** | Entrée du journal de bord : début, position, note, photo, note vocale, alerte SOS, fin, ajout complémentaire. |
 | **Note vocale** | Enregistrement audio conservé sur le serveur, accompagné de sa transcription texte ([D-07](07-decisions.md#d-07)). |
 | **Alerte SOS** | Alerte de détresse déclenchée depuis Android : SMS aux contacts SOS, enregistrement sur le serveur, e-mail aux suiveurs. |
-| **Contact SOS** | Destinataire des SMS SOS : nom, numéro de téléphone, e-mail facultatif. Défini par le navigateur. |
+| **Contact** | Personne de la liste unique du navigateur : nom, téléphone et/ou e-mail, cases « Suiveur » et « Contact SOS », cochées par défaut ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)). |
+| **Contact SOS** | Contact dont la case « Contact SOS » est cochée ; reçoit les SMS SOS. Il a forcément un numéro de téléphone. |
 | **Destinataire SMS** | Suiveur d'une navigation ayant renseigné un numéro de téléphone ; reçoit les SMS ordinaires de cette navigation ([RG-SMS-01](02-regles-metier.md#rg-sms-01)). |
 | **SMS ordinaire** | Tout SMS ou MMS autre qu'un SMS SOS : début, positions, notes, photos, notes vocales, fin. |
 | **Invitation** | Message (e-mail ou SMS) contenant un lien qui mène à la connexion ou à la création d'un compte, puis donne un accès. |
 | **Accès** | Droit d'un suiveur sur les navigations d'un navigateur. Périmètre *navigation* (une seule) ou *navigateur* (toutes, présentes et futures, tous bateaux confondus). |
-| **Paramètres généraux** | Réglages par défaut du navigateur (SMS, fréquence, contacts SOS), synchronisés entre Android et le Web. |
+| **Paramètres généraux** | Réglages par défaut du navigateur (SMS, fréquence), synchronisés entre Android et le Web. |
 | **Paramètres de navigation** | Copie des paramètres généraux modifiable au démarrage, valable pour cette seule navigation. |
 | **Circuit Internet** | Échanges entre les applications et le serveur par API HTTPS. |
 | **Circuit SMS** | Envoi de SMS et MMS par la carte SIM du téléphone Android, sans prestataire externe. |

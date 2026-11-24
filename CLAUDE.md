@@ -14,6 +14,8 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + Web + serveur). 
 | Couleurs, polices, ton, logo | `docs/05-identite-marque.md` |
 | Ce qui n'est pas décidé | `docs/06-questions-ouvertes.md` (`Q-nn`) |
 | Pourquoi une règle est ainsi | `docs/07-decisions.md` (`D-nn`) |
+| Ce qu'il reste à faire, dans quel ordre | `docs/TODO.md` (`TODO-x.y`), `docs/Todo-done.md` |
+| Demandes en vrac de l'utilisateur | `docs/Todo-ithem-for-todo.md` |
 
 ## Ordre de priorité en cas d'écart
 
@@ -33,8 +35,12 @@ Un écart entre documents est un défaut : le signaler et le corriger, ne pas ch
 - **Ancres** : chaque identifiant porte une ancre HTML minuscule (`<a id="rg-nav-05"></a>`, `<a id="q-12"></a>`, `<a id="d-07"></a>`) pour les liens entre fichiers.
 - **Vocabulaire** du glossaire uniquement : *navigateur*, *suiveur*, *navigation*, *contact SOS*, *destinataire SMS*, *accès* de périmètre *navigation* ou *navigateur*, etc. Nouveau terme : l'ajouter au glossaire.
 - **Libellés d'interface** entre guillemets français, tels qu'affichés : « Démarrer navigation », « Envoyer un SOS ».
-- Noms de fichiers : minuscules, sans accents ni espaces, préfixe numérique pour l'ordre de lecture.
+- Noms de fichiers : minuscules, sans accents ni espaces, préfixe numérique pour l'ordre de lecture ; exception : `TODO.md`, `Todo-done.md` et `Todo-ithem-for-todo.md`, noms imposés par le skill `todo`.
 - Markdown GitHub ; schémas en Mermaid.
+
+## Feuille de route
+
+Skill `todo`. Lire `docs/Todo-ithem-for-todo.md` avant de travailler : chaque demande devient une action du TODO (ou une question `Q-nn` si c'est une décision à prendre), puis est retirée du fichier. Mettre le TODO à jour dans le même commit que le travail : `[~]` quand c'est fait mais pas validé, `[x]` et déplacement dans `Todo-done.md` quand les critères d'acceptation sont constatés. Une question tranchée débloque l'action `[!]` correspondante de la section 1.
 
 ## Trancher une question
 
@@ -43,7 +49,8 @@ Dans un même commit :
 1. ajouter une ligne `D-nn` datée dans `07-decisions.md` (problème, choix, règles touchées) ;
 2. écrire ou modifier les règles dans `02-regles-metier.md` ;
 3. mettre à jour les autres documents qui citent le sujet (`grep -rn "Q-nn\|<mot-clé>" docs README.md`) ;
-4. supprimer la question de `06-questions-ouvertes.md`.
+4. supprimer la question de `06-questions-ouvertes.md` ;
+5. cocher l'action correspondante du TODO et la déplacer dans `docs/Todo-done.md`.
 
 ## Vérifications avant commit
 
@@ -62,5 +69,10 @@ comm -23 /tmp/cites /tmp/definis
   - évolutions futures : `docs/01-cahier-des-charges.md` §9 et `docs/06-questions-ouvertes.md` §5 ;
   - schémas : `docs/01-cahier-des-charges.md` §4 (Mermaid) ;
   - arborescence du dépôt : `README.md` (tableau « Documents ») et `CLAUDE.md` ;
+  - avancement : `docs/TODO.md` ;
   - historique : `docs/07-decisions.md`.
+- **`todo`** :
+  - TODO : `docs/TODO.md` ; actions réalisées : `docs/Todo-done.md` ; boîte de réception : `docs/Todo-ithem-for-todo.md` ;
+  - spécification : `docs/02-regles-metier.md` et `docs/01-cahier-des-charges.md` ;
+  - filtres : non (pas de site publié).
 - **`clarify-request`** : toute question fonctionnelle sans réponse dans `docs/` se pose à l'utilisateur, puis se trace en `D-nn`.

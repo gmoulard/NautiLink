@@ -44,3 +44,4 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-27"></a>D-27 | SOS hors navigation | Ancienne question 02 : bouton SOS hors navigation ? | Oui, sur l'écran d'accueil, rattaché au bateau du téléphone ; e-mail aux suiveurs de périmètre *navigateur*. | RG-SOS-01, RG-SOS-15 |
 | <a id="d-28"></a>D-28 | Invitation par téléphone depuis le Web | Ancienne question 05 : le Web ne peut pas envoyer de SMS. | Le Web affiche le lien ; le navigateur le transmet lui-même. | RG-PAR-04 |
 | <a id="d-29"></a>D-29 | Droits des suiveurs | Ancienne question 07 : fiche bateau, export, autres suiveurs, contacts SOS ? | Les quatre, en lecture seule. | RG-PAR-08, RG-NAV-19 |
+| <a id="d-30"></a>D-30 | Suiveurs et contacts SOS | Deux listes séparées jusqu'ici. | Une seule liste de contacts ; chaque contact est par défaut suiveur et contact SOS, décochable séparément. | RG-CTC-01, RG-CTC-04, RG-CTC-05 |

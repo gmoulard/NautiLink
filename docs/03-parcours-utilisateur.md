@@ -16,7 +16,8 @@ Ce document décrit les parcours pas à pas. Il applique les règles de [02-regl
 1. L'utilisateur crée son compte sur le Web ou sur Android.
 2. Il crée la fiche de son bateau (RG-BAT-01).
 3. Il se connecte sur son téléphone Android, qui devient le téléphone associé au bateau (RG-BAT-02).
-4. Il renseigne ses contacts SOS et ses paramètres généraux, sur le Web ou sur Android (RG-CTC-02, RG-PRM-01).
+4. Il renseigne ses contacts, sur le Web ou sur Android : chacun est par défaut suiveur (une invitation part) et contact SOS ; il décoche ce qu'il ne veut pas (RG-CTC-01, RG-CTC-04).
+5. Il règle ses paramètres généraux (RG-PRM-01).
 
 ## 3. Navigateur sur Android
 
@@ -88,14 +89,15 @@ Le suiveur consulte le journal tant qu'il a l'accès (RG-PAR-06).
 
 ## 5. Navigateur sur le Web
 
-### 5.1 Gérer ses suiveurs
+### 5.1 Gérer ses contacts
 
 Depuis le Web ou Android, le navigateur peut :
 
-1. voir la liste de ses suiveurs et le périmètre de chacun ;
+1. voir sa liste de contacts, avec pour chacun les cases « Suiveur » et « Contact SOS » et le périmètre (RG-CTC-01) ;
 2. inviter une personne par e-mail ou téléphone (RG-PAR-03) ;
 3. changer le périmètre d'un suiveur (RG-PAR-02) ;
-4. retirer un suiveur d'une navigation, ou de toutes ses navigations (RG-PAR-06).
+4. retirer un suiveur d'une navigation, ou de toutes ses navigations (RG-PAR-06) ;
+5. cocher ou décocher « Contact SOS » (RG-CTC-05).
 
 ### 5.2 Compléter le journal
 
@@ -107,7 +109,7 @@ Page de la navigation → « Supprimer » → confirmation → corbeille ; resta
 
 ### 5.4 Configurer
 
-Paramètres généraux (interrupteur SMS, préférences par type, fréquence par défaut) et contacts SOS, sur le Web ou Android, synchronisés (RG-PRM-01, RG-SMS-02, RG-CTC-02).
+Paramètres généraux (interrupteur SMS, préférences par type, fréquence par défaut), sur le Web ou Android, synchronisés (RG-PRM-01, RG-SMS-02).
 
 ### 5.5 Quota et abonnement
 

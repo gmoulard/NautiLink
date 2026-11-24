@@ -18,6 +18,9 @@ Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas enco
 | [`docs/05-identite-marque.md`](docs/05-identite-marque.md) | Nom, signature, logo, couleurs, typographie, ton. |
 | [`docs/06-questions-ouvertes.md`](docs/06-questions-ouvertes.md) | Tout ce qui n'est pas décidé, numéroté `Q-…`. |
 | [`docs/07-decisions.md`](docs/07-decisions.md) | Journal des arbitrages, numérotés `D-…`. |
+| [`docs/TODO.md`](docs/TODO.md) | Feuille de route : actions `TODO-x.y`, états, dépendances, critères d'acceptation. |
+| [`docs/Todo-done.md`](docs/Todo-done.md) | Actions réalisées et validées. |
+| [`docs/Todo-ithem-for-todo.md`](docs/Todo-ithem-for-todo.md) | Demandes notées en vrac, à reporter dans le TODO. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
 
 ## Statut des informations
