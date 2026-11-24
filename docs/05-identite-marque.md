@@ -109,3 +109,13 @@ Simple, rassurant, direct, moderne, positif, axé sur la liberté et la sécurit
 ## 12. À finaliser
 
 Voir [Q-25](06-questions-ouvertes.md#q-25) (logo, fichiers vectoriels, icône Android, déclinaisons) et [Q-26](06-questions-ouvertes.md#q-26) (disponibilité juridique du nom, domaines, réseaux sociaux).
+
+## 13. Sponsor
+
+NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/), [D-68](07-decisions.md#d-68)).
+
+- Mention : « Sponsorisée par la SRT », toujours accompagnée du guidon de la SRT ([`site/assets/sponsor-srt.png`](../site/assets/sponsor-srt.png)).
+- Place : bandeau blanc à filet jaune en bas de chaque page du site, et en bas de l'écran d'accueil de l'application.
+- Couleurs du guidon : bleu `#1E3296`, jaune `#F8D818`, rouge des ancres. Elles servent au bandeau sponsor ; leur usage comme base de toute l'identité NautiLink est la proposition 11 de la [planche de designs](../site/designs/index.html), à choisir ([TODO-3.9](TODO.md)).
+- Le guidon reste la propriété de la SRT : ne pas le modifier ni le recolorer.
+

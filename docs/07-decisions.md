@@ -127,3 +127,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-65"></a>D-65 | Affichage des envois | Demande de l'utilisateur. | Chaque résultat d'envoi s'affiche dans une fenêtre avec « OK », fermée seule au bout d'une minute. | RG-COM-03 |
 | <a id="d-66"></a>D-66 | Navigation immobile | Demande de l'utilisateur. | Moins de 20 mètres de déplacement en 2 heures : l'application propose de terminer la navigation. | RG-NAV-24 |
 | <a id="d-67"></a>D-67 | Accès au quota et à l'abonnement | Demande de l'utilisateur. | Lien « Version gratuite - abonnement » sur l'accueil vers « Quota et abonnement », puis lien vers la page d'information sur l'abonnement du site. | RG-ECO-10 |
+
+## 2026-11-24 — Sponsor
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-68"></a>D-68 | Sponsor SRT | Demande de l'utilisateur, qui a fourni le guidon de la SRT. | NautiLink est présentée comme sponsorisée par la SRT (srtoulon.fr) : bandeau avec le guidon sur toutes les pages du site et en bas de l'accueil de l'application. Le guidon est un logo tiers, utilisé à la demande de l'utilisateur. | [05-identite-marque.md §13](05-identite-marque.md) |

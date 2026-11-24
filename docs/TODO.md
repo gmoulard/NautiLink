@@ -16,7 +16,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
 | LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7 | LOT-4, LOT-5 | [ ] |
-| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8 | aucun | [~] |
+| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9 | aucun | [~] |
 | LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [ ] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [ ] |
@@ -87,6 +87,8 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 - [~] **TODO-3.8**: Demandes du 2026-11-24 sur l'application mobile (boîte de réception) : logo sans coins blancs, fréquences de 15 minutes à 10 jours (RG-NAV-05), chronomètre remis à zéro par tout envoi (RG-NAV-10), fenêtre de résultat avec « OK » fermée au bout d'une minute (RG-COM-03), proposition de fin si immobile 2 heures (RG-NAV-24), lien « Version gratuite - abonnement » et page d'information sur l'abonnement (RG-ECO-10). Dépend de : TODO-3.6.
   - Critères d'acceptation : chaque point visible dans le prototype et sur le site, couvert par un test quand c'est possible ; relu par l'utilisateur.
   - Fait (2026-11-24) : les six points dans le prototype (5 tests) et sur le site (`site/abonnement.html`, fréquence de l'accueil, logo). Reste : relecture par l'utilisateur sur la démonstration en ligne.
+- [!] **TODO-3.9**: Choisir le design du site et de l'application parmi les 11 propositions de la [planche](../site/designs/index.html) (dont la 11 aux couleurs du guidon de la SRT), puis l'appliquer. Dépend de : aucune.
+  - Critères d'acceptation : design choisi par l'utilisateur, tracé en `D-nn`, appliqué au site et au prototype, identité de marque mise à jour. Bloqué par : choix de l'utilisateur.
 - [~] **TODO-3.7**: Squelette du serveur en Go déployé sur pi-appliance ([D-62](07-decisions.md#d-62)) : page d'accueil de la plateforme Web, point de santé de l'API, connexion à la base, image `arm64`, fichier `compose.yaml` pour « Docker Compose libre ». Dépend de : aucune pour le squelette ; publication sur internet : TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance.
   - Critères d'acceptation : service installé sur le Pi de `vdl.moulard.org`, page ouverte depuis un téléphone à `https://nautilink.moulard.org` (redirigée vers `https://vdl.moulard.org/nautilink/`), base PostgreSQL partagée jointe, e-mail d'essai reçu par le relais, service gardé après un redémarrage du Pi.
   - Fait (2026-11-24) : serveur Go dans `server/` (accueil, espace administrateur vide, `api/sante`, PostgreSQL par pgx, commande `mail-essai`, tests), image `ghcr.io/gmoulard/nautilink-serveur` construite par le workflow « Serveur », `server/compose.yaml` ; essayé sous Docker (arm64 et amd64 construits, base jointe puis arrêtée, renvoi vers `/nautilink/`). Reste : premier passage du workflow sur GitHub, puis installation sur le Pi une fois TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance faits.
