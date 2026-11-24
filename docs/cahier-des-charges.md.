@@ -1,0 +1,399 @@
+NautiLink — Cahier des charges fonctionnel
+
+Nom du projet : NautiLink
+Signature : Your sea, your safety, your story.
+Version : 1.0 — Document de définition fonctionnelle
+Statut : Projet en phase de préparation
+
+---
+
+1. Présentation du projet
+
+NautiLink est une solution connectée destinée aux navigateurs de plaisance et à leurs proches.
+
+Elle permet de partager une position géographique, de transmettre des informations pendant une navigation, de déclencher une alerte SOS et de conserver un journal de bord consultable depuis une plateforme Web.
+
+NautiLink repose sur deux applications complémentaires :
+
+- Une application mobile Android utilisée par le navigateur à bord.
+- Une application Web permettant de consulter les navigations, les positions, les traces GPS et les journaux de bord, et de gérer les comptes et les suiveurs.
+
+Aucune application iOS n'est prévue dans le périmètre initial.
+
+2. Objectifs fonctionnels
+
+Les objectifs principaux sont :
+
+1. Permettre au navigateur de démarrer et terminer une navigation.
+2. Enregistrer et transmettre régulièrement sa position GPS.
+3. Permettre l'envoi manuel d'une position.
+4. Transmettre des notes écrites, des photos et des notes vocales.
+5. Permettre l'envoi d'une alerte SOS.
+6. Donner aux proches autorisés la possibilité de suivre une navigation.
+7. Conserver l'ensemble des informations dans un journal de bord.
+8. Permettre la consultation des navigations depuis une plateforme Web.
+
+3. Architecture générale
+
+3.1 Application Android
+
+L'application Android est l'outil principal du navigateur.
+
+Elle utilise :
+
+- Le GPS du téléphone pour obtenir la position.
+- La carte SIM du téléphone pour transmettre des SMS.
+- Les MMS pour transmettre les photos lorsque cette option est activée.
+- Une connexion Internet et une API HTTPS pour communiquer avec le serveur NautiLink.
+
+Les transmissions par SMS/MMS et par API sont indépendantes. Un échec de transmission par l'un des moyens ne doit pas empêcher de tenter l'autre.
+
+3.2 Application Web
+
+La plateforme Web permet notamment :
+
+- De consulter les navigations en cours et terminées.
+- De visualiser les positions GPS et les traces.
+- De consulter les journaux de bord.
+- De consulter les photos et les événements.
+- De gérer les invitations et les suiveurs.
+- De modifier les préférences de communication.
+- De gérer les contacts destinataires des alertes SOS.
+
+4. Gestion des comptes, invitations et suiveurs
+
+4.1 Type de compte
+
+NautiLink comporte un seul type de compte utilisateur.
+
+Un même utilisateur peut être navigateur lors de ses propres navigations et suiveur lorsqu'il consulte les navigations d'un autre utilisateur.
+
+4.2 Invitation d'un suiveur
+
+Depuis l'application Android, le navigateur peut inviter une personne en renseignant :
+
+- Son adresse e-mail ;
+- Ou son numéro de téléphone.
+
+Une invitation contenant une URL est envoyée à la personne invitée.
+
+Cette URL permet d'accéder à la plateforme Web et de créer un compte NautiLink.
+
+Après création de son compte, la personne devient automatiquement suiveur du navigateur qui l'a invitée.
+
+Elle obtient :
+
+- L'accès à la navigation pour laquelle elle a été invitée ;
+- L'accès automatique aux futures navigations de ce même navigateur.
+
+4.3 Gestion des droits d'accès
+
+Le navigateur peut retirer un suiveur :
+
+- Pour une navigation uniquement ;
+- Ou globalement, pour toutes ses navigations présentes et futures.
+
+Le partage peut également être réalisé au moyen d'un lien de partage.
+
+Le navigateur doit pouvoir révoquer les accès accordés.
+
+5. Application Android — fonctionnalités
+
+5.1 Écran d'accueil
+
+L'écran d'accueil propose trois accès principaux :
+
+- Démarrer navigation
+- Reprendre la dernière navigation
+- Navigations enregistrées
+
+Le bouton « Reprendre la dernière navigation » permet de retrouver directement la dernière navigation encore en cours.
+
+Le bouton « Navigations enregistrées » affiche la liste des navigations récupérées depuis le serveur.
+
+La sélection d'une navigation ouvre la page correspondante sur la plateforme Web, notamment son journal de bord.
+
+5.2 Démarrer une navigation
+
+L'écran de démarrage propose :
+
+- Un choix de fréquence d'envoi automatique ;
+- Un bouton « Paramètres » permettant d'adapter les réglages à cette navigation ;
+- Un bouton « Envoi message – Début de navigation ».
+
+Les fréquences proposées sont :
+
+- 3 minutes ;
+- 4 minutes ;
+- 5 minutes ;
+- 10 minutes ;
+- 15 minutes ;
+- 30 minutes ;
+- 1 heure.
+
+Lors du démarrage confirmé :
+
+1. La date et l'heure de début sont enregistrées.
+2. La position GPS est récupérée.
+3. Les informations sont transmises au serveur par API.
+4. Un SMS de début est envoyé si les paramètres le prévoient.
+5. Les transmissions automatiques de position sont activées selon la fréquence choisie.
+
+5.3 Écran de navigation en cours
+
+L'écran de navigation affiche :
+
+- Un chronomètre indiquant le temps écoulé depuis le début de la navigation ;
+- Un chronomètre indiquant le temps écoulé depuis le dernier envoi des messages.
+
+Il comporte les commandes suivantes :
+
+Envoyer information position
+
+Cette commande déclenche immédiatement :
+
+1. La récupération de la position GPS ;
+2. L'envoi d'un SMS si les paramètres le prévoient ;
+3. L'envoi des informations au serveur par API ;
+4. La mise à jour du dernier envoi.
+
+Un message de confirmation, par exemple « Position envoyée », s'affiche après le traitement de la demande.
+
+Envoyer un SOS
+
+Cette commande permet de déclencher une alerte de détresse. Son fonctionnement détaillé est décrit au chapitre 6.
+
+Terminer la navigation
+
+Cette commande permet de clôturer la navigation après confirmation.
+
+Fonctions de journal de bord
+
+Trois commandes distinctes sont disponibles :
+
+- NOTE : saisie d'une note écrite ;
+- Photo : prise ou sélection d'une photographie ;
+- Vocal : dictée vocale transformée en texte.
+
+Chacune de ces commandes doit déclencher, selon les préférences configurées :
+
+- Une transmission par SMS ou MMS ;
+- Une transmission au serveur par API ;
+- L'enregistrement de l'événement dans le journal de bord.
+
+Pour une note vocale, la reconnaissance vocale produit un texte qui est enregistré comme note dans le journal.
+
+Pour une photo :
+
+- La photographie est transmise au serveur et associée au journal de bord.
+- Un MMS peut transmettre la photographie en pièce jointe lorsque les paramètres le prévoient.
+- Le message peut également contenir un lien vers la photographie hébergée sur le serveur.
+
+Les contraintes techniques des MMS, notamment celles liées aux opérateurs et à la taille des pièces jointes, restent à préciser.
+
+6. Gestion des alertes SOS
+
+Le bouton SOS est clairement identifiable et de couleur rouge.
+
+Avant l'envoi, une demande de confirmation est affichée afin d'éviter les déclenchements accidentels.
+
+Après confirmation :
+
+1. La position GPS est récupérée.
+2. Un SMS d'alerte est envoyé aux contacts configurés pour les SOS.
+3. Une alerte accompagnée de la position est transmise au serveur par API.
+4. L'événement est enregistré dans le journal de bord.
+5. Un message de confirmation est affiché.
+
+Les destinataires des alertes SOS doivent pouvoir être configurés et modifiés depuis l'application Android et depuis la plateforme Web.
+
+7. Fin de navigation
+
+Le bouton « Terminer la navigation » déclenche une demande de confirmation.
+
+Après confirmation :
+
+1. Un dernier SMS est envoyé si les paramètres le prévoient.
+2. Les informations de fin sont transmises au serveur par API.
+3. La navigation est clôturée côté serveur.
+4. La navigation est archivée.
+5. Le journal de bord reste consultable depuis la plateforme Web.
+
+La clôture côté serveur doit être effectuée même si l'une des transmissions de communication échoue.
+
+8. Paramètres de communication
+
+8.1 Paramètres généraux
+
+Les paramètres généraux sont accessibles depuis :
+
+- L'application Android ;
+- La plateforme Web.
+
+Les modifications effectuées sur l'une des interfaces doivent être synchronisées avec l'autre.
+
+Un interrupteur général permet d'activer ou de désactiver les transmissions SMS.
+
+Les préférences détaillées sont configurables par type de message :
+
+- Début de navigation ;
+- Positions automatiques ;
+- Positions manuelles ;
+- Notes écrites ;
+- Photos ;
+- Notes vocales ;
+- SOS ;
+- Fin de navigation.
+
+8.2 Paramètres propres à une navigation
+
+Au démarrage d'une navigation, un petit bouton « Paramètres » permet de modifier les réglages pour cette navigation uniquement.
+
+Ces réglages spécifiques ne doivent pas modifier les paramètres généraux par défaut.
+
+À chaque nouvelle navigation, les paramètres généraux par défaut sont repris automatiquement.
+
+8.3 Envois automatiques et manuels
+
+Le système doit permettre :
+
+- Des envois automatiques à la fréquence sélectionnée ;
+- Des envois manuels immédiats à la demande du navigateur.
+
+Les deux modes de transmission doivent pouvoir fonctionner pendant une même navigation.
+
+9. Plateforme Web
+
+9.1 Tableau de bord
+
+Le tableau de bord présente les navigations :
+
+- En cours ;
+- Terminées ;
+- Effectuées par l'utilisateur en tant que navigateur ;
+- Suivies par l'utilisateur en tant que suiveur.
+
+9.2 Cartographie
+
+Pour chaque navigation, la plateforme Web affiche une carte permettant de visualiser :
+
+- La dernière position GPS connue ;
+- Les positions successives ;
+- Le tracé de navigation ;
+- Les dates et heures des positions ;
+- Les événements associés.
+
+9.3 Journal de bord
+
+Le journal de bord présente les informations dans l'ordre chronologique :
+
+- Début de navigation ;
+- Positions automatiques ;
+- Positions manuelles ;
+- Notes écrites ;
+- Notes issues de dictées vocales ;
+- Photographies ;
+- Alertes SOS ;
+- Fin de navigation.
+
+Les photos doivent pouvoir être consultées depuis le journal.
+
+9.4 Gestion des suiveurs
+
+La plateforme Web permet au navigateur de :
+
+- Consulter la liste de ses suiveurs ;
+- Gérer les invitations ;
+- Retirer un suiveur pour une navigation ;
+- Retirer un suiveur globalement ;
+- Gérer les liens de partage et les accès.
+
+9.5 Préférences
+
+Les paramètres généraux de communication et les destinataires SOS sont accessibles depuis la plateforme Web.
+
+Ils sont synchronisés avec l'application Android.
+
+10. Modèle économique et règles d'accès
+
+Le modèle économique repose sur une offre gratuite et une offre par abonnement.
+
+10.1 Offre gratuite
+
+Un utilisateur dispose gratuitement de 24 heures de navigation cumulées sur les 7 derniers jours glissants.
+
+Le quota fonctionne de manière glissante : chaque minute de navigation consommée redevient disponible lorsque cette minute sort de la période des 7 derniers jours.
+
+Lorsque le quota est épuisé, l'utilisateur ne peut plus démarrer une nouvelle navigation sans souscrire un abonnement.
+
+10.2 Abonnement
+
+L'abonnement permet de dépasser la limite de navigation gratuite.
+
+Les formules et tarifs restent à définir.
+
+10.3 Suivi gratuit
+
+Le suivi d'une navigation partagée par un autre utilisateur est toujours gratuit, sans limite de durée.
+
+Le temps passé en tant que suiveur n'est jamais décompté du quota de navigation.
+
+10.4 Historique gratuit
+
+L'accès à l'historique des navigations est toujours gratuit et sans limite de durée de conservation ou d'accès.
+
+Les informations suivantes restent consultables sans abonnement :
+
+- Positions GPS ;
+- Traces ;
+- Notes ;
+- Photos ;
+- Événements ;
+- Alertes SOS ;
+- Journaux de bord.
+
+Seul le temps passé à naviguer en tant que navigateur est soumis à la limite de l'offre gratuite.
+
+11. Principes techniques et sécurité
+
+Les principes suivants doivent guider la conception :
+
+- Les communications entre applications et serveur utilisent une API HTTPS.
+- Les SMS utilisent la carte SIM du téléphone Android.
+- Les MMS sont utilisés pour les photographies lorsque cela est prévu.
+- Les transmissions SMS/MMS et API sont indépendantes.
+- Les événements importants doivent être enregistrés dans le journal de bord.
+- Les accès aux navigations doivent respecter les droits accordés par le navigateur.
+- La révocation d'un accès doit empêcher la consultation ultérieure des navigations concernées.
+
+Les modalités précises de sécurisation, d'authentification et de conservation des données restent à définir.
+
+12. Points restant à définir
+
+Les sujets suivants devront être étudiés et précisés avant ou pendant la conception technique :
+
+1. Fonctionnement de l'application lorsque le réseau mobile ou Internet est indisponible.
+2. Gestion des transmissions en attente et des éventuelles tentatives de renvoi.
+3. Fonctionnement du GPS en arrière-plan sur Android.
+4. Gestion de la consommation de batterie.
+5. Formats et longueur des SMS.
+6. Limites de taille et compatibilité des MMS selon les opérateurs.
+7. Notifications envoyées aux suiveurs lors des événements importants.
+8. Architecture et hébergement du serveur.
+9. Base de données et stockage des photographies.
+10. Politique de conservation et de suppression des données.
+11. Authentification et sécurisation des comptes.
+12. Gestion des erreurs et des doublons de transmission.
+13. Détails des formules d'abonnement et tarifs.
+14. Conditions d'utilisation et informations relatives à la confidentialité.
+15. Compatibilité avec les différentes versions et marques de téléphones Android.
+
+Ces éléments ne sont pas considérés comme définitivement validés à ce stade.
+
+13. Conclusion
+
+NautiLink doit devenir un compagnon connecté de navigation permettant au navigateur de partager sa position, de communiquer avec ses proches, de transmettre des informations importantes et de conserver une trace complète de ses navigations.
+
+L'application Android assure les fonctions à bord. La plateforme Web constitue l'espace central de consultation, de suivi et de gestion.
+
+La priorité est de concevoir une solution fiable, simple à utiliser et capable de maintenir des moyens de communication indépendants afin de faciliter le partage et le suivi des navigations.
