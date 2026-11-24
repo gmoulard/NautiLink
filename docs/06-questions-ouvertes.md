@@ -38,6 +38,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Question : comment prévenir le navigateur que sa navigation sera clôturée au bout des 24 heures suivant l'épuisement du quota (RG-ECO-05) ?
 - Proposition : avertissement à l'épuisement, puis 1 heure avant la clôture, sur l'écran de navigation ; SMS de fin envoyé si les paramètres le prévoient.
 
+### <a id="q-33"></a>Q-33 — Notifications push sur iPhone
+
+- Priorité : avant l'application iPhone.
+- Question : en plus du SOS (RG-IOS-06), quels événements déclenchent une notification push au suiveur (début et fin de navigation, nouvelle photo, retard de position) ? Peut-il les régler ?
+- Proposition : début, fin et SOS ; chaque type désactivable sauf le SOS.
+
 ### <a id="q-16"></a>Q-16 — Notifications
 
 - Priorité : lancement.
@@ -69,7 +75,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
 
 - Priorité : bloquant.
-- Étude : enregistrement GPS application en arrière-plan ou écran éteint, consommation de batterie, comportement selon les marques et versions d'Android.
+- Étude : enregistrement GPS application en arrière-plan ou écran éteint, consommation de batterie, comportement selon les marques et versions d'Android, et sur iPhone (localisation en arrière-plan, règles de l'App Store).
 
 ### <a id="q-10"></a>Q-10 — File d'attente et doublons
 
@@ -109,7 +115,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-31"></a>Q-31 — Autorisations Android
 
 - Priorité : bloquant.
-- Étude : localisation (y compris en arrière-plan), SMS, appareil photo, micro, notifications ; versions d'Android visées.
+- Étude : localisation (y compris en arrière-plan), SMS, appareil photo, micro, notifications ; versions d'Android et d'iOS visées.
 
 ### <a id="q-22"></a>Q-22 — Architecture et développement
 
@@ -133,7 +139,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-25"></a>Q-25 — Logo et charte
 
 - Priorité : lancement.
-- À faire : valider le logo ; fichiers vectoriels ; icône Android ; déclinaisons claire, sombre et monochrome. La proposition actuelle utilise un repère GPS orange absent de la palette : l'ajouter à la palette ou le remplacer. Définir les couleurs du thème sombre.
+- À faire : valider le logo ; fichiers vectoriels ; icônes Android et iPhone ; déclinaisons claire, sombre et monochrome. La proposition actuelle utilise un repère GPS orange absent de la palette : l'ajouter à la palette ou le remplacer. Définir les couleurs du thème sombre.
 
 ### <a id="q-26"></a>Q-26 — Nom et présence en ligne
 

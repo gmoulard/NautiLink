@@ -1,6 +1,6 @@
 # CLAUDE.md — NautiLink
 
-Dépôt de spécification fonctionnelle de NautiLink (Android + Web + serveur). Tout est rédigé en français. Pas encore de code.
+Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + serveur). Tout est rédigé en français. Pas encore de code.
 
 ## Où trouver quoi
 

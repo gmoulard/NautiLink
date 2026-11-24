@@ -44,13 +44,13 @@ Un bateau (le navigateur), un repère GPS (sa position), plusieurs silhouettes (
 
 ### 5.3 Style
 
-Moderne, simple, reconnaissable, lisible en petit, adapté à une icône Android et au Web, lisible sur fond clair comme sur fond sombre.
+Moderne, simple, reconnaissable, lisible en petit, adapté à une icône Android et iPhone et au Web, lisible sur fond clair comme sur fond sombre.
 
 ### 5.4 Déclinaisons à produire
 
 1. Logo complet : symbole et nom.
 2. Version avec la signature.
-3. Symbole seul pour l'icône Android.
+3. Symbole seul pour les icônes Android et iPhone.
 4. Version monochrome.
 5. Version pour fond sombre.
 6. Version pour fond clair.
@@ -96,7 +96,7 @@ Simple, rassurant, direct, moderne, positif, axé sur la liberté et la sécurit
 >
 > Que vous naviguiez en voilier ou en bateau à moteur, NautiLink vous permet de partager votre position avec vos proches, de suivre vos navigations, de transmettre des informations importantes et de conserver un journal de bord complet.
 >
-> Grâce à son application Android et à sa plateforme Web, NautiLink rapproche le navigateur de ceux qui comptent pour lui.
+> Grâce à ses applications Android et iPhone et à sa plateforme Web, NautiLink rapproche le navigateur de ceux qui comptent pour lui.
 >
 > Naviguez. Partagez. Gardez une trace.
 

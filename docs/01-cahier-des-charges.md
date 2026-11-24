@@ -10,7 +10,8 @@ NautiLink est une solution connectée pour les plaisanciers et leurs proches. El
 
 Elle comprend :
 
-- **NautiLink Android** : l'application du navigateur à bord (démarrage et fin de navigation, positions, journal de bord, SOS) ;
+- **NautiLink Android** : l'application du navigateur à bord (démarrage et fin de navigation, positions, journal de bord, SOS par SMS et par Internet) ;
+- **NautiLink iPhone** : les mêmes fonctions sans aucun SMS, plus le suivi des navigations avec notifications push (§5.6) ;
 - **NautiLink Web** : la plateforme de consultation, de suivi et de gestion (navigations, journaux, bateaux, suiveurs, paramètres, abonnement) ;
 - **le serveur NautiLink** : API HTTPS, stockage, calcul du quota, envoi des e-mails ;
 - **l'espace administrateur** : application Web distincte réservée à l'équipe NautiLink.
@@ -27,12 +28,12 @@ Elle comprend :
 
 ## 3. Périmètre
 
-**Inclus au lancement** : application Android, plateforme Web, espace administrateur, interfaces en français, thème clair et thème sombre, offre gratuite et abonnement.
+**Inclus** : application Android, plateforme Web, application iPhone (construite après l'application Android et le Web), espace administrateur, interfaces en français, thème clair et thème sombre, offre gratuite et abonnement.
 
 **Exclus au lancement** :
 
-- application iOS ;
-- carte affichée sur Android pendant une navigation (RG-NAV-09) ;
+- carte affichée sur l'écran de navigation de l'application mobile (RG-NAV-09) ;
+- envoi de SMS depuis un iPhone (RG-IOS-02) ;
 - prestataire d'envoi de SMS : les SMS partent de la carte SIM du téléphone (RG-COM-01) ;
 - accès anonyme aux navigations (RG-PAR-01) ;
 - gestion de plusieurs versions de l'application Web (RG-ADM-05) ;
@@ -45,18 +46,23 @@ Les évolutions futures sont listées au §9.
 ```mermaid
 flowchart LR
   A[Android<br/>navigateur] -- API HTTPS --> S[(Serveur NautiLink)]
+  I[iPhone<br/>navigateur et suiveurs] -- API HTTPS --> S
+  S -- notification push --> I
   W[Web<br/>navigateur et suiveurs] -- API HTTPS --> S
   ADM[Espace administrateur] -- API HTTPS --> S
   A -- SMS / MMS par la SIM --> D[Suiveurs avec téléphone<br/>Contacts SOS]
   S -- e-mail --> E[Suiveurs, invités,<br/>contacts SOS avec e-mail]
   G((GPS)) --> A
+  G --> I
 ```
 
 - Le circuit Internet et le circuit SMS sont indépendants ; le GPS ne dépend d'aucun des deux (RG-COM-01, RG-COM-02, RG-GPS-01).
-- Android stocke localement positions, événements, paramètres et contacts, et les synchronise dès que possible (RG-GPS-03, RG-GPS-04, RG-PRM-02, RG-CTC-03).
+- L'application mobile stocke localement positions, événements, paramètres et contacts, et les synchronise dès que possible (RG-GPS-03, RG-GPS-04, RG-PRM-02, RG-CTC-03).
 - Le serveur est la référence pour les paramètres, les accès et le quota (RG-PRM-01, RG-ECO-09).
 
-## 5. Application Android
+## 5. Applications mobiles
+
+Les §5.1 à §5.5 décrivent l'application Android ; l'application iPhone est identique, sauf ce que dit le §5.6.
 
 ### 5.1 Connexion
 
@@ -103,6 +109,14 @@ Chaque note, photo et note vocale est enregistrée dans le journal et transmise 
 - **Quota et abonnement**, souscription Google Play (RG-ECO-07, RG-ECO-09) ;
 - **Historique des alertes SOS** (RG-SOS-13) ;
 - **Assistance** : contact de l'équipe NautiLink.
+
+### 5.6 Particularités de l'iPhone
+
+- Aucun SMS ni MMS : ni positions, ni notes, ni SOS, ni invitations par SMS (RG-IOS-02). Les réglages SMS sont sans effet et l'écran de démarrage le dit.
+- SOS par Internet uniquement : alerte au serveur, e-mails, notifications push ; sans Internet, envoi dès le retour de la connexion (RG-IOS-03). Avertissement au démarrage (RG-IOS-04).
+- Invitation par téléphone : le lien s'affiche, le navigateur le transmet lui-même (RG-PAR-04).
+- Rôle suiveur : tableau de bord et page de navigation comme sur le Web, avec la carte (RG-IOS-05) ; notifications push (RG-IOS-06).
+- Abonnement par achat intégré de l'App Store (RG-IOS-07).
 
 ## 6. Plateforme Web
 
@@ -158,5 +172,4 @@ Hors lancement, sans engagement :
 
 - cartes marines du SHOM sur le Web ([Q-23](06-questions-ouvertes.md#q-23)) ;
 - autres langues ([Q-27](06-questions-ouvertes.md#q-27)) ;
-- plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28)) ;
-- application iOS.
+- plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28)).

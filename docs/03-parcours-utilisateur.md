@@ -13,13 +13,15 @@ Ce document décrit les parcours pas à pas. Il applique les règles de [02-regl
 
 ## 2. Créer son compte et son bateau
 
-1. L'utilisateur crée son compte sur le Web ou sur Android.
+1. L'utilisateur crée son compte sur le Web ou sur l'application mobile.
 2. Il crée la fiche de son bateau (RG-BAT-01).
-3. Il se connecte sur son téléphone Android, qui devient le téléphone associé au bateau (RG-BAT-02).
-4. Il renseigne ses contacts, sur le Web ou sur Android : chacun est par défaut suiveur (une invitation part) et contact SOS ; il décoche ce qu'il ne veut pas (RG-CTC-01, RG-CTC-04).
+3. Il se connecte sur son téléphone (Android ou iPhone), qui devient le téléphone associé au bateau (RG-BAT-02).
+4. Il renseigne ses contacts, sur le Web ou sur l'application mobile : chacun est par défaut suiveur (une invitation part) et contact SOS ; il décoche ce qu'il ne veut pas (RG-CTC-01, RG-CTC-04).
 5. Il règle ses paramètres généraux (RG-PRM-01).
 
-## 3. Navigateur sur Android
+## 3. Navigateur sur l'application mobile
+
+Le parcours est décrit pour Android. Sur iPhone, il est identique sans aucun SMS (§3.8).
 
 ### 3.1 Démarrer une navigation
 
@@ -77,13 +79,23 @@ Accueil → « Reprendre la dernière navigation » → écran de la navigation 
 
 Accueil → « Navigations enregistrées » → liste du serveur → sélection → ouverture de la page de la navigation sur la plateforme Web.
 
+### 3.8 Sur iPhone
+
+1. Au démarrage, un avertissement rappelle que le SOS passe uniquement par Internet et liste les contacts SOS sans e-mail, qui ne seront pas prévenus (RG-IOS-04).
+2. Positions, notes, photos et notes vocales partent au serveur seulement ; aucun SMS (RG-IOS-02).
+3. SOS : confirmation, alerte au serveur, e-mails et notifications push aux suiveurs ; sans Internet, l'application dit que l'alerte n'est pas partie et l'envoie dès le retour de la connexion (RG-IOS-03).
+
 ## 4. Suiveur sur le Web
 
 ### 4.1 Suivre une navigation en cours
 
 Depuis son tableau de bord, le suiveur ouvre la navigation et voit la dernière position, les positions successives, le tracé, les dates et heures, les notes, les photos, les notes vocales, les événements et les alertes SOS (RG-PAR-07). La page se met à jour à mesure que les positions arrivent. Il peut aussi consulter la fiche du bateau, les autres suiveurs et les contacts SOS, et exporter la navigation en PDF (RG-PAR-08). Le suivi est gratuit et sans limite (RG-ECO-08).
 
-### 4.2 Consulter une navigation terminée
+### 4.2 Suivre depuis un iPhone
+
+Le suiveur qui a l'application iPhone voit les mêmes informations que sur le Web, carte comprise, et reçoit une notification push à chaque alerte SOS (RG-IOS-05, RG-IOS-06).
+
+### 4.3 Consulter une navigation terminée
 
 Le suiveur consulte le journal tant qu'il a l'accès (RG-PAR-06).
 
@@ -91,7 +103,7 @@ Le suiveur consulte le journal tant qu'il a l'accès (RG-PAR-06).
 
 ### 5.1 Gérer ses contacts
 
-Depuis le Web ou Android, le navigateur peut :
+Depuis le Web ou l'application mobile, le navigateur peut :
 
 1. voir sa liste de contacts, avec pour chacun les cases « Suiveur » et « Contact SOS » et le périmètre (RG-CTC-01) ;
 2. inviter une personne par e-mail ou téléphone (RG-PAR-03) ;
@@ -109,12 +121,12 @@ Page de la navigation → « Supprimer » → confirmation → corbeille ; resta
 
 ### 5.4 Configurer
 
-Paramètres généraux (interrupteur SMS, préférences par type, fréquence par défaut), sur le Web ou Android, synchronisés (RG-PRM-01, RG-SMS-02).
+Paramètres généraux (interrupteur SMS, préférences par type, fréquence par défaut), sur le Web ou l'application mobile, synchronisés (RG-PRM-01, RG-SMS-02).
 
 ### 5.5 Quota et abonnement
 
-Le navigateur consulte le temps consommé, le temps disponible et l'heure à laquelle des minutes redeviennent disponibles (RG-ECO-09). Il peut s'abonner sur le Web ou sur Android (RG-ECO-07).
+Le navigateur consulte le temps consommé, le temps disponible et l'heure à laquelle des minutes redeviennent disponibles (RG-ECO-09). Il peut s'abonner sur le Web, sur Android (Google Play) ou sur iPhone (App Store) (RG-ECO-07).
 
 ## 6. Points restant à concevoir
 
-Maquettes, autorisations Android, reprise après perte de réseau ou redémarrage, erreurs d'envoi, hors connexion, accessibilité : voir [06-questions-ouvertes.md](06-questions-ouvertes.md).
+Maquettes, autorisations Android et iPhone, reprise après perte de réseau ou redémarrage, erreurs d'envoi, hors connexion, accessibilité : voir [06-questions-ouvertes.md](06-questions-ouvertes.md).

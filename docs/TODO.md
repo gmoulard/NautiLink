@@ -1,6 +1,6 @@
 # TODO
 
-Feuille de route de NautiLink, dans l'ordre de construction : décisions, études, préparation, serveur, Android, Web, administration, lancement. Les identifiants `RG-…` renvoient aux [règles métier](02-regles-metier.md), les `Q-nn` aux [questions ouvertes](06-questions-ouvertes.md), les `D-nn` au [journal des décisions](07-decisions.md).
+Feuille de route de NautiLink, dans l'ordre de construction : décisions, études, préparation, serveur, Android, Web, administration, lancement, puis iPhone. Les identifiants `RG-…` renvoient aux [règles métier](02-regles-metier.md), les `Q-nn` aux [questions ouvertes](06-questions-ouvertes.md), les `D-nn` au [journal des décisions](07-decisions.md).
 
 États : `[ ]` à faire ; `[~]` en cours ou à vérifier (fait, mais pas encore validé) ; `[!]` bloqué (attend une décision, un accès ou un matériel : la raison est dite) ; `[x]` réalisé et validé. Une action ouverte dit de quoi elle dépend (« Dépend de : ») et ses critères d'acceptation ; elle n'est cochée `[x]` qu'une fois ses critères remplis. Les actions réalisées tiennent sur une ligne ; une fois validées, elles sont déplacées dans [Actions réalisées](Todo-done.md), sauf si un de leurs points reste ouvert.
 
@@ -134,7 +134,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 ## 8. Lancement
 
 - [!] **TODO-8.1**: Logo, icône Android, déclinaisons, couleurs du thème sombre ([Q-25](06-questions-ouvertes.md#q-25)). Dépend de : aucune.
-  - Critères d'acceptation : fichiers vectoriels dans `docs/assets/`, palette complétée dans l'identité de marque. Bloqué par : validation du logo par l'utilisateur.
+  - Critères d'acceptation : fichiers vectoriels et icônes Android et iPhone dans `docs/assets/`, palette complétée dans l'identité de marque. Bloqué par : validation du logo par l'utilisateur.
 - [ ] **TODO-8.2**: Disponibilité du nom, domaines, réseaux sociaux ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : aucune.
   - Critères d'acceptation : recherche d'antériorité faite, domaines et comptes réservés.
 - [ ] **TODO-8.3**: Conditions d'utilisation et politique de confidentialité. Dépend de : TODO-1.17.
@@ -150,5 +150,22 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : textes des interfaces séparés du code dès le départ ; une deuxième langue essayée.
 - [ ] **TODO-9.3**: Plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28), RG-ADM-05). Dépend de : TODO-7.1.
   - Critères d'acceptation : stratégie de déploiement et de compatibilité écrite.
-- [ ] **TODO-9.4**: Application iOS. Dépend de : aucune.
-  - Critères d'acceptation : décision de l'utilisateur de l'inclure, et règles adaptées (pas d'envoi de SMS automatique sur iOS).
+
+## 10. Étape 5 — iPhone (15)
+
+Construite après l'application Android et le Web (D-33).
+
+- [!] **TODO-10.1**: Notifications push du suiveur sur iPhone ([Q-33](06-questions-ouvertes.md#q-33), RG-IOS-06). Dépend de : aucune.
+  - Critères d'acceptation : choix de l'utilisateur tracé en `D-nn`, règle écrite, question retirée. Bloqué par : décision de l'utilisateur.
+- [ ] **TODO-10.2**: Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store ([Q-09](06-questions-ouvertes.md#q-09), [Q-31](06-questions-ouvertes.md#q-31)). Dépend de : aucune.
+  - Critères d'acceptation : prototype qui enregistre une position toutes les 3 minutes pendant 8 heures, écran verrouillé, sur deux modèles d'iPhone ; autorisations et règles de l'App Store citées.
+- [ ] **TODO-10.3**: Navigateur sur iPhone, sans SMS : accueil, démarrage, positions, NOTE, Photo, Vocal, fin, contacts, paramètres (RG-IOS-01, RG-IOS-02, RG-IOS-04). Dépend de : TODO-5.1 à TODO-5.7, TODO-10.2.
+  - Critères d'acceptation : mêmes essais que l'application Android sur un vrai iPhone ; aucun SMS envoyé ; avertissement de démarrage avec la liste des contacts SOS sans e-mail.
+- [ ] **TODO-10.4**: SOS sur iPhone par Internet (RG-IOS-03). Dépend de : TODO-10.3, TODO-4.7.
+  - Critères d'acceptation : e-mails et notifications push reçus ; en mode avion, message clair puis envoi automatique au retour de la connexion.
+- [ ] **TODO-10.5**: Suiveur sur iPhone et notifications push (RG-IOS-05, RG-IOS-06). Dépend de : TODO-6.2, TODO-10.1.
+  - Critères d'acceptation : navigation suivie en direct avec la carte ; notification push d'un SOS reçue application fermée.
+- [ ] **TODO-10.6**: Abonnement par achat intégré de l'App Store (RG-IOS-07). Dépend de : TODO-4.6, TODO-1.14.
+  - Critères d'acceptation : abonnement souscrit sur l'iPhone reconnu sur Android et le Web.
+- [ ] **TODO-10.7**: Publication sur l'App Store. Dépend de : TODO-10.3 à TODO-10.6, TODO-8.3.
+  - Critères d'acceptation : application acceptée par Apple avec la localisation en arrière-plan.

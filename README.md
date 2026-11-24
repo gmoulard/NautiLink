@@ -2,7 +2,7 @@
 
 *Your sea, your safety, your story.*
 
-NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS) et une plateforme Web pour suivre, consulter et gérer les navigations avec ses proches.
+NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS), une application iPhone équivalente sans SMS, et une plateforme Web pour suivre, consulter et gérer les navigations avec ses proches.
 
 Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas encore de code.
 

@@ -13,3 +13,8 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.1**: Contradictions des documents d'origine arbitrées par l'utilisateur : SOS, contacts, partage, fréquence, destination, notes vocales, SMS, quota, journal, corbeille, connexion, abonnement (2026-11-24, D-01 à D-25).
 - [x] **TODO-1.2**: SMS SOS non désactivables, SOS depuis l'accueil, invitation par téléphone depuis le Web, droits des suiveurs (2026-11-24, D-26 à D-29).
 - [x] **TODO-1.3**: Suiveurs et contacts SOS : une seule liste, les deux cases cochées par défaut (2026-11-24, D-30).
+- [x] **TODO-1.18**: Application iPhone ajoutée : navigateur et suiveur, aucun SMS, SOS par Internet, après Android, abonnement App Store (2026-11-24, D-31 à D-34).
+
+## 9. Évolutions futures
+
+- [x] **TODO-9.4**: ~~Application iOS.~~ Retiré le 2026-11-24 : l'application iPhone entre dans le périmètre (D-31), voir la section 10 du TODO.

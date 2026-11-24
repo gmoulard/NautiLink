@@ -26,7 +26,7 @@ Exemple : un navigateur navigue 10 h le lundi à partir de 9 h et 14 h le mercre
 
 ## 4. Abonnement
 
-L'abonnement lève la limite pour le compte (RG-ECO-06). Il se souscrit sur Google Play ou sur le Web ; le serveur tient un seul état d'abonnement par compte (RG-ECO-07).
+L'abonnement lève la limite pour le compte (RG-ECO-06). Il se souscrit sur Google Play, sur l'App Store ou sur le Web ; le serveur tient un seul état d'abonnement par compte (RG-ECO-07).
 
 À définir ([Q-17](06-questions-ouvertes.md#q-17)) : prix, nombre et contenu des formules, limites éventuelles, périodicité, moyens de paiement, renouvellement et résiliation, période d'essai, paiements échoués, changement de formule.
 
@@ -48,5 +48,5 @@ L'abonnement ne conditionne jamais l'accès aux données déjà enregistrées (R
 ## 6. Exigences pour l'application
 
 - Le quota est calculé par le serveur, pour être identique sur tous les appareils (RG-ECO-09).
-- Android et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement (RG-ECO-09 ; présentation : [Q-18](06-questions-ouvertes.md#q-18)).
+- Les applications mobiles et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement (RG-ECO-09 ; présentation : [Q-18](06-questions-ouvertes.md#q-18)).
 - Le temps de suivi n'est jamais compté (RG-ECO-03).

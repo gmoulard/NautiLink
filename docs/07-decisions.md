@@ -45,3 +45,7 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-28"></a>D-28 | Invitation par téléphone depuis le Web | Ancienne question 05 : le Web ne peut pas envoyer de SMS. | Le Web affiche le lien ; le navigateur le transmet lui-même. | RG-PAR-04 |
 | <a id="d-29"></a>D-29 | Droits des suiveurs | Ancienne question 07 : fiche bateau, export, autres suiveurs, contacts SOS ? | Les quatre, en lecture seule. | RG-PAR-08, RG-NAV-19 |
 | <a id="d-30"></a>D-30 | Suiveurs et contacts SOS | Deux listes séparées jusqu'ici. | Une seule liste de contacts ; chaque contact est par défaut suiveur et contact SOS, décochable séparément. | RG-CTC-01, RG-CTC-04, RG-CTC-05 |
+| <a id="d-31"></a>D-31 | Application iPhone | iOS exclu du périmètre initial. | Application iPhone ajoutée, pour le navigateur et le suiveur ; l'iPhone ne peut envoyer aucun SMS. | RG-IOS-01, RG-IOS-02, RG-IOS-05, RG-IOS-06 |
+| <a id="d-32"></a>D-32 | SOS depuis un iPhone | Sans SMS, comment prévenir les contacts SOS ? | Par Internet seulement : alerte au serveur, e-mails, notifications push ; avertissement clair au démarrage. Pas de prestataire SMS. | RG-IOS-03, RG-IOS-04 |
+| <a id="d-33"></a>D-33 | Calendrier de l'iPhone | — | Construite après l'application Android et le Web. | [01 §3](01-cahier-des-charges.md#3-périmètre) |
+| <a id="d-34"></a>D-34 | Abonnement sur iPhone | — | Achat intégré de l'App Store, reconnu sur tous les supports. | RG-ECO-07, RG-IOS-07 |
