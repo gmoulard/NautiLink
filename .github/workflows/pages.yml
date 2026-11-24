@@ -1,7 +1,11 @@
 name: Site GitHub Pages
 
-# Publie site/, la démonstration Web (site/app/) et l'APK Android de
-# démonstration (site/downloads/nautilink-demo.apk), construits depuis app/.
+# Publie site/ avec les applications de démonstration construites depuis app/ :
+#   site/app/                                  démonstration Web (installable sur l'écran d'accueil)
+#   site/downloads/nautilink-demo.apk          Android, signature de débogage
+#   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, non signé (AltStore, Sideloadly)
+#   site/downloads/SHA256SUMS.txt              empreintes des fichiers
+# Aucune publication dans les stores (D-61).
 on:
   push:
     branches: [main]
@@ -17,8 +21,35 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  FLUTTER_VERSION: "3.47.9"
+
 jobs:
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Application iPhone non signée
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign
+          mkdir -p ipa/Payload
+          cp -R build/ios/iphoneos/Runner.app ipa/Payload/
+          cd ipa && zip -qr ../nautilink-demo-ios-non-signe.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ipa
+          path: app/nautilink-demo-ios-non-signe.ipa
+          retention-days: 7
+
   build:
+    needs: ios
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +59,7 @@ jobs:
           java-version: "17"
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.47.9"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - name: Tests
@@ -43,13 +74,18 @@ jobs:
       - name: APK Android de démonstration
         working-directory: app
         run: flutter build apk --release
+      - uses: actions/download-artifact@v4
+        with:
+          name: ipa
+          path: ipa
       - name: Assembler le site
         run: |
-          mkdir -p _site
+          mkdir -p _site/downloads
           cp -r site/. _site/
           cp -r app/build/web _site/app
-          mkdir -p _site/downloads
           cp app/build/app/outputs/flutter-apk/app-release.apk _site/downloads/nautilink-demo.apk
+          cp ipa/nautilink-demo-ios-non-signe.ipa _site/downloads/
+          cd _site/downloads && sha256sum *.apk *.ipa > SHA256SUMS.txt && cat SHA256SUMS.txt
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
