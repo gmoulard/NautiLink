@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Designs météo NautiLink</title>
+<meta name="description" content="Dix variantes du design « Météo marine » pour NautiLink.">
+<link rel="icon" href="../assets/logo-nautilink.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@600;800&family=Playfair+Display:wght@600;800&family=IBM+Plex+Mono:wght@500;600&family=Oswald:wght@500;700&family=Barlow+Condensed:wght@500;700&family=Archivo:wght@500;700;800&family=Libre+Baskerville:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Planche de comparaison : 10 maquettes d'accueil, même contenu, dix directions visuelles. */
+:root { --bg: #EEF2F5; --fg: #0B2233; --muted: #4A6274; --line: #D3DEE6; --card: #FFFFFF; }
+@media (prefers-color-scheme: dark) { :root { --bg: #071A2A; --fg: #E6F0F5; --muted: #9FB6C6; --line: #1B4462; --card: #0B2B44; color-scheme: dark; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 Inter, system-ui, sans-serif; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+header.page { padding-block: 2.5rem 1.5rem; display: grid; gap: .6rem; }
+header.page h1 { font: 800 clamp(1.8rem, 4vw, 2.6rem)/1.15 Montserrat, sans-serif; margin: 0; }
+header.page p { margin: 0; color: var(--muted); max-width: 70ch; }
+nav.jump { display: flex; flex-wrap: wrap; gap: .4rem; padding-block: .5rem 1.5rem; }
+nav.jump a { font-size: .85rem; text-decoration: none; color: var(--fg); border: 1px solid var(--line); border-radius: 999px; padding: .2rem .7rem; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem; padding-bottom: 3rem; }
+figure { margin: 0; display: grid; gap: .6rem; min-width: 0; }
+figcaption { display: grid; gap: .15rem; }
+figcaption b { font: 700 1.05rem Montserrat, sans-serif; }
+figcaption span { color: var(--muted); font-size: .9rem; }
+.frame { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 12px 30px rgba(8,43,70,.12); }
+
+/* Structure commune d'une maquette */
+.mock { position: relative; min-height: 470px; display: grid; grid-template-rows: auto 1fr auto auto; color: var(--m-fg); background: var(--m-bg); font-family: var(--m-body); }
+.mock .bar { display: flex; justify-content: space-between; align-items: center; padding: .9rem 1.2rem; gap: 1rem; }
+.mock .brand { font: var(--m-brand); letter-spacing: var(--m-track, 0); }
+.mock .links { display: flex; gap: .9rem; font-size: .78rem; opacity: .85; flex-wrap: wrap; justify-content: flex-end; }
+.mock .hero { padding: 1.4rem 1.2rem 1rem; display: grid; gap: .7rem; align-content: center; position: relative; z-index: 1; }
+.mock .eyebrow { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; opacity: .8; }
+.mock h2 { margin: 0; font: var(--m-title); line-height: 1.05; text-wrap: balance; }
+.mock .lede { margin: 0; font-size: .92rem; max-width: 40ch; opacity: .9; }
+.mock .ctas { display: flex; gap: .5rem; flex-wrap: wrap; }
+.mock .cta { font-weight: 700; font-size: .85rem; padding: .5rem .95rem; border-radius: var(--m-radius, 999px); background: var(--m-accent); color: var(--m-on-accent); }
+.mock .cta.ghost { background: transparent; color: var(--m-fg); border: 1.5px solid currentColor; }
+.mock .cta.sos { background: #D94343; color: #fff; }
+.mock .feats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; padding: 0 1.2rem 1rem; position: relative; z-index: 1; }
+.mock .feat { font-size: .76rem; padding: .55rem .6rem; border-radius: var(--m-radius-s, 8px); background: var(--m-chip); color: var(--m-chip-fg, var(--m-fg)); }
+.mock .feat b { display: block; font-size: .8rem; }
+.mock .sponsor { display: flex; align-items: center; gap: .6rem; padding: .6rem 1.2rem; font-size: .75rem; background: var(--m-sponsor-bg, rgba(0,0,0,.08)); position: relative; z-index: 1; }
+.mock .sponsor img { height: 26px; width: auto; display: block; }
+.mock .sponsor .srt-txt { display: inline-grid; place-items: center; height: 26px; padding: 0 .5rem; border: 1.5px solid currentColor; border-radius: 4px; font: 700 .8rem Inter, sans-serif; letter-spacing: .08em; }
+
+/* Base commune : la proposition 7 « Météo marine » (isobares, fond ciel, Space Grotesk). */
+.m { --m-bg: #EAF4FB; --m-fg: #0E2A47; --m-accent: #0E6BA8; --m-on-accent: #fff; --m-chip: #fff; --m-body: Inter, sans-serif; --m-brand: 700 1.05rem "Space Grotesk", sans-serif; --m-title: 700 2.1rem "Space Grotesk", sans-serif; --m-radius: 8px; }
+.mock .wx { font: 600 .75rem Inter, sans-serif; color: var(--m-accent); }
+
+/* 1. Isobares, affiné */
+.v1::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 88% 38%, transparent 0 46px, rgba(14,107,168,.25) 47px 48px, transparent 49px 84px, rgba(14,107,168,.2) 85px 86px, transparent 87px 122px, rgba(14,107,168,.15) 123px 124px, transparent 125px 160px, rgba(14,107,168,.1) 161px 162px, transparent 163px); }
+.v1 .hero::before { content: "1012"; position: absolute; right: 11%; top: 34%; font: 700 .8rem "Space Grotesk"; color: #0E6BA8; opacity: .7; }
+
+/* 2. Bulletin officiel */
+.v2 { --m-bg: #FFFFFF; --m-fg: #10243B; --m-accent: #1A4F8B; --m-chip: #F1F5F9; --m-title: 700 1.9rem "IBM Plex Mono", monospace; --m-brand: 600 1rem "IBM Plex Mono", monospace; --m-radius: 2px; --m-radius-s: 2px; }
+.v2 .hero { border: 1.5px solid #10243B; margin: 0 1.2rem; padding: 1rem; }
+.v2 .hero::before { content: "BULLETIN CÔTE · VALABLE JUSQU'À 18 H LOCALES"; font: 600 .66rem "IBM Plex Mono"; letter-spacing: .06em; background: #10243B; color: #fff; padding: .2rem .5rem; justify-self: start; }
+.v2 .feats { padding-top: 1rem; }
+
+/* 3. Rose des vents */
+.v3::before { content: ""; position: absolute; right: -40px; top: 40px; width: 300px; height: 300px; border-radius: 50%; background:
+  conic-gradient(from -11.25deg, rgba(14,107,168,.35) 0 22.5deg, transparent 22.5deg 45deg, rgba(14,107,168,.15) 45deg 67.5deg, transparent 67.5deg 90deg, rgba(14,107,168,.35) 90deg 112.5deg, transparent 112.5deg 135deg, rgba(14,107,168,.15) 135deg 157.5deg, transparent 157.5deg 180deg, rgba(14,107,168,.35) 180deg 202.5deg, transparent 202.5deg 225deg, rgba(14,107,168,.15) 225deg 247.5deg, transparent 247.5deg 270deg, rgba(14,107,168,.35) 270deg 292.5deg, transparent 292.5deg 315deg, rgba(14,107,168,.15) 315deg 337.5deg, transparent 337.5deg);
+  -webkit-mask: radial-gradient(circle, #000 0 70%, transparent 71%); mask: radial-gradient(circle, #000 0 70%, transparent 71%); }
+.v3 .hero { max-width: 64%; }
+
+/* 4. Échelle de Beaufort */
+.v4 { --m-bg: #F7FAFC; }
+.v4 .hero::before { content: ""; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #BFE6F5 0 16%, #7FCDEB 16% 33%, #36B0D9 33% 50%, #F2C14E 50% 62%, #E8833A 62% 78%, #D94343 78% 100%); }
+.v4 .hero::after { content: "Force 1 · 3 · 5 · 7 grand frais · 8 coup de vent · 10 tempête"; font: 600 .7rem Inter; color: #4A6274; }
+
+/* 5. Carte des fronts */
+.v5 .hero { max-width: 60%; }
+.v6 .hero { max-width: 60%; }
+.v5::before { content: ""; position: absolute; left: 56%; right: 0; top: 58%; height: 26px; background:
+  radial-gradient(circle at 12px 0, #D94343 0 9px, transparent 10px) 0 0/48px 26px repeat-x,
+  linear-gradient(#D94343 0 0) 0 0/100% 3px no-repeat; opacity: .55; }
+.v5::after { content: ""; position: absolute; left: 56%; right: 0; top: 24%; height: 22px; background:
+  conic-gradient(from 135deg at 12px 100%, #1F5FD1 0 90deg, transparent 90deg) 0 0/48px 14px repeat-x,
+  linear-gradient(#1F5FD1 0 0) 0 14px/100% 3px no-repeat; opacity: .45; }
+
+/* 6. Barbules de vent (dense) */
+.v6 { --m-bg: #0E2A47; --m-fg: #EAF4FB; --m-accent: #7EDDE4; --m-on-accent: #07202F; --m-chip: rgba(255,255,255,.08); --m-sponsor-bg: rgba(255,255,255,.06); }
+.v6::before { content: ""; position: absolute; inset: 0 0 0 52%; opacity: .3; background:
+  linear-gradient(55deg, transparent 0 46%, #7EDDE4 46% 49%, transparent 49%) 0 0/56px 56px,
+  linear-gradient(145deg, transparent 0 70%, #7EDDE4 70% 74%, transparent 74%) 0 0/56px 56px; }
+.v6 .wx { color: #7EDDE4; }
+
+/* 7. Grain qui arrive */
+.v7 { --m-bg: linear-gradient(170deg, #2C3E57 0%, #4E6A8A 45%, #C9D7E3 100%); --m-fg: #F4F8FB; --m-accent: #F2C14E; --m-on-accent: #241A00; --m-chip: rgba(255,255,255,.16); --m-sponsor-bg: rgba(0,0,0,.25); }
+.v7 { background: linear-gradient(170deg, #2C3E57 0%, #4E6A8A 45%, #C9D7E3 100%); }
+.v7::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(100deg, transparent 0 14px, rgba(255,255,255,.08) 14px 15px); -webkit-mask: linear-gradient(90deg, transparent 50%, #000); mask: linear-gradient(90deg, transparent 50%, #000); }
+.v7 .wx { color: #F2C14E; }
+
+/* 8. Radar de précipitations */
+.v8::before { content: ""; position: absolute; inset: 0; background:
+  radial-gradient(ellipse 90px 60px at 80% 30%, rgba(217,67,67,.45), transparent 70%),
+  radial-gradient(ellipse 150px 100px at 78% 34%, rgba(242,193,78,.45), transparent 70%),
+  radial-gradient(ellipse 230px 150px at 75% 40%, rgba(76,175,80,.35), transparent 70%); }
+.v8 .hero::before { content: "Radar · 14:35"; font: 600 .7rem "IBM Plex Mono"; color: #2E7D32; }
+
+/* 9. Baromètre */
+.v9 { --m-bg: #F6F0E3; --m-fg: #2A2118; --m-accent: #8B5E1A; --m-on-accent: #fff; --m-chip: #FFFDF7; --m-title: 700 2.1rem "Libre Baskerville", serif; --m-brand: 700 1.05rem "Libre Baskerville", serif; }
+.v9::before { content: ""; position: absolute; right: 6%; top: 60px; width: 170px; height: 170px; border-radius: 50%; border: 8px solid #B8893B; background:
+  conic-gradient(from 210deg, #2A2118 0 1deg, transparent 1deg 30deg, #2A2118 30deg 31deg, transparent 31deg 60deg, #2A2118 60deg 61deg, transparent 61deg 90deg, #2A2118 90deg 91deg, transparent 91deg 120deg, #2A2118 120deg 121deg, transparent 121deg 150deg, #2A2118 150deg 151deg, transparent 151deg 300deg), radial-gradient(circle, #FFFDF7 0 60%, #EFE3C8 61%); }
+.v9::after { content: ""; position: absolute; right: calc(6% + 81px); top: 75px; width: 8px; height: 70px; background: #8B1E1E; border-radius: 4px; transform-origin: 50% 100%; transform: rotate(35deg); }
+.v9 .hero { max-width: 60%; }
+
+/* 10. Météo aux couleurs du guidon SRT */
+.v10 { --m-bg: #EEF1FB; --m-fg: #121E5C; --m-accent: #1E3296; --m-on-accent: #fff; --m-chip: #FFFFFF; --m-sponsor-bg: #FFFFFF; }
+.v10::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 88% 38%, transparent 0 46px, rgba(30,50,150,.3) 47px 48px, transparent 49px 84px, rgba(248,216,24,.9) 85px 87px, transparent 88px 122px, rgba(30,50,150,.2) 123px 124px, transparent 125px); }
+.v10 .wx { color: #1E3296; }
+.v10 .cta { box-shadow: inset 0 -4px 0 #F8D818; }
+.v10 .sponsor { border-top: 3px solid #F8D818; color: #1E3296; font-weight: 600; }
+
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .mock .feats { grid-template-columns: 1fr; } .v3 .hero, .v9 .hero, .v5 .hero, .v6 .hero { max-width: 100%; } .v3::before, .v9::before, .v9::after, .v5::before, .v5::after, .v6::before { opacity: .15; } .mock h2 { font-size: 1.8rem; } }
+</style>
+</head>
+<body>
+<header class="page wrap">
+  <h1>Météo marine : dix variantes</h1>
+  <p>Toutes partent de la proposition 7 de la <a href="index.html">première planche</a> : fond ciel, isobares, titres en Space Grotesk, une ligne de conditions en tête. Chacune pousse une idée météo différente. Dites-moi le numéro retenu.</p>
+</header>
+<nav class="wrap jump" aria-label="Aller à une variante" id="jump"></nav>
+<main class="wrap grid" id="grid"></main>
+
+<script>
+(() => {
+  const variants = [
+    ["Isobares", "La proposition 7 affinée : plus d'isobares, valeur de pression en hectopascals.", "Force 4 · 13 nœuds · mer peu agitée"],
+    ["Bulletin officiel", "Cadre et typographie de bulletin côtier, bandeau de validité : sérieux et factuel.", "Ouest 4 à 5 · mer agitée · houle 1,5 m"],
+    ["Rose des vents", "Une grande rose des vents en filigrane, seize secteurs.", "Vent de sud-ouest · 15 nœuds"],
+    ["Échelle de Beaufort", "Une barre de couleurs de la force 1 à 12 en tête de page, du bleu calme au rouge tempête.", "Force 3 · petite brise"],
+    ["Carte des fronts", "Front froid (triangles bleus) et front chaud (demi-cercles rouges) traversant la page.", "Passage d'un front froid cet après-midi"],
+    ["Barbules de vent", "Fond bleu nuit couvert de barbules : dense, pour les passionnés de fichiers météo.", "NW 20 nœuds · rafales 28"],
+    ["Grain qui arrive", "Ciel qui s'assombrit, pluie en hachures : dramatique, rappelle d'anticiper.", "Grain attendu vers 17 h · rafales 35 nœuds"],
+    ["Radar de pluie", "Échos radar vert, jaune, rouge au-dessus de la côte.", "Averses éparses · visibilité réduite"],
+    ["Baromètre", "Laiton et cadran d'aiguille, papier crème : la météo à l'ancienne.", "1008 hPa · en baisse"],
+    ["Météo SRT", "Les isobares aux couleurs du guidon de la SRT : bleu et un isobare jaune.", "Rade de Toulon · mistral force 5"]
+  ];
+  const sponsor = '<div class="sponsor"><span>Sponsorisée par la SRT</span>' +
+    '<img src="../assets/sponsor-srt.png" alt="Guidon de la SRT" onerror="this.replaceWith(Object.assign(document.createElement(\'b\'),{className:\'srt-txt\',textContent:\'SRT\'}))">' +
+    '<span>· <a href="https://srtoulon.fr/" style="color:inherit">srtoulon.fr</a></span></div>';
+  const grid = document.getElementById("grid");
+  const jump = document.getElementById("jump");
+  variants.forEach(([name, desc, wx], i) => {
+    const n = i + 1;
+    jump.insertAdjacentHTML("beforeend", `<a href="#v${n}">${n}. ${name}</a>`);
+    grid.insertAdjacentHTML("beforeend", `
+      <figure id="v${n}">
+        <div class="frame"><div class="mock m v${n}">
+          <div class="bar"><span class="brand">NautiLink</span><span class="links"><span>Fonctions</span><span>Télécharger</span><span>Abonnement</span><span>Sécurité</span></span></div>
+          <div class="hero">
+            <span class="eyebrow">Your sea, your safety, your story.</span>
+            <h2>Naviguez. Partagez. Gardez une trace.</h2>
+            <p class="lede">Vos proches suivent votre position en mer, vous tenez votre journal de bord, et le SOS reste à portée de main.</p>
+            <span class="wx">${wx}</span>
+            <div class="ctas"><span class="cta">Essayer la démonstration</span><span class="cta ghost">Télécharger</span></div>
+          </div>
+          <div class="feats">
+            <div class="feat"><b>Position partagée</b>de 15 min à 10 jours</div>
+            <div class="feat"><b>Journal de bord</b>notes, photos, vocal</div>
+            <div class="feat"><b>Alerte SOS</b>SMS même sans Internet</div>
+          </div>
+          ${sponsor}
+        </div></div>
+        <figcaption><b>${n}. ${name}</b><span>${desc}</span></figcaption>
+      </figure>`);
+  });
+})();
+</script>
+</body>
+</html>
