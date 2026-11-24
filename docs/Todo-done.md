@@ -27,6 +27,7 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.15**: Un seul profil d'administrateur (2026-11-24, D-47).
 - [x] **TODO-1.16**: Conservation et export des données (2026-11-24, D-46).
 - [x] **TODO-1.17**: Conformité au lancement (2026-11-24, D-45).
+- [x] **TODO-1.22**: Copie au navigateur de tous les SMS et e-mails de notification (2026-11-24, D-55).
 
 ## 9. Évolutions futures
 

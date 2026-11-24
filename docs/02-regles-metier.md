@@ -85,6 +85,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-sms-05"></a>**RG-SMS-05** — Photo : la photo est envoyée au serveur. Si les paramètres le prévoient, un MMS la joint ; le message peut aussi contenir un lien vers la photo hébergée. Si le MMS échoue, un SMS contenant le lien vers la photo hébergée est proposé à la place ([D-49](07-decisions.md#d-49)). Taille et opérateurs : [Q-13](06-questions-ouvertes.md#q-13).
 - <a id="rg-sms-06"></a>**RG-SMS-06** — Note vocale : le SMS contient la transcription texte, pas l'audio.
 - <a id="rg-sms-07"></a>**RG-SMS-07** — SMS SOS en échec : nouvel essai chaque minute jusqu'à la réussite ou l'arrêt par le navigateur. SMS ordinaire en échec : 3 essais, puis l'échec est affiché avec « Réessayer » ([D-50](07-decisions.md#d-50)). Restrictions Android et Google Play sur l'envoi de SMS : [Q-12](06-questions-ouvertes.md#q-12).
+- <a id="rg-sms-08"></a>**RG-SMS-08** — Tout SMS ou MMS envoyé par l'application (SMS ordinaires, SMS SOS, invitations par SMS) part aussi en copie au navigateur, au numéro de téléphone de son profil. La copie suit le même mode d'envoi que le message (automatique pour le SOS, prérempli sinon, RG-SMS-03). Sans numéro dans le profil du navigateur, pas de copie SMS. Cette copie ne se désactive pas ([D-55](07-decisions.md#d-55)).
 
 ## 7. Alerte SOS
 
@@ -156,6 +157,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 - <a id="rg-not-01"></a>**RG-NOT-01** — Les notifications sont envoyées par e-mail par le serveur.
 - <a id="rg-not-02"></a>**RG-NOT-02** — Événements notifiés par e-mail : invitation, nouvel accès accordé, alerte SOS ([RG-SOS-06](#rg-sos-06)), et début de navigation, envoyé aux suiveurs de la navigation. Un suiveur peut se désinscrire des e-mails de début, jamais de ceux du SOS ([D-41](07-decisions.md#d-41)). Sur iPhone, les suiveurs reçoivent aussi des notifications push ([RG-IOS-06](#rg-ios-06)).
+- <a id="rg-not-03"></a>**RG-NOT-03** — Tout e-mail de notification envoyé par le serveur (invitation, nouvel accès, alerte SOS, début de navigation) part aussi en copie au navigateur concerné, à l'adresse de son compte. Cette copie ne se désactive pas ([D-55](07-decisions.md#d-55)).
 
 ## 13. Administration
 

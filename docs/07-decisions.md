@@ -84,3 +84,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-52"></a>D-52 | Optimisation de la batterie | Étude TODO-2.2. | Demande d'exclusion et aide propre à la marque au premier démarrage d'une navigation. | RG-GPS-05 |
 | <a id="d-53"></a>D-53 | Notes vocales | Ancienne question 14. | AAC `.m4a`, 1 minute au plus, transcription par le moteur du téléphone. | RG-JRN-04 |
 | <a id="d-54"></a>D-54 | Localisation sur iPhone | Étude TODO-10.2. | Autorisation « Pendant l'utilisation ». | RG-IOS-08 |
+
+## 2026-11-24 — Copie au navigateur
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-55"></a>D-55 | Copie au navigateur | Demande de l'utilisateur. | Tout SMS envoyé par l'application et tout e-mail de notification part aussi en copie au navigateur (numéro de son profil, adresse de son compte), sans désactivation possible. | RG-SMS-08, RG-NOT-03 |

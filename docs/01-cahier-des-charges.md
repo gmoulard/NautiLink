@@ -50,8 +50,8 @@ flowchart LR
   S -- notification push --> I
   W[Web<br/>navigateur et suiveurs] -- API HTTPS --> S
   ADM[Espace administrateur] -- API HTTPS --> S
-  A -- SMS / MMS par la SIM --> D[Suiveurs avec téléphone<br/>Contacts SOS]
-  S -- e-mail --> E[Suiveurs, invités,<br/>contacts SOS avec e-mail]
+  A -- SMS / MMS par la SIM --> D[Suiveurs avec téléphone<br/>Contacts SOS<br/>copie au navigateur]
+  S -- e-mail --> E[Suiveurs, invités,<br/>contacts SOS avec e-mail,<br/>copie au navigateur]
   G((GPS)) --> A
   G --> I
 ```
