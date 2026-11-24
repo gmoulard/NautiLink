@@ -1,6 +1,6 @@
 # Étude : envoi de SMS et de MMS par l'application Android
 
-Étude documentaire pour [TODO-2.1](../TODO.md) ([Q-12](../06-questions-ouvertes.md#q-12), RG-COM-01, RG-SMS-07). Rédigée le 24 novembre 2026, sans essai sur téléphone. Elle ne décide rien : la voie à suivre reste à choisir par l'utilisateur.
+Étude documentaire pour [TODO-2.1](../TODO.md) ([Q-12](../06-questions-ouvertes.md#q-12), RG-COM-01, RG-SMS-07) et TODO-2.4 ([Q-13](../06-questions-ouvertes.md#q-13), RG-SMS-05, § 5). Rédigée le 24 novembre 2026, sans essai sur téléphone. Elle ne décide rien : la voie à suivre reste à choisir par l'utilisateur.
 
 ## 1. Ce que dit Google Play
 
@@ -18,7 +18,7 @@
 | SMS SOS (RG-SOS-14) | Probablement : c'est exactement le cas visé. À faire accepter par Google. |
 | SMS ordinaires (début, positions, notes, photos, fin : RG-SMS-02) | Peu probable : ce n'est pas une alerte d'urgence. Le refus de Google peut porter sur toute l'application. |
 | Invitations par SMS | Peu probable, pour la même raison. |
-| MMS (RG-SMS-05) | Non : l'envoi direct de MMS passe en pratique par l'application SMS par défaut (§ 4). |
+| MMS avec photo (RG-SMS-05) | Peu probable pour une photo ordinaire ; voir § 5. |
 
 ## 3. Voies possibles
 
@@ -40,7 +40,16 @@ Les voies peuvent se combiner (par exemple A sur Play Store et D pour un public 
 - Aucun envoi possible sans la fonction `FEATURE_TELEPHONY_MESSAGING` (tablettes sans SIM). [S6]
 - Android limite le nombre de SMS envoyés par une application dans une période donnée et peut demander une confirmation au-delà : la valeur exacte dépend du téléphone, à mesurer lors de l'essai (positions automatiques fréquentes vers plusieurs suiveurs).
 
-## 5. Ce qui reste à faire pour TODO-2.1
+## 5. MMS (TODO-2.4)
+
+- **Envoi direct** : `SmsManager.sendMultimediaMessage()` lit un message MMS déjà encodé (PDU) depuis un `contentUri` ; l'application doit construire ce PDU elle-même (Android ne fournit pas d'outil public pour cela). Le résultat arrive par `Activity.RESULT_OK` ou un code `MMS_ERROR_…` : `MMS_ERROR_NO_DATA_NETWORK`, `MMS_ERROR_DATA_DISABLED` (données mobiles coupées), `MMS_ERROR_MMS_DISABLED_BY_CARRIER`, `MMS_ERROR_INVALID_APN`, `MMS_ERROR_HTTP_FAILURE`, `MMS_ERROR_RETRY`… [S6] Le MMS passe par les **données mobiles**, pas seulement par le réseau GSM : en mer, il échoue plus souvent qu'un SMS.
+- **Envoi prérempli** : `Intent.ACTION_SEND` avec la photo dans `EXTRA_STREAM` ouvre l'application de messagerie, qui fabrique et envoie le MMS ; aucune permission, mais un geste de l'utilisateur. [S5]
+- **Taille maximale** : propre à l'opérateur, lue sur le téléphone par `SmsManager.getCarrierConfigValues()`, clé `MMS_CONFIG_MAX_MESSAGE_SIZE` (octets) ; d'autres clés donnent la largeur et la hauteur maximales d'image (`CarrierConfigManager.KEY_MMS_MAX_IMAGE_WIDTH_INT`, `KEY_MMS_MAX_IMAGE_HEIGHT_INT`). [S6] [S7] Repères non officiels trouvés : 300 Ko ou 600 Ko selon l'opérateur, pour le message entier (photo + texte) [S8] [S9]. Aucun chiffre officiel d'Orange, SFR, Bouygues Telecom ou Free n'a été trouvé : à mesurer lors de l'essai.
+- **Conséquence** : une photo de téléphone (plusieurs Mo) doit être réduite et recompressée sous la limite lue sur le téléphone avant l'envoi.
+- **Repli possible si le MMS échoue** (non décidé) : SMS contenant le lien vers la photo hébergée, déjà prévu par RG-SMS-05. Le comportement exact (repli automatique, nouvelle tentative, affichage) relève de [Q-11](../06-questions-ouvertes.md#q-11) et [Q-13](../06-questions-ouvertes.md#q-13).
+- **Reste à faire pour TODO-2.4** : essai d'un MMS avec photo envoyé et reçu chez les quatre opérateurs français, avec la taille lue sur chaque téléphone ; choix de la taille maximale et du comportement en cas d'échec par l'utilisateur. Dépend du choix de la voie (§ 3) : sans `SEND_SMS`, seul l'envoi prérempli reste possible.
+
+## 6. Ce qui reste à faire pour TODO-2.1
 
 1. Relire en entier [S1], [S3], [S4] (accès réseau à support.google.com nécessaire).
 2. Choix de la voie par l'utilisateur (§ 3), puis écriture dans les règles métier (RG-COM-01, RG-SMS-03, RG-SMS-07) et tracé en `D-nn`.
@@ -54,3 +63,6 @@ Les voies peuvent se combiner (par exemple A sur Play Store et D pour un public 
 - [S4] Google Play Console, aperçu de la règle révisée (effet au 27 janvier 2027) : https://support.google.com/googleplay/android-developer/answer/13986130
 - [S5] Android Developers, « Common intents », section messagerie : https://developer.android.com/guide/components/intents-common
 - [S6] Android Developers, référence `SmsManager` : https://developer.android.com/reference/android/telephony/SmsManager
+- [S7] Android Developers, référence `CarrierConfigManager` : https://developer.android.com/reference/android/telephony/CarrierConfigManager
+- [S8] Selectra, « Fin des MMS : ce qui les remplace » (taille 300 ou 600 Ko) : https://selectra.info/telecom/actualites/marche/fin-des-mms-ce-qui-les-remplace
+- [S9] Communauté Orange, « Taille limitée MMS » (réponse d'utilisateur, non officielle) : https://communaute.orange.fr/t5/offres-mobile-Orange-et-options/Taille-limit%C3%A9-MMS/td-p/1278202
