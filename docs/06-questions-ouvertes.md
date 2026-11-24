@@ -74,7 +74,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-22"></a>Q-22 — Architecture et développement
 
 - Priorité : bloquant.
-- À définir : architecture technique, hébergement, base de données, stockage des fichiers, API et formats de données, mécanismes de synchronisation, environnements de développement, test et production, scénarios de tests.
+- Décidé (D-58, D-59) : applications mobiles Android et iPhone en Flutter, un seul code ; serveur maison.
+- Reste : langage et cadre du serveur, hébergeur, base de données, stockage des fichiers, API et formats de données, synchronisation, environnements de développement, test et production.
 
 ## 3. Données, sécurité, conformité
 

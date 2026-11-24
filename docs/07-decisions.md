@@ -96,3 +96,12 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Question | Décision | Règles |
 |----|-------|----------|----------|--------|
 | <a id="d-56"></a>D-56 | Avertissement bêta et responsabilité | Demande de l'utilisateur : signaler la bêta et limiter la responsabilité en termes valables en droit français. | Texte dans `docs/textes/avertissement-beta.md` ; accepté à la création du compte, rappelé avant le premier démarrage d'une navigation sur chaque téléphone, mention « Version bêta » visible. Relecture par un juriste avant la mise en ligne. | RG-CPT-06, RG-CPT-07, RG-NAV-23 |
+
+## 2026-11-24 — Prototype de démonstration et choix techniques
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-57"></a>D-57 | Prototype de démonstration | Demande de l'utilisateur : générer les applications et les relier au site. | D'abord un prototype de démonstration, avec des données d'exemple et sans serveur : application Web de démonstration publiée sur le site, APK Android de démonstration téléchargeable depuis le site. | [TODO-3.6](TODO.md) |
+| <a id="d-58"></a>D-58 | Technologie des applications mobiles | Partie de Q-22. | Flutter : un seul code pour Android et iPhone (et la démonstration Web). | [Q-22](06-questions-ouvertes.md#q-22) |
+| <a id="d-59"></a>D-59 | Serveur | Partie de Q-22. | Serveur maison (API et hébergement à choisir), pas de service tout fait. | [Q-22](06-questions-ouvertes.md#q-22) |
+| <a id="d-60"></a>D-60 | Application iPhone | Pas encore de compte développeur Apple. | Le code iPhone suit le même code Flutter ; le site affiche « iPhone : bientôt » jusqu'à l'ouverture du compte. | RG-IOS-01 |

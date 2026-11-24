@@ -29,6 +29,7 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.17**: Conformité au lancement (2026-11-24, D-45).
 - [x] **TODO-1.22**: Copie au navigateur de tous les SMS et e-mails de notification (2026-11-24, D-55).
 - [x] **TODO-1.23**: Avertissement bêta et responsabilité : texte, acceptation à la création du compte, rappel avant la première navigation (2026-11-24, D-56).
+- [x] **TODO-1.24**: Prototype de démonstration, Flutter, serveur maison, iPhone « bientôt » (2026-11-24, D-57 à D-60).
 
 ## 9. Évolutions futures
 
