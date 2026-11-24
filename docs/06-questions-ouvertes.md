@@ -71,11 +71,14 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Question : la navigation en cours et les positions automatiques reprennent-elles seules après un redémarrage du téléphone ou une fermeture forcée de l'application ?
 - Proposition : oui, l'enregistrement reprend automatiquement et l'écran de navigation s'ouvre au lancement suivant.
+- Éléments techniques Android : [gps-arriere-plan-android.md](etudes/gps-arriere-plan-android.md) §3.
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
 
 - Priorité : bloquant.
 - Étude : enregistrement GPS application en arrière-plan ou écran éteint, consommation de batterie, comportement selon les marques et versions d'Android, et sur iPhone (localisation en arrière-plan, règles de l'App Store).
+- Étude documentaire Android : [gps-arriere-plan-android.md](etudes/gps-arriere-plan-android.md).
+- Étude documentaire iPhone : [localisation-arriere-plan-iphone.md](etudes/localisation-arriere-plan-iphone.md).
 
 ### <a id="q-10"></a>Q-10 — File d'attente et doublons
 
@@ -91,16 +94,19 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant, à étudier en premier.
 - Étude : Google Play restreint fortement la permission d'envoyer des SMS aux applications qui ne sont pas l'application SMS par défaut. Vérifier si NautiLink peut obtenir une exception, ou prévoir une alternative (ouverture de l'application SMS préremplie, distribution hors Play Store). Tout le circuit SMS en dépend.
+- Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md) (voies possibles §3).
 
 ### <a id="q-13"></a>Q-13 — MMS
 
 - Priorité : lancement.
 - Étude : taille maximale des pièces jointes, compatibilité opérateurs, comportement si MMS impossible.
+- Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md#5-mms-todo-24).
 
 ### <a id="q-14"></a>Q-14 — Notes vocales
 
 - Priorité : bloquant pour la fonction Vocal.
 - Étude : format audio, durée et taille maximales, stockage serveur, moteur de transcription (sur le téléphone, utilisable hors connexion, ou sur le serveur).
+- Étude documentaire : [notes-vocales.md](etudes/notes-vocales.md) (choix possibles §6).
 
 ### <a id="q-15"></a>Q-15 — Photos
 
