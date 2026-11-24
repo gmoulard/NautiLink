@@ -30,10 +30,12 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.22**: Copie au navigateur de tous les SMS et e-mails de notification (2026-11-24, D-55).
 - [x] **TODO-1.23**: Avertissement bêta et responsabilité : texte, acceptation à la création du compte, rappel avant la première navigation (2026-11-24, D-56).
 - [x] **TODO-1.24**: Prototype de démonstration, Flutter, serveur maison, iPhone « bientôt » (2026-11-24, D-57 à D-60).
+- [x] **TODO-1.25**: Hébergement du serveur sur pi-appliance (ancienne question 37, 2026-11-24, D-62).
 
 ## 9. Évolutions futures
 
 - [x] **TODO-9.4**: ~~Application iOS.~~ Retiré le 2026-11-24 : l'application iPhone entre dans le périmètre (D-31), voir la section 10 du TODO.
+- [x] **TODO-9.5**: ~~Serveur et plateforme Web installables depuis la marketplace de pi-appliance.~~ Tranché le 2026-11-24 (D-62) : le serveur central lui-même est sur pi-appliance, voir TODO-3.7.
 
 ## 10. Étape 5 — iPhone (15)
 

@@ -15,7 +15,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-3 | Décisions sur l'administration, les données et la conformité | TODO-1.15, TODO-1.16, TODO-1.17 | aucun | [x] |
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
-| LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4 | LOT-4, LOT-5 | [ ] |
+| LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7 | LOT-4, LOT-5 | [ ] |
 | LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6 | aucun | [~] |
 | LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [ ] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
@@ -26,7 +26,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [ ] |
 | LOT-15 | Marque et publication Android | TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5 | LOT-3, LOT-11 | [~] |
 | LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7 | LOT-11, LOT-13, LOT-15 | [ ] |
-| LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3, TODO-9.5 | LOT-13, LOT-14 | [ ] |
+| LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3 | LOT-13, LOT-14 | [ ] |
 
 ## 0. Ménage du dépôt
 
@@ -84,6 +84,8 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : démonstration Web en ligne sur le site ; APK Android de démonstration téléchargeable depuis le site et installé sur un vrai téléphone ; écrans conformes au cahier des charges §5 et §6 ; relu par l'utilisateur.
   - Fait (2026-11-24) : application Flutter dans `app/`, test de parcours et analyse sans erreur, démonstration Web vérifiée dans Chromium ; le workflow « Site GitHub Pages » construit la démonstration Web et l'APK et les publie avec le site. Reste : activer GitHub Pages, installer l'APK sur un vrai téléphone, relecture.
   - Ajouté (2026-11-24, D-61) : page « Télécharger » (`site/telecharger.html`), IPA iPhone non signé construit sur macOS, démonstration Web installable sur l'écran d'accueil, `SHA256SUMS.txt`. Reste : essai de l'IPA avec AltStore ou Sideloadly sur un vrai iPhone.
+- [ ] **TODO-3.7**: Squelette du serveur en Go déployé sur pi-appliance ([D-62](07-decisions.md#d-62)) : page d'accueil de la plateforme Web, point de santé de l'API, connexion à la base, image `arm64`, fichier `compose.yaml` pour « Docker Compose libre ». Dépend de : aucune pour le squelette ; publication sur internet : TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance.
+  - Critères d'acceptation : service installé sur le Pi de `vdl.moulard.org`, page ouverte depuis un téléphone à `https://nautilink.moulard.org` (redirigée vers `https://vdl.moulard.org/nautilink/`), base PostgreSQL partagée jointe, e-mail d'essai reçu par le relais, service gardé après un redémarrage du Pi.
 - [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
   - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : scénarios pour les règles tranchées ou ajoutées le 2026-11-24 après leur écriture (RG-NAV-16, RG-NAV-22, RG-JRN-04, RG-JRN-08, RG-SMS-03, RG-SMS-05, RG-SMS-07, RG-GPS-05, RG-SOS-16, RG-DON-02, RG-DON-03, RG-ADM-03, RG-IOS-06, RG-IOS-08, RG-SMS-08, RG-NOT-03, RG-CPT-06, RG-CPT-07, RG-NAV-23) ; validation par l'utilisateur.
@@ -170,8 +172,6 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : textes des interfaces séparés du code dès le départ ; une deuxième langue essayée.
 - [ ] **TODO-9.3**: Plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28), RG-ADM-05). Dépend de : TODO-7.1.
   - Critères d'acceptation : stratégie de déploiement et de compatibilité écrite.
-- [ ] **TODO-9.5**: Serveur et plateforme Web installables sur un Raspberry Pi depuis la marketplace de pi-appliance ([Q-37](06-questions-ouvertes.md#q-37) ; côté pi-appliance : TODO-2.71). Dépend de : TODO-3.1, TODO-6.7.
-  - Critères d'acceptation : choix de l'utilisateur sur Q-37 tracé en `D-nn` ; si retenu, images `arm64` du serveur et du Web publiées et manifeste proposé au catalogue de pi-appliance.
 
 ## 10. Étape 5 — iPhone (15)
 

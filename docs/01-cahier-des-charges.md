@@ -56,6 +56,7 @@ flowchart LR
   G --> I
 ```
 
+- Hébergement pendant la bêta : un seul serveur, en Go, sur un Raspberry Pi sous pi-appliance, à l'adresse `https://nautilink.moulard.org` ([D-62](07-decisions.md#d-62)).
 - Le circuit Internet et le circuit SMS sont indépendants ; le GPS ne dépend d'aucun des deux (RG-COM-01, RG-COM-02, RG-GPS-01).
 - L'application mobile stocke localement positions, événements, paramètres et contacts, et les synchronise dès que possible (RG-GPS-03, RG-GPS-04, RG-PRM-02, RG-CTC-03).
 - Le serveur est la référence pour les paramètres, les accès et le quota (RG-PRM-01, RG-ECO-09).
@@ -172,5 +173,4 @@ Hors lancement, sans engagement :
 
 - cartes marines du SHOM sur le Web ([Q-23](06-questions-ouvertes.md#q-23)) ;
 - autres langues ([Q-27](06-questions-ouvertes.md#q-27)) ;
-- plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28)) ;
-- serveur et plateforme Web installables sur un Raspberry Pi depuis la marketplace de pi-appliance ([Q-37](06-questions-ouvertes.md#q-37)).
+- plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28)).
