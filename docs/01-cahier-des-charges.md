@@ -172,4 +172,5 @@ Hors lancement, sans engagement :
 
 - cartes marines du SHOM sur le Web ([Q-23](06-questions-ouvertes.md#q-23)) ;
 - autres langues ([Q-27](06-questions-ouvertes.md#q-27)) ;
-- plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28)).
+- plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28)) ;
+- serveur et plateforme Web installables sur un Raspberry Pi depuis la marketplace de pi-appliance ([Q-37](06-questions-ouvertes.md#q-37)).

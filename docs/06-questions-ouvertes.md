@@ -111,3 +111,10 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : plus tard.
 - Étude : déploiement et compatibilité de plusieurs versions de l'application Web, utilisateurs sur des versions différentes (RG-ADM-05).
+
+### <a id="q-37"></a>Q-37 — Hébergement sur pi-appliance
+
+- Priorité : plus tard.
+- Demande de l'utilisateur du 2026-11-24 : rendre le serveur et la plateforme Web de NautiLink installables sur un Raspberry Pi depuis la marketplace de [pi-appliance](https://github.com/gmoulard/pi-appliance) (action TODO-2.71 de ce dépôt).
+- À définir : hébergement central seul, ou aussi un serveur installé chez soi ; ce que deviennent alors l'abonnement, les SMS et les e-mails ; réglage de l'adresse du serveur dans les applications Android et iPhone ; images `arm64`.
+- Proposition (non validée) : à étudier après le lancement, une fois l'architecture choisie ([Q-22](#q-22)).

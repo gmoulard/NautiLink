@@ -26,7 +26,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [ ] |
 | LOT-15 | Marque et publication Android | TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4 | LOT-3, LOT-11 | [ ] |
 | LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7 | LOT-11, LOT-13, LOT-15 | [ ] |
-| LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3 | LOT-13, LOT-14 | [ ] |
+| LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3, TODO-9.4 | LOT-13, LOT-14 | [ ] |
 
 ## 0. Ménage du dépôt
 
@@ -163,6 +163,8 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : textes des interfaces séparés du code dès le départ ; une deuxième langue essayée.
 - [ ] **TODO-9.3**: Plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28), RG-ADM-05). Dépend de : TODO-7.1.
   - Critères d'acceptation : stratégie de déploiement et de compatibilité écrite.
+- [ ] **TODO-9.4**: Serveur et plateforme Web installables sur un Raspberry Pi depuis la marketplace de pi-appliance ([Q-37](06-questions-ouvertes.md#q-37) ; côté pi-appliance : TODO-2.71). Dépend de : TODO-3.1, TODO-6.7.
+  - Critères d'acceptation : choix de l'utilisateur sur Q-37 tracé en `D-nn` ; si retenu, images `arm64` du serveur et du Web publiées et manifeste proposé au catalogue de pi-appliance.
 
 ## 10. Étape 5 — iPhone (15)
 
