@@ -28,6 +28,7 @@ Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas enco
 | [`docs/etudes/notes-vocales.md`](docs/etudes/notes-vocales.md) | Étude : notes vocales, formats audio, durée, transcription en français hors connexion. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
+| [`site/`](site/) | Site de présentation publié sur GitHub Pages (accueil, mémo sécurité en mer, avertissement), par le workflow `.github/workflows/pages.yml`. |
 
 ## Statut des informations
 

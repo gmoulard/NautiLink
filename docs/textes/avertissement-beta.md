@@ -4,7 +4,7 @@ Texte affiché aux utilisateurs selon RG-CPT-06, RG-CPT-07 et RG-NAV-23 ([D-56](
 
 **Statut : version 1 du 2026-11-24, à faire relire par un juriste avant la mise en ligne (RG-DON-03, TODO-8.3).** Rédigé pour rester valable en droit français : il ne supprime ni ne réduit le droit à réparation du consommateur (article R212-1 du Code de la consommation) et n'exclut pas la responsabilité pour les dommages corporels ni pour la faute lourde ou intentionnelle.
 
-Le même texte figure sur la page « Mémo sécurité en mer ». Toute modification se fait ici d'abord.
+Le même texte est recopié dans le site de présentation (`site/avertissement.html` et la section « Avertissement » de `site/securite.html`). Toute modification se fait ici d'abord, puis dans ces deux pages, dans le même commit.
 
 ---
 
