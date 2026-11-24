@@ -121,7 +121,7 @@ NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/), [D-6
 
 ## 14. Design du site : « Radar de pluie »
 
-Choisi le 2026-11-24 ([D-69](07-decisions.md#d-69)) parmi les [variantes météo](../site/designs/meteo.html) (n° 8). Appliqué au site de présentation (`site/style.css`, bloc « Radar de pluie ») ; pas encore à l'application.
+Choisi le 2026-11-24 ([D-69](07-decisions.md#d-69)) parmi les [variantes météo](../site/designs/meteo.html) (n° 8). Appliqué au site de présentation (`site/style.css`, bloc « Radar de pluie ») et à l'application ([D-70](07-decisions.md#d-70) : `app/lib/theme.dart`, polices dans `app/assets/fonts/` sous licence OFL). Maquettes : [`site/designs/app.html`](../site/designs/app.html).
 
 | Rôle | Valeur |
 |------|--------|

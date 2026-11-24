@@ -139,3 +139,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Question | Décision | Règles |
 |----|-------|----------|----------|--------|
 | <a id="d-69"></a>D-69 | Design du site | Choix parmi la planche météo (TODO-3.9). | Variante 8 « Radar de pluie » : fond ciel, échos radar vert-jaune-rouge, titres Space Grotesk, IBM Plex Mono pour les petites mentions, bleu d'action `#0E6BA8`. Appliquée au site seulement ; l'application garde son style pour l'instant. | [05-identite-marque.md §14](05-identite-marque.md) |
+
+## 2026-11-24 — Design de l'application
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-70"></a>D-70 | Design de l'application | Demande de l'utilisateur après les maquettes. | Le design « Radar de pluie » (D-69) s'applique aussi à l'application : thème clair et sombre, échos radar, Space Grotesk et IBM Plex Mono intégrées (licence OFL, disponibles hors connexion). | [05-identite-marque.md §14](05-identite-marque.md) |
