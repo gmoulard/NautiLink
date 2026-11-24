@@ -111,3 +111,50 @@ footer a { color: var(--aqua); }
   .features { grid-template-columns: 1fr; }
   .hero .logo { width: min(220px, 70%); }
 }
+
+/* ===== Design « Radar de pluie » (proposition 8 de la planche météo, D-69) =====
+   Fond ciel, échos radar vert-jaune-rouge, titres Space Grotesk, chiffres en IBM Plex Mono. */
+:root {
+  --sky: #EAF4FB;
+  --ink: #0E2A47;
+  --accent: #0E6BA8;
+  --radar-green: rgba(76, 175, 80, .38);
+  --radar-yellow: rgba(242, 193, 78, .5);
+  --radar-red: rgba(217, 67, 67, .5);
+  --bg: #F4F9FD;
+  --fg: #0E2A47;
+  --muted: #45627D;
+  --line: #CFE0EE;
+  --teal: #0E6BA8;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --sky: #0B2236; --ink: #E3F0FA; --accent: #5DB3EA; --bg: #071827; --fg: #E3F0FA; --muted: #9DB7CC; --line: #1D3B55; --teal: #5DB3EA; --surface: #0E2A43; }
+}
+.topnav { background: var(--sky); color: var(--ink); border-bottom: 1px solid var(--line); }
+.brand { color: var(--ink); }
+.brand .link { color: var(--accent); }
+.topnav nav a { color: var(--muted); }
+.topnav nav a:hover { color: var(--ink); }
+.hero { position: relative; overflow: hidden; background: var(--sky); color: var(--ink); }
+.hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background:
+  radial-gradient(ellipse 120px 90px at 58% 24%, var(--radar-red), transparent 70%),
+  radial-gradient(ellipse 230px 160px at 60% 28%, var(--radar-yellow), transparent 70%),
+  radial-gradient(ellipse 420px 280px at 66% 40%, var(--radar-green), transparent 72%),
+  radial-gradient(ellipse 160px 110px at 92% 82%, var(--radar-yellow), transparent 70%),
+  radial-gradient(ellipse 260px 170px at 90% 84%, var(--radar-green), transparent 72%); }
+.hero .wrap { position: relative; }
+.hero h1 { font-family: var(--font-display); }
+.hero h1 .link { color: var(--accent); }
+.sig { color: var(--accent); font-family: var(--font-mono); font-size: .9rem; letter-spacing: .02em; }
+.hero p.lede { color: var(--muted); }
+.pill { border-color: var(--line); color: var(--ink); background: rgba(255,255,255,.55); }
+a.pill:hover { border-color: var(--accent); color: var(--accent); }
+.hero .logo { box-shadow: 0 18px 50px rgba(14, 42, 71, .25); }
+.button { background: var(--accent); }
+.button.ghost { border-color: var(--accent); color: var(--accent); background: transparent; }
+.kicker { color: var(--accent); font-family: var(--font-mono); letter-spacing: .08em; }
+.big { color: var(--accent); font-family: var(--font-display); }
+.role.nav { background: var(--ink); }
+@media (prefers-color-scheme: dark) { .role.nav { background: #0E2A43; } .pill { background: rgba(14,42,67,.6); } .button { color: #071827; } }

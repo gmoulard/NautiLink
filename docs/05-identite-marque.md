@@ -119,3 +119,18 @@ NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/), [D-6
 - Couleurs du guidon : bleu `#1E3296`, jaune `#F8D818`, rouge des ancres. Elles servent au bandeau sponsor ; leur usage comme base de toute l'identité NautiLink est la proposition 11 de la [planche de designs](../site/designs/index.html), à choisir ([TODO-3.9](TODO.md)).
 - Le guidon reste la propriété de la SRT : ne pas le modifier ni le recolorer.
 
+## 14. Design du site : « Radar de pluie »
+
+Choisi le 2026-11-24 ([D-69](07-decisions.md#d-69)) parmi les [variantes météo](../site/designs/meteo.html) (n° 8). Appliqué au site de présentation (`site/style.css`, bloc « Radar de pluie ») ; pas encore à l'application.
+
+| Rôle | Valeur |
+|------|--------|
+| Fond du bandeau d'accueil et du menu | ciel `#EAF4FB` |
+| Texte | encre `#0E2A47` |
+| Actions, liens, accents | bleu `#0E6BA8` |
+| Échos radar (décor) | vert, jaune, rouge en dégradés transparents |
+| Titres | Space Grotesk |
+| Petites mentions, signature | IBM Plex Mono |
+
+Pas de fausse donnée météo « en direct » sur le site : les échos radar restent un décor.
+

@@ -133,3 +133,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Question | Décision | Règles |
 |----|-------|----------|----------|--------|
 | <a id="d-68"></a>D-68 | Sponsor SRT | Demande de l'utilisateur, qui a fourni le guidon de la SRT. | NautiLink est présentée comme sponsorisée par la SRT (srtoulon.fr) : bandeau avec le guidon sur toutes les pages du site et en bas de l'accueil de l'application. Le guidon est un logo tiers, utilisé à la demande de l'utilisateur. | [05-identite-marque.md §13](05-identite-marque.md) |
+
+## 2026-11-24 — Design du site
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-69"></a>D-69 | Design du site | Choix parmi la planche météo (TODO-3.9). | Variante 8 « Radar de pluie » : fond ciel, échos radar vert-jaune-rouge, titres Space Grotesk, IBM Plex Mono pour les petites mentions, bleu d'action `#0E6BA8`. Appliquée au site seulement ; l'application garde son style pour l'instant. | [05-identite-marque.md §14](05-identite-marque.md) |
