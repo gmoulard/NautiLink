@@ -5,7 +5,7 @@ Ce document décrit les parcours pas à pas. Il applique les règles de [02-regl
 ## 1. Rejoindre NautiLink sur invitation
 
 1. Le navigateur invite une personne par e-mail ou par téléphone et choisit le périmètre : cette navigation ou toutes ses navigations (RG-PAR-02, RG-PAR-03).
-2. La personne reçoit l'invitation par e-mail (envoyé par le serveur) ou par SMS (envoyé par le téléphone du navigateur) (RG-PAR-04).
+2. La personne reçoit l'invitation par e-mail (envoyé par le serveur) ou par SMS (envoyé par le téléphone du navigateur). Une invitation par téléphone lancée depuis le Web affiche le lien, que le navigateur transmet lui-même (RG-PAR-04).
 3. Elle ouvre le lien et arrive sur la plateforme Web.
 4. Elle se connecte ou crée son compte (e-mail, Google ou Apple) (RG-CPT-02).
 5. Elle devient suiveur avec le périmètre choisi par le navigateur (RG-PAR-05).
@@ -45,7 +45,7 @@ L'écran affiche le temps depuis le début et le temps depuis le dernier envoi (
 
 ### 3.3 Déclencher un SOS
 
-1. Bouton rouge « Envoyer un SOS ».
+1. Bouton rouge « Envoyer un SOS », sur l'écran de navigation ou sur l'écran d'accueil (RG-SOS-15).
 2. Boîte de confirmation (RG-SOS-02).
 3. Confirmation.
 4. Position acquise (RG-SOS-09 à RG-SOS-11).
@@ -80,7 +80,7 @@ Accueil → « Navigations enregistrées » → liste du serveur → sélection 
 
 ### 4.1 Suivre une navigation en cours
 
-Depuis son tableau de bord, le suiveur ouvre la navigation et voit la dernière position, les positions successives, le tracé, les dates et heures, les notes, les photos, les notes vocales, les événements et les alertes SOS (RG-PAR-07). La page se met à jour à mesure que les positions arrivent. Le suivi est gratuit et sans limite (RG-ECO-08).
+Depuis son tableau de bord, le suiveur ouvre la navigation et voit la dernière position, les positions successives, le tracé, les dates et heures, les notes, les photos, les notes vocales, les événements et les alertes SOS (RG-PAR-07). La page se met à jour à mesure que les positions arrivent. Il peut aussi consulter la fiche du bateau, les autres suiveurs et les contacts SOS, et exporter la navigation en PDF (RG-PAR-08). Le suivi est gratuit et sans limite (RG-ECO-08).
 
 ### 4.2 Consulter une navigation terminée
 

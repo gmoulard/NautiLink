@@ -35,3 +35,12 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-23"></a>D-23 | Accueil Web | Liste des navigations passées (cahier fonctionnel) contre tableau de bord (cahier des charges). | Tableau de bord : navigations en cours puis historique, filtres navigateur / suiveur, prévisualisation. | [01 §6.1](01-cahier-des-charges.md#61-tableau-de-bord) |
 | <a id="d-24"></a>D-24 | Organisation du dépôt | Deux cahiers des charges, noms de fichiers incohérents, liens cassés. | Un fichier par domaine, numéroté ; identifiants de règles, décisions et questions ; `CLAUDE.md`. | — |
 | <a id="d-25"></a>D-25 | Création d'une navigation | « Automatique, manuelle ou les deux » ouvert dans les tâches, alors que tous les parcours décrivent un démarrage manuel. | Manuelle uniquement. | RG-NAV-01 |
+
+## 2026-11-24 — Questions bloquantes tranchées
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-26"></a>D-26 | SMS SOS désactivable | Ancienne question 03 : l'interrupteur général ou les préférences peuvent-ils bloquer les SMS SOS ? | Jamais ; avertissement au démarrage s'il n'y a aucun contact SOS. | RG-SOS-14, RG-SMS-02 |
+| <a id="d-27"></a>D-27 | SOS hors navigation | Ancienne question 02 : bouton SOS hors navigation ? | Oui, sur l'écran d'accueil, rattaché au bateau du téléphone ; e-mail aux suiveurs de périmètre *navigateur*. | RG-SOS-01, RG-SOS-15 |
+| <a id="d-28"></a>D-28 | Invitation par téléphone depuis le Web | Ancienne question 05 : le Web ne peut pas envoyer de SMS. | Le Web affiche le lien ; le navigateur le transmet lui-même. | RG-PAR-04 |
+| <a id="d-29"></a>D-29 | Droits des suiveurs | Ancienne question 07 : fiche bateau, export, autres suiveurs, contacts SOS ? | Les quatre, en lecture seule. | RG-PAR-08, RG-NAV-19 |

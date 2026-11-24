@@ -70,6 +70,8 @@ Trois boutons :
 - **Reprendre la dernière navigation** : ouvre l'écran de la navigation en cours (RG-NAV-12) ;
 - **Navigations enregistrées** : liste récupérée depuis le serveur ; la sélection ouvre la page de la navigation sur la plateforme Web.
 
+L'accueil affiche aussi le bouton rouge **Envoyer un SOS** (RG-SOS-15).
+
 L'accueil donne aussi accès aux paramètres généraux, aux contacts SOS, aux suiveurs, au quota et à l'abonnement, à l'historique des alertes SOS et à l'assistance.
 
 ### 5.3 Écran de démarrage
@@ -89,7 +91,7 @@ Si le quota est épuisé sans abonnement, le démarrage est refusé avec l'expli
 - **NOTE** : note écrite ;
 - **Photo** : prise ou sélection d'une photo (RG-SMS-05) ;
 - **Vocal** : enregistrement audio, transcription à valider (RG-JRN-04, RG-SMS-06) ;
-- **Envoyer un SOS** : bouton rouge, confirmation (RG-SOS-01 à RG-SOS-11) ;
+- **Envoyer un SOS** : bouton rouge, confirmation (RG-SOS-01 à RG-SOS-14) ;
 - **Terminer la navigation** : confirmation puis clôture (RG-NAV-13, RG-NAV-14).
 
 Chaque note, photo et note vocale est enregistrée dans le journal et transmise selon les paramètres de la navigation. Aucune carte n'est affichée (RG-NAV-09).
@@ -116,11 +118,12 @@ Page d'accueil après connexion ([D-23](07-decisions.md#d-23)) :
 
 ### 6.2 Page d'une navigation
 
-- informations générales (RG-NAV-16) ;
+- informations générales et fiche du bateau (RG-NAV-16, RG-PAR-08) ;
+- export PDF, pour le navigateur et les suiveurs (RG-NAV-19) ;
 - carte : dernière position, positions successives, tracé, dates et heures, événements ;
 - journal de bord chronologique avec photos et notes vocales lisibles (RG-JRN-02, RG-JRN-03) ;
 - alertes SOS de la navigation ;
-- pour le navigateur seulement : renommer (RG-NAV-17), ajouter et modifier des éléments du journal (RG-JRN-05, RG-JRN-06), exporter en PDF (RG-NAV-19), supprimer (RG-NAV-20), gérer les suiveurs de la navigation.
+- pour le navigateur seulement : renommer (RG-NAV-17), ajouter et modifier des éléments du journal (RG-JRN-05, RG-JRN-06), supprimer (RG-NAV-20), gérer les suiveurs de la navigation.
 
 Pendant une navigation en cours, la page se met à jour à mesure que les positions arrivent sur le serveur.
 
@@ -136,7 +139,7 @@ Pendant une navigation en cours, la page se met à jour à mesure que les positi
 
 ### 6.4 Côté suiveur
 
-Le suiveur voit sur son tableau de bord les navigations auxquelles il a accès et les consulte en lecture seule (RG-PAR-07). Le suivi est gratuit (RG-ECO-08).
+Le suiveur voit sur son tableau de bord les navigations auxquelles il a accès et les consulte en lecture seule ; il voit aussi la fiche du bateau, les autres suiveurs et les contacts SOS, et peut exporter en PDF (RG-PAR-07, RG-PAR-08). Le suivi est gratuit (RG-ECO-08).
 
 ## 7. Espace administrateur
 

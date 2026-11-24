@@ -14,41 +14,17 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Question : comment sont déterminés le lieu de départ, le lieu d'arrivée et la distance d'une navigation (RG-NAV-16) ?
 - Proposition : lieux = nom du lieu le plus proche de la première et de la dernière position (géocodage inverse), sinon coordonnées ; distance = somme des distances entre positions successives.
 
-### <a id="q-02"></a>Q-02 — SOS hors navigation
-
-- Priorité : bloquant.
-- Question : le bouton SOS est-il disponible aussi en dehors d'une navigation en cours (écran d'accueil) ? Si oui, à quel bateau et quels suiveurs est-il rattaché ?
-- Proposition : oui, sur l'écran d'accueil, rattaché au bateau du téléphone (choix si plusieurs) ; e-mail aux suiveurs de périmètre *navigateur*.
-
-### <a id="q-03"></a>Q-03 — Le SMS SOS peut-il être désactivé ?
-
-- Priorité : bloquant.
-- Question : les anciens documents listent « SOS » parmi les préférences SMS par type. L'interrupteur général des SMS et cette préférence peuvent-ils empêcher l'envoi des SMS SOS ?
-- Proposition : non ; les SMS SOS partent toujours dès qu'au moins un contact SOS existe. Sans contact SOS, le démarrage d'une navigation affiche un avertissement.
-
 ### <a id="q-04"></a>Q-04 — Refus des SMS par un suiveur
 
 - Priorité : lancement.
 - Question : un suiveur peut-il refuser de recevoir les SMS ordinaires d'un navigateur (RG-SMS-01) ? Faut-il son consentement préalable ?
 - Proposition : oui, option « recevoir les SMS » dans son profil, activée par défaut lorsqu'il renseigne un numéro.
 
-### <a id="q-05"></a>Q-05 — Invitation par téléphone depuis le Web
-
-- Priorité : bloquant.
-- Question : le Web ne peut pas envoyer de SMS (pas de prestataire). Que se passe-t-il quand le navigateur invite un numéro de téléphone depuis le Web ?
-- Proposition : le Web affiche le lien d'invitation à copier ; le SMS est envoyé par le téléphone associé à sa prochaine synchronisation.
-
 ### <a id="q-06"></a>Q-06 — Validité d'une invitation
 
 - Priorité : lancement.
 - Question : durée de validité, usage unique ou multiple, renvoi, annulation par le navigateur.
 - Proposition : 7 jours, usage unique, renvoyable et annulable.
-
-### <a id="q-07"></a>Q-07 — Droits exacts des suiveurs
-
-- Priorité : bloquant.
-- Question : un suiveur voit-il la fiche bateau, la liste des autres suiveurs, les contacts SOS ? Peut-il exporter en PDF ?
-- Proposition : lecture seule des navigations et de la fiche bateau ; ni contacts SOS, ni autres suiveurs, ni export.
 
 ### <a id="q-24"></a>Q-24 — Modifier les informations d'une navigation
 

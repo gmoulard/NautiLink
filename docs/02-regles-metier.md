@@ -46,7 +46,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-nav-16"></a>**RG-NAV-16** — Une navigation porte au minimum : nom, bateau, date et heure de début et de fin, lieu de départ, lieu d'arrivée, destination si saisie, durée, distance parcourue. Calcul du lieu d'arrivée et de la distance : [Q-01](06-questions-ouvertes.md#q-01).
 - <a id="rg-nav-17"></a>**RG-NAV-17** — Le nom est généré au démarrage (« <nom du bateau> — <destination> » si une destination est saisie, sinon « <nom du bateau> — <date> ») et peut être modifié ensuite par le navigateur, sur le Web et sur Android ([D-15](07-decisions.md#d-15)). Modification des autres informations : [Q-24](06-questions-ouvertes.md#q-24).
 - <a id="rg-nav-18"></a>**RG-NAV-18** — Les navigations terminées sont conservées sans limite de durée.
-- <a id="rg-nav-19"></a>**RG-NAV-19** — Une navigation peut être exportée en PDF depuis le Web par son navigateur.
+- <a id="rg-nav-19"></a>**RG-NAV-19** — Une navigation peut être exportée en PDF depuis le Web par son navigateur et par ses suiveurs ([RG-PAR-08](#rg-par-08)).
 - <a id="rg-nav-20"></a>**RG-NAV-20** — Le navigateur peut supprimer depuis le Web une navigation terminée. Elle passe dans la corbeille, restaurable pendant 30 jours, puis est supprimée définitivement. Une navigation en cours ne peut pas être supprimée. Pendant son séjour dans la corbeille, les suiveurs n'y ont plus accès ([D-17](07-decisions.md#d-17)).
 - <a id="rg-nav-21"></a>**RG-NAV-21** — Le temps d'une navigation supprimée reste décompté du quota.
 
@@ -76,7 +76,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 ## 6. SMS ordinaires
 
 - <a id="rg-sms-01"></a>**RG-SMS-01** — Les SMS ordinaires d'une navigation sont envoyés aux suiveurs de cette navigation ayant renseigné un numéro de téléphone ([D-08](07-decisions.md#d-08)). Possibilité pour un suiveur de refuser ces SMS : [Q-04](06-questions-ouvertes.md#q-04).
-- <a id="rg-sms-02"></a>**RG-SMS-02** — Un interrupteur général active ou désactive tous les SMS ordinaires. Une préférence par type précise lesquels partent : début, positions automatiques, positions manuelles, notes écrites, photos, notes vocales, fin. Effet de ces réglages sur le SMS SOS : [Q-03](06-questions-ouvertes.md#q-03).
+- <a id="rg-sms-02"></a>**RG-SMS-02** — Un interrupteur général active ou désactive tous les SMS ordinaires. Une préférence par type précise lesquels partent : début, positions automatiques, positions manuelles, notes écrites, photos, notes vocales, fin. Ces réglages ne s'appliquent jamais aux SMS SOS ([RG-SOS-14](#rg-sos-14)).
 - <a id="rg-sms-03"></a>**RG-SMS-03** — Les SMS prévus par les paramètres partent sans confirmation supplémentaire.
 - <a id="rg-sms-04"></a>**RG-SMS-04** — Si le GPS est indisponible pour un SMS ordinaire qui doit contenir une position, le SMS indique « GPS NON DISPONIBLE » au lieu d'une position ancienne.
 - <a id="rg-sms-05"></a>**RG-SMS-05** — Photo : la photo est envoyée au serveur. Si les paramètres le prévoient, un MMS la joint ; le message peut aussi contenir un lien vers la photo hébergée. Contraintes MMS : [Q-13](06-questions-ouvertes.md#q-13).
@@ -87,12 +87,14 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 ### 7.1 Déclenchement
 
-- <a id="rg-sos-01"></a>**RG-SOS-01** — Le bouton SOS n'existe que sur Android. Il est rouge (`#D94343`) et clairement identifiable. Disponibilité hors navigation : [Q-02](06-questions-ouvertes.md#q-02).
+- <a id="rg-sos-01"></a>**RG-SOS-01** — Le bouton SOS n'existe que sur Android. Il est rouge (`#D94343`) et clairement identifiable. Il figure sur l'écran de navigation en cours et sur l'écran d'accueil ([RG-SOS-15](#rg-sos-15)).
 - <a id="rg-sos-02"></a>**RG-SOS-02** — L'appui sur le bouton ouvre une boîte de confirmation. L'envoi part à la confirmation ([D-02](07-decisions.md#d-02)).
 - <a id="rg-sos-03"></a>**RG-SOS-03** — Le SOS reste disponible quel que soit l'état du quota ou de l'abonnement.
 - <a id="rg-sos-04"></a>**RG-SOS-04** — Après confirmation, dans cet ordre et sans qu'une étape en bloque une autre : acquisition de la position, SMS aux contacts SOS, envoi de l'alerte et de la position au serveur, enregistrement dans le journal, affichage du résultat.
 - <a id="rg-sos-05"></a>**RG-SOS-05** — Les SMS SOS utilisent la liste des contacts SOS présente sur le téléphone, même sans Internet.
 - <a id="rg-sos-06"></a>**RG-SOS-06** — À réception de l'alerte, le serveur envoie un e-mail à tous les suiveurs de la navigation et aux contacts SOS dont l'e-mail est connu ([D-14](07-decisions.md#d-14)).
+- <a id="rg-sos-14"></a>**RG-SOS-14** — Les SMS SOS ne peuvent pas être désactivés : ni l'interrupteur général des SMS ni les préférences par type ne s'y appliquent. Ils partent dès qu'au moins un contact SOS existe. Si le navigateur n'a aucun contact SOS, le démarrage d'une navigation affiche un avertissement ([D-26](07-decisions.md#d-26)).
+- <a id="rg-sos-15"></a>**RG-SOS-15** — SOS depuis l'écran d'accueil, hors navigation : il est rattaché au bateau du téléphone (choix du bateau s'il y en a plusieurs), enregistré dans l'historique des alertes de ce bateau, et le serveur envoie l'e-mail aux suiveurs de périmètre *navigateur* et aux contacts SOS dont l'e-mail est connu. Le reste est identique au SOS en navigation ([D-27](07-decisions.md#d-27)).
 
 ### 7.2 Contenu des SMS SOS
 
@@ -121,10 +123,11 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-par-01"></a>**RG-PAR-01** — Le partage est réservé aux utilisateurs ayant un compte NautiLink. Aucun accès anonyme.
 - <a id="rg-par-02"></a>**RG-PAR-02** — Un accès a l'un de ces deux périmètres, choisi par le navigateur : *navigation* (une seule navigation, en cours ou terminée) ou *navigateur* (toutes ses navigations présentes et futures, tous bateaux confondus). Le navigateur peut changer le périmètre à tout moment ([D-04](07-decisions.md#d-04)).
 - <a id="rg-par-03"></a>**RG-PAR-03** — Le navigateur invite depuis le Web ou depuis Android, par e-mail ou par numéro de téléphone, en choisissant le périmètre ([D-10](07-decisions.md#d-10)).
-- <a id="rg-par-04"></a>**RG-PAR-04** — Une invitation par e-mail est envoyée par le serveur. Une invitation par téléphone est envoyée en SMS par la carte SIM du téléphone Android. Invitation par téléphone lancée depuis le Web : [Q-05](06-questions-ouvertes.md#q-05).
+- <a id="rg-par-04"></a>**RG-PAR-04** — Une invitation par e-mail est envoyée par le serveur. Une invitation par téléphone est envoyée en SMS par la carte SIM du téléphone Android. Depuis le Web, une invitation par téléphone n'envoie pas de SMS : le Web affiche le lien d'invitation, que le navigateur transmet lui-même ([D-28](07-decisions.md#d-28)).
 - <a id="rg-par-05"></a>**RG-PAR-05** — Le lien d'invitation mène à la connexion ou à la création d'un compte ; l'accès est accordé dès que l'invité est connecté. Un « lien de partage » est un lien d'invitation, jamais un accès public ([D-09](07-decisions.md#d-09)). Durée de validité : [Q-06](06-questions-ouvertes.md#q-06).
 - <a id="rg-par-06"></a>**RG-PAR-06** — Le navigateur peut retirer un suiveur d'une navigation seulement, ou globalement de toutes ses navigations présentes et futures. Le retrait prend effet immédiatement.
-- <a id="rg-par-07"></a>**RG-PAR-07** — Un suiveur voit en lecture seule, pour les navigations auxquelles il a accès : dernière position, positions successives, tracé, dates et heures, notes, photos, notes vocales, événements, alertes SOS. Droits exacts (fiche bateau, export, contacts) : [Q-07](06-questions-ouvertes.md#q-07).
+- <a id="rg-par-07"></a>**RG-PAR-07** — Un suiveur voit en lecture seule, pour les navigations auxquelles il a accès : dernière position, positions successives, tracé, dates et heures, notes, photos, notes vocales, événements, alertes SOS.
+- <a id="rg-par-08"></a>**RG-PAR-08** — Un suiveur voit aussi la fiche du bateau, la liste des autres suiveurs du navigateur et la liste de ses contacts SOS, et peut exporter en PDF les navigations auxquelles il a accès. Il ne modifie rien ([D-29](07-decisions.md#d-29)).
 
 ## 10. Paramètres
 
