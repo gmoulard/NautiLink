@@ -15,6 +15,7 @@ Ce dépôt contient la **spécification fonctionnelle**, le **site de présentat
 | **Site de présentation** | **<https://gmoulard.github.io/NautiLink/>** |
 | Télécharger les démonstrations (APK Android, IPA iPhone non signé) | <https://gmoulard.github.io/NautiLink/telecharger.html> |
 | Démonstration Web (installable sur l'écran d'accueil) | <https://gmoulard.github.io/NautiLink/app/> |
+| Version gratuite et abonnement | <https://gmoulard.github.io/NautiLink/abonnement.html> |
 | Mémo sécurité en mer | <https://gmoulard.github.io/NautiLink/securite.html> |
 | Avertissement bêta | <https://gmoulard.github.io/NautiLink/avertissement.html> |
 
