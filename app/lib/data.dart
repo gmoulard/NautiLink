@@ -21,8 +21,13 @@ class Boat {
 }
 
 class Contact {
-  Contact({required this.name, this.phone, this.email, this.follower = true, bool sos = true})
-      : sos = sos && phone != null;
+  Contact({
+    required this.name,
+    this.phone,
+    this.email,
+    this.follower = true,
+    bool sos = true,
+  }) : sos = sos && phone != null;
   String name;
   String? phone;
   String? email;
@@ -46,7 +51,16 @@ class Position {
   }
 }
 
-enum EventKind { start, autoPosition, manualPosition, note, photo, voice, sos, end }
+enum EventKind {
+  start,
+  autoPosition,
+  manualPosition,
+  note,
+  photo,
+  voice,
+  sos,
+  end,
+}
 
 class LogEvent {
   LogEvent(this.kind, this.time, {this.text, this.position});
@@ -56,15 +70,15 @@ class LogEvent {
   final Position? position;
 
   String get label => switch (kind) {
-        EventKind.start => 'Début de navigation',
-        EventKind.autoPosition => 'Position automatique',
-        EventKind.manualPosition => 'Position envoyée',
-        EventKind.note => 'Note',
-        EventKind.photo => 'Photo',
-        EventKind.voice => 'Note vocale',
-        EventKind.sos => 'Alerte SOS',
-        EventKind.end => 'Fin de navigation',
-      };
+    EventKind.start => 'Début de navigation',
+    EventKind.autoPosition => 'Position automatique',
+    EventKind.manualPosition => 'Position envoyée',
+    EventKind.note => 'Note',
+    EventKind.photo => 'Photo',
+    EventKind.voice => 'Note vocale',
+    EventKind.sos => 'Alerte SOS',
+    EventKind.end => 'Fin de navigation',
+  };
 }
 
 class Voyage {
@@ -78,8 +92,8 @@ class Voyage {
     this.asFollower = false,
     List<Position>? track,
     List<LogEvent>? log,
-  })  : track = track ?? [],
-        log = log ?? [];
+  }) : track = track ?? [],
+       log = log ?? [];
   String name;
   final Boat boat;
   final DateTime start;
@@ -101,14 +115,17 @@ class Voyage {
     return total;
   }
 
-  static double distanceMeters(Position a, Position b) => _haversineNm(a, b) * 1852;
+  static double distanceMeters(Position a, Position b) =>
+      _haversineNm(a, b) * 1852;
 
   static double _haversineNm(Position a, Position b) {
     const r = 3440.065; // rayon de la Terre en milles nautiques
     double rad(double d) => d * pi / 180;
     final dLat = rad(b.lat - a.lat);
     final dLon = rad(b.lon - a.lon);
-    final h = pow(sin(dLat / 2), 2) + cos(rad(a.lat)) * cos(rad(b.lat)) * pow(sin(dLon / 2), 2);
+    final h =
+        pow(sin(dLat / 2), 2) +
+        cos(rad(a.lat)) * cos(rad(b.lat)) * pow(sin(dLon / 2), 2);
     return 2 * r * asin(sqrt(h));
   }
 }
@@ -128,7 +145,20 @@ String fmtClock(Duration d) {
 }
 
 String fmtDate(DateTime t) {
-  const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  const months = [
+    'janv.',
+    'févr.',
+    'mars',
+    'avr.',
+    'mai',
+    'juin',
+    'juil.',
+    'août',
+    'sept.',
+    'oct.',
+    'nov.',
+    'déc.',
+  ];
   final hh = t.hour.toString().padLeft(2, '0');
   final mm = t.minute.toString().padLeft(2, '0');
   return '${t.day} ${months[t.month - 1]} ${t.year}, $hh:$mm';
@@ -152,7 +182,8 @@ const frequencies = <int, String>{
 };
 
 /// Page d'information sur l'abonnement du site de présentation (RG-ECO-10).
-const subscriptionInfoUrl = 'https://gmoulard.github.io/NautiLink/abonnement.html';
+const subscriptionInfoUrl =
+    'https://gmoulard.github.io/NautiLink/abonnement.html';
 
 class AppState extends ChangeNotifier {
   AppState() {
@@ -160,12 +191,28 @@ class AppState extends ChangeNotifier {
   }
 
   final boats = const [
-    Boat(name: 'Alizé', type: 'Voilier', length: '9,50 m', registration: 'VA 123456', homePort: 'Port-Haliguen'),
-    Boat(name: 'Petit Pingouin', type: 'Bateau à moteur', length: '6,20 m', registration: 'VA 654321', homePort: 'La Trinité-sur-Mer'),
+    Boat(
+      name: 'Alizé',
+      type: 'Voilier',
+      length: '9,50 m',
+      registration: 'VA 123456',
+      homePort: 'Port-Haliguen',
+    ),
+    Boat(
+      name: 'Petit Pingouin',
+      type: 'Bateau à moteur',
+      length: '6,20 m',
+      registration: 'VA 654321',
+      homePort: 'La Trinité-sur-Mer',
+    ),
   ];
 
   final contacts = <Contact>[
-    Contact(name: 'Claire (sœur)', phone: '06 12 34 56 78', email: 'claire@example.org'),
+    Contact(
+      name: 'Claire (sœur)',
+      phone: '06 12 34 56 78',
+      email: 'claire@example.org',
+    ),
     Contact(name: 'Marc (voisin de ponton)', phone: '06 98 76 54 32'),
     Contact(name: 'Inès', email: 'ines@example.org'),
   ];
@@ -213,18 +260,30 @@ class AppState extends ChangeNotifier {
     return _cursor;
   }
 
-  void startVoyage({required Boat boat, String? destination, required int frequency}) {
+  void startVoyage({
+    required Boat boat,
+    String? destination,
+    required int frequency,
+  }) {
     final now = DateTime.now();
     final p = Position(47.4875, -3.0970, now);
     _cursor = p;
     final v = Voyage(
-      name: '${boat.name} — ${destination?.isNotEmpty == true ? destination : fmtDate(now)}',
+      name:
+          '${boat.name} — ${destination?.isNotEmpty == true ? destination : fmtDate(now)}',
       boat: boat,
       start: now,
       destination: destination,
       navigator: 'Moi',
       track: [p],
-      log: [LogEvent(EventKind.start, now, position: p, text: 'Fréquence : ${frequencies[frequency]}')],
+      log: [
+        LogEvent(
+          EventKind.start,
+          now,
+          position: p,
+          text: 'Fréquence : ${frequencies[frequency]}',
+        ),
+      ],
     );
     current = v;
     voyages.insert(0, v);
@@ -234,7 +293,10 @@ class AppState extends ChangeNotifier {
   void addEvent(EventKind kind, {String? text}) {
     final v = current;
     if (v == null) return;
-    final withPos = kind == EventKind.manualPosition || kind == EventKind.autoPosition || kind == EventKind.sos;
+    final withPos =
+        kind == EventKind.manualPosition ||
+        kind == EventKind.autoPosition ||
+        kind == EventKind.sos;
     final p = withPos ? nextPosition() : null;
     if (p != null) v.track.add(p);
     v.log.add(LogEvent(kind, DateTime.now(), text: text, position: p));
@@ -242,7 +304,10 @@ class AppState extends ChangeNotifier {
   }
 
   /// RG-NAV-24 : aucune position à plus de 20 m de la dernière depuis 2 heures.
-  bool isStationary({Duration span = const Duration(hours: 2), double meters = 20}) {
+  bool isStationary({
+    Duration span = const Duration(hours: 2),
+    double meters = 20,
+  }) {
     final v = current;
     if (v == null || v.track.isEmpty) return false;
     final last = v.track.last;
@@ -258,7 +323,13 @@ class AppState extends ChangeNotifier {
     if (v == null || v.track.isEmpty) return;
     final base = v.track.last;
     for (var i = 1; i <= 13; i++) {
-      v.track.add(Position(base.lat + (i.isEven ? 0.00004 : -0.00004), base.lon, base.time.add(Duration(minutes: 10 * i))));
+      v.track.add(
+        Position(
+          base.lat + (i.isEven ? 0.00004 : -0.00004),
+          base.lon,
+          base.time.add(Duration(minutes: 10 * i)),
+        ),
+      );
     }
     notifyListeners();
   }
@@ -267,7 +338,13 @@ class AppState extends ChangeNotifier {
     final v = current;
     if (v == null) return;
     v.end = DateTime.now();
-    v.log.add(LogEvent(EventKind.end, v.end!, position: v.track.isEmpty ? null : v.track.last));
+    v.log.add(
+      LogEvent(
+        EventKind.end,
+        v.end!,
+        position: v.track.isEmpty ? null : v.track.last,
+      ),
+    );
     usedMinutes += max(1, v.duration.inMinutes);
     current = null;
     notifyListeners();
@@ -295,56 +372,91 @@ class AppState extends ChangeNotifier {
     }
 
     final t1 = track(47.4875, -3.0970, 22, base);
-    voyages.add(Voyage(
-      name: 'Alizé — Belle-Île',
-      boat: boats[0],
-      start: base,
-      end: base.add(const Duration(hours: 3, minutes: 40)),
-      destination: 'Le Palais, Belle-Île',
-      navigator: 'Moi',
-      track: t1,
-      log: [
-        LogEvent(EventKind.start, t1.first.time, position: t1.first, text: 'Fréquence : 30 minutes'),
-        LogEvent(EventKind.autoPosition, t1[6].time, position: t1[6]),
-        LogEvent(EventKind.note, t1[8].time, text: 'Vent d\'ouest 12 nœuds, mer belle. Grand-voile haute.'),
-        LogEvent(EventKind.photo, t1[12].time, text: 'Phare de Kerdonis par le travers'),
-        LogEvent(EventKind.voice, t1[16].time, text: 'Arrivée en vue du Palais, on affale dans vingt minutes.'),
-        LogEvent(EventKind.end, t1.last.time, position: t1.last),
-      ],
-    ));
+    voyages.add(
+      Voyage(
+        name: 'Alizé — Belle-Île',
+        boat: boats[0],
+        start: base,
+        end: base.add(const Duration(hours: 3, minutes: 40)),
+        destination: 'Le Palais, Belle-Île',
+        navigator: 'Moi',
+        track: t1,
+        log: [
+          LogEvent(
+            EventKind.start,
+            t1.first.time,
+            position: t1.first,
+            text: 'Fréquence : 30 minutes',
+          ),
+          LogEvent(EventKind.autoPosition, t1[6].time, position: t1[6]),
+          LogEvent(
+            EventKind.note,
+            t1[8].time,
+            text: 'Vent d\'ouest 12 nœuds, mer belle. Grand-voile haute.',
+          ),
+          LogEvent(
+            EventKind.photo,
+            t1[12].time,
+            text: 'Phare de Kerdonis par le travers',
+          ),
+          LogEvent(
+            EventKind.voice,
+            t1[16].time,
+            text: 'Arrivée en vue du Palais, on affale dans vingt minutes.',
+          ),
+          LogEvent(EventKind.end, t1.last.time, position: t1.last),
+        ],
+      ),
+    );
 
-    final base2 = DateTime.now().subtract(const Duration(hours: 1, minutes: 25));
+    final base2 = DateTime.now().subtract(
+      const Duration(hours: 1, minutes: 25),
+    );
     final t2 = track(47.5830, -3.0750, 9, base2);
-    voyages.add(Voyage(
-      name: 'Héloïse — Houat',
-      boat: const Boat(name: 'Héloïse', type: 'Voilier', length: '11 m', registration: 'LO 778899', homePort: 'Lorient'),
-      start: base2,
-      destination: 'Houat',
-      navigator: 'Paul (ami)',
-      asFollower: true,
-      track: t2,
-      log: [
-        LogEvent(EventKind.start, t2.first.time, position: t2.first),
-        LogEvent(EventKind.autoPosition, t2[4].time, position: t2[4]),
-        LogEvent(EventKind.note, t2[6].time, text: 'Tout va bien à bord, café servi.'),
-        LogEvent(EventKind.autoPosition, t2.last.time, position: t2.last),
-      ],
-    ));
+    voyages.add(
+      Voyage(
+        name: 'Héloïse — Houat',
+        boat: const Boat(
+          name: 'Héloïse',
+          type: 'Voilier',
+          length: '11 m',
+          registration: 'LO 778899',
+          homePort: 'Lorient',
+        ),
+        start: base2,
+        destination: 'Houat',
+        navigator: 'Paul (ami)',
+        asFollower: true,
+        track: t2,
+        log: [
+          LogEvent(EventKind.start, t2.first.time, position: t2.first),
+          LogEvent(EventKind.autoPosition, t2[4].time, position: t2[4]),
+          LogEvent(
+            EventKind.note,
+            t2[6].time,
+            text: 'Tout va bien à bord, café servi.',
+          ),
+          LogEvent(EventKind.autoPosition, t2.last.time, position: t2.last),
+        ],
+      ),
+    );
 
     final base3 = DateTime.now().subtract(const Duration(days: 9));
     final t3 = track(47.5680, -3.0710, 14, base3);
-    voyages.add(Voyage(
-      name: 'Petit Pingouin — Pêche aux Birvideaux',
-      boat: boats[1],
-      start: base3,
-      end: base3.add(const Duration(hours: 2, minutes: 15)),
-      navigator: 'Moi',
-      track: t3,
-      log: [
-        LogEvent(EventKind.start, t3.first.time, position: t3.first),
-        LogEvent(EventKind.photo, t3[7].time, text: 'Trois bars ce matin'),
-        LogEvent(EventKind.end, t3.last.time, position: t3.last),
-      ],
-    ));
+    voyages.add(
+      Voyage(
+        name: 'Petit Pingouin — Pêche aux Birvideaux',
+        boat: boats[1],
+        start: base3,
+        end: base3.add(const Duration(hours: 2, minutes: 15)),
+        navigator: 'Moi',
+        track: t3,
+        log: [
+          LogEvent(EventKind.start, t3.first.time, position: t3.first),
+          LogEvent(EventKind.photo, t3[7].time, text: 'Trois bars ce matin'),
+          LogEvent(EventKind.end, t3.last.time, position: t3.last),
+        ],
+      ),
+    );
   }
 }

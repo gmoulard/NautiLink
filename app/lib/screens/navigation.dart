@@ -37,12 +37,20 @@ class _StartScreenState extends State<StartScreen> {
         children: [
           if (state.boats.length > 1) ...[
             DropdownButtonFormField<int>(
-            isExpanded: true,
+              isExpanded: true,
               initialValue: boat,
-              decoration: const InputDecoration(labelText: 'Bateau', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Bateau',
+                border: OutlineInputBorder(),
+              ),
               items: [
                 for (var i = 0; i < state.boats.length; i++)
-                  DropdownMenuItem(value: i, child: Text('${state.boats[i].name} · ${state.boats[i].type}')),
+                  DropdownMenuItem(
+                    value: i,
+                    child: Text(
+                      '${state.boats[i].name} · ${state.boats[i].type}',
+                    ),
+                  ),
               ],
               onChanged: (v) => setState(() => boat = v ?? 0),
             ),
@@ -60,8 +68,14 @@ class _StartScreenState extends State<StartScreen> {
           DropdownButtonFormField<int>(
             isExpanded: true,
             initialValue: frequency,
-            decoration: const InputDecoration(labelText: 'Fréquence d\'envoi automatique', border: OutlineInputBorder()),
-            items: [for (final e in frequencies.entries) DropdownMenuItem(value: e.key, child: Text(e.value))],
+            decoration: const InputDecoration(
+              labelText: 'Fréquence d\'envoi automatique',
+              border: OutlineInputBorder(),
+            ),
+            items: [
+              for (final e in frequencies.entries)
+                DropdownMenuItem(value: e.key, child: Text(e.value)),
+            ],
             onChanged: (v) => setState(() => frequency = v),
           ),
           const SizedBox(height: 8),
@@ -73,7 +87,11 @@ class _StartScreenState extends State<StartScreen> {
               onPressed: () => showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                builder: (_) => SafeArea(child: SingleChildScrollView(child: SmsSettings(state: state))),
+                builder: (_) => SafeArea(
+                  child: SingleChildScrollView(
+                    child: SmsSettings(state: state),
+                  ),
+                ),
               ),
             ),
           ),
@@ -82,14 +100,22 @@ class _StartScreenState extends State<StartScreen> {
               color: Color(0xFFFBE9E9),
               child: ListTile(
                 leading: Icon(Icons.warning_amber, color: NlColors.alert),
-                title: Text('Aucun contact SOS : personne ne recevra vos SMS SOS.'),
+                title: Text(
+                  'Aucun contact SOS : personne ne recevra vos SMS SOS.',
+                ),
               ),
             ),
           const SizedBox(height: 16),
           FilledButton(
             onPressed: () {
-              state.startVoyage(boat: state.boats[boat], destination: destination.text.trim(), frequency: frequency!);
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const NavigationScreen()));
+              state.startVoyage(
+                boat: state.boats[boat],
+                destination: destination.text.trim(),
+                frequency: frequency!,
+              );
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const NavigationScreen()),
+              );
             },
             child: const Text('Envoi message – Début de navigation'),
           ),
@@ -128,8 +154,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Future<void> sent(String what) async {
     setState(() => lastSend = DateTime.now());
     final state = AppScope.of(context);
-    final sms = state.smsEnabled ? 'SMS prérempli pour vos suiveurs' : 'SMS désactivés';
-    await showSendResult(context, what, ['Serveur : envoyé', sms, '(démonstration : rien n\'est réellement envoyé)']);
+    final sms = state.smsEnabled
+        ? 'SMS prérempli pour vos suiveurs'
+        : 'SMS désactivés';
+    await showSendResult(context, what, [
+      'Serveur : envoyé',
+      sms,
+      '(démonstration : rien n\'est réellement envoyé)',
+    ]);
     if (mounted) await proposeEndIfStationary();
   }
 
@@ -141,10 +173,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Navigation terminée ?'),
-        content: const Text('Vous ne vous êtes pas éloigné de plus de 20 mètres depuis 2 heures.'),
+        content: const Text(
+          'Vous ne vous êtes pas éloigné de plus de 20 mètres depuis 2 heures.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Continuer')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Terminer la navigation')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Continuer'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Terminer la navigation'),
+          ),
         ],
       ),
     );
@@ -159,10 +199,21 @@ class _NavigationScreenState extends State<NavigationScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(title),
-        content: TextField(controller: c, autofocus: true, maxLines: 3, decoration: InputDecoration(hintText: hint)),
+        content: TextField(
+          controller: c,
+          autofocus: true,
+          maxLines: 3,
+          decoration: InputDecoration(hintText: hint),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
-          TextButton(onPressed: () => Navigator.pop(ctx, c.text.trim()), child: const Text('Valider l\'envoi')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, c.text.trim()),
+            child: const Text('Valider l\'envoi'),
+          ),
         ],
       ),
     );
@@ -173,7 +224,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
     final state = AppScope.of(context);
     final v = state.current;
     if (v == null) {
-      return Scaffold(appBar: AppBar(), body: const Center(child: Text('Aucune navigation en cours.')));
+      return Scaffold(
+        appBar: AppBar(),
+        body: const Center(child: Text('Aucune navigation en cours.')),
+      );
     }
     return Scaffold(
       appBar: AppBar(
@@ -186,7 +240,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
               await proposeEndIfStationary();
             },
             itemBuilder: (_) => const [
-              PopupMenuItem(value: 'immobile', child: Text('Démo : simuler 2 h sans bouger')),
+              PopupMenuItem(
+                value: 'immobile',
+                child: Text('Démo : simuler 2 h sans bouger'),
+              ),
             ],
           ),
         ],
@@ -195,91 +252,118 @@ class _NavigationScreenState extends State<NavigationScreen> {
         children: [
           const DemoBanner(),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Row(
-                  children: [
-                    Expanded(child: _Chrono(label: 'Depuis le début', value: fmtClock(v.duration))),
-                    const SizedBox(width: 12),
-                    Expanded(child: _Chrono(label: 'Depuis le dernier envoi', value: fmtClock(DateTime.now().difference(lastSend)))),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                FilledButton.icon(
-                  icon: const Icon(Icons.my_location),
-                  label: const Text('Envoyer information position'),
-                  onPressed: () {
-                    state.addEvent(EventKind.manualPosition);
-                    sent('Position envoyée');
-                  },
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.edit_note),
-                        label: const Text('NOTE'),
-                        onPressed: () async {
-                          final t = await askText('Note', 'Votre note');
-                          if (t == null || t.isEmpty) return;
-                          state.addEvent(EventKind.note, text: t);
-                          sent('Note envoyée');
-                        },
+            child: RadarBackground(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _Chrono(
+                          label: 'Depuis le début',
+                          value: fmtClock(v.duration),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.photo_camera_outlined),
-                        label: const Text('Photo'),
-                        onPressed: () {
-                          state.addEvent(EventKind.photo, text: 'Photo d\'exemple');
-                          sent('Photo envoyée');
-                        },
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _Chrono(
+                          label: 'Depuis le dernier envoi',
+                          value: fmtClock(DateTime.now().difference(lastSend)),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.mic_none),
-                        label: const Text('Vocal'),
-                        onPressed: () async {
-                          final t = await askText('Note vocale', 'Transcription de la dictée, à corriger');
-                          if (t == null || t.isEmpty) return;
-                          state.addEvent(EventKind.voice, text: t);
-                          sent('Note vocale envoyée');
-                        },
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    icon: const Icon(Icons.my_location),
+                    label: const Text('Envoyer information position'),
+                    onPressed: () {
+                      state.addEvent(EventKind.manualPosition);
+                      sent('Position envoyée');
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.edit_note),
+                          label: const Text('NOTE'),
+                          onPressed: () async {
+                            final t = await askText('Note', 'Votre note');
+                            if (t == null || t.isEmpty) return;
+                            state.addEvent(EventKind.note, text: t);
+                            sent('Note envoyée');
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                SosButton(onPressed: () => confirmSos(context)),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () async {
-                    final ok = await showDialog<bool>(
-                      context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: const Text('Terminer la navigation ?'),
-                        actions: [
-                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
-                          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Terminer')),
-                        ],
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.photo_camera_outlined),
+                          label: const Text('Photo'),
+                          onPressed: () {
+                            state.addEvent(
+                              EventKind.photo,
+                              text: 'Photo d\'exemple',
+                            );
+                            sent('Photo envoyée');
+                          },
+                        ),
                       ),
-                    );
-                    if (ok != true) return;
-                    state.endVoyage();
-                    if (context.mounted) Navigator.of(context).pop();
-                  },
-                  child: const Text('Terminer la navigation'),
-                ),
-                const SizedBox(height: 20),
-                Text('Journal de bord', style: Theme.of(context).textTheme.titleMedium),
-                for (final e in v.log.reversed) LogTile(event: e),
-              ],
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.mic_none),
+                          label: const Text('Vocal'),
+                          onPressed: () async {
+                            final t = await askText(
+                              'Note vocale',
+                              'Transcription de la dictée, à corriger',
+                            );
+                            if (t == null || t.isEmpty) return;
+                            state.addEvent(EventKind.voice, text: t);
+                            sent('Note vocale envoyée');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  SosButton(onPressed: () => confirmSos(context)),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () async {
+                      final ok = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Terminer la navigation ?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: const Text('Annuler'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, true),
+                              child: const Text('Terminer'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (ok != true) return;
+                      state.endVoyage();
+                      if (context.mounted) Navigator.of(context).pop();
+                    },
+                    child: const Text('Terminer la navigation'),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Journal de bord',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  for (final e in v.log.reversed) LogTile(event: e),
+                ],
+              ),
             ),
           ),
         ],
@@ -302,7 +386,15 @@ class _Chrono extends StatelessWidget {
           children: [
             Text(label, style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 4),
-            Text(value, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700, fontFeatures: [FontFeature.tabularFigures()])),
+            Text(
+              value,
+              style: const TextStyle(
+                fontFamily: kMonoFont,
+                fontSize: 26,
+                fontWeight: FontWeight.w600,
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
           ],
         ),
       ),
@@ -315,30 +407,43 @@ class LogTile extends StatelessWidget {
   final LogEvent event;
 
   IconData get icon => switch (event.kind) {
-        EventKind.start => Icons.flag_outlined,
-        EventKind.autoPosition || EventKind.manualPosition => Icons.place_outlined,
-        EventKind.note => Icons.edit_note,
-        EventKind.photo => Icons.photo_outlined,
-        EventKind.voice => Icons.mic_none,
-        EventKind.sos => Icons.sos,
-        EventKind.end => Icons.sports_score,
-      };
+    EventKind.start => Icons.flag_outlined,
+    EventKind.autoPosition || EventKind.manualPosition => Icons.place_outlined,
+    EventKind.note => Icons.edit_note,
+    EventKind.photo => Icons.photo_outlined,
+    EventKind.voice => Icons.mic_none,
+    EventKind.sos => Icons.sos,
+    EventKind.end => Icons.sports_score,
+  };
 
   @override
   Widget build(BuildContext context) {
     final sos = event.kind == EventKind.sos;
-    final details = [event.text, event.position?.text].whereType<String>().join('\n');
+    final details = [
+      event.text,
+      event.position?.text,
+    ].whereType<String>().join('\n');
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: sos ? NlColors.alert : NlColors.teal),
-      title: Text('${fmtTime(event.time)} · ${event.label}', style: TextStyle(fontWeight: FontWeight.w600, color: sos ? NlColors.alert : null)),
+      title: Text(
+        '${fmtTime(event.time)} · ${event.label}',
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: sos ? NlColors.alert : null,
+        ),
+      ),
       subtitle: details.isEmpty ? null : Text(details),
     );
   }
 }
 
 /// Fenêtre de résultat d'un envoi, avec « OK », fermée seule au bout d'une minute (RG-COM-03).
-Future<void> showSendResult(BuildContext context, String title, List<String> lines) {
+Future<void> showSendResult(
+  BuildContext context,
+  String title,
+  List<String> lines,
+) {
   return showDialog<void>(
     context: context,
     builder: (_) => _SendResultDialog(title: title, lines: lines),
@@ -374,14 +479,23 @@ class _SendResultDialogState extends State<_SendResultDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      icon: const Icon(Icons.check_circle_outline, color: NlColors.teal, size: 36),
+      icon: const Icon(
+        Icons.check_circle_outline,
+        color: NlColors.teal,
+        size: 36,
+      ),
       title: Text(widget.title),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [for (final l in widget.lines) Text(l)],
       ),
-      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('OK'),
+        ),
+      ],
     );
   }
 }
@@ -393,11 +507,19 @@ Future<void> confirmSos(BuildContext context) async {
     builder: (ctx) => AlertDialog(
       icon: const Icon(Icons.sos, color: NlColors.alert, size: 40),
       title: const Text('Envoyer un SOS ?'),
-      content: const Text('Vos contacts SOS recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.'),
+      content: const Text(
+        'Vos contacts SOS recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.',
+      ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: const Text('Annuler'),
+        ),
         FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: NlColors.alert, minimumSize: const Size(140, 44)),
+          style: FilledButton.styleFrom(
+            backgroundColor: NlColors.alert,
+            minimumSize: const Size(140, 44),
+          ),
           onPressed: () => Navigator.pop(ctx, true),
           child: const Text('Confirmer le SOS'),
         ),
@@ -405,10 +527,12 @@ Future<void> confirmSos(BuildContext context) async {
     ),
   );
   if (ok != true || !context.mounted) return;
-  ScaffoldMessenger.of(context).clearSnackBars(); // rien ne doit masquer l'écran SOS
+  ScaffoldMessenger.of(context)
+      .clearSnackBars(); // rien ne doit masquer l'écran SOS
   final state = AppScope.of(context);
   state.addEvent(EventKind.sos);
-  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SosResultScreen()));
+  Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => const SosResultScreen()));
 }
 
 class SosResultScreen extends StatelessWidget {
@@ -421,13 +545,19 @@ class SosResultScreen extends StatelessWidget {
     final boat = state.current?.boat ?? state.boats.first;
     final pos = state.current?.track.last ?? state.nextPosition();
     return Scaffold(
-      appBar: AppBar(title: const Text('Alerte SOS'), backgroundColor: NlColors.alert),
+      appBar: AppBar(
+        title: const Text('Alerte SOS'),
+        backgroundColor: NlColors.alert,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const DemoBanner(),
           const SizedBox(height: 12),
-          Text('Démonstration : aucun SMS n\'est réellement parti.', style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Démonstration : aucun SMS n\'est réellement parti.',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 16),
           Card(
             child: Padding(
@@ -458,7 +588,10 @@ class SosResultScreen extends StatelessWidget {
             subtitle: Text('Alerte reçue · e-mail aux suiveurs'),
           ),
           const SizedBox(height: 12),
-          FilledButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Retour')),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Retour'),
+          ),
         ],
       ),
     );

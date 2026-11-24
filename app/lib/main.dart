@@ -11,7 +11,8 @@ void main() => runApp(const NautiLinkApp());
 
 /// Donne l'état du prototype à tous les écrans.
 class AppScope extends InheritedNotifier<AppState> {
-  const AppScope({super.key, required AppState state, required super.child}) : super(notifier: state);
+  const AppScope({super.key, required AppState state, required super.child})
+    : super(notifier: state);
 
   static AppState of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AppScope>()!.notifier!;
@@ -72,20 +73,31 @@ class ChooseSideScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   shrinkWrap: true,
                   children: [
-                    Text('Que voulez-vous essayer ?', style: Theme.of(context).textTheme.headlineSmall),
+                    Text(
+                      'Que voulez-vous essayer ?',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
                     const SizedBox(height: 20),
                     _SideCard(
                       icon: Icons.sailing,
                       title: 'Le navigateur à bord',
                       text: 'L\'application mobile : démarrer une navigation, envoyer sa position, noter, déclencher un SOS.',
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PhoneFrame(child: HomeScreen()))),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const PhoneFrame(child: HomeScreen()),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 12),
                     _SideCard(
                       icon: Icons.dashboard_outlined,
                       title: 'Le suiveur, sur la plateforme Web',
                       text: 'Le tableau de bord : navigations en cours et passées, carte du tracé, journal de bord.',
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DashboardScreen())),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const DashboardScreen(),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -100,7 +112,12 @@ class ChooseSideScreen extends StatelessWidget {
 }
 
 class _SideCard extends StatelessWidget {
-  const _SideCard({required this.icon, required this.title, required this.text, required this.onTap});
+  const _SideCard({
+    required this.icon,
+    required this.title,
+    required this.text,
+    required this.onTap,
+  });
   final IconData icon;
   final String title;
   final String text;
@@ -113,7 +130,10 @@ class _SideCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(16),
         leading: Icon(icon, size: 36, color: NlColors.teal),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
-        subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(text)),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Text(text),
+        ),
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),
@@ -128,23 +148,25 @@ class PhoneFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, c) {
-      if (c.maxWidth < 600) return child;
-      return ColoredBox(
-        color: NlColors.navy,
-        child: Center(
-          child: Container(
-            width: 412,
-            height: (c.maxHeight - 40).clamp(500, 900).toDouble(),
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.black, width: 10),
+    return LayoutBuilder(
+      builder: (context, c) {
+        if (c.maxWidth < 600) return child;
+        return ColoredBox(
+          color: NlColors.navy,
+          child: Center(
+            child: Container(
+              width: 412,
+              height: (c.maxHeight - 40).clamp(500, 900).toDouble(),
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: Colors.black, width: 10),
+              ),
+              child: child,
             ),
-            child: child,
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
