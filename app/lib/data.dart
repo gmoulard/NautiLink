@@ -101,6 +101,8 @@ class Voyage {
     return total;
   }
 
+  static double distanceMeters(Position a, Position b) => _haversineNm(a, b) * 1852;
+
   static double _haversineNm(Position a, Position b) {
     const r = 3440.065; // rayon de la Terre en milles nautiques
     double rad(double d) => d * pi / 180;
@@ -135,16 +137,22 @@ String fmtDate(DateTime t) {
 String fmtTime(DateTime t) =>
     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
-/// Fréquences possibles (RG-NAV-05).
+/// Fréquences possibles, en minutes (RG-NAV-05).
 const frequencies = <int, String>{
-  3: '3 minutes',
-  4: '4 minutes',
-  5: '5 minutes',
-  10: '10 minutes',
   15: '15 minutes',
   30: '30 minutes',
   60: '1 heure',
+  120: '2 heures',
+  180: '3 heures',
+  360: '6 heures',
+  720: '12 heures',
+  1440: '1 jour',
+  2880: '2 jours',
+  14400: '10 jours',
 };
+
+/// Page d'information sur l'abonnement du site de présentation (RG-ECO-10).
+const subscriptionInfoUrl = 'https://gmoulard.github.io/NautiLink/abonnement.html';
 
 class AppState extends ChangeNotifier {
   AppState() {
@@ -167,7 +175,7 @@ class AppState extends ChangeNotifier {
 
   bool warningAccepted = false; // RG-CPT-06
   bool firstVoyageReminderSeen = false; // RG-NAV-23
-  int defaultFrequency = 10;
+  int defaultFrequency = 30;
   bool smsEnabled = true;
   final smsByType = <String, bool>{
     'Début de navigation': true,
@@ -233,6 +241,28 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// RG-NAV-24 : aucune position à plus de 20 m de la dernière depuis 2 heures.
+  bool isStationary({Duration span = const Duration(hours: 2), double meters = 20}) {
+    final v = current;
+    if (v == null || v.track.isEmpty) return false;
+    final last = v.track.last;
+    if (last.time.difference(v.track.first.time) < span) return false;
+    final since = last.time.subtract(span);
+    final recent = v.track.where((p) => !p.time.isBefore(since));
+    return recent.every((p) => Voyage.distanceMeters(p, last) <= meters);
+  }
+
+  /// Démonstration : simule 2 h 10 passées au même endroit après la dernière position.
+  void simulateStationary() {
+    final v = current;
+    if (v == null || v.track.isEmpty) return;
+    final base = v.track.last;
+    for (var i = 1; i <= 13; i++) {
+      v.track.add(Position(base.lat + (i.isEven ? 0.00004 : -0.00004), base.lon, base.time.add(Duration(minutes: 10 * i))));
+    }
+    notifyListeners();
+  }
+
   void endVoyage() {
     final v = current;
     if (v == null) return;
@@ -274,7 +304,7 @@ class AppState extends ChangeNotifier {
       navigator: 'Moi',
       track: t1,
       log: [
-        LogEvent(EventKind.start, t1.first.time, position: t1.first, text: 'Fréquence : 10 minutes'),
+        LogEvent(EventKind.start, t1.first.time, position: t1.first, text: 'Fréquence : 30 minutes'),
         LogEvent(EventKind.autoPosition, t1[6].time, position: t1[6]),
         LogEvent(EventKind.note, t1[8].time, text: 'Vent d\'ouest 12 nœuds, mer belle. Grand-voile haute.'),
         LogEvent(EventKind.photo, t1[12].time, text: 'Phare de Kerdonis par le travers'),

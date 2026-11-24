@@ -8,8 +8,10 @@ Application Flutter, un seul code pour Android, iPhone et la démonstration Web 
 
 - avertissement bêta à accepter (RG-CPT-06) et rappel avant la première navigation (RG-NAV-23) ;
 - accueil mobile : « Démarrer navigation », « Reprendre la dernière navigation », « Navigations enregistrées », bouton SOS ;
-- démarrage : bateau, destination facultative, fréquence, paramètres de la navigation ;
-- navigation en cours : deux chronomètres, position, NOTE, Photo, Vocal, SOS avec confirmation, fin ;
+- démarrage : bateau, destination facultative, fréquence de 15 minutes à 10 jours, paramètres de la navigation ;
+- navigation en cours : deux chronomètres (le second remis à zéro par chaque envoi), position, NOTE, Photo, Vocal, SOS avec confirmation, fin ; résultat de chaque envoi dans une fenêtre « OK » fermée au bout d'une minute ;
+- proposition de terminer une navigation immobile depuis 2 heures (menu « Démo : simuler 2 h sans bouger ») ;
+- lien « Version gratuite - abonnement » sur l'accueil, puis lien vers la page d'information sur l'abonnement du site ;
 - contacts (cases « Suiveur » et « Contact SOS »), paramètres SMS, quota ;
 - tableau de bord Web : navigations en cours et historique, filtre navigateur / suiveur, carte du tracé, journal.
 

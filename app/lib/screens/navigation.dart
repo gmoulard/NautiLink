@@ -123,13 +123,34 @@ class _NavigationScreenState extends State<NavigationScreen> {
     super.dispose();
   }
 
-  void sent(String what) {
-    lastSend = DateTime.now();
+  /// Envoi réussi : remet le chronomètre à zéro (RG-NAV-10) et affiche le
+  /// résultat par circuit dans une fenêtre (RG-COM-03).
+  Future<void> sent(String what) async {
+    setState(() => lastSend = DateTime.now());
     final state = AppScope.of(context);
     final sms = state.smsEnabled ? 'SMS prérempli pour vos suiveurs' : 'SMS désactivés';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$what · Serveur : envoyé · $sms (démonstration)')),
+    await showSendResult(context, what, ['Serveur : envoyé', sms, '(démonstration : rien n\'est réellement envoyé)']);
+    if (mounted) await proposeEndIfStationary();
+  }
+
+  /// RG-NAV-24 : proposer de terminer une navigation immobile depuis 2 heures.
+  Future<void> proposeEndIfStationary() async {
+    final state = AppScope.of(context);
+    if (!state.isStationary()) return;
+    final end = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Navigation terminée ?'),
+        content: const Text('Vous ne vous êtes pas éloigné de plus de 20 mètres depuis 2 heures.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Continuer')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Terminer la navigation')),
+        ],
+      ),
     );
+    if (end != true || !mounted) return;
+    state.endVoyage();
+    Navigator.of(context).pop();
   }
 
   Future<String?> askText(String title, String hint) {
@@ -155,7 +176,21 @@ class _NavigationScreenState extends State<NavigationScreen> {
       return Scaffold(appBar: AppBar(), body: const Center(child: Text('Aucune navigation en cours.')));
     }
     return Scaffold(
-      appBar: AppBar(title: Text(v.boat.name)),
+      appBar: AppBar(
+        title: Text(v.boat.name),
+        actions: [
+          PopupMenuButton<String>(
+            tooltip: 'Démonstration',
+            onSelected: (_) async {
+              state.simulateStationary();
+              await proposeEndIfStationary();
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: 'immobile', child: Text('Démo : simuler 2 h sans bouger')),
+            ],
+          ),
+        ],
+      ),
       body: Column(
         children: [
           const DemoBanner(),
@@ -298,6 +333,55 @@ class LogTile extends StatelessWidget {
       leading: Icon(icon, color: sos ? NlColors.alert : NlColors.teal),
       title: Text('${fmtTime(event.time)} · ${event.label}', style: TextStyle(fontWeight: FontWeight.w600, color: sos ? NlColors.alert : null)),
       subtitle: details.isEmpty ? null : Text(details),
+    );
+  }
+}
+
+/// Fenêtre de résultat d'un envoi, avec « OK », fermée seule au bout d'une minute (RG-COM-03).
+Future<void> showSendResult(BuildContext context, String title, List<String> lines) {
+  return showDialog<void>(
+    context: context,
+    builder: (_) => _SendResultDialog(title: title, lines: lines),
+  );
+}
+
+class _SendResultDialog extends StatefulWidget {
+  const _SendResultDialog({required this.title, required this.lines});
+  final String title;
+  final List<String> lines;
+
+  @override
+  State<_SendResultDialog> createState() => _SendResultDialogState();
+}
+
+class _SendResultDialogState extends State<_SendResultDialog> {
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer(const Duration(minutes: 1), () {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      icon: const Icon(Icons.check_circle_outline, color: NlColors.teal, size: 36),
+      title: Text(widget.title),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [for (final l in widget.lines) Text(l)],
+      ),
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
     );
   }
 }

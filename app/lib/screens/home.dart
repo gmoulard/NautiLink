@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
 import '../main.dart';
@@ -47,8 +48,13 @@ class HomeScreen extends StatelessWidget {
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.timer_outlined, color: NlColors.teal),
-                    title: Text('${fmtDuration(Duration(minutes: left))} de navigation gratuite disponibles'),
-                    subtitle: const Text('sur les 7 derniers jours glissants'),
+                    // RG-ECO-10 : lien vers « Quota et abonnement ».
+                    title: const Text(
+                      'Version gratuite - abonnement',
+                      style: TextStyle(fontWeight: FontWeight.w700, decoration: TextDecoration.underline),
+                    ),
+                    subtitle: Text('${fmtDuration(Duration(minutes: left))} de navigation gratuite disponibles sur les 7 derniers jours'),
+                    trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
                   ),
                 ),
@@ -275,6 +281,13 @@ class QuotaScreen extends StatelessWidget {
               title: Text('Abonnement'),
               subtitle: Text('Navigation sans limite, au mois ou à l\'année. Prix à venir. Suivre et consulter l\'historique restent gratuits.'),
             ),
+          ),
+          const SizedBox(height: 12),
+          // RG-ECO-10 : page d'information sur l'abonnement du site.
+          OutlinedButton.icon(
+            icon: const Icon(Icons.open_in_new),
+            label: const Text('En savoir plus sur l\'abonnement'),
+            onPressed: () => launchUrl(Uri.parse(subscriptionInfoUrl), mode: LaunchMode.externalApplication),
           ),
         ],
       ),
