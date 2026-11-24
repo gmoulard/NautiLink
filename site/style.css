@@ -97,6 +97,11 @@ ol.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: .45rem; }
 code { font-size: .9em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 0 .25rem; }
 .legal .note { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--beta); border-radius: 12px; padding: 1rem 1.2rem; }
 
+.sponsor { background: #FFFFFF; color: #1E3296; border-top: 4px solid #F8D818; }
+.sponsor .wrap { display: flex; align-items: center; gap: .9rem; padding-block: 1rem; flex-wrap: wrap; }
+.sponsor img { height: 44px; width: auto; }
+.sponsor p { font-weight: 600; }
+.sponsor a { color: #1E3296; }
 footer { background: var(--navy); color: #C9DCE8; font-size: .9rem; }
 footer .wrap { padding-block: 2rem; display: grid; gap: .6rem; }
 footer a { color: var(--aqua); }
