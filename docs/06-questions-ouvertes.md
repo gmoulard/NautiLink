@@ -71,11 +71,13 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Question : la navigation en cours et les positions automatiques reprennent-elles seules après un redémarrage du téléphone ou une fermeture forcée de l'application ?
 - Proposition : oui, l'enregistrement reprend automatiquement et l'écran de navigation s'ouvre au lancement suivant.
+- Éléments techniques Android : [gps-arriere-plan-android.md](etudes/gps-arriere-plan-android.md) §3.
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
 
 - Priorité : bloquant.
 - Étude : enregistrement GPS application en arrière-plan ou écran éteint, consommation de batterie, comportement selon les marques et versions d'Android, et sur iPhone (localisation en arrière-plan, règles de l'App Store).
+- Étude documentaire Android : [gps-arriere-plan-android.md](etudes/gps-arriere-plan-android.md).
 
 ### <a id="q-10"></a>Q-10 — File d'attente et doublons
 
