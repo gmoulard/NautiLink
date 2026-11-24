@@ -1,0 +1,31 @@
+# NautiLink sur pi-appliance, à installer par « Docker Compose libre » (D-62).
+#
+# À la date de ce fichier, pi-appliance ne sait pas encore :
+#   - publier un Docker Compose libre sous un chemin (TODO-2.72 de pi-appliance) ;
+#   - ouvrir son PostgreSQL aux autres services (TODO-2.73) ;
+#   - offrir un relais d'e-mails aux services (TODO-2.74) ;
+#   - rediriger nautilink.moulard.org vers vdl.moulard.org/nautilink/ (TODO-3.18).
+# Les valeurs marquées « À RÉGLER » seront données par la console une fois ces
+# fonctions faites. Aucun mot de passe dans ce fichier : la console les pose.
+services:
+  nautilink:
+    image: ghcr.io/gmoulard/nautilink-serveur:latest
+    restart: unless-stopped
+    environment:
+      NAUTILINK_ADRESSE: ":8080"
+      # Chemin sous lequel pi-appliance publie le service (Traefik le garde).
+      NAUTILINK_CHEMIN: "/nautilink"
+      # À RÉGLER (TODO-2.73) : postgres://<compte>:<mot de passe>@<hôte>:5432/<base>
+      NAUTILINK_BASE: "${NAUTILINK_BASE:-}"
+      # À RÉGLER (TODO-2.74) : hôte du relais d'e-mails de pi-appliance.
+      NAUTILINK_SMTP_HOTE: "${NAUTILINK_SMTP_HOTE:-}"
+      NAUTILINK_SMTP_PORT: "25"
+      NAUTILINK_EXPEDITEUR: "nautilink@moulard.org"
+    ports:
+      - "8080"
+    mem_limit: 128m
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

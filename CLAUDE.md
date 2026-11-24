@@ -19,6 +19,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Demandes en vrac de l'utilisateur | `docs/Todo-ithem-for-todo.md` |
 | Textes affichés aux utilisateurs (avertissement bêta) | `docs/textes/` |
 | Prototype de démonstration (Flutter : Android, iPhone, Web) | `app/` (`lib/`, `test/`), voir `app/README.md` ; Flutter 3.47.9 |
+| Serveur central (Go, hébergé sur pi-appliance, D-62) | `server/`, voir `server/README.md` ; image publiée par `.github/workflows/serveur.yml` |
 | Site de présentation (GitHub Pages) | `site/` (`index.html`, `telecharger.html`, `securite.html`, `avertissement.html`, `style.css`), publié par `.github/workflows/pages.yml` |
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
@@ -63,6 +64,8 @@ Dans un même commit :
 ## Vérifications avant commit
 
 Prototype (`app/`) : `flutter analyze` et `flutter test` sans erreur.
+
+Serveur (`server/`) : `gofmt -l .` vide, `go vet ./...` et `go test ./...` sans erreur.
 
 
 ```bash

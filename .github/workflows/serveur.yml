@@ -1,0 +1,64 @@
+name: Serveur
+
+# Teste le serveur Go (server/) et publie son image arm64 + amd64 sur
+# ghcr.io/gmoulard/nautilink-serveur (D-62, TODO-3.7) :
+#   :latest, :<sha court>   à chaque push sur main qui touche server/
+# Les pull requests sont seulement testées.
+on:
+  push:
+    branches: [main]
+    paths: ["server/**", ".github/workflows/serveur.yml"]
+  pull_request:
+    paths: ["server/**", ".github/workflows/serveur.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: serveur-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+      - run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+      - run: go vet ./...
+      - run: go test ./...
+
+  image:
+    needs: tests
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: sha
+        run: echo "court=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        with:
+          context: server
+          platforms: linux/arm64,linux/amd64
+          push: true
+          build-args: VERSION=${{ steps.sha.outputs.court }}
+          tags: |
+            ghcr.io/gmoulard/nautilink-serveur:latest
+            ghcr.io/gmoulard/nautilink-serveur:${{ steps.sha.outputs.court }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

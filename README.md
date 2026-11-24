@@ -31,6 +31,7 @@ Site : https://gmoulard.github.io/NautiLink/ (page « Télécharger » : APK And
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
 | [`app/`](app/) | Prototype de démonstration Flutter (Android, iPhone, Web), voir son [README](app/README.md). |
+| [`server/`](server/) | Serveur central en Go (squelette, TODO-3.7), image Docker et `compose.yaml` pour pi-appliance, voir son [README](server/README.md). |
 | [`site/`](site/) | Site de présentation publié sur GitHub Pages (accueil, mémo sécurité en mer, avertissement), par le workflow `.github/workflows/pages.yml`. |
 
 ## Statut des informations
