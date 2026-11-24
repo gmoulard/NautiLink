@@ -24,7 +24,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-12 | Web : consultation des navigations | TODO-6.1, TODO-6.2, TODO-6.3, TODO-6.4 | LOT-7, LOT-9 | [ ] |
 | LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7 | LOT-12 | [ ] |
 | LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [ ] |
-| LOT-15 | Marque et publication Android | TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4 | LOT-3, LOT-11 | [ ] |
+| LOT-15 | Marque et publication Android | TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5 | LOT-3, LOT-11 | [~] |
 | LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7 | LOT-11, LOT-13, LOT-15 | [ ] |
 | LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3, TODO-9.4 | LOT-13, LOT-14 | [ ] |
 
@@ -152,6 +152,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : recherche d'antériorité faite, domaines et comptes réservés.
 - [ ] **TODO-8.3**: Conditions d'utilisation, politique de confidentialité et [avertissement bêta](textes/avertissement-beta.md) relus par un juriste (RG-DON-03, D-56). Dépend de : TODO-1.17.
   - Critères d'acceptation : textes publiés sur le Web et accessibles depuis Android.
+- [~] **TODO-8.5**: Site de présentation sur GitHub Pages : accueil, mémo sécurité en mer, avertissement bêta (`site/`, D-56). Dépend de : aucune.
+  - Critères d'acceptation : site en ligne à l'adresse GitHub Pages du dépôt ; contenu cohérent avec la spécification ; mémo sécurité relu par l'utilisateur.
+  - Fait : trois pages et le workflow de déploiement (2026-11-24). Reste : activer GitHub Pages (Settings → Pages → Source : GitHub Actions), vérifier le site en ligne, relecture.
 - [ ] **TODO-8.4**: Publication sur Google Play. Dépend de : TODO-2.1, TODO-5.1 à TODO-5.8, TODO-8.3.
   - Critères d'acceptation : application acceptée par Google Play avec les autorisations SMS et localisation en arrière-plan.
 
