@@ -19,6 +19,7 @@ Ce dépôt contient la **spécification fonctionnelle**, le **site de présentat
 | Démonstration Web (installable sur l'écran d'accueil) | <https://gmoulard.github.io/NautiLink/app/> |
 | Version gratuite et abonnement | <https://gmoulard.github.io/NautiLink/abonnement.html> |
 | Propositions de design (11 maquettes) | <https://gmoulard.github.io/NautiLink/designs/> |
+| Maquettes de l'application Android et Web (design « Radar de pluie ») | <https://gmoulard.github.io/NautiLink/designs/app.html> |
 | Variantes du design « Météo marine » (10 maquettes) | <https://gmoulard.github.io/NautiLink/designs/meteo.html> |
 | Mémo sécurité en mer | <https://gmoulard.github.io/NautiLink/securite.html> |
 | Avertissement bêta | <https://gmoulard.github.io/NautiLink/avertissement.html> |

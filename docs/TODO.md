@@ -76,8 +76,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : document d'architecture dans `docs/`, schéma Mermaid, choix validés par l'utilisateur.
 - [ ] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-3.1.
   - Critères d'acceptation : description de l'API (OpenAPI) couvrant chaque règle `RG-…` qui passe par le serveur.
-- [ ] **TODO-3.3**: Maquettes Android et Web ([Q-30](06-questions-ouvertes.md#q-30)). Dépend de : aucune.
+- [~] **TODO-3.3**: Maquettes Android et Web ([Q-30](06-questions-ouvertes.md#q-30)). Dépend de : aucune.
   - Critères d'acceptation : un écran par section des §5 et §6 du cahier des charges, thèmes clair et sombre, validés par l'utilisateur.
+  - Fait (2026-11-24) : [maquettes Android et Web](../site/designs/app.html) en design « Radar de pluie » : 9 écrans Android (accueil, démarrage, navigation, résultat d'envoi, bateau immobile, confirmation et résultat du SOS, quota, contacts) et 2 écrans Web (tableau de bord, suivi d'une navigation), avec les règles illustrées. Reste : thème sombre, écrans manquants (paramètres, bateaux, corbeille, administration), validation par l'utilisateur.
 - [ ] **TODO-3.4**: Environnements de développement, de test et de production ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-3.1.
   - Critères d'acceptation : trois environnements décrits ; déploiement de test reproductible.
 - [~] **TODO-3.6**: Prototype de démonstration en Flutter, données d'exemple, sans serveur (`app/`, D-57, D-58). Dépend de : aucune.
