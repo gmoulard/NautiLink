@@ -184,8 +184,9 @@ Construite après l'application Android et le Web (D-33).
 
 - [!] **TODO-10.1**: Notifications push du suiveur sur iPhone ([Q-33](06-questions-ouvertes.md#q-33), RG-IOS-06). Dépend de : aucune.
   - Critères d'acceptation : choix de l'utilisateur tracé en `D-nn`, règle écrite, question retirée. Bloqué par : décision de l'utilisateur.
-- [ ] **TODO-10.2**: Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store ([Q-09](06-questions-ouvertes.md#q-09), [Q-31](06-questions-ouvertes.md#q-31)). Dépend de : aucune.
+- [~] **TODO-10.2**: Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store ([Q-09](06-questions-ouvertes.md#q-09), [Q-31](06-questions-ouvertes.md#q-31)). Dépend de : aucune.
   - Critères d'acceptation : prototype qui enregistre une position toutes les 3 minutes pendant 8 heures, écran verrouillé, sur deux modèles d'iPhone ; autorisations et règles de l'App Store citées.
+  - Fait : [étude documentaire](etudes/localisation-arriere-plan-iphone.md) (mode d'arrière-plan, autorisations, pause automatique, règles 2.4.2, 2.5.4, 5.1.1 et 5.1.5 de l'App Store citées, reprise). Reste : prototype de 8 heures sur deux modèles d'iPhone ; risque de la règle 5.1.5 (services d'urgence) pour le SOS à traiter.
 - [ ] **TODO-10.3**: Navigateur sur iPhone, sans SMS : accueil, démarrage, positions, NOTE, Photo, Vocal, fin, contacts, paramètres (RG-IOS-01, RG-IOS-02, RG-IOS-04). Dépend de : TODO-5.1 à TODO-5.7, TODO-10.2.
   - Critères d'acceptation : mêmes essais que l'application Android sur un vrai iPhone ; aucun SMS envoyé ; avertissement de démarrage avec la liste des contacts SOS sans e-mail.
 - [ ] **TODO-10.4**: SOS sur iPhone par Internet (RG-IOS-03). Dépend de : TODO-10.3, TODO-4.7.

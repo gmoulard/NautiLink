@@ -18,6 +18,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Demandes en vrac de l'utilisateur | `docs/Todo-ithem-for-todo.md` |
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
+| Localisation en arrière-plan sur iPhone, App Store | `docs/etudes/localisation-arriere-plan-iphone.md` |
 
 ## Ordre de priorité en cas d'écart
 

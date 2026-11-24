@@ -23,6 +23,7 @@ Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas enco
 | [`docs/Todo-ithem-for-todo.md`](docs/Todo-ithem-for-todo.md) | Demandes notées en vrac, à reporter dans le TODO. |
 | [`docs/etudes/sms-mms-android.md`](docs/etudes/sms-mms-android.md) | Étude : envoi de SMS et MMS sur Android, règles Google Play, voies possibles. |
 | [`docs/etudes/gps-arriere-plan-android.md`](docs/etudes/gps-arriere-plan-android.md) | Étude : GPS en arrière-plan sur Android, batterie, constructeurs, reprise après redémarrage. |
+| [`docs/etudes/localisation-arriere-plan-iphone.md`](docs/etudes/localisation-arriere-plan-iphone.md) | Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
 
 ## Statut des informations

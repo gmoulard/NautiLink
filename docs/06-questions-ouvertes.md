@@ -78,6 +78,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Étude : enregistrement GPS application en arrière-plan ou écran éteint, consommation de batterie, comportement selon les marques et versions d'Android, et sur iPhone (localisation en arrière-plan, règles de l'App Store).
 - Étude documentaire Android : [gps-arriere-plan-android.md](etudes/gps-arriere-plan-android.md).
+- Étude documentaire iPhone : [localisation-arriere-plan-iphone.md](etudes/localisation-arriere-plan-iphone.md).
 
 ### <a id="q-10"></a>Q-10 — File d'attente et doublons
 
