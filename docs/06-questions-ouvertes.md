@@ -91,6 +91,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant, à étudier en premier.
 - Étude : Google Play restreint fortement la permission d'envoyer des SMS aux applications qui ne sont pas l'application SMS par défaut. Vérifier si NautiLink peut obtenir une exception, ou prévoir une alternative (ouverture de l'application SMS préremplie, distribution hors Play Store). Tout le circuit SMS en dépend.
+- Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md) (voies possibles §3).
 
 ### <a id="q-13"></a>Q-13 — MMS
 

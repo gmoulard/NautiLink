@@ -67,8 +67,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 ## 2. Études techniques
 
-- [ ] **TODO-2.1**: **À faire en premier.** Envoi de SMS par une application Android publiée sur Google Play ([Q-12](06-questions-ouvertes.md#q-12), RG-COM-01). Tout le circuit SMS en dépend, SOS compris. Dépend de : aucune.
+- [~] **TODO-2.1**: **À faire en premier.** Envoi de SMS par une application Android publiée sur Google Play ([Q-12](06-questions-ouvertes.md#q-12), RG-COM-01). Tout le circuit SMS en dépend, SOS compris. Dépend de : aucune.
   - Critères d'acceptation : règles actuelles de Google Play sur la permission SMS lues et citées ; voie retenue par l'utilisateur (exception demandée, application SMS préremplie, distribution hors Play Store…) et écrite dans les règles métier.
+  - Fait : [étude documentaire](etudes/sms-mms-android.md) (règles Google Play, voies A à D, API `SmsManager`). Reste : relire en entier les pages d'aide Google Play (inaccessibles lors de la rédaction) ; choix de la voie par l'utilisateur, puis règles métier et `D-nn`.
 - [ ] **TODO-2.2**: GPS en arrière-plan, écran éteint, et consommation de batterie ([Q-09](06-questions-ouvertes.md#q-09), RG-GPS-03). Dépend de : aucune.
   - Critères d'acceptation : prototype qui enregistre une position toutes les 3 minutes pendant 8 heures, écran éteint, sur au moins trois marques de téléphones (dont Samsung et Xiaomi) ; positions manquantes et batterie consommée notées.
 - [ ] **TODO-2.3**: Autorisations Android et versions visées ([Q-31](06-questions-ouvertes.md#q-31)). Dépend de : TODO-2.1, TODO-2.2.
