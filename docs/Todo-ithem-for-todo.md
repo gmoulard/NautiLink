@@ -11,5 +11,4 @@ appli web
 - dans la log de nav il faut pouvoir consulter mes notes, photo et vocal
 - dans laog, les position gps doivent être agrémenter du non du lieux.
 - mémoriser la meteo
-
--  
+- intégrer openseamap et les données gratuit du shom dans la page récap de la nav. 
