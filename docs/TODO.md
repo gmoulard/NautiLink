@@ -11,7 +11,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | Lot | Titre | Actions | Dépend de | État |
 |-----|-------|---------|-----------|------|
 | LOT-1 | Décisions sur les navigations et le partage | TODO-1.4, TODO-1.5, TODO-1.6, TODO-1.7, TODO-1.8, TODO-1.11, TODO-1.19 | aucun | [!] |
-| LOT-2 | Décisions sur les notifications, le quota et l'abonnement | TODO-1.12, TODO-1.13, TODO-1.14, TODO-10.1 | aucun | [!] |
+| LOT-2 | Décisions sur les notifications, le quota et l'abonnement | TODO-1.12, TODO-1.13, TODO-1.14, TODO-10.1, TODO-1.20 | aucun | [!] |
 | LOT-3 | Décisions sur l'administration, les données et la conformité | TODO-1.15, TODO-1.16, TODO-1.17 | aucun | [!] |
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
@@ -42,12 +42,10 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur, éclairée par l'étude TODO-2.2.
 - [!] **TODO-1.10**: Nouvelles tentatives et affichage des échecs d'envoi des SMS, SOS compris ([Q-11](06-questions-ouvertes.md#q-11), RG-SMS-07). Dépend de : TODO-2.1.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.12**: Liste des notifications par e-mail, fréquence, désinscription ([Q-16](06-questions-ouvertes.md#q-16), RG-NOT-02). Dépend de : aucune.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.13**: Présentation du quota dans les interfaces ([Q-18](06-questions-ouvertes.md#q-18), RG-ECO-09). Dépend de : aucune.
-  - Critères d'acceptation : communs, plus une maquette de l'écran quota (TODO-3.3). Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.14**: Formules, tarifs et règles de l'abonnement ([Q-17](06-questions-ouvertes.md#q-17), RG-ECO-06, RG-ECO-07). Dépend de : aucune.
+- [!] **TODO-1.14**: Prix et règles de paiement de l'abonnement ([Q-17](06-questions-ouvertes.md#q-17), RG-ECO-06, RG-ECO-07). Tranché le 2026-11-24 : une seule formule, mensuelle ou annuelle, sans essai (D-43). Dépend de : aucune.
   - Critères d'acceptation : communs, dans le modèle économique. Bloqué par : décision de l'utilisateur.
+- [!] **TODO-1.20**: Seuil d'une position en retard ([Q-35](06-questions-ouvertes.md#q-35), RG-IOS-06). Dépend de : aucune.
+  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
 - [!] **TODO-1.15**: Profils d'administrateurs et traçabilité ([Q-19](06-questions-ouvertes.md#q-19), RG-ADM-03). Dépend de : aucune.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
 - [!] **TODO-1.16**: Conservation des données, sauvegardes, export des données personnelles ([Q-20](06-questions-ouvertes.md#q-20), RG-DON-02). Dépend de : TODO-1.17.
@@ -174,8 +172,6 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 Construite après l'application Android et le Web (D-33).
 
-- [!] **TODO-10.1**: Notifications push du suiveur sur iPhone ([Q-33](06-questions-ouvertes.md#q-33), RG-IOS-06). Dépend de : aucune.
-  - Critères d'acceptation : choix de l'utilisateur tracé en `D-nn`, règle écrite, question retirée. Bloqué par : décision de l'utilisateur.
 - [~] **TODO-10.2**: Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store ([Q-09](06-questions-ouvertes.md#q-09), [Q-31](06-questions-ouvertes.md#q-31)). Dépend de : aucune.
   - Critères d'acceptation : prototype qui enregistre une position toutes les 3 minutes pendant 8 heures, écran verrouillé, sur deux modèles d'iPhone ; autorisations et règles de l'App Store citées.
   - Fait : [étude documentaire](etudes/localisation-arriere-plan-iphone.md) (mode d'arrière-plan, autorisations, pause automatique, règles 2.4.2, 2.5.4, 5.1.1 et 5.1.5 de l'App Store citées, reprise). Reste : prototype de 8 heures sur deux modèles d'iPhone ; risque de la règle 5.1.5 (services d'urgence) pour le SOS à traiter.
@@ -183,7 +179,7 @@ Construite après l'application Android et le Web (D-33).
   - Critères d'acceptation : mêmes essais que l'application Android sur un vrai iPhone ; aucun SMS envoyé ; avertissement de démarrage avec la liste des contacts SOS sans e-mail.
 - [ ] **TODO-10.4**: SOS sur iPhone par Internet (RG-IOS-03). Dépend de : TODO-10.3, TODO-4.7.
   - Critères d'acceptation : e-mails et notifications push reçus ; en mode avion, message clair puis envoi automatique au retour de la connexion.
-- [ ] **TODO-10.5**: Suiveur sur iPhone et notifications push (RG-IOS-05, RG-IOS-06). Dépend de : TODO-6.2, TODO-10.1.
+- [ ] **TODO-10.5**: Suiveur sur iPhone et notifications push (RG-IOS-05, RG-IOS-06). Dépend de : TODO-6.2, TODO-10.1, TODO-1.20.
   - Critères d'acceptation : navigation suivie en direct avec la carte ; notification push d'un SOS reçue application fermée.
 - [ ] **TODO-10.6**: Abonnement par achat intégré de l'App Store (RG-IOS-07). Dépend de : TODO-4.6, TODO-1.14.
   - Critères d'acceptation : abonnement souscrit sur l'iPhone reconnu sur Android et le Web.

@@ -60,3 +60,12 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-38"></a>D-38 | Informations modifiables | Ancienne question 24. | Nom, destination, bateau, heures de début et de fin. | RG-NAV-17, RG-NAV-22 |
 | <a id="d-39"></a>D-39 | Avant la clôture automatique | Ancienne question 32. | Avertissement à l'épuisement et 1 h avant, à l'écran et par notification. | RG-ECO-05 |
 | <a id="d-40"></a>D-40 | Photos | Ancienne question 15. | 20 photos par navigation au plus, environ 1 Mo chacune. | RG-JRN-08 |
+
+## 2026-11-24 — Décisions du lot 2 (notifications, quota, abonnement)
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-41"></a>D-41 | E-mails | Ancienne question 16. | En plus de l'invitation, de l'accès et du SOS : e-mail de début de navigation aux suiveurs, désinscription possible. | RG-NOT-02 |
+| <a id="d-42"></a>D-42 | Affichage du quota | Ancienne question 18. | Écran « Quota et abonnement » et résumé sur l'accueil. | RG-ECO-09 |
+| <a id="d-43"></a>D-43 | Formule d'abonnement | Q-17, en partie. | Une seule formule, mensuelle ou annuelle, sans période d'essai. | RG-ECO-06 |
+| <a id="d-44"></a>D-44 | Notifications push iPhone | Ancienne question 33. | SOS, début, fin, nouvelle photo, position en retard ; chaque type désactivable sauf le SOS. | RG-IOS-06 |

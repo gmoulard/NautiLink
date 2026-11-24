@@ -1,6 +1,6 @@
 # NautiLink — Modèle économique
 
-Statut : principes validés, formules et tarifs à définir ([Q-17](06-questions-ouvertes.md#q-17)).
+Statut : principes validés, une seule formule mensuelle ou annuelle sans essai ; prix à définir ([Q-17](06-questions-ouvertes.md#q-17)).
 
 Les règles opposables sont RG-ECO-01 à RG-ECO-09 dans [02-regles-metier.md](02-regles-metier.md). Ce document en explique l'intention.
 
@@ -28,7 +28,9 @@ Exemple : un navigateur navigue 10 h le lundi à partir de 9 h et 14 h le mercre
 
 L'abonnement lève la limite pour le compte (RG-ECO-06). Il se souscrit sur Google Play, sur l'App Store ou sur le Web ; le serveur tient un seul état d'abonnement par compte (RG-ECO-07).
 
-À définir ([Q-17](06-questions-ouvertes.md#q-17)) : prix, nombre et contenu des formules, limites éventuelles, périodicité, moyens de paiement, renouvellement et résiliation, période d'essai, paiements échoués, changement de formule.
+Une seule formule, sans autre contenu que la navigation sans limite, payée au mois ou à l'année ; pas de période d'essai, le quota gratuit en tient lieu (RG-ECO-06).
+
+À définir ([Q-17](06-questions-ouvertes.md#q-17)) : prix mensuel et annuel, moyens de paiement sur le Web, renouvellement et résiliation, paiements échoués.
 
 ## 5. Toujours gratuit
 
@@ -48,5 +50,5 @@ L'abonnement ne conditionne jamais l'accès aux données déjà enregistrées (R
 ## 6. Exigences pour l'application
 
 - Le quota est calculé par le serveur, pour être identique sur tous les appareils (RG-ECO-09).
-- Les applications mobiles et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement (RG-ECO-09 ; présentation : [Q-18](06-questions-ouvertes.md#q-18)).
+- Les applications mobiles et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement sur un écran « Quota et abonnement » et en résumé sur l'accueil (RG-ECO-09).
 - Le temps de suivi n'est jamais compté (RG-ECO-03).

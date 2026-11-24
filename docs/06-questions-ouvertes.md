@@ -8,11 +8,11 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 ## 1. Questions fonctionnelles
 
-### <a id="q-33"></a>Q-33 — Notifications push sur iPhone
+### <a id="q-35"></a>Q-35 — Position en retard
 
 - Priorité : avant l'application iPhone.
-- Question : en plus du SOS (RG-IOS-06), quels événements déclenchent une notification push au suiveur (début et fin de navigation, nouvelle photo, retard de position) ? Peut-il les régler ?
-- Proposition : début, fin et SOS ; chaque type désactivable sauf le SOS.
+- Question : à partir de quand une position est-elle « en retard » et déclenche-t-elle une notification push au suiveur (RG-IOS-06) ?
+- Proposition : aucune position reçue pendant deux fois la fréquence de la navigation, une seule notification jusqu'à la position suivante.
 
 ### <a id="q-34"></a>Q-34 — Changer les heures d'une navigation
 
@@ -20,20 +20,11 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Question : si le navigateur change les heures de début ou de fin (RG-NAV-22), le quota est-il recalculé, et que deviennent les positions et événements hors de la nouvelle plage ?
 - Proposition : le quota reste calculé sur les heures réellement enregistrées par le téléphone ; les positions et événements hors plage sont gardés mais masqués du tracé.
 
-### <a id="q-16"></a>Q-16 — Notifications
-
-- Priorité : lancement.
-- Question : liste complète des événements qui envoient un e-mail (début de navigation aux suiveurs ? fin ? quota épuisé ?), fréquence, désinscription.
-
-### <a id="q-18"></a>Q-18 — Présentation du quota
-
-- Priorité : lancement.
-- Question : écrans et formulation du temps consommé, du temps disponible et des minutes récupérables.
-
 ### <a id="q-17"></a>Q-17 — Formules d'abonnement
 
 - Priorité : lancement.
-- Question : prix, nombre et contenu des formules, limites, périodicité, moyens de paiement, renouvellement et résiliation, période d'essai, paiements échoués, changement de formule, cohérence entre Google Play et le Web.
+- Décidé (D-43) : une seule formule, mensuelle ou annuelle, sans période d'essai.
+- Question : prix mensuel et annuel, moyens de paiement sur le Web, renouvellement et résiliation, paiements échoués, cohérence entre Google Play, l'App Store et le Web.
 
 ### <a id="q-19"></a>Q-19 — Administration
 

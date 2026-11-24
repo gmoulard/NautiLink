@@ -20,7 +20,13 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.7**: Informations modifiables d'une navigation (2026-11-24, D-38).
 - [x] **TODO-1.8**: Avertissement avant la clôture automatique (2026-11-24, D-39).
 - [x] **TODO-1.11**: Photos : 20 par navigation, environ 1 Mo (2026-11-24, D-40).
+- [x] **TODO-1.12**: Notifications par e-mail (2026-11-24, D-41).
+- [x] **TODO-1.13**: Affichage du quota (2026-11-24, D-42).
 
 ## 9. Évolutions futures
 
 - [x] **TODO-9.4**: ~~Application iOS.~~ Retiré le 2026-11-24 : l'application iPhone entre dans le périmètre (D-31), voir la section 10 du TODO.
+
+## 10. Étape 5 — iPhone (15)
+
+- [x] **TODO-10.1**: Notifications push du suiveur sur iPhone (2026-11-24, D-44).
