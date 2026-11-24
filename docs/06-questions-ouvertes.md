@@ -14,6 +14,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Question : avec des SMS ordinaires préremplis (RG-SMS-03), un SMS de position automatique demanderait un appui toutes les N minutes, et l'application ne voit pas si un SMS prérempli est parti (nouvelles tentatives de RG-SMS-07). Que faire ?
 - Proposition : les positions automatiques ne partent plus par SMS, seulement au serveur ; les nouvelles tentatives ne concernent que les SMS SOS.
 
+### <a id="q-38"></a>Q-38 — Proposition de fin après « Continuer »
+
+- Priorité : avant la version réelle.
+- Question : quand le navigateur répond « Continuer » à la proposition de terminer une navigation immobile (RG-NAV-24), quand l'application la propose-t-elle de nouveau ?
+- Proposition : après 2 nouvelles heures sans éloignement de plus de 20 mètres.
+
 ### <a id="q-35"></a>Q-35 — Position en retard
 
 - Priorité : avant l'application iPhone.

@@ -25,16 +25,17 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-nav-02"></a>**RG-NAV-02** — Au démarrage, le navigateur choisit le bateau. Si le téléphone n'est associé qu'à un seul bateau, ce choix n'est pas affiché ([D-12](07-decisions.md#d-12)).
 - <a id="rg-nav-03"></a>**RG-NAV-03** — Un bateau a au plus une navigation en cours. Un téléphone a au plus une navigation en cours.
 - <a id="rg-nav-04"></a>**RG-NAV-04** — La destination est facultative. Elle se saisit en texte (adresse ou lieu) ou en choisissant un point sur une carte ([D-06](07-decisions.md#d-06)).
-- <a id="rg-nav-05"></a>**RG-NAV-05** — La fréquence est préremplie avec la valeur des paramètres généraux et peut être changée au démarrage pour cette navigation seulement. Valeurs possibles : 3, 4, 5, 10, 15, 30 minutes, 1 heure ([D-05](07-decisions.md#d-05)).
+- <a id="rg-nav-05"></a>**RG-NAV-05** — La fréquence est préremplie avec la valeur des paramètres généraux et peut être changée au démarrage pour cette navigation seulement. Valeurs possibles : 15 minutes, 30 minutes, 1 heure, 2 heures, 3 heures, 6 heures, 12 heures, 1 jour, 2 jours, 10 jours ([D-63](07-decisions.md#d-63)).
 - <a id="rg-nav-06"></a>**RG-NAV-06** — Le bouton « Paramètres » de l'écran de démarrage modifie les paramètres de cette navigation seulement. Les paramètres généraux ne changent pas et sont repris à la navigation suivante.
 - <a id="rg-nav-07"></a>**RG-NAV-07** — Le démarrage est refusé si le quota gratuit est épuisé et que le compte n'a pas d'abonnement actif ([RG-ECO-04](#rg-eco-04)).
 - <a id="rg-nav-08"></a>**RG-NAV-08** — À la confirmation du démarrage (« Envoi message – Début de navigation ») : enregistrement de la date et de l'heure de début, acquisition d'une position, envoi au serveur par API, SMS de début si les paramètres le prévoient, activation des positions automatiques.
 - <a id="rg-nav-23"></a>**RG-NAV-23** — Avant le premier démarrage d'une navigation sur un téléphone, l'application affiche les points 1 et 2 de l'[avertissement bêta](textes/avertissement-beta.md) (version bêta, pas un équipement de sécurité : alerter d'abord par le canal 16 ou le 196) ; le navigateur confirme avec « J'ai compris » avant de continuer ([D-56](07-decisions.md#d-56)).
+- <a id="rg-nav-24"></a>**RG-NAV-24** — Si les positions montrent que le navigateur ne s'est pas éloigné de plus de 20 mètres pendant 2 heures, l'application lui propose de terminer la navigation (« Terminer la navigation » ou « Continuer ») ; elle ne la termine jamais d'elle-même ([D-66](07-decisions.md#d-66)). Nouvelle proposition après « Continuer » : [Q-38](06-questions-ouvertes.md#q-38).
 
 ### 2.2 Pendant la navigation
 
 - <a id="rg-nav-09"></a>**RG-NAV-09** — Aucune carte n'est affichée sur l'écran de navigation de l'application mobile. La seule carte de l'écran du navigateur est celle du choix de la destination ; le suivi sur iPhone affiche une carte ([RG-IOS-05](#rg-ios-05)).
-- <a id="rg-nav-10"></a>**RG-NAV-10** — L'écran de navigation affiche deux chronomètres : temps écoulé depuis le début, temps écoulé depuis le dernier envoi.
+- <a id="rg-nav-10"></a>**RG-NAV-10** — L'écran de navigation affiche deux chronomètres : temps écoulé depuis le début, temps écoulé depuis le dernier envoi. Tout envoi réussi par au moins un circuit (position, note, photo, note vocale) remet ce second chronomètre à zéro ([D-64](07-decisions.md#d-64)).
 - <a id="rg-nav-11"></a>**RG-NAV-11** — Positions automatiques et positions manuelles coexistent pendant une même navigation.
 - <a id="rg-nav-12"></a>**RG-NAV-12** — « Reprendre la dernière navigation » rouvre l'écran de la navigation en cours du téléphone. Après une fermeture forcée ou un redémarrage du téléphone, la navigation reste en cours ; les positions automatiques reprennent quand le navigateur rouvre l'application. Après un redémarrage, une notification l'invite à la rouvrir ([D-51](07-decisions.md#d-51)).
 
@@ -77,7 +78,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 - <a id="rg-com-01"></a>**RG-COM-01** — Deux circuits indépendants : le circuit Internet (API HTTPS vers le serveur) et le circuit SMS (SMS et MMS par la carte SIM du téléphone, sans prestataire externe). Le circuit SMS n'existe que sur Android ([RG-IOS-02](#rg-ios-02)).
 - <a id="rg-com-02"></a>**RG-COM-02** — L'échec ou l'indisponibilité d'un circuit n'empêche jamais de tenter l'autre. Le GPS ne dépend d'aucun des deux.
-- <a id="rg-com-03"></a>**RG-COM-03** — Chaque action de transmission (position, note, photo, note vocale, SOS, début, fin) affiche le résultat de chaque circuit (par exemple « Position envoyée »).
+- <a id="rg-com-03"></a>**RG-COM-03** — Chaque action de transmission (position, note, photo, note vocale, SOS, début, fin) affiche le résultat de chaque circuit (par exemple « Position envoyée ») dans une fenêtre avec un bouton « OK » ; la fenêtre se ferme seule au bout d'une minute ([D-65](07-decisions.md#d-65)).
 
 ## 6. SMS ordinaires
 
@@ -155,6 +156,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-eco-07"></a>**RG-ECO-07** — L'abonnement se souscrit sur Android (Google Play), sur iPhone (achat intégré de l'App Store, [D-34](07-decisions.md#d-34)) ou sur le Web. Le serveur tient un seul état d'abonnement par compte, quel que soit le canal ([D-21](07-decisions.md#d-21)).
 - <a id="rg-eco-08"></a>**RG-ECO-08** — Le suivi des navigations des autres et la consultation de l'historique (positions, traces, notes, notes vocales, photos, alertes SOS, journaux) sont gratuits, sans limite, avec ou sans abonnement.
 - <a id="rg-eco-09"></a>**RG-ECO-09** — Le quota est calculé par le serveur. Les applications mobiles et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement. Ces informations sont sur un écran « Quota et abonnement » et résumées sur l'écran d'accueil de l'application mobile et sur le tableau de bord Web ([D-42](07-decisions.md#d-42)).
+- <a id="rg-eco-10"></a>**RG-ECO-10** — L'écran d'accueil de l'application mobile porte un lien « Version gratuite - abonnement » vers l'écran « Quota et abonnement ». Cet écran porte un lien vers la page d'information sur l'abonnement du site de présentation ([D-67](07-decisions.md#d-67)).
 
 ## 12. Notifications
 

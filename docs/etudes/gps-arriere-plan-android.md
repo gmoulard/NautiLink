@@ -6,7 +6,7 @@ Action : [TODO-2.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.m
 
 ## 1. Besoin
 
-Pendant une navigation, le téléphone enregistre une position à la fréquence choisie (3, 4, 5, 10, 15, 30 minutes ou 1 heure, RG-NAV-05), application en arrière-plan ou écran éteint, que le serveur soit joignable ou non (RG-GPS-03). Une navigation peut durer plusieurs heures, voire plusieurs jours.
+Pendant une navigation, le téléphone enregistre une position à la fréquence choisie (de 15 minutes à 10 jours depuis D-63 ; 3 minutes au moment de cette étude, RG-NAV-05), application en arrière-plan ou écran éteint, que le serveur soit joignable ou non (RG-GPS-03). Une navigation peut durer plusieurs heures, voire plusieurs jours.
 
 ## 2. Ce que dit la documentation Android
 

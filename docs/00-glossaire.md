@@ -16,7 +16,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Position** | Coordonnées GPS horodatées à l'instant de leur acquisition par le téléphone. |
 | **Position automatique** | Position acquise et transmise à la fréquence de la navigation. |
 | **Position manuelle** | Position acquise et transmise à la demande du navigateur (« Envoyer information position »). |
-| **Fréquence** | Intervalle entre deux positions automatiques : 3, 4, 5, 10, 15, 30 minutes ou 1 heure. |
+| **Fréquence** | Intervalle entre deux positions automatiques : 15 minutes, 30 minutes, 1 heure, 2 heures, 3 heures, 6 heures, 12 heures, 1 jour, 2 jours, 10 jours ([RG-NAV-05](02-regles-metier.md#rg-nav-05)). |
 | **Journal de bord** | Liste chronologique des événements d'une navigation. |
 | **Événement** | Entrée du journal de bord : début, position, note, photo, note vocale, alerte SOS, fin, ajout complémentaire. |
 | **Note vocale** | Enregistrement audio conservé sur le serveur, accompagné de sa transcription texte ([D-07](07-decisions.md#d-07)). |

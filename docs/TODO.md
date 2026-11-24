@@ -16,7 +16,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
 | LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7 | LOT-4, LOT-5 | [ ] |
-| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6 | aucun | [~] |
+| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8 | aucun | [~] |
 | LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [ ] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [ ] |
@@ -52,7 +52,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Fait : [étude documentaire](etudes/sms-mms-android.md) (règles Google Play, voies A à D, API `SmsManager`). Reste : relire en entier les pages d'aide Google Play (inaccessibles lors de la rédaction) ; choix de la voie par l'utilisateur, puis règles métier et `D-nn`.
   - Tranché le 2026-11-24 (D-48) : exception « urgence » pour les SMS SOS, SMS ordinaires préremplis. Reste : vérifier l'exception sur la page officielle de Google Play.
 - [~] **TODO-2.2**: GPS en arrière-plan, écran éteint, et consommation de batterie ([Q-09](06-questions-ouvertes.md#q-09), RG-GPS-03). Dépend de : aucune.
-  - Critères d'acceptation : prototype qui enregistre une position toutes les 3 minutes pendant 8 heures, écran éteint, sur au moins trois marques de téléphones (dont Samsung et Xiaomi) ; positions manquantes et batterie consommée notées.
+  - Critères d'acceptation : prototype qui enregistre une position toutes les 15 minutes pendant 8 heures, écran éteint, sur au moins trois marques de téléphones (dont Samsung et Xiaomi) ; positions manquantes et batterie consommée notées.
   - Fait : [étude documentaire](etudes/gps-arriere-plan-android.md) (service de premier plan `location`, autorisations, Doze, constructeurs, reprise au redémarrage, protocole d'essai). Reste : prototype sur trois marques (dont Samsung et Xiaomi) avec mesures ; relire dontkillmyapp.com et la politique Google Play (inaccessibles lors de la rédaction).
   - Tranché le 2026-11-24 (D-51, D-52) : reprise au lancement, exclusion de l'optimisation de la batterie et aide par marque.
 - [ ] **TODO-2.3**: Autorisations Android et versions visées ([Q-31](06-questions-ouvertes.md#q-31)). Dépend de : TODO-2.1, TODO-2.2.
@@ -84,12 +84,14 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : démonstration Web en ligne sur le site ; APK Android de démonstration téléchargeable depuis le site et installé sur un vrai téléphone ; écrans conformes au cahier des charges §5 et §6 ; relu par l'utilisateur.
   - Fait (2026-11-24) : application Flutter dans `app/`, test de parcours et analyse sans erreur, démonstration Web vérifiée dans Chromium ; le workflow « Site GitHub Pages » construit la démonstration Web et l'APK et les publie avec le site. Reste : activer GitHub Pages, installer l'APK sur un vrai téléphone, relecture.
   - Ajouté (2026-11-24, D-61) : page « Télécharger » (`site/telecharger.html`), IPA iPhone non signé construit sur macOS, démonstration Web installable sur l'écran d'accueil, `SHA256SUMS.txt`. Reste : essai de l'IPA avec AltStore ou Sideloadly sur un vrai iPhone.
+- [ ] **TODO-3.8**: Demandes du 2026-11-24 sur l'application mobile (boîte de réception) : logo sans coins blancs, fréquences de 15 minutes à 10 jours (RG-NAV-05), chronomètre remis à zéro par tout envoi (RG-NAV-10), fenêtre de résultat avec « OK » fermée au bout d'une minute (RG-COM-03), proposition de fin si immobile 2 heures (RG-NAV-24), lien « Version gratuite - abonnement » et page d'information sur l'abonnement (RG-ECO-10). Dépend de : TODO-3.6.
+  - Critères d'acceptation : chaque point visible dans le prototype et sur le site, couvert par un test quand c'est possible ; relu par l'utilisateur.
 - [~] **TODO-3.7**: Squelette du serveur en Go déployé sur pi-appliance ([D-62](07-decisions.md#d-62)) : page d'accueil de la plateforme Web, point de santé de l'API, connexion à la base, image `arm64`, fichier `compose.yaml` pour « Docker Compose libre ». Dépend de : aucune pour le squelette ; publication sur internet : TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance.
   - Critères d'acceptation : service installé sur le Pi de `vdl.moulard.org`, page ouverte depuis un téléphone à `https://nautilink.moulard.org` (redirigée vers `https://vdl.moulard.org/nautilink/`), base PostgreSQL partagée jointe, e-mail d'essai reçu par le relais, service gardé après un redémarrage du Pi.
   - Fait (2026-11-24) : serveur Go dans `server/` (accueil, espace administrateur vide, `api/sante`, PostgreSQL par pgx, commande `mail-essai`, tests), image `ghcr.io/gmoulard/nautilink-serveur` construite par le workflow « Serveur », `server/compose.yaml` ; essayé sous Docker (arm64 et amd64 construits, base jointe puis arrêtée, renvoi vers `/nautilink/`). Reste : premier passage du workflow sur GitHub, puis installation sur le Pi une fois TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance faits.
 - [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
-  - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : scénarios pour les règles tranchées ou ajoutées le 2026-11-24 après leur écriture (RG-NAV-16, RG-NAV-22, RG-JRN-04, RG-JRN-08, RG-SMS-03, RG-SMS-05, RG-SMS-07, RG-GPS-05, RG-SOS-16, RG-DON-02, RG-DON-03, RG-ADM-03, RG-IOS-06, RG-IOS-08, RG-SMS-08, RG-NOT-03, RG-CPT-06, RG-CPT-07, RG-NAV-23) ; validation par l'utilisateur.
+  - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : scénarios pour les règles tranchées ou ajoutées le 2026-11-24 après leur écriture (RG-NAV-16, RG-NAV-22, RG-JRN-04, RG-JRN-08, RG-SMS-03, RG-SMS-05, RG-SMS-07, RG-GPS-05, RG-SOS-16, RG-DON-02, RG-DON-03, RG-ADM-03, RG-IOS-06, RG-IOS-08, RG-SMS-08, RG-NOT-03, RG-CPT-06, RG-CPT-07, RG-NAV-23, RG-NAV-24, RG-ECO-10, et RG-NAV-10, RG-COM-03 modifiées) ; validation par l'utilisateur.
 
 ## 4. Étape 1 — Serveur
 
@@ -179,7 +181,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 Construite après l'application Android et le Web (D-33).
 
 - [~] **TODO-10.2**: Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store ([Q-09](06-questions-ouvertes.md#q-09), [Q-31](06-questions-ouvertes.md#q-31)). Dépend de : aucune.
-  - Critères d'acceptation : prototype qui enregistre une position toutes les 3 minutes pendant 8 heures, écran verrouillé, sur deux modèles d'iPhone ; autorisations et règles de l'App Store citées.
+  - Critères d'acceptation : prototype qui enregistre une position toutes les 15 minutes pendant 8 heures, écran verrouillé, sur deux modèles d'iPhone ; autorisations et règles de l'App Store citées.
   - Fait : [étude documentaire](etudes/localisation-arriere-plan-iphone.md) (mode d'arrière-plan, autorisations, pause automatique, règles 2.4.2, 2.5.4, 5.1.1 et 5.1.5 de l'App Store citées, reprise). Reste : prototype de 8 heures sur deux modèles d'iPhone ; risque de la règle 5.1.5 (services d'urgence) pour le SOS à traiter.
   - Tranché le 2026-11-24 (D-54) : autorisation « Pendant l'utilisation ». Reste : prototype sur deux iPhone.
 - [ ] **TODO-10.3**: Navigateur sur iPhone, sans SMS : accueil, démarrage, positions, NOTE, Photo, Vocal, fin, contacts, paramètres (RG-IOS-01, RG-IOS-02, RG-IOS-04). Dépend de : TODO-5.1 à TODO-5.7, TODO-10.2.

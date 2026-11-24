@@ -117,3 +117,13 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Question | Décision | Règles |
 |----|-------|----------|----------|--------|
 | <a id="d-62"></a>D-62 | Hébergement du serveur | Ancienne question 37 : héberger NautiLink sur pi-appliance (demande de l'utilisateur du 2026-11-24). Complète D-59. | Le serveur central lui-même (API, plateforme Web, espace administrateur sous un chemin réservé) tourne sur le Raspberry Pi 4 de `vdl.moulard.org`, sous pi-appliance, en un seul exemplaire ; pas de serveur installé chez les plaisanciers. Écrit en Go. Adresse publique `https://nautilink.moulard.org`, redirigée par Traefik vers `https://vdl.moulard.org/nautilink/`. Installé par « Docker Compose libre » (pas dans le catalogue public) ; base dans le PostgreSQL partagé de pi-appliance ; e-mails par le relais d'envoi de pi-appliance ; abonnement et quota inchangés (RG-ECO). Risque accepté pendant la bêta : une coupure du Pi ou de la box arrête le circuit Internet (e-mails SOS compris ; les SMS partent quand même, RG-COM-01) ; passage chez un hébergeur avant l'ouverture au grand public. Squelette déployable à écrire tout de suite (TODO-3.7). Fonctions qui manquent à pi-appliance : publication d'un Docker Compose libre sous un chemin, PostgreSQL partagé, relais d'e-mails, domaine de redirection (TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance). | Cahier des charges §4 ; [Q-22](06-questions-ouvertes.md#q-22) en partie |
+
+## 2026-11-24 — Demandes de la boîte de réception (application mobile)
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-63"></a>D-63 | Fréquences d'envoi | Demande de l'utilisateur : fréquences de 15 minutes à 10 jours. | 15 minutes, 30 minutes, 1 heure, 2 heures, 3 heures, 6 heures, 12 heures, 1 jour, 2 jours, 10 jours. Remplace les valeurs de D-05. | RG-NAV-05 |
+| <a id="d-64"></a>D-64 | Chronomètre du dernier envoi | Demande de l'utilisateur. | Tout envoi réussi (position, note, photo, note vocale) remet à zéro le chronomètre du dernier envoi. | RG-NAV-10 |
+| <a id="d-65"></a>D-65 | Affichage des envois | Demande de l'utilisateur. | Chaque résultat d'envoi s'affiche dans une fenêtre avec « OK », fermée seule au bout d'une minute. | RG-COM-03 |
+| <a id="d-66"></a>D-66 | Navigation immobile | Demande de l'utilisateur. | Moins de 20 mètres de déplacement en 2 heures : l'application propose de terminer la navigation. | RG-NAV-24 |
+| <a id="d-67"></a>D-67 | Accès au quota et à l'abonnement | Demande de l'utilisateur. | Lien « Version gratuite - abonnement » sur l'accueil vers « Quota et abonnement », puis lien vers la page d'information sur l'abonnement du site. | RG-ECO-10 |

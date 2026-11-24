@@ -85,7 +85,7 @@ L'accueil donne aussi accès aux paramètres généraux, aux contacts (suiveurs 
 
 - choix du bateau, s'il y en a plusieurs (RG-NAV-02) ;
 - destination facultative, en texte ou sur une carte (RG-NAV-04) ;
-- fréquence préremplie : 3, 4, 5, 10, 15, 30 min, 1 h (RG-NAV-05) ;
+- fréquence préremplie : de 15 minutes à 10 jours (RG-NAV-05) ;
 - bouton **Paramètres** pour adapter les réglages à cette navigation (RG-NAV-06) ;
 - bouton **Envoi message – Début de navigation** (RG-NAV-08).
 
