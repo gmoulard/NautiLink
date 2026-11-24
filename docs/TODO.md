@@ -78,8 +78,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 - [~] **TODO-2.4**: MMS : taille, opérateurs, repli ([Q-13](06-questions-ouvertes.md#q-13), RG-SMS-05). Dépend de : TODO-2.1.
   - Critères d'acceptation : MMS avec photo envoyé et reçu chez les quatre opérateurs français ; taille maximale et comportement en cas d'échec écrits.
   - Fait : [étude documentaire](etudes/sms-mms-android.md#5-mms-todo-24) (API, taille lue sur le téléphone, repères 300/600 Ko non officiels). Reste : essai chez les quatre opérateurs ; choix de la taille et du comportement en cas d'échec par l'utilisateur.
-- [ ] **TODO-2.5**: Notes vocales : format, durée, transcription ([Q-14](06-questions-ouvertes.md#q-14), RG-JRN-04). Dépend de : aucune.
+- [~] **TODO-2.5**: Notes vocales : format, durée, transcription ([Q-14](06-questions-ouvertes.md#q-14), RG-JRN-04). Dépend de : aucune.
   - Critères d'acceptation : format et durée maximale choisis ; transcription en français essayée hors connexion et en ligne, avec le taux d'erreur constaté.
+  - Fait : [étude documentaire](etudes/notes-vocales.md) (formats AAC, Opus, AMR ; moteurs Android, iPhone, Whisper ; limite d'une minute sur iPhone ; protocole d'essai). Reste : essais de transcription en français et taux d'erreur ; choix du format, de la durée et du moteur par l'utilisateur.
 - [ ] **TODO-2.6**: Fonctionnement hors connexion de chaque écran Android ([Q-29](06-questions-ouvertes.md#q-29)). Dépend de : TODO-3.1.
   - Critères d'acceptation : tableau écran par écran (sans Internet, sans réseau mobile, sans les deux), validé par l'utilisateur.
 - [ ] **TODO-2.7**: File d'attente des envois et doublons ([Q-10](06-questions-ouvertes.md#q-10), RG-GPS-04). Dépend de : TODO-3.2.

@@ -106,6 +106,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant pour la fonction Vocal.
 - Étude : format audio, durée et taille maximales, stockage serveur, moteur de transcription (sur le téléphone, utilisable hors connexion, ou sur le serveur).
+- Étude documentaire : [notes-vocales.md](etudes/notes-vocales.md) (choix possibles §6).
 
 ### <a id="q-15"></a>Q-15 — Photos
 

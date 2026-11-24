@@ -19,6 +19,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
 | Localisation en arrière-plan sur iPhone, App Store | `docs/etudes/localisation-arriere-plan-iphone.md` |
+| Notes vocales : format audio, transcription | `docs/etudes/notes-vocales.md` |
 
 ## Ordre de priorité en cas d'écart
 
