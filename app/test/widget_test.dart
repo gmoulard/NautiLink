@@ -63,6 +63,7 @@ void main() {
   testWidgets('accueil : lien « Version gratuite - abonnement » (RG-ECO-10)', (tester) async {
     setPhone(tester);
     await openHome(tester);
+    expect(find.text('Sponsorisée par la SRT'), findsOneWidget);
     await tester.tap(find.text('Version gratuite - abonnement'));
     await tester.pumpAndSettle();
     expect(find.text('Quota et abonnement'), findsOneWidget);

@@ -92,6 +92,7 @@ class ChooseSideScreen extends StatelessWidget {
               ),
             ),
           ),
+          const SponsorFooter(),
         ],
       ),
     );

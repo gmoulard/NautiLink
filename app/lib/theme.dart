@@ -77,6 +77,36 @@ class SosButton extends StatelessWidget {
   }
 }
 
+/// Mention du sponsor : la SRT et son guidon.
+class SponsorFooter extends StatelessWidget {
+  const SponsorFooter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: NlColors.white,
+        border: Border(top: BorderSide(color: Color(0xFFF8D818), width: 3)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset('assets/sponsor-srt.png', height: 30, semanticLabel: 'Guidon de la SRT'),
+          const SizedBox(width: 10),
+          const Flexible(
+            child: Text(
+              'Sponsorisée par la SRT',
+              style: TextStyle(color: Color(0xFF1E3296), fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Bandeau rappelant que tout est simulé.
 class DemoBanner extends StatelessWidget {
   const DemoBanner({super.key});
