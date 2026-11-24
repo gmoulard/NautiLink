@@ -4,7 +4,9 @@
 
 NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS), une application iPhone équivalente sans SMS, et une plateforme Web pour suivre, consulter et gérer les navigations avec ses proches.
 
-Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas encore de code.
+Ce dépôt contient la **spécification fonctionnelle**, le **site de présentation** et un **prototype de démonstration** (Flutter, données d'exemple, sans serveur).
+
+Site : https://gmoulard.github.io/NautiLink/ (démonstration Web : `app/`, APK Android : `downloads/nautilink-demo.apk`), une fois GitHub Pages activé (Settings → Pages → Source : GitHub Actions).
 
 ## Documents
 
@@ -28,6 +30,7 @@ Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas enco
 | [`docs/etudes/notes-vocales.md`](docs/etudes/notes-vocales.md) | Étude : notes vocales, formats audio, durée, transcription en français hors connexion. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
+| [`app/`](app/) | Prototype de démonstration Flutter (Android, iPhone, Web), voir son [README](app/README.md). |
 | [`site/`](site/) | Site de présentation publié sur GitHub Pages (accueil, mémo sécurité en mer, avertissement), par le workflow `.github/workflows/pages.yml`. |
 
 ## Statut des informations

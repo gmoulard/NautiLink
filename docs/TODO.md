@@ -82,6 +82,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : trois environnements décrits ; déploiement de test reproductible.
 - [~] **TODO-3.6**: Prototype de démonstration en Flutter, données d'exemple, sans serveur (`app/`, D-57, D-58). Dépend de : aucune.
   - Critères d'acceptation : démonstration Web en ligne sur le site ; APK Android de démonstration téléchargeable depuis le site et installé sur un vrai téléphone ; écrans conformes au cahier des charges §5 et §6 ; relu par l'utilisateur.
+  - Fait (2026-11-24) : application Flutter dans `app/`, test de parcours et analyse sans erreur, démonstration Web vérifiée dans Chromium ; le workflow « Site GitHub Pages » construit la démonstration Web et l'APK et les publie avec le site. Reste : activer GitHub Pages, installer l'APK sur un vrai téléphone, relecture.
 - [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
   - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : scénarios pour les règles tranchées ou ajoutées le 2026-11-24 après leur écriture (RG-NAV-16, RG-NAV-22, RG-JRN-04, RG-JRN-08, RG-SMS-03, RG-SMS-05, RG-SMS-07, RG-GPS-05, RG-SOS-16, RG-DON-02, RG-DON-03, RG-ADM-03, RG-IOS-06, RG-IOS-08, RG-SMS-08, RG-NOT-03, RG-CPT-06, RG-CPT-07, RG-NAV-23) ; validation par l'utilisateur.
@@ -156,7 +157,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : textes publiés sur le Web et accessibles depuis Android.
 - [~] **TODO-8.5**: Site de présentation sur GitHub Pages : accueil, mémo sécurité en mer, avertissement bêta (`site/`, D-56). Dépend de : aucune.
   - Critères d'acceptation : site en ligne à l'adresse GitHub Pages du dépôt ; contenu cohérent avec la spécification ; mémo sécurité relu par l'utilisateur.
-  - Fait : trois pages et le workflow de déploiement (2026-11-24). Reste : activer GitHub Pages (Settings → Pages → Source : GitHub Actions), vérifier le site en ligne, relecture.
+  - Fait : trois pages, le workflow de déploiement, liens vers la démonstration Web et l'APK (2026-11-24). Reste : activer GitHub Pages (Settings → Pages → Source : GitHub Actions), vérifier le site en ligne, relecture.
 - [ ] **TODO-8.4**: Publication sur Google Play. Dépend de : TODO-2.1, TODO-5.1 à TODO-5.8, TODO-8.3.
   - Critères d'acceptation : application acceptée par Google Play avec les autorisations SMS et localisation en arrière-plan.
 

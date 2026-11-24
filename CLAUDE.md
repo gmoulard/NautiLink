@@ -1,6 +1,6 @@
 # CLAUDE.md — NautiLink
 
-Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + serveur). Tout est rédigé en français. Pas encore de code.
+Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + serveur), avec le site de présentation et un prototype de démonstration Flutter (`app/`, données d'exemple, sans serveur). Tout est rédigé en français. La spécification fait foi sur le prototype.
 
 ## Où trouver quoi
 
@@ -18,6 +18,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Ce qu'il reste à faire, dans quel ordre | `docs/TODO.md` (`TODO-x.y`), `docs/Todo-done.md` |
 | Demandes en vrac de l'utilisateur | `docs/Todo-ithem-for-todo.md` |
 | Textes affichés aux utilisateurs (avertissement bêta) | `docs/textes/` |
+| Prototype de démonstration (Flutter : Android, iPhone, Web) | `app/` (`lib/`, `test/`), voir `app/README.md` ; Flutter 3.47.9 |
 | Site de présentation (GitHub Pages) | `site/` (`index.html`, `securite.html`, `avertissement.html`, `style.css`), publié par `.github/workflows/pages.yml` |
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
@@ -60,6 +61,9 @@ Dans un même commit :
 5. cocher l'action correspondante du TODO et la déplacer dans `docs/Todo-done.md`.
 
 ## Vérifications avant commit
+
+Prototype (`app/`) : `flutter analyze` et `flutter test` sans erreur.
+
 
 ```bash
 # identifiants cités mais non définis (doit être vide)
