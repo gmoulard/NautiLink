@@ -6,7 +6,7 @@ NautiLink est une solution connectée pour les plaisanciers : une application An
 
 Ce dépôt contient la **spécification fonctionnelle**, le **site de présentation** et un **prototype de démonstration** (Flutter, données d'exemple, sans serveur).
 
-Site : https://gmoulard.github.io/NautiLink/ (démonstration Web : `app/`, APK Android : `downloads/nautilink-demo.apk`), une fois GitHub Pages activé (Settings → Pages → Source : GitHub Actions).
+Site : https://gmoulard.github.io/NautiLink/ (page « Télécharger » : APK Android, IPA iPhone non signé, démonstration Web installable ; aucune publication dans les stores), une fois GitHub Pages activé (Settings → Pages → Source : GitHub Actions).
 
 ## Documents
 

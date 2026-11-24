@@ -105,3 +105,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-58"></a>D-58 | Technologie des applications mobiles | Partie de Q-22. | Flutter : un seul code pour Android et iPhone (et la démonstration Web). | [Q-22](06-questions-ouvertes.md#q-22) |
 | <a id="d-59"></a>D-59 | Serveur | Partie de Q-22. | Serveur maison (API et hébergement à choisir), pas de service tout fait. | [Q-22](06-questions-ouvertes.md#q-22) |
 | <a id="d-60"></a>D-60 | Application iPhone | Pas encore de compte développeur Apple. | Le code iPhone suit le même code Flutter ; le site affiche « iPhone : bientôt » jusqu'à l'ouverture du compte. | RG-IOS-01 |
+
+## 2026-11-24 — Distribution des démonstrations hors des stores
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-61"></a>D-61 | Téléchargement des démonstrations | Demande de l'utilisateur : télécharger les applications de démonstration depuis le site, sans publication dans les stores. | Tout passe par le site GitHub Pages : APK Android (signature de débogage), démonstration Web installable sur l'écran d'accueil, IPA iPhone non signé à installer avec AltStore ou Sideloadly, empreintes SHA-256. Remplace l'affichage « iPhone : bientôt » de D-60 pour la démonstration. | [TODO-3.6](TODO.md) |

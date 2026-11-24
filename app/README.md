@@ -26,4 +26,4 @@ flutter build web --release --base-href /NautiLink/app/ --no-web-resources-cdn
 flutter build apk --release                   # APK de démonstration (signature de débogage)
 ```
 
-Le site GitHub Pages publie la démonstration Web sous `app/` et l'APK sous `downloads/nautilink-demo.apk`, construits par le workflow « Site GitHub Pages ».
+Le workflow « Site GitHub Pages » construit et publie sur le site, sans passer par les stores : la démonstration Web (`app/`), l'APK Android (`downloads/nautilink-demo.apk`), l'IPA iPhone non signé (`downloads/nautilink-demo-ios-non-signe.ipa`, construit sur macOS) et `downloads/SHA256SUMS.txt`. Mode d'emploi : `site/telecharger.html`.

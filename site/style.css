@@ -91,6 +91,10 @@ a.pill:hover { border-color: var(--aqua); color: #FFFFFF; }
 
 .legal { display: grid; gap: 1rem; }
 .legal h2 { font-size: 1.15rem; margin-top: .75rem; }
+.legal h3 { font-size: 1.02rem; margin-top: .5rem; }
+.legal .button { justify-self: start; }
+ol.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: .45rem; }
+code { font-size: .9em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 0 .25rem; }
 .legal .note { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--beta); border-radius: 12px; padding: 1rem 1.2rem; }
 
 footer { background: var(--navy); color: #C9DCE8; font-size: .9rem; }

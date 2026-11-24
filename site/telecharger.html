@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Télécharger NautiLink</title>
+<meta name="description" content="Installer les applications de démonstration NautiLink sur Android et iPhone, sans passer par les stores.">
+<link rel="icon" href="assets/logo-nautilink.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="betabar" role="note">
+  <div class="wrap">
+    <b>Démonstration</b>
+    <span>Données d'exemple, aucun serveur : rien n'est réellement envoyé. NautiLink est en version bêta.</span>
+    <a href="avertissement.html">Lire l'avertissement</a>
+  </div>
+</div>
+
+<header class="topnav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo-nautilink.png" alt="" width="36" height="36"><span>Nauti<span class="link">Link</span></span></a>
+    <nav aria-label="Navigation principale">
+      <a href="index.html">Accueil</a>
+      <a href="#android">Android</a>
+      <a href="#iphone">iPhone</a>
+      <a href="app/">Démonstration Web</a>
+      <a href="securite.html">Sécurité en mer</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap narrow legal">
+      <span class="kicker">Télécharger</span>
+      <h1>Installer les applications de démonstration</h1>
+      <p>Les applications de démonstration ne sont pas publiées sur Google Play ni sur l'App Store. Vous les installez directement depuis ce site. Elles sont reconstruites à chaque mise à jour du projet.</p>
+      <p class="note">Ces applications ne servent qu'à découvrir les écrans. N'en dépendez pas en mer : en cas de détresse, canal 16 de la VHF ou 196.</p>
+    </div>
+  </section>
+
+  <section id="android">
+    <div class="wrap narrow legal">
+      <span class="kicker">Android</span>
+      <h2>Installer l'APK</h2>
+      <a class="button" href="downloads/nautilink-demo.apk">Télécharger l'APK de démonstration</a>
+      <ol class="steps">
+        <li>Ouvrez cette page sur votre téléphone Android et touchez « Télécharger l'APK de démonstration ».</li>
+        <li>Ouvrez le fichier téléchargé. Android demande d'autoriser votre navigateur à installer des applications : touchez « Paramètres », activez « Autoriser cette source », puis revenez.</li>
+        <li>Touchez « Installer ». Google Play Protect peut prévenir que l'application n'est pas connue, car elle n'est pas publiée sur Google Play : choisissez d'installer quand même si vous faites confiance à ce site.</li>
+        <li>Ouvrez NautiLink et acceptez l'avertissement.</li>
+      </ol>
+      <p class="muted">Pour installer une nouvelle version, désinstallez d'abord la précédente : chaque version de démonstration est signée avec une clé de test différente, et Android refuse de la mettre à jour par-dessus.</p>
+    </div>
+  </section>
+
+  <section id="iphone">
+    <div class="wrap narrow legal">
+      <span class="kicker">iPhone</span>
+      <h2>Deux façons, sans l'App Store</h2>
+
+      <h3>1. Sur l'écran d'accueil (le plus simple)</h3>
+      <p>La démonstration Web s'ouvre comme une application, sans compte ni installation.</p>
+      <ol class="steps">
+        <li>Ouvrez <a href="app/">la démonstration Web</a> dans <b>Safari</b> sur votre iPhone.</li>
+        <li>Touchez le bouton de partage, puis « Sur l'écran d'accueil ».</li>
+        <li>Touchez « Ajouter » : l'icône NautiLink apparaît avec vos applications.</li>
+      </ol>
+
+      <h3>2. Application iPhone non signée (pour les curieux)</h3>
+      <p>Apple n'autorise l'installation hors App Store qu'avec une signature. Le fichier proposé ici n'est pas signé : vous le signez vous-même avec votre identifiant Apple, grâce à un outil d'installation sur ordinateur comme AltStore ou Sideloadly.</p>
+      <a class="button" href="downloads/nautilink-demo-ios-non-signe.ipa">Télécharger l'IPA non signé</a>
+      <ol class="steps">
+        <li>Sur votre ordinateur, installez <a href="https://altstore.io/" target="_blank" rel="noopener">AltStore</a> ou <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a> en suivant leurs instructions.</li>
+        <li>Branchez l'iPhone, ouvrez l'outil, choisissez le fichier IPA téléchargé et connectez-vous avec votre identifiant Apple.</li>
+        <li>Sur l'iPhone, activez le mode développeur si iOS le demande : Réglages, Confidentialité et sécurité, Mode développeur, puis redémarrez.</li>
+        <li>Faites confiance au profil : Réglages, Général, VPN et gestion de l'appareil, votre identifiant Apple, « Faire confiance ».</li>
+      </ol>
+      <p class="muted">Avec un identifiant Apple gratuit, l'application cesse de s'ouvrir au bout de 7 jours : il faut la réinstaller ou la renouveler avec l'outil. Le nombre d'applications installées ainsi est aussi limité. Ces règles sont celles d'Apple et peuvent changer.</p>
+    </div>
+  </section>
+
+  <section id="verifier">
+    <div class="wrap narrow legal">
+      <span class="kicker">Vérifier</span>
+      <h2>Empreintes des fichiers</h2>
+      <p>Le fichier <a href="downloads/SHA256SUMS.txt">SHA256SUMS.txt</a> donne l'empreinte SHA-256 de chaque fichier. Elle permet de vérifier que le fichier téléchargé est bien celui construit par le projet, par exemple avec <code>sha256sum nautilink-demo.apk</code>.</p>
+      <p class="muted">Les applications sont construites automatiquement à partir du code du dépôt <a href="https://github.com/gmoulard/NautiLink" target="_blank" rel="noopener">gmoulard/NautiLink</a>, dossier <code>app/</code>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>NautiLink</b> · Your sea, your safety, your story. · <a href="index.html">Accueil</a> · <a href="avertissement.html">Avertissement</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
