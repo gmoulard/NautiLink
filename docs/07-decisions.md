@@ -69,3 +69,18 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-42"></a>D-42 | Affichage du quota | Ancienne question 18. | Écran « Quota et abonnement » et résumé sur l'accueil. | RG-ECO-09 |
 | <a id="d-43"></a>D-43 | Formule d'abonnement | Q-17, en partie. | Une seule formule, mensuelle ou annuelle, sans période d'essai. | RG-ECO-06 |
 | <a id="d-44"></a>D-44 | Notifications push iPhone | Ancienne question 33. | SOS, début, fin, nouvelle photo, position en retard ; chaque type désactivable sauf le SOS. | RG-IOS-06 |
+
+## 2026-11-24 — Décisions des lots 3, 4 et 5 (administration, données, SMS, GPS, notes vocales)
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-45"></a>D-45 | Conformité | Ancienne question 21. | RGPD de base : conditions et politique de confidentialité relues par un juriste, sessions qui expirent, obligations listées avec leurs sources. | RG-DON-03 |
+| <a id="d-46"></a>D-46 | Conservation | Ancienne question 20. | Positions comme la navigation, journaux techniques 1 an, d'administration 3 ans, sauvegarde quotidienne 30 jours, export JSON et GPX. | RG-DON-02 |
+| <a id="d-47"></a>D-47 | Administrateurs | Ancienne question 19. | Un seul profil, qui peut tout modifier, SOS et positions compris ; seul le navigateur ne les modifie pas. | RG-ADM-03 |
+| <a id="d-48"></a>D-48 | Voie d'envoi des SMS sur Android | Q-12 (étude TODO-2.1). | Play Store ; SMS SOS automatiques au titre de l'exception « urgence » (à vérifier) ; SMS ordinaires et invitations préremplis. | RG-SMS-03, RG-SOS-16 |
+| <a id="d-49"></a>D-49 | MMS en échec | Q-13, en partie. | SMS avec le lien vers la photo hébergée. | RG-SMS-05 |
+| <a id="d-50"></a>D-50 | Nouvelles tentatives | Ancienne question 11. | SOS : chaque minute jusqu'à réussite ou arrêt ; ordinaires : 3 essais puis « Réessayer ». | RG-SMS-07 |
+| <a id="d-51"></a>D-51 | Reprise après redémarrage | Ancienne question 08. | Reprise au lancement suivant de l'application, avec une notification après redémarrage. | RG-NAV-12 |
+| <a id="d-52"></a>D-52 | Optimisation de la batterie | Étude TODO-2.2. | Demande d'exclusion et aide propre à la marque au premier démarrage d'une navigation. | RG-GPS-05 |
+| <a id="d-53"></a>D-53 | Notes vocales | Ancienne question 14. | AAC `.m4a`, 1 minute au plus, transcription par le moteur du téléphone. | RG-JRN-04 |
+| <a id="d-54"></a>D-54 | Localisation sur iPhone | Étude TODO-10.2. | Autorisation « Pendant l'utilisation ». | RG-IOS-08 |

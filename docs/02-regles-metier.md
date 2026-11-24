@@ -33,7 +33,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-nav-09"></a>**RG-NAV-09** — Aucune carte n'est affichée sur l'écran de navigation de l'application mobile. La seule carte de l'écran du navigateur est celle du choix de la destination ; le suivi sur iPhone affiche une carte ([RG-IOS-05](#rg-ios-05)).
 - <a id="rg-nav-10"></a>**RG-NAV-10** — L'écran de navigation affiche deux chronomètres : temps écoulé depuis le début, temps écoulé depuis le dernier envoi.
 - <a id="rg-nav-11"></a>**RG-NAV-11** — Positions automatiques et positions manuelles coexistent pendant une même navigation.
-- <a id="rg-nav-12"></a>**RG-NAV-12** — « Reprendre la dernière navigation » rouvre l'écran de la navigation en cours du téléphone. Comportement après fermeture forcée ou redémarrage du téléphone : [Q-08](06-questions-ouvertes.md#q-08).
+- <a id="rg-nav-12"></a>**RG-NAV-12** — « Reprendre la dernière navigation » rouvre l'écran de la navigation en cours du téléphone. Après une fermeture forcée ou un redémarrage du téléphone, la navigation reste en cours ; les positions automatiques reprennent quand le navigateur rouvre l'application. Après un redémarrage, une notification l'invite à la rouvrir ([D-51](07-decisions.md#d-51)).
 
 ### 2.3 Fin
 
@@ -56,7 +56,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-jrn-01"></a>**RG-JRN-01** — Chaque navigation a un journal de bord, conservé sans limite de durée.
 - <a id="rg-jrn-02"></a>**RG-JRN-02** — Types d'événements : début de navigation, position automatique, position manuelle, note écrite, photo, note vocale, alerte SOS, fin de navigation, ajout complémentaire (texte, photo, note vocale ou information ajoutés depuis le Web).
 - <a id="rg-jrn-03"></a>**RG-JRN-03** — Le journal est présenté dans l'ordre chronologique de l'heure de l'événement (heure d'acquisition sur le téléphone, pas heure de réception par le serveur).
-- <a id="rg-jrn-04"></a>**RG-JRN-04** — Une note vocale est un enregistrement audio conservé sur le serveur avec sa transcription texte. Le navigateur valide la transcription avant l'envoi ([D-07](07-decisions.md#d-07)). Format, taille, moteur de transcription : [Q-14](06-questions-ouvertes.md#q-14).
+- <a id="rg-jrn-04"></a>**RG-JRN-04** — Une note vocale est un enregistrement audio conservé sur le serveur avec sa transcription texte. Le navigateur valide la transcription avant l'envoi ([D-07](07-decisions.md#d-07)). Format AAC (`.m4a`), durée de 1 minute au plus, transcription par le moteur de reconnaissance vocale du téléphone ([D-53](07-decisions.md#d-53)).
 - <a id="rg-jrn-05"></a>**RG-JRN-05** — Depuis le Web, le navigateur peut ajouter à une navigation terminée des textes, photos, notes vocales et informations complémentaires.
 - <a id="rg-jrn-06"></a>**RG-JRN-06** — Le navigateur peut modifier et supprimer, depuis le Web ou l'application mobile, les notes écrites, photos, notes vocales et ajouts complémentaires, quelle que soit leur origine ([D-16](07-decisions.md#d-16)).
 - <a id="rg-jrn-07"></a>**RG-JRN-07** — Les événements de début, de fin, de position et d'alerte SOS ne sont jamais modifiables ni supprimables par le navigateur. Ils ne disparaissent qu'avec la suppression de la navigation entière ([D-16](07-decisions.md#d-16)).
@@ -68,6 +68,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-gps-02"></a>**RG-GPS-02** — Chaque position est horodatée à son acquisition.
 - <a id="rg-gps-03"></a>**RG-GPS-03** — Les positions sont enregistrées sur le téléphone à la fréquence de la navigation, que le serveur soit joignable ou non.
 - <a id="rg-gps-04"></a>**RG-GPS-04** — Les positions non transmises sont envoyées au serveur dès que la connexion Internet le permet, dans l'ordre d'acquisition. Gestion fine de la file d'attente et des doublons : [Q-10](06-questions-ouvertes.md#q-10).
+- <a id="rg-gps-05"></a>**RG-GPS-05** — Au premier démarrage d'une navigation sur Android, l'application demande l'exclusion de l'optimisation de la batterie et affiche les réglages propres à la marque du téléphone (Samsung, Xiaomi…) qui peuvent couper l'enregistrement ([D-52](07-decisions.md#d-52)).
 
 ## 5. Circuits de communication
 
@@ -79,11 +80,11 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 - <a id="rg-sms-01"></a>**RG-SMS-01** — Les SMS ordinaires d'une navigation sont envoyés aux suiveurs de cette navigation ayant renseigné un numéro de téléphone ([D-08](07-decisions.md#d-08)). Un suiveur peut refuser ces SMS avec l'option « Recevoir les SMS » de son profil, activée par défaut dès qu'il renseigne un numéro ([D-36](07-decisions.md#d-36)).
 - <a id="rg-sms-02"></a>**RG-SMS-02** — Un interrupteur général active ou désactive tous les SMS ordinaires. Une préférence par type précise lesquels partent : début, positions automatiques, positions manuelles, notes écrites, photos, notes vocales, fin. Ces réglages ne s'appliquent jamais aux SMS SOS ([RG-SOS-14](#rg-sos-14)).
-- <a id="rg-sms-03"></a>**RG-SMS-03** — Les SMS prévus par les paramètres partent sans confirmation supplémentaire.
+- <a id="rg-sms-03"></a>**RG-SMS-03** — Sur Android, les SMS ordinaires et les invitations par SMS s'ouvrent préremplis (texte et destinataires) dans l'application SMS du téléphone ; le navigateur les envoie d'un appui. Seuls les SMS SOS partent automatiquement ([RG-SOS-16](#rg-sos-16), [D-48](07-decisions.md#d-48)). Conséquences sur les positions automatiques et les nouvelles tentatives : [Q-36](06-questions-ouvertes.md#q-36).
 - <a id="rg-sms-04"></a>**RG-SMS-04** — Si le GPS est indisponible pour un SMS ordinaire qui doit contenir une position, le SMS indique « GPS NON DISPONIBLE » au lieu d'une position ancienne.
-- <a id="rg-sms-05"></a>**RG-SMS-05** — Photo : la photo est envoyée au serveur. Si les paramètres le prévoient, un MMS la joint ; le message peut aussi contenir un lien vers la photo hébergée. Contraintes MMS : [Q-13](06-questions-ouvertes.md#q-13).
+- <a id="rg-sms-05"></a>**RG-SMS-05** — Photo : la photo est envoyée au serveur. Si les paramètres le prévoient, un MMS la joint ; le message peut aussi contenir un lien vers la photo hébergée. Si le MMS échoue, un SMS contenant le lien vers la photo hébergée est proposé à la place ([D-49](07-decisions.md#d-49)). Taille et opérateurs : [Q-13](06-questions-ouvertes.md#q-13).
 - <a id="rg-sms-06"></a>**RG-SMS-06** — Note vocale : le SMS contient la transcription texte, pas l'audio.
-- <a id="rg-sms-07"></a>**RG-SMS-07** — Échecs d'envoi et nouvelles tentatives : [Q-11](06-questions-ouvertes.md#q-11). Restrictions Android et Google Play sur l'envoi de SMS : [Q-12](06-questions-ouvertes.md#q-12).
+- <a id="rg-sms-07"></a>**RG-SMS-07** — SMS SOS en échec : nouvel essai chaque minute jusqu'à la réussite ou l'arrêt par le navigateur. SMS ordinaire en échec : 3 essais, puis l'échec est affiché avec « Réessayer » ([D-50](07-decisions.md#d-50)). Restrictions Android et Google Play sur l'envoi de SMS : [Q-12](06-questions-ouvertes.md#q-12).
 
 ## 7. Alerte SOS
 
@@ -97,6 +98,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-sos-06"></a>**RG-SOS-06** — À réception de l'alerte, le serveur envoie un e-mail à tous les suiveurs de la navigation et aux contacts SOS dont l'e-mail est connu ([D-14](07-decisions.md#d-14)).
 - <a id="rg-sos-14"></a>**RG-SOS-14** — Les SMS SOS ne peuvent pas être désactivés : ni l'interrupteur général des SMS ni les préférences par type ne s'y appliquent. Ils partent dès qu'au moins un contact SOS existe. Si le navigateur n'a aucun contact SOS, le démarrage d'une navigation affiche un avertissement ([D-26](07-decisions.md#d-26)).
 - <a id="rg-sos-15"></a>**RG-SOS-15** — SOS depuis l'écran d'accueil, hors navigation : il est rattaché au bateau du téléphone (choix du bateau s'il y en a plusieurs), enregistré dans l'historique des alertes de ce bateau, et le serveur envoie l'e-mail aux suiveurs de périmètre *navigateur* et aux contacts SOS dont l'e-mail est connu. Le reste est identique au SOS en navigation ([D-27](07-decisions.md#d-27)).
+- <a id="rg-sos-16"></a>**RG-SOS-16** — Sur Android, les SMS SOS partent automatiquement, sans passer par l'application SMS du téléphone. Cela suppose que Google Play accorde à NautiLink la permission d'envoi de SMS au titre de son exception pour les urgences, encore à vérifier ([Q-12](06-questions-ouvertes.md#q-12), [D-48](07-decisions.md#d-48)).
 
 ### 7.2 Contenu des SMS SOS
 
@@ -159,14 +161,15 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 - <a id="rg-adm-01"></a>**RG-ADM-01** — L'espace administrateur est distinct de l'espace utilisateur.
 - <a id="rg-adm-02"></a>**RG-ADM-02** — Au lancement, il permet : gestion des utilisateurs, gestion des bateaux et de leur rattachement aux comptes, gestion des abonnements, supervision technique (serveurs, erreurs, incidents, synchronisations), publication d'annonces et d'informations de maintenance, sécurité et journaux de traçabilité, statistiques générales.
-- <a id="rg-adm-03"></a>**RG-ADM-03** — L'administrateur peut consulter, modifier et supprimer les données des utilisateurs (navigations, journaux, positions, alertes SOS). Chaque action est tracée ; modalités et profils d'administrateurs : [Q-19](06-questions-ouvertes.md#q-19).
+- <a id="rg-adm-03"></a>**RG-ADM-03** — Il existe un seul profil d'administrateur. Il peut consulter, modifier et supprimer toutes les données des utilisateurs : navigations, journaux, positions et alertes SOS comprises (le navigateur, lui, ne modifie jamais ses positions ni ses SOS, RG-JRN-07). Chaque action est tracée et gardée 3 ans (RG-DON-02) ([D-47](07-decisions.md#d-47)).
 - <a id="rg-adm-04"></a>**RG-ADM-04** — La gestion des langues n'est pas une fonction de l'espace administrateur.
 - <a id="rg-adm-05"></a>**RG-ADM-05** — La gestion de plusieurs versions de l'application Web est une évolution future, hors lancement ([D-22](07-decisions.md#d-22)).
 
 ## 14. Conservation des données
 
 - <a id="rg-don-01"></a>**RG-DON-01** — Navigations et journaux de bord : conservés sans limite de durée, sauf suppression par le navigateur ([RG-NAV-20](#rg-nav-20)) ou par un administrateur.
-- <a id="rg-don-02"></a>**RG-DON-02** — Positions détaillées, journaux techniques, journaux d'administration, sauvegardes, export des données personnelles : [Q-20](06-questions-ouvertes.md#q-20).
+- <a id="rg-don-02"></a>**RG-DON-02** — Positions détaillées : gardées comme leur navigation. Journaux techniques : 1 an. Journaux d'administration : 3 ans. Sauvegarde quotidienne, gardée 30 jours. Le navigateur exporte les données de son compte en JSON et ses traces en GPX depuis son compte ([D-46](07-decisions.md#d-46)).
+- <a id="rg-don-03"></a>**RG-DON-03** — Au lancement : conditions d'utilisation et politique de confidentialité rédigées puis relues par un juriste, sessions qui expirent, liste des obligations légales (RGPD notamment) avec leurs sources ([D-45](07-decisions.md#d-45)).
 
 ## 15. Application iPhone
 
@@ -179,3 +182,4 @@ L'application iPhone a les mêmes fonctions que l'application Android, avec les 
 - <a id="rg-ios-05"></a>**RG-IOS-05** — Le suiveur sur iPhone voit les navigations auxquelles il a accès comme sur le Web, carte comprise (RG-PAR-07, RG-PAR-08).
 - <a id="rg-ios-06"></a>**RG-IOS-06** — Le suiveur sur iPhone reçoit une notification push pour chaque navigation qu'il suit : alerte SOS (en plus de l'e-mail), début et fin de navigation, nouvelle photo, position en retard. Il peut désactiver chaque type, sauf le SOS ([D-44](07-decisions.md#d-44)). Seuil d'une position en retard : [Q-35](06-questions-ouvertes.md#q-35).
 - <a id="rg-ios-07"></a>**RG-IOS-07** — L'abonnement se souscrit par achat intégré de l'App Store ; le serveur le reconnaît sur tous les supports (RG-ECO-07).
+- <a id="rg-ios-08"></a>**RG-IOS-08** — L'application iPhone demande l'autorisation de localisation « Pendant l'utilisation » ; une navigation démarre à l'écran et continue en arrière-plan ([D-54](07-decisions.md#d-54)).

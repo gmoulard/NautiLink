@@ -73,7 +73,7 @@ L'écran affiche le temps depuis le début et le temps depuis le dernier envoi (
 
 ### 3.6 Reprendre une navigation
 
-Accueil → « Reprendre la dernière navigation » → écran de la navigation en cours (RG-NAV-12). Après fermeture forcée ou redémarrage du téléphone : [Q-08](06-questions-ouvertes.md#q-08).
+Accueil → « Reprendre la dernière navigation » → écran de la navigation en cours (RG-NAV-12). Après fermeture forcée ou redémarrage du téléphone : [D-51](07-decisions.md#d-51).
 
 ### 3.7 Consulter ses navigations
 

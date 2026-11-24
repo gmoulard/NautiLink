@@ -22,6 +22,11 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.11**: Photos : 20 par navigation, environ 1 Mo (2026-11-24, D-40).
 - [x] **TODO-1.12**: Notifications par e-mail (2026-11-24, D-41).
 - [x] **TODO-1.13**: Affichage du quota (2026-11-24, D-42).
+- [x] **TODO-1.9**: Reprise après redémarrage : au lancement suivant (2026-11-24, D-51).
+- [x] **TODO-1.10**: Nouvelles tentatives des SMS (2026-11-24, D-50).
+- [x] **TODO-1.15**: Un seul profil d'administrateur (2026-11-24, D-47).
+- [x] **TODO-1.16**: Conservation et export des données (2026-11-24, D-46).
+- [x] **TODO-1.17**: Conformité au lancement (2026-11-24, D-45).
 
 ## 9. Évolutions futures
 

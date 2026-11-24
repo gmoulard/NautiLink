@@ -1,6 +1,6 @@
 # Étude : localisation en arrière-plan sur iPhone, batterie et App Store
 
-Action : [TODO-10.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [Q-31](../06-questions-ouvertes.md#q-31), [Q-08](../06-questions-ouvertes.md#q-08) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12, RG-IOS-01, RG-IOS-03.
+Action : [TODO-10.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [Q-31](../06-questions-ouvertes.md#q-31), [D-51](../07-decisions.md#d-51) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12, RG-IOS-01, RG-IOS-03.
 
 **Statut : recherche documentaire faite (novembre 2026). Le prototype sur deux modèles d'iPhone reste à faire** : aucune mesure n'est donnée ici. Rien de ce document n'est une décision.
 
@@ -43,7 +43,7 @@ Source : [App Review Guidelines](https://developer.apple.com/app-store/review/gu
 | 5.1.1 | Consentement avant collecte ; textes d'explication (*purpose strings*) clairs et complets ; fonctions payantes non conditionnées à l'accès aux données. | Textes `NSLocationWhenInUseUsageDescription` (et `NSLocationAlwaysAndWhenInUseUsageDescription` si « Toujours ») à rédiger. La fonction gratuite comme l'abonnement ne doivent pas dépendre d'une autorisation non nécessaire. |
 | 5.1.5 | Localisation seulement quand elle sert directement la fonction ; prévenir et obtenir le consentement avant de collecter, transmettre ou utiliser la position. **Les API de localisation ne devraient pas servir à fournir des services d'urgence**, sauf exceptions citées (petits drones, jouets, alarmes de voiture…). | **Risque pour le SOS sur iPhone (RG-IOS-03)** : la présentation de NautiLink et de son SOS devant la revue Apple est à étudier (par exemple : alerte envoyée à des proches, pas service d'urgence ; renvoi vers les moyens officiels). À traiter avant la soumission. |
 
-## 4. Reprise après fermeture ou redémarrage (éclaire [Q-08](../06-questions-ouvertes.md#q-08))
+## 4. Reprise après fermeture ou redémarrage (éclaire [D-51](../07-decisions.md#d-51))
 
 - **Terminaison par le système** : relancement possible en arrière-plan par un événement de localisation (changement significatif, § 2.4) ; l'application doit alors recréer sa `CLBackgroundActivitySession` et relancer ses services (§ 2.1 et § 2.2). Les pages consultées ne disent pas si l'autorisation « Pendant l'utilisation » suffit à ce relancement : **à constater au prototype**.
 - **Fermeture par l'utilisateur** (balayage dans le sélecteur d'applications) et **redémarrage** de l'iPhone : non décrits par les pages consultées. D'après le fonctionnement connu d'iOS, une application fermée par l'utilisateur n'est pas relancée par les événements de localisation et rien ne redémarre seul après un redémarrage avant le lancement de l'application. **À constater au prototype** ; si c'est confirmé, la seule reprise possible sur iPhone est celle du lancement suivant (RG-NAV-12).

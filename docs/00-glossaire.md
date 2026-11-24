@@ -24,7 +24,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Contact** | Personne de la liste unique du navigateur : nom, téléphone et/ou e-mail, cases « Suiveur » et « Contact SOS », cochées par défaut ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)). |
 | **Contact SOS** | Contact dont la case « Contact SOS » est cochée ; reçoit les SMS SOS. Il a forcément un numéro de téléphone. |
 | **Destinataire SMS** | Suiveur d'une navigation ayant renseigné un numéro de téléphone ; reçoit les SMS ordinaires de cette navigation ([RG-SMS-01](02-regles-metier.md#rg-sms-01)). |
-| **SMS ordinaire** | Tout SMS ou MMS autre qu'un SMS SOS : début, positions, notes, photos, notes vocales, fin. |
+| **SMS ordinaire** | Tout SMS ou MMS autre qu'un SMS SOS : début, positions, notes, photos, notes vocales, fin. Sur Android, il s'ouvre prérempli dans l'application SMS et part d'un appui ([RG-SMS-03](02-regles-metier.md#rg-sms-03)). |
 | **Invitation** | Message (e-mail ou SMS) contenant un lien qui mène à la connexion ou à la création d'un compte, puis donne un accès. |
 | **Accès** | Droit d'un suiveur sur les navigations d'un navigateur. Périmètre *navigation* (une seule) ou *navigateur* (toutes, présentes et futures, tous bateaux confondus). |
 | **Paramètres généraux** | Réglages par défaut du navigateur (SMS, fréquence), synchronisés entre les applications mobiles et le Web. |

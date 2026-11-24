@@ -8,6 +8,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 ## 1. Questions fonctionnelles
 
+### <a id="q-36"></a>Q-36 — SMS préremplis : positions automatiques et nouvelles tentatives
+
+- Priorité : bloquant pour les SMS sur Android.
+- Question : avec des SMS ordinaires préremplis (RG-SMS-03), un SMS de position automatique demanderait un appui toutes les N minutes, et l'application ne voit pas si un SMS prérempli est parti (nouvelles tentatives de RG-SMS-07). Que faire ?
+- Proposition : les positions automatiques ne partent plus par SMS, seulement au serveur ; les nouvelles tentatives ne concernent que les SMS SOS.
+
 ### <a id="q-35"></a>Q-35 — Position en retard
 
 - Priorité : avant l'application iPhone.
@@ -26,19 +32,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-43) : une seule formule, mensuelle ou annuelle, sans période d'essai.
 - Question : prix mensuel et annuel, moyens de paiement sur le Web, renouvellement et résiliation, paiements échoués, cohérence entre Google Play, l'App Store et le Web.
 
-### <a id="q-19"></a>Q-19 — Administration
-
-- Priorité : lancement.
-- Question : profils et niveaux d'accès des administrateurs ; contenu et durée des journaux de traçabilité ; contrôle des suppressions ; un administrateur peut-il modifier des positions et alertes SOS que le navigateur lui-même ne peut pas modifier (RG-JRN-07) ?
-
 ## 2. Études techniques
-
-### <a id="q-08"></a>Q-08 — Reprise après fermeture forcée ou redémarrage
-
-- Priorité : bloquant.
-- Question : la navigation en cours et les positions automatiques reprennent-elles seules après un redémarrage du téléphone ou une fermeture forcée de l'application ?
-- Proposition : oui, l'enregistrement reprend automatiquement et l'écran de navigation s'ouvre au lancement suivant.
-- Éléments techniques Android : [gps-arriere-plan-android.md](etudes/gps-arriere-plan-android.md) §3.
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
 
@@ -52,28 +46,19 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Étude : stockage local des positions et événements non transmis, renvoi après coupure, détection des doublons côté serveur.
 
-### <a id="q-11"></a>Q-11 — Échecs d'envoi des SMS
-
-- Priorité : bloquant.
-- Question : nombre et rythme des nouvelles tentatives, en particulier pour le SOS ; affichage de l'échec.
-
 ### <a id="q-12"></a>Q-12 — Restrictions Android sur l'envoi de SMS
 
 - Priorité : bloquant, à étudier en premier.
-- Étude : Google Play restreint fortement la permission d'envoyer des SMS aux applications qui ne sont pas l'application SMS par défaut. Vérifier si NautiLink peut obtenir une exception, ou prévoir une alternative (ouverture de l'application SMS préremplie, distribution hors Play Store). Tout le circuit SMS en dépend.
+- Décidé (D-48) : exception « urgence » de Google Play pour les seuls SMS SOS ; SMS ordinaires préremplis.
+- Reste : lire la page officielle de Google Play et vérifier que l'exception existe et couvre NautiLink. Si elle est refusée, revenir vers l'utilisateur.
 - Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md) (voies possibles §3).
 
 ### <a id="q-13"></a>Q-13 — MMS
 
 - Priorité : lancement.
-- Étude : taille maximale des pièces jointes, compatibilité opérateurs, comportement si MMS impossible.
+- Décidé (D-49) : en cas d'échec, SMS avec le lien vers la photo.
+- Reste : taille maximale des pièces jointes et compatibilité des opérateurs, à mesurer.
 - Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md#5-mms-todo-24).
-
-### <a id="q-14"></a>Q-14 — Notes vocales
-
-- Priorité : bloquant pour la fonction Vocal.
-- Étude : format audio, durée et taille maximales, stockage serveur, moteur de transcription (sur le téléphone, utilisable hors connexion, ou sur le serveur).
-- Étude documentaire : [notes-vocales.md](etudes/notes-vocales.md) (choix possibles §6).
 
 ### <a id="q-29"></a>Q-29 — Fonctionnement hors connexion
 
@@ -83,7 +68,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-31"></a>Q-31 — Autorisations Android
 
 - Priorité : bloquant.
-- Étude : localisation (y compris en arrière-plan), SMS, appareil photo, micro, notifications ; versions d'Android et d'iOS visées.
+- Décidé : localisation « Pendant l'utilisation » sur iPhone (D-54) ; exclusion de l'optimisation de la batterie sur Android (D-52).
+- Reste : liste des autorisations Android (localisation en arrière-plan, SMS, appareil photo, micro, notifications) ; versions minimales d'Android et d'iOS.
 
 ### <a id="q-22"></a>Q-22 — Architecture et développement
 
@@ -91,16 +77,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - À définir : architecture technique, hébergement, base de données, stockage des fichiers, API et formats de données, mécanismes de synchronisation, environnements de développement, test et production, scénarios de tests.
 
 ## 3. Données, sécurité, conformité
-
-### <a id="q-20"></a>Q-20 — Conservation des données
-
-- Priorité : lancement.
-- À définir : durée de conservation des positions détaillées, des journaux techniques et d'administration ; sauvegarde et restauration ; export des données personnelles.
-
-### <a id="q-21"></a>Q-21 — Sécurité et conformité
-
-- Priorité : lancement.
-- À définir : protection des données personnelles (RGPD), sécurisation des comptes et des sessions, conditions d'utilisation, politique de confidentialité, obligations légales.
 
 ## 4. Marque et interface
 

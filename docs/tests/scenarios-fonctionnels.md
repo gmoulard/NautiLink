@@ -127,7 +127,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-SMS-04** ([RG-SMS-04](../02-regles-metier.md#rg-sms-04)) — Étant donné le GPS indisponible, quand un SMS ordinaire de position part, alors il indique « GPS NON DISPONIBLE » et aucune position ancienne.
 - **TS-SMS-05** ([RG-SMS-05](../02-regles-metier.md#rg-sms-05)) — Étant donné l'envoi d'une photo avec MMS prévu par les paramètres, quand le navigateur l'envoie, alors la photo part au serveur et un MMS la joint.
 - **TS-SMS-06** ([RG-SMS-06](../02-regles-metier.md#rg-sms-06)) — Étant donné une note vocale validée avec SMS prévu, quand elle part, alors le SMS contient la transcription texte, pas l'audio.
-- **TS-SMS-07** ([RG-SMS-07](../02-regles-metier.md#rg-sms-07)) — Aucun scénario tant que [Q-11](../06-questions-ouvertes.md#q-11) et [Q-12](../06-questions-ouvertes.md#q-12) ne sont pas tranchées : la règle ne fixe encore aucun comportement.
+- **TS-SMS-07** ([RG-SMS-07](../02-regles-metier.md#rg-sms-07)) — Aucun scénario tant que [D-50](../07-decisions.md#d-50) et [Q-12](../06-questions-ouvertes.md#q-12) ne sont pas tranchées : la règle ne fixe encore aucun comportement.
 
 ## 11. Contacts (RG-CTC)
 
@@ -158,7 +158,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 ## 15. Conservation des données (RG-DON)
 
 - **TS-DON-01** ([RG-DON-01](../02-regles-metier.md#rg-don-01)) — Étant donné une navigation et son journal jamais supprimés, quand des années passent, alors ils sont toujours conservés ; seule une suppression par le navigateur (TS-NAV-21) ou par un administrateur (TS-ADM-03) les retire.
-- **TS-DON-02** ([RG-DON-02](../02-regles-metier.md#rg-don-02)) — Aucun scénario tant que [Q-20](../06-questions-ouvertes.md#q-20) n'est pas tranchée : la règle ne fixe encore aucun comportement.
+- **TS-DON-02** ([RG-DON-02](../02-regles-metier.md#rg-don-02)) — Aucun scénario tant que [D-46](../07-decisions.md#d-46) n'est pas tranchée : la règle ne fixe encore aucun comportement.
 
 ## 16. Application iPhone (RG-IOS)
 

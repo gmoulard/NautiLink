@@ -1,6 +1,6 @@
 # Étude : GPS en arrière-plan sur Android, batterie et reprise
 
-Action : [TODO-2.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [Q-08](../06-questions-ouvertes.md#q-08), [Q-31](../06-questions-ouvertes.md#q-31) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12.
+Action : [TODO-2.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [D-51](../07-decisions.md#d-51), [Q-31](../06-questions-ouvertes.md#q-31) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12.
 
 **Statut : recherche documentaire faite (novembre 2026). Le prototype sur vrais téléphones reste à faire** : aucune mesure de batterie ni de positions manquantes n'est donnée ici. Rien de ce document n'est une décision.
 
@@ -45,7 +45,7 @@ Les constructeurs ajoutent leurs propres « tueurs d'applications », au-delà d
 
 Conséquence pour le produit : prévoir un écran d'aide par marque, ouvert au premier démarrage d'une navigation (à décider, voir § 5).
 
-## 3. Reprise après fermeture forcée ou redémarrage (éclaire [Q-08](../06-questions-ouvertes.md#q-08))
+## 3. Reprise après fermeture forcée ou redémarrage (éclaire [D-51](../07-decisions.md#d-51))
 
 - **Redémarrage** : un récepteur `BOOT_COMPLETED` peut démarrer un service de premier plan (exemption prévue). Android 15 interdit ce démarrage pour les types `dataSync`, `camera`, `mediaPlayback`, `phoneCall`, `mediaProjection` et `microphone`, **mais pas pour `location`**. Sources : [Restrictions on starting a foreground service from the background](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start), [Android 15 behavior changes](https://developer.android.com/about/versions/15/behavior-changes-15).
   - Condition : comme le service `location` est alors créé depuis l'arrière-plan, il faut l'autorisation `ACCESS_BACKGROUND_LOCATION` (« Toujours autoriser ») ; sinon `SecurityException` (Android 14+). Même source.
@@ -64,6 +64,6 @@ Conséquence pour le produit : prévoir un écran d'aide par marque, ouvert au p
 
 ## 5. Questions pour l'utilisateur (non tranchées)
 
-- [Q-08](../06-questions-ouvertes.md#q-08) : reprise automatique après redémarrage, qui exige de demander « Toujours autoriser » la localisation (et de justifier cet accès auprès de Google Play), ou reprise seulement au lancement suivant de l'application.
+- [D-51](../07-decisions.md#d-51) : reprise automatique après redémarrage, qui exige de demander « Toujours autoriser » la localisation (et de justifier cet accès auprès de Google Play), ou reprise seulement au lancement suivant de l'application.
 - Écran d'aide par marque (Samsung, Xiaomi…) et demande d'exclusion de l'optimisation de la batterie : à proposer ou non au démarrage d'une navigation.
 - [Q-31](../06-questions-ouvertes.md#q-31) : version minimale d'Android (les règles ci-dessus changent à Android 10, 12, 14 et 15).
