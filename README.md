@@ -26,6 +26,7 @@ Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas enco
 | [`docs/etudes/gps-arriere-plan-android.md`](docs/etudes/gps-arriere-plan-android.md) | Étude : GPS en arrière-plan sur Android, batterie, constructeurs, reprise après redémarrage. |
 | [`docs/etudes/localisation-arriere-plan-iphone.md`](docs/etudes/localisation-arriere-plan-iphone.md) | Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store. |
 | [`docs/etudes/notes-vocales.md`](docs/etudes/notes-vocales.md) | Étude : notes vocales, formats audio, durée, transcription en français hors connexion. |
+| [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
 
 ## Statut des informations

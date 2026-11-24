@@ -90,3 +90,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Question | Décision | Règles |
 |----|-------|----------|----------|--------|
 | <a id="d-55"></a>D-55 | Copie au navigateur | Demande de l'utilisateur. | Tout SMS envoyé par l'application et tout e-mail de notification part aussi en copie au navigateur (numéro de son profil, adresse de son compte), sans désactivation possible. | RG-SMS-08, RG-NOT-03 |
+
+## 2026-11-24 — Avertissement bêta
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-56"></a>D-56 | Avertissement bêta et responsabilité | Demande de l'utilisateur : signaler la bêta et limiter la responsabilité en termes valables en droit français. | Texte dans `docs/textes/avertissement-beta.md` ; accepté à la création du compte, rappelé avant le premier démarrage d'une navigation sur chaque téléphone, mention « Version bêta » visible. Relecture par un juriste avant la mise en ligne. | RG-CPT-06, RG-CPT-07, RG-NAV-23 |

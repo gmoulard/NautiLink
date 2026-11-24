@@ -82,7 +82,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : trois environnements décrits ; déploiement de test reproductible.
 - [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
-  - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : scénarios pour les règles tranchées ou ajoutées le 2026-11-24 après leur écriture (RG-NAV-16, RG-NAV-22, RG-JRN-04, RG-JRN-08, RG-SMS-03, RG-SMS-05, RG-SMS-07, RG-GPS-05, RG-SOS-16, RG-DON-02, RG-DON-03, RG-ADM-03, RG-IOS-06, RG-IOS-08, RG-SMS-08, RG-NOT-03) ; validation par l'utilisateur.
+  - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : scénarios pour les règles tranchées ou ajoutées le 2026-11-24 après leur écriture (RG-NAV-16, RG-NAV-22, RG-JRN-04, RG-JRN-08, RG-SMS-03, RG-SMS-05, RG-SMS-07, RG-GPS-05, RG-SOS-16, RG-DON-02, RG-DON-03, RG-ADM-03, RG-IOS-06, RG-IOS-08, RG-SMS-08, RG-NOT-03, RG-CPT-06, RG-CPT-07, RG-NAV-23) ; validation par l'utilisateur.
 
 ## 4. Étape 1 — Serveur
 
@@ -150,7 +150,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : fichiers vectoriels et icônes Android et iPhone dans `docs/assets/`, palette complétée dans l'identité de marque. Bloqué par : validation du logo par l'utilisateur.
 - [ ] **TODO-8.2**: Disponibilité du nom, domaines, réseaux sociaux ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : aucune.
   - Critères d'acceptation : recherche d'antériorité faite, domaines et comptes réservés.
-- [ ] **TODO-8.3**: Conditions d'utilisation et politique de confidentialité. Dépend de : TODO-1.17.
+- [ ] **TODO-8.3**: Conditions d'utilisation, politique de confidentialité et [avertissement bêta](textes/avertissement-beta.md) relus par un juriste (RG-DON-03, D-56). Dépend de : TODO-1.17.
   - Critères d'acceptation : textes publiés sur le Web et accessibles depuis Android.
 - [ ] **TODO-8.4**: Publication sur Google Play. Dépend de : TODO-2.1, TODO-5.1 à TODO-5.8, TODO-8.3.
   - Critères d'acceptation : application acceptée par Google Play avec les autorisations SMS et localisation en arrière-plan.

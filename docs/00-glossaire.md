@@ -29,6 +29,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Accès** | Droit d'un suiveur sur les navigations d'un navigateur. Périmètre *navigation* (une seule) ou *navigateur* (toutes, présentes et futures, tous bateaux confondus). |
 | **Paramètres généraux** | Réglages par défaut du navigateur (SMS, fréquence), synchronisés entre les applications mobiles et le Web. |
 | **Paramètres de navigation** | Copie des paramètres généraux modifiable au démarrage, valable pour cette seule navigation. |
+| **Avertissement bêta** | Texte sur la version bêta et la responsabilité, accepté à la création du compte ([RG-CPT-06](02-regles-metier.md#rg-cpt-06), [texte](textes/avertissement-beta.md)). |
 | **Circuit Internet** | Échanges entre les applications et le serveur par API HTTPS. |
 | **Circuit SMS** | Envoi de SMS et MMS par la carte SIM du téléphone Android, sans prestataire externe. N'existe pas sur iPhone. |
 | **Quota gratuit** | 24 heures de navigation cumulées sur les 7 derniers jours glissants, par compte. |

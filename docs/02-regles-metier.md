@@ -11,6 +11,8 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-cpt-03"></a>**RG-CPT-03** — Les interfaces sont en français au lancement. La signature de marque reste en anglais.
 - <a id="rg-cpt-04"></a>**RG-CPT-04** — Un compte peut posséder plusieurs bateaux. Un bateau a un seul propriétaire.
 - <a id="rg-cpt-05"></a>**RG-CPT-05** — Seul le propriétaire d'un bateau peut démarrer une navigation avec ce bateau ([D-11](07-decisions.md#d-11)).
+- <a id="rg-cpt-06"></a>**RG-CPT-06** — À la création du compte, sur le Web comme sur l'application mobile, l'utilisateur lit l'[avertissement bêta](textes/avertissement-beta.md) et l'accepte en cochant une case ; le compte n'est pas créé sans cette acceptation. La date d'acceptation et la version du texte sont enregistrées ([D-56](07-decisions.md#d-56)).
+- <a id="rg-cpt-07"></a>**RG-CPT-07** — Tant que NautiLink est en bêta, une mention « Version bêta » est visible sur l'application mobile et sur le Web, et l'avertissement reste consultable à tout moment depuis l'assistance ([D-56](07-decisions.md#d-56)). Si le texte change, il est de nouveau présenté et accepté à la connexion suivante.
 - <a id="rg-bat-01"></a>**RG-BAT-01** — La fiche bateau comprend : nom, type (voilier ou bateau à moteur), longueur, immatriculation, port d'attache, photo, caractéristiques techniques (moteur, autonomie, capacité en carburant, vitesse, tirant d'eau).
 - <a id="rg-bat-02"></a>**RG-BAT-02** — Un bateau a au plus un téléphone associé. Un même téléphone peut être associé à plusieurs bateaux du même compte. Associer un autre téléphone à un bateau remplace l'association précédente ([D-12](07-decisions.md#d-12)).
 - <a id="rg-bat-03"></a>**RG-BAT-03** — Les données de chaque bateau (navigations, journaux, positions, alertes) restent séparées de celles des autres bateaux du compte.
@@ -27,6 +29,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-nav-06"></a>**RG-NAV-06** — Le bouton « Paramètres » de l'écran de démarrage modifie les paramètres de cette navigation seulement. Les paramètres généraux ne changent pas et sont repris à la navigation suivante.
 - <a id="rg-nav-07"></a>**RG-NAV-07** — Le démarrage est refusé si le quota gratuit est épuisé et que le compte n'a pas d'abonnement actif ([RG-ECO-04](#rg-eco-04)).
 - <a id="rg-nav-08"></a>**RG-NAV-08** — À la confirmation du démarrage (« Envoi message – Début de navigation ») : enregistrement de la date et de l'heure de début, acquisition d'une position, envoi au serveur par API, SMS de début si les paramètres le prévoient, activation des positions automatiques.
+- <a id="rg-nav-23"></a>**RG-NAV-23** — Avant le premier démarrage d'une navigation sur un téléphone, l'application affiche les points 1 et 2 de l'[avertissement bêta](textes/avertissement-beta.md) (version bêta, pas un équipement de sécurité : alerter d'abord par le canal 16 ou le 196) ; le navigateur confirme avec « J'ai compris » avant de continuer ([D-56](07-decisions.md#d-56)).
 
 ### 2.2 Pendant la navigation
 

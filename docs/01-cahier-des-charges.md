@@ -66,7 +66,7 @@ Les §5.1 à §5.5 décrivent l'application Android ; l'application iPhone est i
 
 ### 5.1 Connexion
 
-Connexion par e-mail et mot de passe, Google ou Apple (RG-CPT-02). Association du téléphone au bateau (RG-BAT-02).
+Connexion par e-mail et mot de passe, Google ou Apple (RG-CPT-02). À la création du compte, acceptation de l'avertissement bêta (RG-CPT-06) ; mention « Version bêta » visible tant que dure la bêta (RG-CPT-07) ; rappel avant le premier démarrage d'une navigation sur le téléphone (RG-NAV-23). Association du téléphone au bateau (RG-BAT-02).
 
 ### 5.2 Écran d'accueil
 
