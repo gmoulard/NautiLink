@@ -4,6 +4,30 @@ Feuille de route de NautiLink, dans l'ordre de construction : décisions, étude
 
 États : `[ ]` à faire ; `[~]` en cours ou à vérifier (fait, mais pas encore validé) ; `[!]` bloqué (attend une décision, un accès ou un matériel : la raison est dite) ; `[x]` réalisé et validé. Une action ouverte dit de quoi elle dépend (« Dépend de : ») et ses critères d'acceptation ; elle n'est cochée `[x]` qu'une fois ses critères remplis. Les actions réalisées tiennent sur une ligne ; une fois validées, elles sont déplacées dans [Actions réalisées](Todo-done.md), sauf si un de leurs points reste ouvert.
 
+## Lots
+
+Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (une action = un commit poussé). Un lot de décisions rend les questions à poser : le sous-agent ne tranche rien.
+
+| Lot | Titre | Actions | Dépend de | État |
+|-----|-------|---------|-----------|------|
+| LOT-1 | Décisions sur les navigations et le partage | TODO-1.4, TODO-1.5, TODO-1.6, TODO-1.7, TODO-1.8, TODO-1.11 | aucun | [!] |
+| LOT-2 | Décisions sur les notifications, le quota et l'abonnement | TODO-1.12, TODO-1.13, TODO-1.14, TODO-10.1 | aucun | [!] |
+| LOT-3 | Décisions sur l'administration, les données et la conformité | TODO-1.15, TODO-1.16, TODO-1.17 | aucun | [!] |
+| LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10 | aucun | [ ] |
+| LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [ ] |
+| LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4 | LOT-4, LOT-5 | [ ] |
+| LOT-7 | Maquettes et scénarios de tests | TODO-3.3, TODO-3.5 | aucun | [ ] |
+| LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [ ] |
+| LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
+| LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [ ] |
+| LOT-11 | Android : journal, fin, contacts, abonnement | TODO-5.4, TODO-5.6, TODO-5.7, TODO-5.8 | LOT-10 | [ ] |
+| LOT-12 | Web : consultation des navigations | TODO-6.1, TODO-6.2, TODO-6.3, TODO-6.4 | LOT-7, LOT-9 | [ ] |
+| LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7 | LOT-12 | [ ] |
+| LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [ ] |
+| LOT-15 | Marque et publication Android | TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4 | LOT-3, LOT-11 | [ ] |
+| LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7 | LOT-11, LOT-13, LOT-15 | [ ] |
+| LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3 | LOT-13, LOT-14 | [ ] |
+
 ## 0. Ménage du dépôt
 
 Tout est réalisé : voir [Actions réalisées](Todo-done.md).

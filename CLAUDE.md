@@ -40,7 +40,7 @@ Un écart entre documents est un défaut : le signaler et le corriger, ne pas ch
 
 ## Feuille de route
 
-Skill `todo`. Lire `docs/Todo-ithem-for-todo.md` avant de travailler : chaque demande devient une action du TODO (ou une question `Q-nn` si c'est une décision à prendre), puis est retirée du fichier. Mettre le TODO à jour dans le même commit que le travail : `[~]` quand c'est fait mais pas validé, `[x]` et déplacement dans `Todo-done.md` quand les critères d'acceptation sont constatés. Une question tranchée débloque l'action `[!]` correspondante de la section 1.
+Skill `todo` ; les actions sont groupées en lots (`LOT-n`) réalisés par l'agent `todo-lot`. Lire `docs/Todo-ithem-for-todo.md` avant de travailler : chaque demande devient une action du TODO (ou une question `Q-nn` si c'est une décision à prendre), puis est retirée du fichier. Mettre le TODO à jour dans le même commit que le travail : `[~]` quand c'est fait mais pas validé, `[x]` et déplacement dans `Todo-done.md` quand les critères d'acceptation sont constatés. Une question tranchée débloque l'action `[!]` correspondante de la section 1.
 
 ## Trancher une question
 
@@ -74,5 +74,10 @@ comm -23 /tmp/cites /tmp/definis
 - **`todo`** :
   - TODO : `docs/TODO.md` ; actions réalisées : `docs/Todo-done.md` ; boîte de réception : `docs/Todo-ithem-for-todo.md` ;
   - spécification : `docs/02-regles-metier.md` et `docs/01-cahier-des-charges.md` ;
-  - filtres : non (pas de site publié).
+  - filtres : non (pas de site publié) ;
+  - lots : tableau « Lots » en tête de `docs/TODO.md`.
+- **Agent `todo-lot`** :
+  - branche de push : `main`, une action = un commit poussé ;
+  - vérification après chaque action : commandes de la section « Vérifications avant commit » ;
+  - lancement depuis la session principale : « Réalise LOT-n avec l'agent todo-lot », un lot à la fois ; les questions qu'il rend sont posées à l'utilisateur par la session principale.
 - **`clarify-request`** : toute question fonctionnelle sans réponse dans `docs/` se pose à l'utilisateur, puis se trace en `D-nn`.
