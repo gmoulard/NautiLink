@@ -1,0 +1,172 @@
+# NautiLink — Scénarios de tests fonctionnels
+
+Scénarios tirés des [règles métier](../02-regles-metier.md), au moins un par règle `RG-…`, regroupés par domaine. Chaque scénario porte un identifiant `TS-<DOMAINE>-<nn>` et cite la règle qu'il vérifie. Ils ne décrivent aucun comportement absent des règles : la partie d'une règle qui renvoie à une question ouverte (`Q-nn`) n'est pas testée tant que la question n'est pas tranchée.
+
+Format : **Étant donné** (situation de départ), **Quand** (action), **Alors** (résultat attendu).
+
+Les domaines prioritaires (SOS, modèle économique, partage) viennent en premier.
+
+## 1. Alerte SOS (RG-SOS)
+
+- **TS-SOS-01** ([RG-SOS-01](../02-regles-metier.md#rg-sos-01)) — Étant donné un navigateur connecté sur l'application Android ou iPhone, quand il affiche l'écran d'accueil puis l'écran de navigation en cours, alors un bouton SOS rouge `#D94343` est visible sur chacun des deux écrans.
+- **TS-SOS-02** ([RG-SOS-01](../02-regles-metier.md#rg-sos-01)) — Étant donné un utilisateur connecté sur le Web, quand il parcourt les écrans, alors aucun bouton SOS n'est proposé.
+- **TS-SOS-03** ([RG-SOS-02](../02-regles-metier.md#rg-sos-02)) — Étant donné une navigation en cours, quand le navigateur appuie sur le bouton SOS, alors une boîte de confirmation s'ouvre et aucune alerte ne part ; quand il confirme, alors l'envoi part.
+- **TS-SOS-04** ([RG-SOS-03](../02-regles-metier.md#rg-sos-03)) — Étant donné un compte au quota épuisé et sans abonnement actif, quand le navigateur appuie sur le bouton SOS et confirme, alors l'alerte part comme avec du quota disponible.
+- **TS-SOS-05** ([RG-SOS-04](../02-regles-metier.md#rg-sos-04)) — Étant donné une navigation en cours sur Android, quand le navigateur confirme un SOS, alors s'enchaînent dans cet ordre l'acquisition de la position, les SMS aux contacts SOS, l'envoi de l'alerte et de la position au serveur, l'enregistrement dans le journal et l'affichage du résultat.
+- **TS-SOS-06** ([RG-SOS-04](../02-regles-metier.md#rg-sos-04)) — Étant donné un téléphone Android sans Internet, quand le navigateur confirme un SOS, alors l'échec de l'envoi au serveur n'empêche ni les SMS SOS, ni l'enregistrement dans le journal, ni l'affichage du résultat.
+- **TS-SOS-07** ([RG-SOS-05](../02-regles-metier.md#rg-sos-05)) — Étant donné un téléphone Android sans Internet dont la copie locale contient deux contacts SOS, quand le navigateur confirme un SOS, alors les SMS SOS partent vers ces deux contacts.
+- **TS-SOS-08** ([RG-SOS-06](../02-regles-metier.md#rg-sos-06)) — Étant donné une navigation avec deux suiveurs et un contact SOS dont l'e-mail est connu, quand le serveur reçoit l'alerte, alors il envoie un e-mail aux deux suiveurs et au contact SOS ; un contact SOS sans e-mail ne reçoit pas d'e-mail.
+- **TS-SOS-09** ([RG-SOS-14](../02-regles-metier.md#rg-sos-14)) — Étant donné l'interrupteur général des SMS désactivé et toutes les préférences par type désactivées, quand le navigateur confirme un SOS sur Android avec au moins un contact SOS, alors les SMS SOS partent.
+- **TS-SOS-10** ([RG-SOS-14](../02-regles-metier.md#rg-sos-14)) — Étant donné un navigateur sans aucun contact SOS, quand il démarre une navigation, alors un avertissement est affiché.
+- **TS-SOS-11** ([RG-SOS-15](../02-regles-metier.md#rg-sos-15)) — Étant donné un téléphone associé à deux bateaux et aucune navigation en cours, quand le navigateur appuie sur le bouton SOS de l'écran d'accueil, alors il choisit le bateau ; après confirmation, l'alerte est enregistrée dans l'historique des alertes de ce bateau et le serveur envoie l'e-mail aux suiveurs de périmètre *navigateur* et aux contacts SOS dont l'e-mail est connu, pas aux suiveurs de périmètre *navigation*.
+- **TS-SOS-12** ([RG-SOS-15](../02-regles-metier.md#rg-sos-15)) — Étant donné un téléphone associé à un seul bateau et aucune navigation en cours, quand le navigateur appuie sur le bouton SOS de l'écran d'accueil, alors l'alerte est rattachée à ce bateau, et la suite (confirmation, SMS, envoi, résultat) est identique au SOS en navigation.
+- **TS-SOS-13** ([RG-SOS-07](../02-regles-metier.md#rg-sos-07)) — Étant donné un bateau à la fiche complète et un GPS disponible, quand un SOS part sur Android, alors le premier SMS contient la mention SOS, le nom, le type, la longueur et l'immatriculation du bateau, les coordonnées GPS, la date et l'heure d'acquisition de la position et un lien Google Maps vers ces coordonnées.
+- **TS-SOS-14** ([RG-SOS-08](../02-regles-metier.md#rg-sos-08)) — Étant donné le même bateau, quand le SOS part, alors un second SMS contient le port d'attache, le moteur, l'autonomie, la capacité en carburant, la vitesse et le tirant d'eau.
+- **TS-SOS-15** ([RG-SOS-09](../02-regles-metier.md#rg-sos-09)) — Étant donné un GPS disponible, quand un SOS part, alors la position actuelle est transmise avec sa date et son heure d'acquisition.
+- **TS-SOS-16** ([RG-SOS-10](../02-regles-metier.md#rg-sos-10)) — Étant donné un GPS indisponible et une position antérieure acquise, quand un SOS part, alors la dernière position connue est transmise avec ses coordonnées, sa date et son heure d'acquisition, un lien Google Maps et la mention explicite qu'il s'agit de la dernière position connue, pas nécessairement de la position actuelle.
+- **TS-SOS-17** ([RG-SOS-11](../02-regles-metier.md#rg-sos-11)) — Étant donné un GPS indisponible et aucune position connue, quand un SOS part, alors le SMS indique que le GPS est indisponible et qu'aucune position n'est connue.
+- **TS-SOS-18** ([RG-SOS-12](../02-regles-metier.md#rg-sos-12)) — Étant donné un SOS envoyé à deux contacts SOS, dont un seul téléphone fournit l'accusé de réception, quand on consulte l'alerte, alors elle porte sa date et son heure, la position transmise et, par SMS, le statut « livraison confirmée » pour l'un et « accepté pour envoi » pour l'autre.
+- **TS-SOS-19** ([RG-SOS-13](../02-regles-metier.md#rg-sos-13)) — Étant donné une alerte enregistrée, quand le navigateur ouvre l'historique des alertes sur l'application mobile puis sur le Web, alors l'alerte y figure dans les deux cas.
+
+## 2. Modèle économique (RG-ECO)
+
+- **TS-ECO-01** ([RG-ECO-01](../02-regles-metier.md#rg-eco-01)) — Étant donné un compte sans abonnement avec deux bateaux, ayant navigué 14 h avec le premier et 10 h avec le second au cours des 7 derniers jours, quand le navigateur veut démarrer une navigation, alors le quota de 24 h est considéré comme épuisé.
+- **TS-ECO-02** ([RG-ECO-02](../02-regles-metier.md#rg-eco-02)) — Étant donné une navigation de 1 h 30 terminée, quand on consulte le quota, alors 90 minutes sont décomptées ; chacune redevient disponible 7 jours après avoir été consommée, sans remise à zéro à date fixe.
+- **TS-ECO-03** ([RG-ECO-03](../02-regles-metier.md#rg-eco-03)) — Étant donné un utilisateur qui suit pendant 30 h les navigations d'un autre, quand on consulte son quota, alors aucune minute n'est décomptée.
+- **TS-ECO-04** ([RG-ECO-04](../02-regles-metier.md#rg-eco-04)) — Étant donné un quota épuisé et pas d'abonnement actif, quand le navigateur touche « Démarrer navigation », alors le démarrage est refusé, l'application l'explique et propose de s'abonner ou d'attendre, avec l'heure à laquelle des minutes redeviennent disponibles.
+- **TS-ECO-05** ([RG-ECO-05](../02-regles-metier.md#rg-eco-05)) — Étant donné une navigation en cours pendant laquelle le quota s'épuise, quand 24 heures passent après l'épuisement sans abonnement, alors la navigation est clôturée automatiquement ; pendant ces 24 heures, le SOS reste disponible.
+- **TS-ECO-06** ([RG-ECO-05](../02-regles-metier.md#rg-eco-05)) — Étant donné une navigation en cours au quota épuisé depuis 5 heures, quand le compte souscrit un abonnement, alors la clôture automatique est annulée.
+- **TS-ECO-07** ([RG-ECO-06](../02-regles-metier.md#rg-eco-06)) — Étant donné un compte avec un abonnement actif ayant navigué 40 h sur les 7 derniers jours, quand le navigateur démarre une navigation, alors le démarrage est accepté.
+- **TS-ECO-08** ([RG-ECO-07](../02-regles-metier.md#rg-eco-07)) — Étant donné un abonnement souscrit sur Google Play, quand le navigateur se connecte sur le Web puis sur un iPhone, alors le même état d'abonnement actif est affiché partout ; de même pour un abonnement souscrit sur le Web ou par achat intégré de l'App Store.
+- **TS-ECO-09** ([RG-ECO-08](../02-regles-metier.md#rg-eco-08)) — Étant donné un suiveur sans abonnement et au quota épuisé comme navigateur, quand il consulte les positions, traces, notes, notes vocales, photos, alertes SOS et journaux des navigations auxquelles il a accès, alors tout est consultable sans limite.
+- **TS-ECO-10** ([RG-ECO-09](../02-regles-metier.md#rg-eco-09)) — Étant donné un compte ayant consommé du quota, quand le navigateur ouvre l'application mobile puis le Web, alors chacun affiche le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement, avec les valeurs calculées par le serveur.
+
+## 3. Partage et suiveurs (RG-PAR)
+
+- **TS-PAR-01** ([RG-PAR-01](../02-regles-metier.md#rg-par-01)) — Étant donné un lien d'invitation, quand une personne non connectée l'ouvre, alors aucune navigation ne lui est montrée avant qu'elle se connecte ou crée un compte.
+- **TS-PAR-02** ([RG-PAR-02](../02-regles-metier.md#rg-par-02)) — Étant donné un suiveur de périmètre *navigation* sur une navigation, quand le navigateur démarre une autre navigation, alors le suiveur n'a pas accès à la nouvelle navigation ; un suiveur de périmètre *navigateur* y a accès, quel que soit le bateau.
+- **TS-PAR-03** ([RG-PAR-02](../02-regles-metier.md#rg-par-02)) — Étant donné un suiveur de périmètre *navigation*, quand le navigateur change son périmètre en *navigateur*, alors le suiveur accède à toutes les navigations présentes et futures du navigateur.
+- **TS-PAR-04** ([RG-PAR-03](../02-regles-metier.md#rg-par-03)) — Étant donné un navigateur sur le Web ou sur l'application mobile, quand il invite une personne par e-mail ou par numéro de téléphone en choisissant le périmètre, alors l'invitation porte ce périmètre et l'invité est ajouté à la liste de contacts.
+- **TS-PAR-05** ([RG-PAR-04](../02-regles-metier.md#rg-par-04)) — Étant donné une invitation par e-mail, quand elle est créée, alors le serveur envoie l'e-mail d'invitation.
+- **TS-PAR-06** ([RG-PAR-04](../02-regles-metier.md#rg-par-04)) — Étant donné une invitation par numéro de téléphone, quand elle est créée sur Android, alors elle part en SMS par la carte SIM ; quand elle est créée sur le Web, alors aucun SMS ne part et le lien d'invitation est affiché ; quand elle est créée sur iPhone, alors aucun SMS ne part.
+- **TS-PAR-07** ([RG-PAR-05](../02-regles-metier.md#rg-par-05)) — Étant donné un lien d'invitation ouvert par une personne sans compte, quand elle crée son compte et se connecte, alors l'accès est accordé immédiatement ; un « lien de partage » ne donne jamais d'accès public.
+- **TS-PAR-08** ([RG-PAR-06](../02-regles-metier.md#rg-par-06)) — Étant donné un suiveur de périmètre *navigateur*, quand le navigateur le retire d'une seule navigation, alors il perd immédiatement l'accès à cette navigation et garde les autres.
+- **TS-PAR-09** ([RG-PAR-06](../02-regles-metier.md#rg-par-06)) — Étant donné un suiveur, quand le navigateur le retire globalement, alors il perd immédiatement l'accès à toutes les navigations présentes et futures du navigateur.
+- **TS-PAR-10** ([RG-PAR-07](../02-regles-metier.md#rg-par-07)) — Étant donné un suiveur ayant accès à une navigation, quand il l'ouvre, alors il voit la dernière position, les positions successives, le tracé, les dates et heures, les notes, photos, notes vocales, événements et alertes SOS, sans pouvoir rien modifier.
+- **TS-PAR-11** ([RG-PAR-08](../02-regles-metier.md#rg-par-08)) — Étant donné un suiveur ayant accès à une navigation, quand il la consulte, alors il voit la fiche du bateau, la liste des autres suiveurs du navigateur et la liste de ses contacts SOS, et peut exporter la navigation en PDF ; aucune modification ne lui est proposée.
+
+## 4. Comptes (RG-CPT)
+
+- **TS-CPT-01** ([RG-CPT-01](../02-regles-metier.md#rg-cpt-01)) — Étant donné un compte qui a démarré ses propres navigations, quand il accepte une invitation d'un autre navigateur, alors le même compte consulte la navigation de l'autre comme suiveur, sans second compte.
+- **TS-CPT-02** ([RG-CPT-02](../02-regles-metier.md#rg-cpt-02)) — Étant donné un utilisateur, quand il se connecte par e-mail et mot de passe, par Google ou par Apple, sur le Web et sur les applications mobiles, alors la connexion réussit par chacun des trois moyens et sur chaque support.
+- **TS-CPT-03** ([RG-CPT-03](../02-regles-metier.md#rg-cpt-03)) — Étant donné les interfaces au lancement, quand on les parcourt, alors tous les libellés sont en français, sauf la signature de marque, en anglais.
+- **TS-CPT-04** ([RG-CPT-04](../02-regles-metier.md#rg-cpt-04)) — Étant donné un compte avec un bateau, quand il en ajoute un second, alors le compte possède les deux bateaux et chacun n'a que ce compte pour propriétaire.
+- **TS-CPT-05** ([RG-CPT-05](../02-regles-metier.md#rg-cpt-05)) — Étant donné un suiveur ayant accès aux navigations d'un bateau dont il n'est pas propriétaire, quand il tente de démarrer une navigation avec ce bateau, alors c'est impossible.
+
+## 5. Bateaux (RG-BAT)
+
+- **TS-BAT-01** ([RG-BAT-01](../02-regles-metier.md#rg-bat-01)) — Étant donné la création d'une fiche bateau, quand le navigateur l'ouvre, alors elle propose nom, type (voilier ou bateau à moteur), longueur, immatriculation, port d'attache, photo, moteur, autonomie, capacité en carburant, vitesse et tirant d'eau.
+- **TS-BAT-02** ([RG-BAT-02](../02-regles-metier.md#rg-bat-02)) — Étant donné un bateau associé au téléphone A, quand le navigateur associe le téléphone B à ce bateau, alors le bateau n'est plus associé qu'au téléphone B.
+- **TS-BAT-03** ([RG-BAT-02](../02-regles-metier.md#rg-bat-02)) — Étant donné un compte à deux bateaux, quand le navigateur associe le même téléphone aux deux, alors les deux associations coexistent.
+- **TS-BAT-04** ([RG-BAT-03](../02-regles-metier.md#rg-bat-03)) — Étant donné un compte à deux bateaux ayant chacun des navigations et des alertes, quand on consulte les données d'un bateau, alors seules ses propres navigations, journaux, positions et alertes apparaissent.
+
+## 6. Navigations (RG-NAV)
+
+- **TS-NAV-01** ([RG-NAV-01](../02-regles-metier.md#rg-nav-01)) — Étant donné un téléphone associé à un bateau qui se déplace, quand le navigateur ne touche pas « Démarrer navigation », alors aucune navigation n'est créée ; sur le Web, aucune fonction ne crée de navigation.
+- **TS-NAV-02** ([RG-NAV-02](../02-regles-metier.md#rg-nav-02)) — Étant donné un téléphone associé à deux bateaux, quand le navigateur démarre une navigation, alors il choisit le bateau ; associé à un seul bateau, le choix n'est pas affiché.
+- **TS-NAV-03** ([RG-NAV-03](../02-regles-metier.md#rg-nav-03)) — Étant donné une navigation en cours sur un bateau ou sur un téléphone, quand on tente d'en démarrer une seconde pour ce bateau ou depuis ce téléphone, alors c'est refusé.
+- **TS-NAV-04** ([RG-NAV-04](../02-regles-metier.md#rg-nav-04)) — Étant donné l'écran de démarrage, quand le navigateur ne saisit pas de destination, alors le démarrage est possible ; il peut aussi la saisir en texte ou choisir un point sur une carte.
+- **TS-NAV-05** ([RG-NAV-05](../02-regles-metier.md#rg-nav-05)) — Étant donné une fréquence par défaut de 10 minutes, quand le navigateur ouvre l'écran de démarrage, alors 10 minutes est prérempli et seules 3, 4, 5, 10, 15, 30 minutes et 1 heure sont proposées ; s'il choisit 5 minutes, la navigation suivante repart de 10 minutes.
+- **TS-NAV-06** ([RG-NAV-06](../02-regles-metier.md#rg-nav-06)) — Étant donné l'écran de démarrage, quand le navigateur modifie des réglages par le bouton « Paramètres », alors ils valent pour cette navigation seulement et les paramètres généraux sont inchangés.
+- **TS-NAV-07** ([RG-NAV-07](../02-regles-metier.md#rg-nav-07)) — Étant donné un quota épuisé sans abonnement actif, quand le navigateur tente de démarrer, alors le démarrage est refusé (voir TS-ECO-04).
+- **TS-NAV-08** ([RG-NAV-08](../02-regles-metier.md#rg-nav-08)) — Étant donné le SMS de début activé, quand le navigateur confirme par « Envoi message – Début de navigation », alors la date et l'heure de début sont enregistrées, une position est acquise et envoyée au serveur, le SMS de début part et les positions automatiques s'activent.
+- **TS-NAV-09** ([RG-NAV-09](../02-regles-metier.md#rg-nav-09)) — Étant donné une navigation en cours, quand le navigateur affiche l'écran de navigation de l'application mobile, alors aucune carte n'y figure.
+- **TS-NAV-10** ([RG-NAV-10](../02-regles-metier.md#rg-nav-10)) — Étant donné une navigation en cours, quand le navigateur affiche l'écran de navigation, alors deux chronomètres indiquent le temps depuis le début et le temps depuis le dernier envoi.
+- **TS-NAV-11** ([RG-NAV-11](../02-regles-metier.md#rg-nav-11)) — Étant donné les positions automatiques actives, quand le navigateur envoie une position manuelle, alors elle s'ajoute et les positions automatiques continuent.
+- **TS-NAV-12** ([RG-NAV-12](../02-regles-metier.md#rg-nav-12)) — Étant donné une navigation en cours sur le téléphone et l'écran d'accueil affiché, quand le navigateur touche « Reprendre la dernière navigation », alors l'écran de cette navigation se rouvre.
+- **TS-NAV-13** ([RG-NAV-13](../02-regles-metier.md#rg-nav-13)) — Étant donné une navigation en cours avec SMS de fin activé, quand le navigateur touche « Terminer la navigation », alors une confirmation est demandée ; après confirmation, le SMS de fin part, les informations de fin sont envoyées et la navigation est clôturée côté serveur.
+- **TS-NAV-14** ([RG-NAV-14](../02-regles-metier.md#rg-nav-14)) — Étant donné l'échec du SMS de fin, quand le navigateur termine la navigation avec Internet, alors elle est quand même clôturée côté serveur.
+- **TS-NAV-15** ([RG-NAV-14](../02-regles-metier.md#rg-nav-14)) — Étant donné un téléphone sans Internet, quand le navigateur termine la navigation à 18 h 00 et que la connexion revient à 19 h 30, alors la fin est transmise avec l'heure 18 h 00.
+- **TS-NAV-16** ([RG-NAV-15](../02-regles-metier.md#rg-nav-15)) — Étant donné une navigation en cours au quota épuisé depuis 24 heures sans abonnement, quand ce délai est atteint, alors elle est clôturée automatiquement (voir TS-ECO-05).
+- **TS-NAV-17** ([RG-NAV-16](../02-regles-metier.md#rg-nav-16)) — Étant donné une navigation terminée avec destination, quand on la consulte, alors elle porte nom, bateau, date et heure de début et de fin, lieu de départ, lieu d'arrivée, destination, durée et distance parcourue.
+- **TS-NAV-18** ([RG-NAV-17](../02-regles-metier.md#rg-nav-17)) — Étant donné le bateau « Alizé », quand une navigation démarre avec la destination « Belle-Île », alors son nom est « Alizé — Belle-Île » ; sans destination, « Alizé — <date> » ; le navigateur peut ensuite le modifier sur le Web et sur l'application mobile.
+- **TS-NAV-19** ([RG-NAV-18](../02-regles-metier.md#rg-nav-18)) — Étant donné une navigation terminée il y a plusieurs années et jamais supprimée, quand on la consulte, alors elle est toujours disponible.
+- **TS-NAV-20** ([RG-NAV-19](../02-regles-metier.md#rg-nav-19)) — Étant donné une navigation, quand son navigateur ou l'un de ses suiveurs demande l'export PDF depuis le Web, alors un PDF est produit.
+- **TS-NAV-21** ([RG-NAV-20](../02-regles-metier.md#rg-nav-20)) — Étant donné une navigation terminée, quand le navigateur la supprime depuis le Web, alors elle passe dans la corbeille, ses suiveurs n'y ont plus accès, elle reste restaurable 30 jours puis est supprimée définitivement.
+- **TS-NAV-22** ([RG-NAV-20](../02-regles-metier.md#rg-nav-20)) — Étant donné une navigation en cours, quand le navigateur tente de la supprimer, alors c'est refusé.
+- **TS-NAV-23** ([RG-NAV-21](../02-regles-metier.md#rg-nav-21)) — Étant donné une navigation de 3 h supprimée hier, quand on consulte le quota, alors ces 3 h restent décomptées.
+
+## 7. Journal de bord (RG-JRN)
+
+- **TS-JRN-01** ([RG-JRN-01](../02-regles-metier.md#rg-jrn-01)) — Étant donné une navigation démarrée, quand on la consulte, alors elle a un journal de bord, conservé sans limite de durée.
+- **TS-JRN-02** ([RG-JRN-02](../02-regles-metier.md#rg-jrn-02)) — Étant donné une navigation complète, quand on lit son journal, alors chaque événement relève d'un des types : début, position automatique, position manuelle, note écrite, photo, note vocale, alerte SOS, fin, ajout complémentaire.
+- **TS-JRN-03** ([RG-JRN-03](../02-regles-metier.md#rg-jrn-03)) — Étant donné une position acquise à 10 h 00 hors connexion et reçue par le serveur à 11 h 00, et une note écrite envoyée à 10 h 30, quand on lit le journal, alors la position précède la note.
+- **TS-JRN-04** ([RG-JRN-04](../02-regles-metier.md#rg-jrn-04)) — Étant donné une note vocale enregistrée, quand sa transcription est affichée, alors le navigateur doit la valider avant l'envoi ; ensuite le serveur conserve l'audio et la transcription.
+- **TS-JRN-05** ([RG-JRN-05](../02-regles-metier.md#rg-jrn-05)) — Étant donné une navigation terminée, quand le navigateur ajoute depuis le Web un texte, une photo, une note vocale ou une information, alors l'ajout complémentaire apparaît dans le journal.
+- **TS-JRN-06** ([RG-JRN-06](../02-regles-metier.md#rg-jrn-06)) — Étant donné une note écrite envoyée depuis le téléphone, quand le navigateur la modifie depuis le Web puis supprime une photo depuis l'application mobile, alors les deux opérations sont acceptées.
+- **TS-JRN-07** ([RG-JRN-07](../02-regles-metier.md#rg-jrn-07)) — Étant donné un journal avec début, fin, positions et alerte SOS, quand le navigateur tente de modifier ou supprimer l'un de ces événements, alors c'est impossible ; ils ne disparaissent qu'avec la suppression de la navigation.
+
+## 8. GPS et positions (RG-GPS)
+
+- **TS-GPS-01** ([RG-GPS-01](../02-regles-metier.md#rg-gps-01)) — Étant donné un téléphone sans Internet ni réseau mobile, GPS actif, quand une position est demandée, alors elle est acquise.
+- **TS-GPS-02** ([RG-GPS-02](../02-regles-metier.md#rg-gps-02)) — Étant donné une position acquise, quand on la consulte, alors elle porte la date et l'heure de son acquisition.
+- **TS-GPS-03** ([RG-GPS-03](../02-regles-metier.md#rg-gps-03)) — Étant donné une fréquence de 5 minutes et un serveur injoignable pendant 30 minutes, quand ces 30 minutes passent, alors six positions sont enregistrées sur le téléphone.
+- **TS-GPS-04** ([RG-GPS-04](../02-regles-metier.md#rg-gps-04)) — Étant donné ces six positions non transmises, quand Internet revient, alors elles sont envoyées au serveur dans l'ordre d'acquisition.
+
+## 9. Circuits de communication (RG-COM)
+
+- **TS-COM-01** ([RG-COM-01](../02-regles-metier.md#rg-com-01)) — Étant donné un téléphone Android, quand une transmission part, alors elle passe par l'API HTTPS et, si les paramètres le prévoient, par SMS ou MMS via la carte SIM, sans prestataire externe ; sur iPhone, seul le circuit Internet existe.
+- **TS-COM-02** ([RG-COM-02](../02-regles-metier.md#rg-com-02)) — Étant donné Internet indisponible et le réseau mobile disponible, quand une position doit partir avec SMS prévu, alors le SMS part ; inversement, sans réseau mobile, l'envoi Internet est tenté ; sans aucun des deux, le GPS acquiert quand même la position.
+- **TS-COM-03** ([RG-COM-03](../02-regles-metier.md#rg-com-03)) — Étant donné l'envoi d'une position, d'une note, d'une photo, d'une note vocale, d'un SOS, du début ou de la fin, quand l'envoi se termine, alors l'écran affiche le résultat de chaque circuit (par exemple « Position envoyée »).
+
+## 10. SMS ordinaires (RG-SMS)
+
+- **TS-SMS-01** ([RG-SMS-01](../02-regles-metier.md#rg-sms-01)) — Étant donné une navigation avec trois suiveurs dont deux ont un numéro de téléphone, quand un SMS ordinaire part, alors il est envoyé à ces deux suiveurs seulement.
+- **TS-SMS-02** ([RG-SMS-02](../02-regles-metier.md#rg-sms-02)) — Étant donné l'interrupteur général désactivé, quand une position automatique est acquise, alors aucun SMS ordinaire ne part ; interrupteur activé et seule la préférence « positions automatiques » cochée, seuls ces SMS partent.
+- **TS-SMS-03** ([RG-SMS-03](../02-regles-metier.md#rg-sms-03)) — Étant donné un SMS de position manuelle prévu par les paramètres, quand le navigateur envoie une position manuelle, alors le SMS part sans confirmation supplémentaire.
+- **TS-SMS-04** ([RG-SMS-04](../02-regles-metier.md#rg-sms-04)) — Étant donné le GPS indisponible, quand un SMS ordinaire de position part, alors il indique « GPS NON DISPONIBLE » et aucune position ancienne.
+- **TS-SMS-05** ([RG-SMS-05](../02-regles-metier.md#rg-sms-05)) — Étant donné l'envoi d'une photo avec MMS prévu par les paramètres, quand le navigateur l'envoie, alors la photo part au serveur et un MMS la joint.
+- **TS-SMS-06** ([RG-SMS-06](../02-regles-metier.md#rg-sms-06)) — Étant donné une note vocale validée avec SMS prévu, quand elle part, alors le SMS contient la transcription texte, pas l'audio.
+- **TS-SMS-07** ([RG-SMS-07](../02-regles-metier.md#rg-sms-07)) — Aucun scénario tant que [Q-11](../06-questions-ouvertes.md#q-11) et [Q-12](../06-questions-ouvertes.md#q-12) ne sont pas tranchées : la règle ne fixe encore aucun comportement.
+
+## 11. Contacts (RG-CTC)
+
+- **TS-CTC-01** ([RG-CTC-01](../02-regles-metier.md#rg-ctc-01)) — Étant donné un nouveau contact avec nom et numéro, quand le navigateur l'enregistre, alors les cases « Suiveur » et « Contact SOS » sont cochées par défaut ; un contact sans numéro ni e-mail est refusé.
+- **TS-CTC-02** ([RG-CTC-04](../02-regles-metier.md#rg-ctc-04)) — Étant donné un contact non suiveur, quand le navigateur coche « Suiveur » en choisissant un périmètre, alors une invitation part et le contact devient suiveur à son acceptation ; quand il décoche « Suiveur », alors le contact est retiré de toutes les navigations.
+- **TS-CTC-03** ([RG-CTC-05](../02-regles-metier.md#rg-ctc-05)) — Étant donné un contact avec e-mail et sans numéro, quand le navigateur tente de cocher « Contact SOS », alors la case reste décochée.
+- **TS-CTC-04** ([RG-CTC-02](../02-regles-metier.md#rg-ctc-02)) — Étant donné la liste de contacts, quand le navigateur ajoute, modifie, supprime un contact ou change ses cases depuis le Web puis depuis l'application mobile, alors chaque opération est acceptée.
+- **TS-CTC-05** ([RG-CTC-03](../02-regles-metier.md#rg-ctc-03)) — Étant donné un contact ajouté sur le Web, quand l'application mobile est lancée avec Internet, alors le contact figure dans sa copie locale, consultable ensuite hors connexion.
+
+## 12. Paramètres (RG-PRM)
+
+- **TS-PRM-01** ([RG-PRM-01](../02-regles-metier.md#rg-prm-01)) — Étant donné la fréquence par défaut changée sur le Web, quand le navigateur ouvre les paramètres sur l'application mobile, alors la nouvelle valeur apparaît ; et inversement.
+- **TS-PRM-02** ([RG-PRM-02](../02-regles-metier.md#rg-prm-02)) — Étant donné un téléphone sans Internet ayant reçu les paramètres la veille, quand le navigateur démarre une navigation, alors la dernière version reçue est utilisée.
+
+## 13. Notifications (RG-NOT)
+
+- **TS-NOT-01** ([RG-NOT-01](../02-regles-metier.md#rg-not-01)) — Étant donné un événement notifié, quand il survient, alors la notification est un e-mail envoyé par le serveur.
+- **TS-NOT-02** ([RG-NOT-02](../02-regles-metier.md#rg-not-02)) — Étant donné une invitation, un nouvel accès accordé ou une alerte SOS, quand l'événement survient, alors l'e-mail correspondant est envoyé ; un suiveur sur iPhone reçoit aussi une notification push pour l'alerte SOS (voir TS-IOS-07).
+
+## 14. Administration (RG-ADM)
+
+- **TS-ADM-01** ([RG-ADM-01](../02-regles-metier.md#rg-adm-01)) — Étant donné un utilisateur connecté à l'espace utilisateur, quand il le parcourt, alors aucune fonction de l'espace administrateur n'y figure : les deux espaces sont distincts.
+- **TS-ADM-02** ([RG-ADM-02](../02-regles-metier.md#rg-adm-02)) — Étant donné un administrateur connecté, quand il parcourt l'espace administrateur, alors il trouve la gestion des utilisateurs, des bateaux et de leur rattachement, des abonnements, la supervision technique, la publication d'annonces et de maintenance, la sécurité et les journaux de traçabilité, les statistiques générales.
+- **TS-ADM-03** ([RG-ADM-03](../02-regles-metier.md#rg-adm-03)) — Étant donné un administrateur, quand il consulte, modifie puis supprime une navigation d'un utilisateur, alors les trois actions sont possibles et tracées.
+- **TS-ADM-04** ([RG-ADM-04](../02-regles-metier.md#rg-adm-04)) — Étant donné l'espace administrateur, quand on le parcourt, alors aucune fonction de gestion des langues n'y figure.
+- **TS-ADM-05** ([RG-ADM-05](../02-regles-metier.md#rg-adm-05)) — Étant donné l'espace administrateur au lancement, quand on le parcourt, alors aucune gestion de plusieurs versions de l'application Web n'y figure.
+
+## 15. Conservation des données (RG-DON)
+
+- **TS-DON-01** ([RG-DON-01](../02-regles-metier.md#rg-don-01)) — Étant donné une navigation et son journal jamais supprimés, quand des années passent, alors ils sont toujours conservés ; seule une suppression par le navigateur (TS-NAV-21) ou par un administrateur (TS-ADM-03) les retire.
+- **TS-DON-02** ([RG-DON-02](../02-regles-metier.md#rg-don-02)) — Aucun scénario tant que [Q-20](../06-questions-ouvertes.md#q-20) n'est pas tranchée : la règle ne fixe encore aucun comportement.
+
+## 16. Application iPhone (RG-IOS)
+
+- **TS-IOS-01** ([RG-IOS-01](../02-regles-metier.md#rg-ios-01)) — Étant donné un iPhone associé à un bateau, quand le navigateur démarre une navigation, envoie positions et notes, déclenche un SOS puis termine, alors chaque étape est possible ; un suiveur sur iPhone consulte les navigations et reçoit les notifications.
+- **TS-IOS-02** ([RG-IOS-02](../02-regles-metier.md#rg-ios-02)) — Étant donné une navigation menée depuis un iPhone avec l'interrupteur SMS activé, quand des positions partent, alors aucun SMS ni MMS n'est envoyé, et l'écran de démarrage a indiqué que les réglages SMS n'ont pas d'effet.
+- **TS-IOS-03** ([RG-IOS-03](../02-regles-metier.md#rg-ios-03)) — Étant donné un iPhone avec Internet, quand le navigateur confirme un SOS, alors l'alerte part au serveur, qui envoie l'e-mail aux suiveurs et aux contacts SOS dont l'e-mail est connu.
+- **TS-IOS-04** ([RG-IOS-03](../02-regles-metier.md#rg-ios-03)) — Étant donné un iPhone sans Internet, quand le navigateur confirme un SOS, alors l'application dit clairement que l'alerte ne peut pas partir, puis l'envoie dès que la connexion revient.
+- **TS-IOS-05** ([RG-IOS-04](../02-regles-metier.md#rg-ios-04)) — Étant donné deux contacts SOS dont un sans e-mail, quand le navigateur démarre une navigation sur iPhone, alors un avertissement rappelle que le SOS passe uniquement par Internet, sans SMS, et liste le contact sans e-mail comme non prévenu.
+- **TS-IOS-06** ([RG-IOS-05](../02-regles-metier.md#rg-ios-05)) — Étant donné un suiveur sur iPhone, quand il ouvre une navigation à laquelle il a accès, alors il voit les mêmes informations que sur le Web, carte comprise.
+- **TS-IOS-07** ([RG-IOS-06](../02-regles-metier.md#rg-ios-06)) — Étant donné un suiveur sur iPhone d'une navigation, quand une alerte SOS est émise, alors il reçoit une notification push en plus de l'e-mail.
+- **TS-IOS-08** ([RG-IOS-07](../02-regles-metier.md#rg-ios-07)) — Étant donné un abonnement souscrit par achat intégré de l'App Store, quand le navigateur se connecte sur Android et sur le Web, alors l'abonnement y est reconnu.

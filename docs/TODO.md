@@ -92,8 +92,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : un écran par section des §5 et §6 du cahier des charges, thèmes clair et sombre, validés par l'utilisateur.
 - [ ] **TODO-3.4**: Environnements de développement, de test et de production ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-3.1.
   - Critères d'acceptation : trois environnements décrits ; déploiement de test reproductible.
-- [ ] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier. Dépend de : aucune.
+- [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
+  - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : RG-SMS-07 et RG-DON-02 n'ont pas de scénario réel (elles renvoient seulement à Q-11, Q-12 et Q-20) ; validation par l'utilisateur.
 
 ## 4. Étape 1 — Serveur
 

@@ -21,6 +21,7 @@ Ce dépôt contient la **spécification fonctionnelle**. Il ne contient pas enco
 | [`docs/TODO.md`](docs/TODO.md) | Feuille de route : actions `TODO-x.y`, états, dépendances, critères d'acceptation. |
 | [`docs/Todo-done.md`](docs/Todo-done.md) | Actions réalisées et validées. |
 | [`docs/Todo-ithem-for-todo.md`](docs/Todo-ithem-for-todo.md) | Demandes notées en vrac, à reporter dans le TODO. |
+| [`docs/tests/scenarios-fonctionnels.md`](docs/tests/scenarios-fonctionnels.md) | Scénarios de tests fonctionnels `TS-…`, un au moins par règle `RG-…`. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
 
 ## Statut des informations
