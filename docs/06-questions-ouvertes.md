@@ -14,12 +14,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-88) : la météo du début et de la fin d'une navigation (RG-NAV-28) vient de l'API de Météo-France.
 - Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 
-### <a id="q-17"></a>Q-17 — Formules d'abonnement
-
-- Priorité : lancement.
-- Décidé (D-43) : une seule formule, mensuelle ou annuelle, sans période d'essai.
-- Question : prix mensuel et annuel, moyens de paiement sur le Web, renouvellement et résiliation, paiements échoués, cohérence entre Google Play, l'App Store et le Web.
-
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
@@ -60,11 +54,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-58, D-59) : applications mobiles Android et iPhone en Flutter, un seul code ; serveur maison.
 - Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL.
 - Décidé (D-86) : photos et notes vocales stockées dans PostgreSQL ; notifications push par APNs pour l'iPhone et Firebase Cloud Messaging pour Android (contenu sur Android : D-92, RG-AND-08) ; sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
-- Reste : cadre du serveur ; hébergeur après la bêta (décidé plus tard) ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration ; API et formats de données ; synchronisation ; environnements de développement, test et production.
-- Propositions (non validées), détaillées dans [08-architecture.md](08-architecture.md) §3 :
-  - hébergeur après la bêta : serveur virtuel dans l'Union européenne, même image Docker, PostgreSQL dédié ;
-  - e-mails après la bêta : relais de l'hébergeur, SPF, DKIM et DMARC ;
-  - géocodage inverse (RG-NAV-16, RG-JRN-10) : Nominatim (OpenStreetMap) appelé par le serveur, avec cache.
+- Décidé (D-96) : [08-architecture.md](08-architecture.md) validé, propositions comprises (serveur virtuel dans l'Union européenne après la bêta, relais d'e-mails avec SPF, DKIM et DMARC, géocodage par Nominatim).
+- Reste : nom de l'hébergeur et date du passage après la bêta ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration ; API et formats de données ; synchronisation ; environnements de développement, test et production.
 
 ## 3. Données, sécurité, conformité
 
@@ -87,7 +78,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-30"></a>Q-30 — Maquettes et accessibilité
 
 - Priorité : bloquant pour le développement des écrans.
-- À produire : maquettes détaillées des écrans Android et Web ; règles d'accessibilité.
+- Décidé (D-95) : WCAG 2.2 niveau AA (RG-PRM-05).
+- Reste : validation des [maquettes](../site/designs/app.html) des écrans Android et Web.
 
 ## 5. Évolutions futures
 

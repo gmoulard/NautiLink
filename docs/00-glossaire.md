@@ -33,6 +33,6 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Circuit Internet** | Échanges entre les applications et le serveur par API HTTPS. |
 | **Circuit SMS** | Envoi de SMS et MMS par la carte SIM du téléphone Android, sans prestataire externe. N'existe pas sur iPhone. |
 | **Quota gratuit** | 24 heures de navigation cumulées sur les 7 derniers jours glissants, par compte. |
-| **Abonnement** | Offre payante qui lève la limite du quota gratuit, par compte. |
+| **Abonnement** | Offre payante qui lève la limite du quota gratuit, par compte : 15 € payés une fois, pour 10 ans (RG-ECO-06). |
 | **Corbeille** | État d'une navigation supprimée, restaurable pendant 30 jours. |
 | **Administrateur** | Personne de l'équipe NautiLink qui utilise l'espace administrateur, distinct de l'espace utilisateur. |

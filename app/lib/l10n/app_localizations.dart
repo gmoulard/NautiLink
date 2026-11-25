@@ -437,7 +437,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscriptionText.
   ///
   /// In fr, this message translates to:
-  /// **'Navigation sans limite, au mois ou à l\'année. Prix à venir. Suivre et consulter l\'historique restent gratuits.'**
+  /// **'Navigation sans limite : 15 € pour 10 ans, sans renouvellement automatique. Suivre et consulter l\'historique restent gratuits.'**
   String get subscriptionText;
 
   /// No description provided for @subscriptionMore.

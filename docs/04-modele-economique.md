@@ -1,6 +1,6 @@
 # NautiLink — Modèle économique
 
-Statut : principes validés, une seule formule mensuelle ou annuelle sans essai ; prix à définir ([Q-17](06-questions-ouvertes.md#q-17)).
+Statut : validé ; une seule formule, 15 € pour 10 ans, sans renouvellement automatique ni essai ([D-94](07-decisions.md#d-94)).
 
 Les règles opposables sont RG-ECO-01 à RG-ECO-09 dans [02-regles-metier.md](02-regles-metier.md). Ce document en explique l'intention.
 
@@ -28,9 +28,7 @@ Exemple : un navigateur navigue 10 h le lundi à partir de 9 h et 14 h le mercre
 
 L'abonnement lève la limite pour le compte (RG-ECO-06). Il se souscrit sur Google Play, sur l'App Store ou sur le Web ; le serveur tient un seul état d'abonnement par compte (RG-ECO-07).
 
-Une seule formule, sans autre contenu que la navigation sans limite, payée au mois ou à l'année ; pas de période d'essai, le quota gratuit en tient lieu (RG-ECO-06).
-
-À définir ([Q-17](06-questions-ouvertes.md#q-17)) : prix mensuel et annuel, moyens de paiement sur le Web, renouvellement et résiliation, paiements échoués.
+Une seule formule, sans autre contenu que la navigation sans limite : 15 € payés une fois, pour 10 ans, sans renouvellement automatique ; pas de période d'essai, le quota gratuit en tient lieu (RG-ECO-06). Paiement par carte bancaire avec Stripe sur le Web, achat unique intégré sur Google Play et l'App Store ; un paiement échoué laisse le compte en version gratuite (RG-ECO-11).
 
 ## 5. Toujours gratuit
 

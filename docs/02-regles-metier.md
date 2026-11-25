@@ -154,6 +154,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-prm-02"></a>**RG-PRM-02** — L'application mobile récupère les paramètres généraux au lancement et à chaque modification lorsque Internet est disponible ; il utilise la dernière version reçue hors connexion.
 - <a id="rg-prm-03"></a>**RG-PRM-03** — Les interfaces sont en français et en anglais au lancement. Par défaut, la langue est celle du téléphone ; l'utilisateur peut la changer dans les paramètres ([D-90](07-decisions.md#d-90)). Sur la plateforme Web, la langue par défaut est celle du navigateur Internet ([D-93](07-decisions.md#d-93)).
 - <a id="rg-prm-04"></a>**RG-PRM-04** — Les SMS, les e-mails et le journal envoyés aux suiveurs et aux contacts SOS partent dans la langue du navigateur ([RG-PRM-03](#rg-prm-03), [D-90](07-decisions.md#d-90)).
+- <a id="rg-prm-05"></a>**RG-PRM-05** — L'application mobile et la plateforme Web respectent les règles d'accessibilité WCAG 2.2 au niveau AA : contrastes, taille des zones à toucher, lecteurs d'écran (TalkBack, VoiceOver), textes agrandis ([D-95](07-decisions.md#d-95)).
 
 ## 11. Modèle économique
 
@@ -162,11 +163,12 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-eco-03"></a>**RG-ECO-03** — Le temps passé comme suiveur n'est jamais décompté.
 - <a id="rg-eco-04"></a>**RG-ECO-04** — Quota épuisé et pas d'abonnement actif : le démarrage d'une nouvelle navigation est refusé ; l'application l'explique et propose de s'abonner ou d'attendre que des minutes redeviennent disponibles (avec l'heure à laquelle elles le redeviennent).
 - <a id="rg-eco-05"></a>**RG-ECO-05** — Quota épuisé pendant une navigation en cours : la navigation continue au plus 24 heures après l'épuisement, puis elle est clôturée automatiquement. Le SOS reste disponible. Si le compte souscrit un abonnement entre-temps, la clôture automatique est annulée ([D-20](07-decisions.md#d-20)). L'application prévient le navigateur à l'épuisement du quota, puis 1 heure avant la clôture, à l'écran et par une notification du téléphone ([D-39](07-decisions.md#d-39)).
-- <a id="rg-eco-06"></a>**RG-ECO-06** — Un abonnement actif lève la limite du quota pour le compte. Il n'existe qu'une formule, mensuelle ou annuelle, sans période d'essai : le quota gratuit en tient lieu ([D-43](07-decisions.md#d-43)). Prix, moyens de paiement, renouvellement, résiliation, paiements échoués : [Q-17](06-questions-ouvertes.md#q-17).
+- <a id="rg-eco-06"></a>**RG-ECO-06** — Un abonnement actif lève la limite du quota pour le compte. Il n'existe qu'une formule : 15 € payés une seule fois, pour 10 ans, sans renouvellement automatique ni période d'essai : le quota gratuit en tient lieu ([D-43](07-decisions.md#d-43), [D-94](07-decisions.md#d-94)). À la fin des 10 ans, le compte revient à la version gratuite.
 - <a id="rg-eco-07"></a>**RG-ECO-07** — L'abonnement se souscrit sur Android (Google Play), sur iPhone (achat intégré de l'App Store, [D-34](07-decisions.md#d-34)) ou sur le Web. Le serveur tient un seul état d'abonnement par compte, quel que soit le canal ([D-21](07-decisions.md#d-21)).
 - <a id="rg-eco-08"></a>**RG-ECO-08** — Le suivi des navigations des autres et la consultation de l'historique (positions, traces, notes, notes vocales, photos, alertes SOS, journaux) sont gratuits, sans limite, avec ou sans abonnement.
 - <a id="rg-eco-09"></a>**RG-ECO-09** — Le quota est calculé par le serveur. Les applications mobiles et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement. Ces informations sont sur un écran « Quota et abonnement » et résumées sur l'écran d'accueil de l'application mobile et sur le tableau de bord Web ([D-42](07-decisions.md#d-42)).
 - <a id="rg-eco-10"></a>**RG-ECO-10** — L'écran d'accueil de l'application mobile porte un lien « Version gratuite - abonnement » vers l'écran « Quota et abonnement ». Cet écran porte un lien vers la page d'information sur l'abonnement du site de présentation ([D-67](07-decisions.md#d-67)).
+- <a id="rg-eco-11"></a>**RG-ECO-11** — Sur le Web, l'abonnement se paie par carte bancaire avec Stripe ; sur Android et sur iPhone, c'est un achat unique intégré de Google Play ou de l'App Store (RG-ECO-07). Un paiement échoué n'ouvre pas l'abonnement : le compte reste en version gratuite ([D-94](07-decisions.md#d-94)).
 
 ## 12. Notifications
 
@@ -198,7 +200,7 @@ L'application iPhone a les mêmes fonctions que l'application Android, avec les 
 - <a id="rg-ios-04"></a>**RG-IOS-04** — Au démarrage d'une navigation sur iPhone, un avertissement rappelle que le SOS passe uniquement par Internet, sans SMS, et liste les contacts SOS sans e-mail, qui ne seront pas prévenus.
 - <a id="rg-ios-05"></a>**RG-IOS-05** — Le suiveur sur iPhone voit les navigations auxquelles il a accès comme sur le Web, carte comprise (RG-PAR-07, RG-PAR-08).
 - <a id="rg-ios-06"></a>**RG-IOS-06** — Le suiveur sur iPhone reçoit une notification push pour chaque navigation qu'il suit : alerte SOS (en plus de l'e-mail), début et fin de navigation, nouvelle photo, position en retard. Il peut désactiver chaque type, sauf le SOS ([D-44](07-decisions.md#d-44)). Une position est en retard quand aucune position n'a été reçue pendant deux fois la fréquence de la navigation ; une seule notification est envoyée jusqu'à la position suivante ([D-84](07-decisions.md#d-84)).
-- <a id="rg-ios-07"></a>**RG-IOS-07** — L'abonnement se souscrit par achat intégré de l'App Store ; le serveur le reconnaît sur tous les supports (RG-ECO-07).
+- <a id="rg-ios-07"></a>**RG-IOS-07** — L'abonnement s'achète par achat intégré de l'App Store (RG-ECO-11) ; le serveur le reconnaît sur tous les supports (RG-ECO-07).
 - <a id="rg-ios-08"></a>**RG-IOS-08** — L'application iPhone demande l'autorisation de localisation « Pendant l'utilisation » ; une navigation démarre à l'écran et continue en arrière-plan ([D-54](07-decisions.md#d-54)).
 - <a id="rg-ios-09"></a>**RG-IOS-09** — L'application iPhone fonctionne à partir de la version d'iOS fixée par défaut par Flutter 3.47.9 ([D-89](07-decisions.md#d-89)).
 

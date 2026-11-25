@@ -3,7 +3,7 @@
 Ce document décrit comment les pièces techniques de NautiLink s'assemblent : applications, serveur, base de données, fichiers, e-mails, notifications push et SMS. La vue fonctionnelle (qui parle à qui, deux circuits indépendants, stockage local sur le téléphone) est au [§4 du cahier des charges](01-cahier-des-charges.md#4-architecture-générale) ; elle n'est pas recopiée ici. Les règles citées (`RG-…`) font foi ([02-regles-metier.md](02-regles-metier.md)).
 
 - **Décidé** : chaque point porte la décision qui le fonde (`D-nn`, [07-decisions.md](07-decisions.md)).
-- **Proposition (non validée)** : choix suggéré, repris dans [Q-22](06-questions-ouvertes.md#q-22). Ne pas l'implémenter tant que l'utilisateur ne l'a pas confirmé.
+- **Proposition validée** : choix proposé puis validé par l'utilisateur le 2026-11-25 ([D-96](07-decisions.md#d-96)).
 
 Mise à jour : 2026-11-25 (TODO-3.1).
 
@@ -61,7 +61,7 @@ Risque accepté pendant la bêta : une coupure du Pi ou de la box arrête tout l
 
 ## 3. Ce qui n'est pas entièrement décidé
 
-Les propositions (non validées) sont reprises dans [Q-22](06-questions-ouvertes.md#q-22).
+Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui reste ouvert est dans [Q-22](06-questions-ouvertes.md#q-22).
 
 ### 3.1 Stockage des photos et notes vocales
 
@@ -72,7 +72,7 @@ Les propositions (non validées) sont reprises dans [Q-22](06-questions-ouvertes
 
 ### 3.2 Hébergeur après la bêta
 
-**Décidé plus tard** ([D-86](07-decisions.md#d-86)). **Proposition (non validée)** : un serveur virtuel chez un hébergeur situé dans l'Union européenne (RGPD, RG-DON-03), avec la même image Docker et un PostgreSQL dédié ; nom de domaine conservé (`nautilink.moulard.org` ou celui retenu en [Q-26](06-questions-ouvertes.md#q-26)). Hébergeur et date de passage à choisir.
+**Décidé plus tard** ([D-86](07-decisions.md#d-86)). **Proposition validée** ([D-96](07-decisions.md#d-96)) : un serveur virtuel chez un hébergeur situé dans l'Union européenne (RGPD, RG-DON-03), avec la même image Docker et un PostgreSQL dédié ; nom de domaine conservé (`nautilink.moulard.org` ou celui retenu en [Q-26](06-questions-ouvertes.md#q-26)). Hébergeur et date de passage à choisir.
 
 ### 3.3 Notifications push
 
@@ -88,13 +88,13 @@ Les propositions (non validées) sont reprises dans [Q-22](06-questions-ouvertes
 
 ### 3.5 E-mails après la bêta
 
-**Proposition (non validée)** : garder un relais d'envoi propre à l'hébergeur retenu, avec les enregistrements SPF, DKIM et DMARC du domaine de l'expéditeur, pour que les e-mails SOS n'arrivent pas en indésirables. À vérifier dès la bêta sur le relais de pi-appliance.
+**Proposition validée** ([D-96](07-decisions.md#d-96)) : garder un relais d'envoi propre à l'hébergeur retenu, avec les enregistrements SPF, DKIM et DMARC du domaine de l'expéditeur, pour que les e-mails SOS n'arrivent pas en indésirables. À vérifier dès la bêta sur le relais de pi-appliance.
 
 ### 3.6 Services externes appelés par le serveur
 
 - Météo marine : API de Météo-France ([D-88](07-decisions.md#d-88)) ; conditions d'accès (clé, quotas) à vérifier ([Q-39](06-questions-ouvertes.md#q-39)).
 - Cartes du SHOM : [Q-23](06-questions-ouvertes.md#q-23).
-- Géocodage inverse (nom du lieu, RG-NAV-16, RG-JRN-10) : **proposition (non validée)** : Nominatim (OpenStreetMap), appelé par le serveur avec un cache des noms, en respectant sa limite d'usage ; service à confirmer.
+- Géocodage inverse (nom du lieu, RG-NAV-16, RG-JRN-10) : Nominatim (OpenStreetMap), appelé par le serveur avec un cache des noms, en respectant sa limite d'usage ([D-96](07-decisions.md#d-96)).
 
 ## 4. Suite
 

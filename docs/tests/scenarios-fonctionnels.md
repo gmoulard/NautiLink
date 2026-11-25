@@ -42,6 +42,9 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-ECO-09** ([RG-ECO-08](../02-regles-metier.md#rg-eco-08)) — Étant donné un suiveur sans abonnement et au quota épuisé comme navigateur, quand il consulte les positions, traces, notes, notes vocales, photos, alertes SOS et journaux des navigations auxquelles il a accès, alors tout est consultable sans limite.
 - **TS-ECO-10** ([RG-ECO-09](../02-regles-metier.md#rg-eco-09)) — Étant donné un compte ayant consommé du quota, quand le navigateur ouvre l'application mobile puis le Web, alors chacun affiche le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement, avec les valeurs calculées par le serveur.
 - **TS-ECO-11** ([RG-ECO-10](../02-regles-metier.md#rg-eco-10)) — Étant donné l'écran d'accueil de l'application mobile, quand le navigateur touche « Version gratuite - abonnement », alors l'écran « Quota et abonnement » s'ouvre ; le lien de cet écran ouvre la page d'information sur l'abonnement du site de présentation.
+- **TS-ECO-12** ([RG-ECO-06](../02-regles-metier.md#rg-eco-06)) — Étant donné un compte qui a payé l'abonnement de 15 € il y a 10 ans, quand les 10 ans sont écoulés, alors aucun renouvellement n'est prélevé et le compte revient à la version gratuite (24 h sur 7 jours glissants).
+- **TS-ECO-13** ([RG-ECO-11](../02-regles-metier.md#rg-eco-11)) — Étant donné un navigateur sur le Web, quand il achète l'abonnement, alors il paie par carte bancaire avec Stripe ; sur Android et iPhone, l'achat passe par Google Play ou l'App Store en achat unique.
+- **TS-ECO-14** ([RG-ECO-11](../02-regles-metier.md#rg-eco-11)) — Étant donné un paiement refusé par la banque ou le magasin, quand l'achat échoue, alors aucun abonnement n'est ouvert et le compte reste en version gratuite.
 
 ## 3. Partage et suiveurs (RG-PAR)
 
@@ -164,6 +167,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-PRM-02** ([RG-PRM-02](../02-regles-metier.md#rg-prm-02)) — Étant donné un téléphone sans Internet ayant reçu les paramètres la veille, quand le navigateur démarre une navigation, alors la dernière version reçue est utilisée.
 - **TS-PRM-03** ([RG-PRM-03](../02-regles-metier.md#rg-prm-03)) — Étant donné un téléphone réglé en anglais, quand l'utilisateur ouvre l'application pour la première fois, alors elle s'affiche en anglais ; quand il choisit le français dans les paramètres, alors elle s'affiche en français.
 - **TS-PRM-04** ([RG-PRM-04](../02-regles-metier.md#rg-prm-04)) — Étant donné un navigateur dont l'application est en anglais, quand il démarre une navigation, alors les SMS et les e-mails envoyés à ses suiveurs sont en anglais, quelle que soit la langue des suiveurs.
+- **TS-PRM-05** ([RG-PRM-05](../02-regles-metier.md#rg-prm-05)) — Étant donné chaque écran de l'application mobile et de la plateforme Web, quand on le contrôle selon WCAG 2.2 niveau AA, alors contrastes, zones à toucher, lecture par TalkBack ou VoiceOver et textes agrandis sont conformes.
 
 ## 13. Notifications (RG-NOT)
 

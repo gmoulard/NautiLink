@@ -198,7 +198,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionText =>
-      'Unlimited sailing, monthly or yearly. Price to come. Following and viewing history remain free.';
+      'Unlimited sailing: €15 for 10 years, no automatic renewal. Following and viewing history remain free.';
 
   @override
   String get subscriptionMore => 'Learn more about the subscription';

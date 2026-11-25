@@ -201,7 +201,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get subscriptionText =>
-      'Navigation sans limite, au mois ou à l\'année. Prix à venir. Suivre et consulter l\'historique restent gratuits.';
+      'Navigation sans limite : 15 € pour 10 ans, sans renouvellement automatique. Suivre et consulter l\'historique restent gratuits.';
 
   @override
   String get subscriptionMore => 'En savoir plus sur l\'abonnement';

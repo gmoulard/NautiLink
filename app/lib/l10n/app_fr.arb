@@ -67,7 +67,7 @@
   "@quotaLeft": {"placeholders": {"duration": {"type": "String"}}},
   "quotaNextRecovery": "Prochaines minutes récupérables : 3 h 40 min dans 4 jours (navigation du début de semaine).",
   "subscriptionTitle": "Abonnement",
-  "subscriptionText": "Navigation sans limite, au mois ou à l'année. Prix à venir. Suivre et consulter l'historique restent gratuits.",
+  "subscriptionText": "Navigation sans limite : 15 € pour 10 ans, sans renouvellement automatique. Suivre et consulter l'historique restent gratuits.",
   "subscriptionMore": "En savoir plus sur l'abonnement",
 
   "boat": "Bateau",
