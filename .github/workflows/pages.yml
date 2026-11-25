@@ -6,11 +6,28 @@ name: Site GitHub Pages
 #   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, non signé (AltStore, Sideloadly)
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
 # Aucune publication dans les stores (D-61).
+#
+# Paramètres :
+#   - lancement manuel (Actions → Site GitHub Pages → Run workflow) : cases
+#     « android » et « iphone » pour construire ou non chaque application ;
+#   - push sur main : les applications ne sont reconstruites que si app/ ou ce
+#     fichier ont changé.
+# Une application non reconstruite reprend le fichier déjà publié sur le site,
+# pour que les liens de telecharger.html restent valides.
 on:
   push:
     branches: [main]
     paths: ["site/**", "app/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
+    inputs:
+      android:
+        description: "Construire l'APK Android"
+        type: boolean
+        default: true
+      iphone:
+        description: "Construire l'IPA iPhone (macOS, plus long)"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -23,9 +40,41 @@ concurrency:
 
 env:
   FLUTTER_VERSION: "3.47.9"
+  APK: nautilink-demo.apk
+  IPA: nautilink-demo-ios-non-signe.ipa
 
 jobs:
+  choix:
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.choix.outputs.android }}
+      iphone: ${{ steps.choix.outputs.iphone }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: choix
+        env:
+          EVENEMENT: ${{ github.event_name }}
+          ANDROID: ${{ inputs.android }}
+          IPHONE: ${{ inputs.iphone }}
+          AVANT: ${{ github.event.before }}
+        run: |
+          if [ "$EVENEMENT" = workflow_dispatch ]; then
+            android="$ANDROID"; iphone="$IPHONE"
+          elif [ -z "$AVANT" ] || ! git cat-file -e "$AVANT^{commit}" 2>/dev/null \
+               || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|\.github/workflows/pages\.yml$)'; then
+            android=true; iphone=true
+          else
+            android=false; iphone=false
+          fi
+          echo "android=$android" >> "$GITHUB_OUTPUT"
+          echo "iphone=$iphone" >> "$GITHUB_OUTPUT"
+          echo "Android : $android, iPhone : $iphone"
+
   ios:
+    needs: choix
+    if: needs.choix.outputs.iphone == 'true'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,19 +90,22 @@ jobs:
           flutter build ios --release --no-codesign
           mkdir -p ipa/Payload
           cp -R build/ios/iphoneos/Runner.app ipa/Payload/
-          cd ipa && zip -qr ../nautilink-demo-ios-non-signe.ipa Payload
+          cd ipa && zip -qr "../$IPA" Payload
       - uses: actions/upload-artifact@v4
         with:
           name: ipa
-          path: app/nautilink-demo-ios-non-signe.ipa
+          path: app/${{ env.IPA }}
           retention-days: 7
 
   build:
-    needs: ios
+    needs: [choix, ios]
+    # s'exécute aussi quand la construction iPhone a été sautée
+    if: ${{ !cancelled() && needs.choix.result == 'success' && needs.ios.result != 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
+        if: needs.choix.outputs.android == 'true'
         with:
           distribution: temurin
           java-version: "17"
@@ -72,27 +124,56 @@ jobs:
         working-directory: app
         run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn
       - name: APK Android de démonstration
+        if: needs.choix.outputs.android == 'true'
         working-directory: app
         run: flutter build apk --release
       - uses: actions/download-artifact@v4
+        if: needs.choix.outputs.iphone == 'true'
         with:
           name: ipa
           path: ipa
+      - id: pages
+        uses: actions/configure-pages@v5
       - name: Assembler le site
+        env:
+          ANDROID: ${{ needs.choix.outputs.android }}
+          IPHONE: ${{ needs.choix.outputs.iphone }}
+          SITE: ${{ steps.pages.outputs.base_url }}
         run: |
           mkdir -p _site/downloads
           cp -r site/. _site/
           cp -r app/build/web _site/app
-          cp app/build/app/outputs/flutter-apk/app-release.apk _site/downloads/nautilink-demo.apk
-          cp ipa/nautilink-demo-ios-non-signe.ipa _site/downloads/
-          cd _site/downloads && sha256sum *.apk *.ipa > SHA256SUMS.txt && cat SHA256SUMS.txt
-      - uses: actions/configure-pages@v5
+          reprendre() {
+            if curl -fsSL "$SITE/downloads/$1" -o "_site/downloads/$1"; then
+              echo "$1 repris du site publié"
+            else
+              rm -f "_site/downloads/$1"
+              echo "::warning::$1 absent du site publié : lien de téléchargement cassé, relancer avec la case cochée"
+            fi
+          }
+          if [ "$ANDROID" = true ]; then
+            cp app/build/app/outputs/flutter-apk/app-release.apk "_site/downloads/$APK"
+          else
+            reprendre "$APK"
+          fi
+          if [ "$IPHONE" = true ]; then
+            cp "ipa/$IPA" _site/downloads/
+          else
+            reprendre "$IPA"
+          fi
+          cd _site/downloads
+          shopt -s nullglob
+          fichiers=(*.apk *.ipa)
+          if [ ${#fichiers[@]} -gt 0 ]; then
+            sha256sum "${fichiers[@]}" > SHA256SUMS.txt && cat SHA256SUMS.txt
+          fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
   deploy:
     needs: build
+    if: ${{ !cancelled() && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages

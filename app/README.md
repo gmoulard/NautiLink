@@ -35,3 +35,5 @@ flutter build apk --release                   # APK de démonstration (signature
 ```
 
 Le workflow « Site GitHub Pages » construit et publie sur le site, sans passer par les stores : la démonstration Web (`app/`), l'APK Android (`downloads/nautilink-demo.apk`), l'IPA iPhone non signé (`downloads/nautilink-demo-ios-non-signe.ipa`, construit sur macOS) et `downloads/SHA256SUMS.txt`. Mode d'emploi : `site/telecharger.html`.
+
+Paramètres du workflow : en lancement manuel (« Actions » → « Site GitHub Pages » → « Run workflow »), les cases « android » et « iphone » choisissent les applications à reconstruire ; sur un push dans `main`, elles ne sont reconstruites que si `app/` ou le workflow ont changé. Une application non reconstruite reprend le fichier déjà publié sur le site. La démonstration Web et les tests sont toujours refaits.
