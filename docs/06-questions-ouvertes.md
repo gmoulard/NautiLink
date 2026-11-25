@@ -82,11 +82,11 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Décidé : localisation « Pendant l'utilisation » sur iPhone (D-54) ; exclusion de l'optimisation de la batterie sur Android (D-52).
 - Étude : [autorisations Android](etudes/autorisations-android.md) (liste, versions concernées, règles Google Play). Version visée imposée par Google Play : Android 16 (API 36).
-- Reste : versions minimales d'Android et d'iOS ; ordre des demandes d'autorisations ; comportement en cas de refus.
+- Décidé (D-80) : Android 8.0 au minimum ; autorisations demandées au moment où elles servent et redemandées à chaque besoin ; localisation précise refusée : navigation sans positions (RG-AND-01 à RG-AND-03).
+- Reste : version minimale d'iOS ; comportement si `SEND_SMS` est refusé ; appareil photo de NautiLink ou du téléphone ; réveil entre deux positions sans alarme exacte (RG-GPS-06) ; choix de la SIM sur les téléphones à deux SIM.
 - Propositions non validées :
-  - version minimale d'Android 8.0 (API 26) ; autres choix : 7.0 (API 24, valeur par défaut de Flutter), 10 (API 29) ;
-  - autorisations demandées au moment où elles servent, après un écran d'explication : localisation précise, notifications (Android 13+), `SEND_SMS` (si un contact SOS est enregistré) et exclusion de l'optimisation de la batterie (première navigation) à l'appui sur « Démarrer navigation » ; appareil photo au premier « Photo », micro au premier « Vocal » ; pas de localisation en arrière-plan (« Toujours autoriser »), inutile depuis D-51 ;
-  - à décider aussi : comportement si la localisation précise ou `SEND_SMS` est refusée ; appareil photo de NautiLink ou du téléphone ; réveil entre deux positions sans alarme exacte (RG-GPS-06) ; choix de la SIM sur les téléphones à deux SIM.
+  - `SEND_SMS` refusé : SOS par Internet, plus le SMS SOS prérempli ; autre choix : SOS par Internet seulement ;
+  - réveil entre deux positions par une minuterie dans le service de premier plan ; autre choix : alarmes exactes (restreintes par Google Play).
 
 ### <a id="q-22"></a>Q-22 — Architecture et développement
 

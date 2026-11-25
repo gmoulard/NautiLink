@@ -39,19 +39,19 @@ Légende : **normale** = accordée à l'installation, sans boîte de dialogue ; 
 - **Choix de la carte SIM pour le SMS SOS** : la SIM SMS par défaut (`SubscriptionManager.getDefaultSmsSubscriptionId()`) ne demande pas d'autorisation ; lister les SIM pour en choisir une demanderait `READ_PHONE_STATE`. Non décidé : à poser si les téléphones à deux SIM doivent être gérés.
 - **Visibilité des applications (Android 11 et plus)** : pour vérifier qu'une application SMS existe avant d'ouvrir un SMS prérempli, déclarer `<queries>` pour l'intention `smsto:`. Pas une autorisation, mais à ne pas oublier.
 
-## 3. Version minimale d'Android (proposition non validée)
+## 3. Version minimale d'Android (décidée, D-80)
 
 | Choix | Pour | Contre |
 |-------|------|--------|
-| **Android 8.0 (API 26)** — proposé | Canaux de notification et `startForegroundService` présents partout ; aucune branche pour Android 7 ; reste compatible avec des téléphones anciens gardés à bord. | Quatre comportements différents à essayer (8–9, 10–12, 13, 14 et plus). |
+| **Android 8.0 (API 26)** — retenu (RG-AND-01) | Canaux de notification et `startForegroundService` présents partout ; aucune branche pour Android 7 ; reste compatible avec des téléphones anciens gardés à bord. | Quatre comportements différents à essayer (8–9, 10–12, 13, 14 et plus). |
 | Android 7.0 (API 24) | Valeur par défaut de Flutter 3.47.9, public le plus large. | Pas de canal de notification ni de `startForegroundService` : cas particulier à coder et à essayer pour peu de téléphones. |
 | Android 10 (API 29) | Type de service `location` et localisation en arrière-plan séparée partout ; moins de cas à essayer. | Exclut des téléphones encore en service ; part de ces téléphones à lire dans le tableau de répartition d'Android Studio avant de choisir. |
 
 Version visée : Android 16 (API 36), imposée par Google Play (§ 1) ; elle n'est pas un choix.
 
-## 4. Parcours de demande des autorisations (proposition non validée)
+## 4. Parcours de demande des autorisations
 
-Principe proposé : demander chaque autorisation **au moment où elle sert**, précédée d'un écran d'explication de NautiLink (exigé par Google Play pour les données sensibles [P5]) ; aucune demande au premier lancement.
+Principe décidé (RG-AND-02, D-80) : demander chaque autorisation **au moment où elle sert**, précédée d'un écran d'explication de NautiLink (exigé par Google Play pour les données sensibles [P5]) ; aucune demande au premier lancement ; une autorisation refusée est redemandée à chaque besoin. L'ordre ci-dessous reste une proposition non validée.
 
 ```mermaid
 flowchart TD
@@ -59,7 +59,7 @@ flowchart TD
     B -- non --> B1["Écran d'explication puis<br/>demande ACCESS_FINE_LOCATION"]
     B1 --> B2{"Réponse"}
     B2 -- "précise" --> C
-    B2 -- "approximative ou refus" --> BX["Comportement à décider (Q-31)"]
+    B2 -- "approximative ou refus" --> BX["Navigation sans positions ;<br/>demande renouvelée à chaque<br/>acquisition (RG-AND-03)"] --> C
     B -- oui --> C{"Android 13 ou plus et<br/>notifications non accordées ?"}
     C -- oui --> C1["Demande POST_NOTIFICATIONS"] --> D
     C -- non --> D{"Contact SOS enregistré et<br/>SEND_SMS non accordée ?"}
@@ -77,13 +77,13 @@ flowchart TD
 Remarques :
 
 - La demande de `SEND_SMS` est placée au démarrage d'une navigation, et non au premier SOS, pour ne pas faire répondre à une boîte de dialogue pendant une urgence. Variante : à l'enregistrement du premier contact SOS.
-- Une autorisation refusée deux fois n'est plus proposée par Android : il ne reste qu'à envoyer l'utilisateur dans les paramètres de l'application [A7].
+- Une autorisation refusée deux fois n'est plus proposée par Android : pour la redemander (RG-AND-02), l'application envoie alors l'utilisateur dans ses paramètres [A7].
 - `ACCESS_BACKGROUND_LOCATION` n'apparaît pas dans le parcours (n° 2 du § 2).
 
 ## 5. Reste à faire pour TODO-2.3
 
 1. Relire les pages Google Play [P1] à [P6] (hôte support.google.com non joignable lors de la rédaction).
-2. Choix par l'utilisateur ([Q-31](../06-questions-ouvertes.md#q-31)) : version minimale, ordre des demandes, comportement en cas de refus de la localisation précise et de `SEND_SMS`, appareil photo de NautiLink ou du téléphone ; puis règles métier et `D-nn`.
+2. Tranché (D-80) : version minimale, demande au moment du besoin, refus de la localisation précise. Reste à choisir ([Q-31](../06-questions-ouvertes.md#q-31)) : refus de `SEND_SMS`, appareil photo de NautiLink ou du téléphone, réveil entre deux positions.
 3. Vérifier le parcours sur le prototype de TODO-2.2 (Android 8, 10, 13 et 14 au moins).
 
 ## Sources
