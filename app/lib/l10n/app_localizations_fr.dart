@@ -31,6 +31,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get buildLocal => 'Version locale, sans commit';
 
   @override
+  String get footerSiteLink => 'Site de NautiLink';
+
+  @override
   String get sosButton => 'Envoyer un SOS';
 
   @override

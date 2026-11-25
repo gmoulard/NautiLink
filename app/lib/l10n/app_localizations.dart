@@ -134,6 +134,12 @@ abstract class AppLocalizations {
   /// **'Version locale, sans commit'**
   String get buildLocal;
 
+  /// No description provided for @footerSiteLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Site de NautiLink'**
+  String get footerSiteLink;
+
   /// No description provided for @sosButton.
   ///
   /// In fr, this message translates to:

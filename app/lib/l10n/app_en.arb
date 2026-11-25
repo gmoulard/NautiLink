@@ -9,6 +9,7 @@
   "buildCommit": "Commit {commit}",
   "@buildCommit": {"placeholders": {"commit": {"type": "String"}}},
   "buildLocal": "Local build, no commit",
+  "footerSiteLink": "NautiLink website",
   "sosButton": "Send an SOS",
   "cancel": "Cancel",
   "close": "Close",

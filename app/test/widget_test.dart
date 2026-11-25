@@ -142,6 +142,13 @@ void main() {
     expect(securityMemoUrl, 'https://gmoulard.github.io/NautiLink/securite.html');
   });
 
+  testWidgets('pied de page : lien « Site de NautiLink » sous le sponsor (TODO-3.13)', (tester) async {
+    setPhone(tester);
+    await openHome(tester);
+    expect(find.text('Site de NautiLink'), findsOneWidget);
+    expect(siteUrl, 'https://gmoulard.github.io/NautiLink/');
+  });
+
   testWidgets('démarrage : personnes à bord, personnes alertées, ajout d\'un contact (RG-NAV-25 à 27)', (tester) async {
     setPhone(tester);
     await openHome(tester);

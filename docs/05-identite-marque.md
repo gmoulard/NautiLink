@@ -149,5 +149,5 @@ Thème sombre, validé le 2026-11-25 ([D-97](07-decisions.md#d-97)) :
 | SOS | `#E35D5D` |
 | Bandeau bêta | `#F2C14E`, inchangé |
 
-Bandeau du sponsor SRT : sur le fond de l'application, en thème clair comme en sombre (filet jaune `#F8D818` au-dessus ; texte bleu SRT `#1E3296` en clair, texte `#E3EEF7` en sombre).
+Bandeau du sponsor SRT : sur le fond de l'application, en thème clair comme en sombre (filet jaune `#F8D818` au-dessus ; texte bleu SRT `#1E3296` en clair, texte `#E3EEF7` en sombre). Sous la mention du sponsor, un petit lien souligné « Site de NautiLink » vers le site de présentation (TODO-3.13).
 

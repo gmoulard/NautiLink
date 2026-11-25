@@ -30,6 +30,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buildLocal => 'Local build, no commit';
 
   @override
+  String get footerSiteLink => 'NautiLink website';
+
+  @override
   String get sosButton => 'Send an SOS';
 
   @override

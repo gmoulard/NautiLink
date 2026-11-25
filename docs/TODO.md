@@ -16,7 +16,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21, TODO-1.26 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
 | LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7, TODO-3.11 | LOT-4, LOT-5 | [~] |
-| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10, TODO-3.12 | aucun | [~] |
+| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10, TODO-3.12, TODO-3.13 | aucun | [~] |
 | LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [~] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [ ] |
@@ -90,6 +90,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 - [~] **TODO-3.12**: Demande du 2026-11-25 (boîte de réception) : mémo sécurité en mer (`site/securite.html`) accessible dans les applications mobiles ([Q-80](06-questions-ouvertes.md#q-80)). Dépend de : TODO-3.6.
   - Critères d'acceptation : « Mémo sécurité en mer » visible sur l'accueil de la démonstration et ouvrant le mémo, couvert par un test ; relu par l'utilisateur ; forme définitive (page du site ou mémo intégré, lisible hors connexion) tranchée par Q-80.
   - Fait (2026-11-25) : bouton « Mémo sécurité en mer » sous le bouton SOS de l'accueil du prototype, qui ouvre <https://gmoulard.github.io/NautiLink/securite.html> dans le navigateur du téléphone ; un test. Reste : relecture, réponse à Q-80.
+- [~] **TODO-3.13**: Demande du 2026-11-25 (boîte de réception) : petit lien en pied de page des applications vers le site de présentation <https://gmoulard.github.io/NautiLink/>. Dépend de : TODO-3.6.
+  - Critères d'acceptation : lien discret visible en pied de page de la démonstration, qui ouvre le site, couvert par un test ; relu par l'utilisateur.
+  - Fait (2026-11-25) : lien souligné « Site de NautiLink » sous la mention du sponsor (accueil mobile et premier écran du Web), ouvert dans le navigateur ; un test. Reste : relecture.
 - [~] **TODO-3.7**: Squelette du serveur en Go déployé sur pi-appliance ([D-62](07-decisions.md#d-62)) : page d'accueil de la plateforme Web, point de santé de l'API, connexion à la base, image `arm64`, fichier `compose.yaml` pour « Docker Compose libre ». Dépend de : aucune pour le squelette ; publication sur internet : TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance.
   - Critères d'acceptation : service installé sur le Pi de `vdl.moulard.org`, page ouverte depuis un téléphone à `https://nautilink.moulard.org` (redirigée vers `https://vdl.moulard.org/nautilink/`), base PostgreSQL partagée jointe, e-mail d'essai reçu par le relais, service gardé après un redémarrage du Pi.
   - Fait (2026-11-24) : serveur Go dans `server/` (accueil, espace administrateur vide, `api/sante`, PostgreSQL par pgx, commande `mail-essai`, tests), image `ghcr.io/gmoulard/nautilink-serveur` construite par le workflow « Serveur », `server/compose.yaml` ; essayé sous Docker (arm64 et amd64 construits, base jointe puis arrêtée, renvoi vers `/nautilink/`). Reste : premier passage du workflow sur GitHub, puis installation sur le Pi une fois TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance faits.
