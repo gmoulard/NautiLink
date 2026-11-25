@@ -5,6 +5,7 @@ name: Site GitHub Pages
 #   site/downloads/nautilink-demo.apk          Android, signature de débogage
 #   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, non signé (AltStore, Sideloadly)
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
+#   site/downloads/COMMITS.txt                 commit de construction de chaque application
 # Aucune publication dans les stores (D-61).
 #
 # Paramètres :
@@ -87,7 +88,7 @@ jobs:
         working-directory: app
         run: |
           flutter pub get
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
           mkdir -p ipa/Payload
           cp -R build/ios/iphoneos/Runner.app ipa/Payload/
           cd ipa && zip -qr "../$IPA" Payload
@@ -122,11 +123,11 @@ jobs:
           flutter test
       - name: Démonstration Web
         working-directory: app
-        run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn
+        run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
       - name: APK Android de démonstration
         if: needs.choix.outputs.android == 'true'
         working-directory: app
-        run: flutter build apk --release
+        run: flutter build apk --release --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
       - uses: actions/download-artifact@v4
         if: needs.choix.outputs.iphone == 'true'
         with:
@@ -139,13 +140,19 @@ jobs:
           ANDROID: ${{ needs.choix.outputs.android }}
           IPHONE: ${{ needs.choix.outputs.iphone }}
           SITE: ${{ steps.pages.outputs.base_url }}
+          COMMIT: ${{ github.sha }}
         run: |
           mkdir -p _site/downloads
           cp -r site/. _site/
           cp -r app/build/web _site/app
+          # COMMITS.txt : commit de construction de chaque application, repris
+          # avec le fichier quand l'application n'est pas reconstruite.
+          curl -fsSL "$SITE/downloads/COMMITS.txt" -o anciens-commits.txt || : > anciens-commits.txt
           reprendre() {
             if curl -fsSL "$SITE/downloads/$1" -o "_site/downloads/$1"; then
               echo "$1 repris du site publié"
+              ancien=$(awk -v f="$1" '$1 == f { print $2 }' anciens-commits.txt)
+              echo "$1 ${ancien:-inconnu}" >> _site/downloads/COMMITS.txt
             else
               rm -f "_site/downloads/$1"
               echo "::warning::$1 absent du site publié : lien de téléchargement cassé, relancer avec la case cochée"
@@ -153,14 +160,24 @@ jobs:
           }
           if [ "$ANDROID" = true ]; then
             cp app/build/app/outputs/flutter-apk/app-release.apk "_site/downloads/$APK"
+            echo "$APK $COMMIT" >> _site/downloads/COMMITS.txt
           else
             reprendre "$APK"
           fi
           if [ "$IPHONE" = true ]; then
             cp "ipa/$IPA" _site/downloads/
+            echo "$IPA $COMMIT" >> _site/downloads/COMMITS.txt
           else
             reprendre "$IPA"
           fi
+          # Pieds de page : commit du site ; telecharger.html : commit de chaque application.
+          commit_de() { awk -v f="$1" '$1 == f { print $2 }' _site/downloads/COMMITS.txt; }
+          apk=$(commit_de "$APK"); ipa=$(commit_de "$IPA")
+          apk=${apk:-inconnu}; ipa=${ipa:-inconnu}
+          sed -i -e "s/@COMMIT_COURT@/${COMMIT::7}/g" -e "s/@COMMIT@/$COMMIT/g" \
+                 -e "s/@COMMIT_APK_COURT@/${apk::7}/g" -e "s/@COMMIT_APK@/$apk/g" \
+                 -e "s/@COMMIT_IPA_COURT@/${ipa::7}/g" -e "s/@COMMIT_IPA@/$ipa/g" _site/*.html
+          cat _site/downloads/COMMITS.txt
           cd _site/downloads
           shopt -s nullglob
           fichiers=(*.apk *.ipa)

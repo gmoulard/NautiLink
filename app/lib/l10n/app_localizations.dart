@@ -122,6 +122,18 @@ abstract class AppLocalizations {
   /// **'Guidon de la SRT'**
   String get sponsorLogoLabel;
 
+  /// No description provided for @buildCommit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commit {commit}'**
+  String buildCommit(String commit);
+
+  /// No description provided for @buildLocal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version locale, sans commit'**
+  String get buildLocal;
+
   /// No description provided for @sosButton.
   ///
   /// In fr, this message translates to:

@@ -79,9 +79,7 @@ ThemeData nlTheme(Brightness brightness) {
       centerTitle: false,
       titleTextStyle: displayStyle(20, color: fg),
       shape: Border(
-        bottom: BorderSide(
-          color: dark ? NlColors.lineDark : NlColors.line,
-        ),
+        bottom: BorderSide(color: dark ? NlColors.lineDark : NlColors.line),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -89,7 +87,10 @@ ThemeData nlTheme(Brightness brightness) {
         minimumSize: const Size.fromHeight(56),
         backgroundColor: accent,
         foregroundColor: scheme.onPrimary,
-        textStyle: base.textTheme.labelLarge?.copyWith(fontSize: 17, fontWeight: FontWeight.w600),
+        textStyle: base.textTheme.labelLarge?.copyWith(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
@@ -98,7 +99,10 @@ ThemeData nlTheme(Brightness brightness) {
         minimumSize: const Size.fromHeight(52),
         foregroundColor: accent,
         side: BorderSide(color: accent, width: 1.5),
-        textStyle: base.textTheme.labelLarge?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+        textStyle: base.textTheme.labelLarge?.copyWith(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
@@ -181,7 +185,11 @@ class SosButton extends StatelessWidget {
   }
 }
 
-/// Mention du sponsor : la SRT et son guidon.
+/// Commit dont l'application est construite, fourni par le workflow
+/// « Site GitHub Pages » (`--dart-define=NAUTILINK_COMMIT=<sha>`) ; vide en local.
+const String buildCommit = String.fromEnvironment('NAUTILINK_COMMIT');
+
+/// Mention du sponsor : la SRT et son guidon, puis le commit de construction.
 class SponsorFooter extends StatelessWidget {
   const SponsorFooter({super.key});
 
@@ -195,26 +203,44 @@ class SponsorFooter extends StatelessWidget {
       // Fond de l'application, en thème clair comme en sombre (D-97).
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        border: const Border(top: BorderSide(color: Color(0xFFF8D818), width: 3)),
+        border: const Border(
+          top: BorderSide(color: Color(0xFFF8D818), width: 3),
+        ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
-            'assets/sponsor-srt.png',
-            height: 30,
-            semanticLabel: l.sponsorLogoLabel,
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            child: Text(
-              l.sponsorText,
-              style: TextStyle(
-                color: dark ? NlColors.inkDark : const Color(0xFF1E3296),
-                fontWeight: FontWeight.w700,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/sponsor-srt.png',
+                height: 30,
+                semanticLabel: l.sponsorLogoLabel,
               ),
-            ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  l.sponsorText,
+                  style: TextStyle(
+                    color: dark ? NlColors.inkDark : const Color(0xFF1E3296),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            buildCommit.isEmpty
+                ? l.buildLocal
+                : l.buildCommit(
+                    buildCommit.length > 7
+                        ? buildCommit.substring(0, 7)
+                        : buildCommit,
+                  ),
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
           ),
         ],
       ),
