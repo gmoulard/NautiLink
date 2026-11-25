@@ -8,6 +8,7 @@ import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../reel/depot_reel.dart';
 import '../theme.dart';
+import 'compte.dart';
 import 'connexion.dart';
 import 'dashboard.dart';
 import 'memo.dart';
@@ -155,11 +156,11 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => page));
             },
+            // Autres écrans (cahier des charges §5.5, TODO-5.7) ; paramètres de la démonstration seulement pour l'instant.
             itemBuilder: (_) => [
-              if (demo) ...[
-                PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
+              PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
+              if (demo)
                 PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
-              ],
               PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
               if (demo)
                 PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
@@ -353,76 +354,6 @@ Future<void> openStart(BuildContext context) async {
   if (!context.mounted) return;
   Navigator.of(context)
       .push(MaterialPageRoute(builder: (_) => const StartScreen()));
-}
-
-/// Contacts : une seule liste, cases « Suiveur » et « Contact SOS » (RG-CTC-01).
-class ContactsScreen extends StatelessWidget {
-  const ContactsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final state = AppScope.of(context);
-    final l = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.menuContacts)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(l.contactsDefault),
-          const SizedBox(height: 12),
-          for (final c in state.contacts)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      c.name,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    Text([c.phone, c.email].whereType<String>().join(' · ')),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: Text(l.roleFollower),
-                            value: c.follower,
-                            onChanged: (v) {
-                              c.follower = v ?? false;
-                              state.touch();
-                            },
-                          ),
-                        ),
-                        Expanded(
-                          child: CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: Text(l.roleSos),
-                            subtitle: c.phone == null
-                                ? Text(l.phoneRequired)
-                                : null,
-                            value: c.sos,
-                            onChanged: c.phone == null
-                                ? null
-                                : (v) {
-                                    c.sos = v ?? false;
-                                    state.touch();
-                                  },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
 
 /// Paramètres généraux (RG-PRM-01, RG-SMS-02).

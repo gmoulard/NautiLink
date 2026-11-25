@@ -233,7 +233,13 @@ void main() {
     await tapText(tester, 'Se connecter');
     await tester.tap(find.byType(PopupMenuButton<String>));
     await tester.pumpAndSettle();
-    expect(find.text('Contacts'), findsNothing); // TODO-5.7
+    // Autres écrans du cahier des charges §5.5 (TODO-5.7).
+    for (final m in [
+      'Contacts',
+      'Quota et abonnement',
+    ]) {
+      expect(find.text(m), findsOneWidget);
+    }
     await tapText(tester, 'Se déconnecter');
     expect(find.text('Se connecter'), findsOneWidget);
   });

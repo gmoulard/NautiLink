@@ -137,6 +137,18 @@ class DepotDemo extends Depot {
   @override
   Future<void> deconnecter() async {}
 
+  /// Cases « Suiveur » et « Contact SOS » des contacts d'exemple ; rien n'est envoyé.
+  @override
+  Future<void> modifierContact(String id, Map<String, Object?> champs) async {
+    for (final c in state.contacts.where((c) => c.name == id)) {
+      if (champs['suiveur'] is bool) c.follower = champs['suiveur'] as bool;
+      if (champs['contactSos'] is bool && c.phone != null) {
+        c.sos = champs['contactSos'] as bool;
+      }
+    }
+    state.touch();
+  }
+
   @override
   void dispose() {
     state.removeListener(notifyListeners);
