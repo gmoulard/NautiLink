@@ -1232,12 +1232,12 @@ paths:
         required: true
         schema:
           type: string
-          enum: [utilisateurs, bateaux, navigations, evenements, alertes-sos, abonnements, annonces,
+          enum: [utilisateurs, bateaux, contacts, navigations, evenements, alertes-sos, abonnements, annonces,
             supervision, journal, statistiques]
     get:
       tags: [Administration]
       summary: 'Consulter (espace administrateur, profil unique d''administrateur).'
-      description: 'Appelée par l''espace administrateur (`/admin/`), distinct de l''espace utilisateur. Chaque appel est tracé et gardé 3 ans. Les annonces s''affichent aux utilisateurs par `GET /v1/annonces` (RG-ADM-06).'
+      description: 'Appelée par l''espace administrateur (`/admin/`), distinct de l''espace utilisateur. Chaque appel est tracé et gardé 3 ans. Les annonces s''affichent aux utilisateurs par `GET /v1/annonces` (RG-ADM-06). Administrateurs : adresses e-mail confirmées listées dans `NAUTILINK_ADMINS` (Q-53, non validée). `contacts` et `bateaux` acceptent `utilisateur` (identifiant du compte) ; une fonction pas encore réalisée rend 404 `non_disponible`.'
       x-regles: [RG-ADM-01, RG-ADM-02, RG-ADM-03, RG-DON-02]
       security:
         - cookieAdmin: []
@@ -1277,6 +1277,7 @@ paths:
     patch:
       tags: [Administration]
       summary: 'Modifier toute donnée, positions et alertes SOS comprises ; action tracée.'
+      description: 'Pour `bateaux`, `proprietaireId` ou `proprietaireEmail` rattache le bateau à un autre compte (le téléphone associé est alors retiré).'
       x-regles: [RG-ADM-03]
       security:
         - cookieAdmin: []

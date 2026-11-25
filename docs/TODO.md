@@ -23,7 +23,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-11 | Android : journal, fin, contacts, abonnement | TODO-5.4, TODO-5.6, TODO-5.7, TODO-5.8 | LOT-10 | [ ] |
 | LOT-12 | Web : consultation des navigations | TODO-6.1, TODO-6.2, TODO-6.3, TODO-6.4 | LOT-7, LOT-9 | [ ] |
 | LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7 | LOT-12 | [ ] |
-| LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [ ] |
+| LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [~] |
 | LOT-15 | Marque et publication Android | TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5 | LOT-3, LOT-11 | [~] |
 | LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7 | LOT-11, LOT-13, LOT-15 | [ ] |
 | LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3 | LOT-13, LOT-14 | [ ] |
@@ -161,8 +161,10 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 ## 7. Étape 4 — Administration
 
-- [ ] **TODO-7.1**: Espace administrateur (RG-ADM-01 à RG-ADM-04). Dépend de : TODO-4.1, TODO-1.15.
+- [~] **TODO-7.1**: Espace administrateur (RG-ADM-01 à RG-ADM-04, RG-ADM-06). Dépend de : TODO-4.1, TODO-1.15.
   - Critères d'acceptation : chaque fonction de RG-ADM-02 disponible ; chaque action tracée.
+  - Fait (`server/admin*.go`, `server/web_admin.go`, `server/web/admin/`, migration 5) : espace `<chemin>/admin/` distinct (cookie `nautilink_admin`, session propre) ; administrateurs désignés par `NAUTILINK_ADMINS` en attendant [Q-53](06-questions-ouvertes.md#q-53) ; utilisateurs (recherche, fiche, modification, suppression), leurs contacts (consultation, suppression), bateaux (fiche, rattachement à un autre compte, suppression), annonces en bandeau du tableau de bord Web avec fermeture (`GET /v1/annonces`, RG-ADM-06), statistiques générales, supervision (version, base, sessions), journal de chaque action (consultations comprises) gardé 3 ans ; API `/v1/admin/{ressource}` pour ces ressources ; essai avec PostgreSQL.
+  - Reste : navigations, journaux, positions, alertes SOS, corbeille et quota (après LOT-9) ; abonnements (TODO-4.8 et suivants) ; erreurs, incidents et synchronisations dans la supervision ; bandeau des annonces dans l'application mobile ; [Q-53](06-questions-ouvertes.md#q-53) à trancher ; essai sur le Pi.
 
 ## 8. Lancement
 

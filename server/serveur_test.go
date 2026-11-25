@@ -33,7 +33,8 @@ func TestPagesSousChemin(t *testing.T) {
 	if rec := requete(t, h, "/nautilink/"); rec.Code != 200 || !strings.Contains(rec.Body.String(), "Version bêta") {
 		t.Fatalf("accueil : %d %q", rec.Code, rec.Body.String())
 	}
-	if rec := requete(t, h, "/nautilink/admin/"); rec.Code != 200 || !strings.Contains(rec.Body.String(), "Administration") {
+	// Sans base, l'espace administrateur dit qu'il est indisponible.
+	if rec := requete(t, h, "/nautilink/admin/"); rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "Administration") {
 		t.Fatalf("admin : %d", rec.Code)
 	}
 	if rec := requete(t, h, "/nautilink/static/style.css"); rec.Code != 200 {

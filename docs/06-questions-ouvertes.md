@@ -14,6 +14,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-88) : la météo du début et de la fin d'une navigation (RG-NAV-28) vient de l'API de Météo-France.
 - Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 
+### <a id="q-53"></a>Q-53 — Désignation des administrateurs
+
+- Priorité : lancement (TODO-7.1).
+- Cas : RG-ADM-03 prévoit un seul profil d'administrateur, mais rien ne dit qui l'obtient ni comment, sans secret dans le dépôt.
+- Proposition (non validée) : variable d'environnement `NAUTILINK_ADMINS`, posée sur le serveur, qui liste les adresses e-mail des administrateurs ; l'administrateur se connecte à `<chemin>/admin/` avec son compte NautiLink, dont l'adresse doit être confirmée ; retirer une adresse retire l'accès aussitôt ; session de l'espace administrateur fermée après 12 heures sans usage. Ce qui est fait (TODO-7.1) : cette proposition, appliquée en attendant.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

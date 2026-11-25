@@ -1,0 +1,96 @@
+{{define "admin-haut"}}<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>{{if .Titre}}{{.Titre}} · {{end}}Administration NautiLink</title>
+<link rel="stylesheet" href="{{.Base}}/static/style.css">
+</head>
+<body class="admin">
+<header>
+  <div class="ligne">
+    <a class="marque" href="{{.Base}}/admin/">NautiLink · Administration</a>
+    {{if .Connecte}}<span class="signature">{{.Email}}</span>{{end}}
+    <nav aria-label="Menu de l'administration">
+    {{if .Connecte}}
+      <a href="{{.Base}}/admin/">Tableau de bord</a>
+      <a href="{{.Base}}/admin/utilisateurs">Utilisateurs</a>
+      <a href="{{.Base}}/admin/bateaux">Bateaux</a>
+      <a href="{{.Base}}/admin/annonces">Annonces</a>
+      <a href="{{.Base}}/admin/journal">Journal</a>
+      <form class="enligne" method="post" action="{{.Base}}/admin/deconnexion"><button class="secondaire" type="submit">Se déconnecter</button></form>
+    {{end}}
+    </nav>
+  </div>
+</header>
+<main>
+{{if .Message}}<div class="message" role="status">{{.Message}}</div>{{end}}
+{{if .Erreur}}<div class="erreur" role="alert">{{.Erreur}}</div>{{end}}
+{{end}}
+
+{{define "admin-bas"}}
+</main>
+<footer>NautiLink {{.Version}} · Espace administrateur · Chaque action est enregistrée dans le journal.</footer>
+</body>
+</html>
+{{end}}
+
+{{define "admin-recherche"}}
+<form method="get" class="carte">
+  <label for="recherche">Rechercher</label>
+  <input id="recherche" name="recherche" type="text" value="{{.}}">
+  <button type="submit">Rechercher</button>
+</form>
+{{end}}
+
+{{define "admin-message.html"}}{{template "admin-haut" .}}
+<h1>{{.Titre}}</h1>
+<div class="carte"><p><a class="lien" href="{{.Base}}/admin/">Retour au tableau de bord</a></p></div>
+{{template "admin-bas" .}}{{end}}
+
+{{define "admin-connexion.html"}}{{template "admin-haut" .}}
+<h1>Espace administrateur</h1>
+<div class="carte">
+<p>Réservé à l'équipe NautiLink. Connectez-vous avec votre compte NautiLink : son adresse e-mail doit être confirmée et autorisée comme administrateur.</p>
+<form method="post" action="{{.Base}}/admin/connexion">
+  <label for="email">Adresse e-mail</label>
+  <input id="email" name="email" type="email" required autocomplete="username" value="{{index .F "email"}}">
+  <label for="motdepasse">Mot de passe</label>
+  <input id="motdepasse" name="motdepasse" type="password" required autocomplete="current-password">
+  <button type="submit">Se connecter</button>
+</form>
+</div>
+{{template "admin-bas" .}}{{end}}
+
+{{define "admin-accueil.html"}}{{template "admin-haut" .}}
+<h1>Tableau de bord</h1>
+{{with .D}}
+<div class="carte">
+<h2>Statistiques générales</h2>
+<dl class="chiffres">
+  <dt>Comptes</dt><dd>{{.Stats.Utilisateurs}}</dd>
+  <dt>Adresses e-mail confirmées</dt><dd>{{.Stats.EmailsConfirmes}}</dd>
+  <dt>Nouveaux comptes sur 7 jours</dt><dd>{{.Stats.Inscrits7Jours}}</dd>
+  <dt>Comptes utilisés sur 30 jours</dt><dd>{{.Stats.Actifs30Jours}}</dd>
+  <dt>Bateaux</dt><dd>{{.Stats.Bateaux}}</dd>
+  <dt>Bateaux avec un téléphone associé</dt><dd>{{.Stats.BateauxAvecTelephone}}</dd>
+  <dt>Contacts</dt><dd>{{.Stats.Contacts}}</dd>
+  <dt>Accès de suiveurs</dt><dd>{{.Stats.Suiveurs}}</dd>
+  <dt>Annonces en cours</dt><dd>{{.Stats.AnnoncesEnCours}}</dd>
+</dl>
+</div>
+<div class="carte">
+<h2>Supervision</h2>
+<dl class="chiffres">
+  <dt>Version du serveur</dt><dd>{{.Supervision.Version}}</dd>
+  <dt>Base de données</dt><dd>{{.Supervision.Base}} (schéma {{.Supervision.Schema}})</dd>
+  <dt>Démarré le</dt><dd>{{.Supervision.DemarreLe.Format "02/01/2006 15:04"}} UTC</dd>
+  <dt>Sessions Web</dt><dd>{{.Supervision.SessionsWeb}}</dd>
+  <dt>Sessions des applications mobiles</dt><dd>{{.Supervision.SessionsMobiles}}</dd>
+</dl>
+<p class="aide">Erreurs, incidents et synchronisations : pas encore disponibles.</p>
+</div>
+{{end}}
+{{template "admin-bas" .}}{{end}}

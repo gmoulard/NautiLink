@@ -23,6 +23,10 @@ type config struct {
 	// connexion par Google ou par Apple est désactivée.
 	GoogleClients []string
 	AppleClients  []string
+	// Admins : NAUTILINK_ADMINS, adresses e-mail des administrateurs,
+	// séparées par des virgules (Q-53, non validée) ; vide : espace
+	// administrateur fermé.
+	Admins []string
 }
 
 func configDepuisEnv() config {
@@ -37,6 +41,7 @@ func configDepuisEnv() config {
 		AdressePublique: strings.TrimRight(strings.TrimSpace(os.Getenv("NAUTILINK_ADRESSE_PUBLIQUE")), "/"),
 		GoogleClients:   liste(os.Getenv("NAUTILINK_GOOGLE_CLIENTS")),
 		AppleClients:    liste(os.Getenv("NAUTILINK_APPLE_CLIENTS")),
+		Admins:          liste(strings.ToLower(os.Getenv("NAUTILINK_ADMINS"))),
 	}
 }
 
