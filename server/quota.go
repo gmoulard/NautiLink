@@ -189,7 +189,7 @@ func (a *app) verifierQuotaAuDemarrage(ctx context.Context, utilisateur string) 
 // d'épuisement du quota (première minute où le décompte atteint 24 heures),
 // puis clôture 24 heures après, à cette heure-là. Un abonnement souscrit
 // entre-temps annule la clôture. Le quota redevenu disponible pendant ces
-// 24 heures ne l'annule pas (Q-55, proposition appliquée).
+// 24 heures ne l'annule pas (RG-ECO-05, D-112).
 func (a *app) cloturesAutomatiques(ctx context.Context) error {
 	t := a.maintenant()
 	lignes, err := a.b.pool.Query(ctx, `SELECT id, navigateur_id, debut_enregistre, epuise_le FROM navigations

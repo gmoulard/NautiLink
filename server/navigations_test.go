@@ -57,6 +57,9 @@ func TestNavigationComplete(t *testing.T) {
 	e := nouvelEssai(t)
 	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
 	t0 := time.Now().Add(-3 * time.Hour).Truncate(time.Second)
+	lea := e.compte("lea@exemple.org", "Léa")
+	e.suivre(nav, lea, "lea@exemple.org", "navigateur", "")
+	e.a.b.pool.Exec(t.Context(), "UPDATE acces SET navigateur_depuis = $1", t0.Add(-time.Hour))
 	id := uuid(t)
 	d := demarrage(bateau, tel, t0, 47.70, -3.36)
 	d["debut"].(map[string]any)["id"] = uuid(t)
@@ -128,9 +131,7 @@ func TestNavigationComplete(t *testing.T) {
 		}
 	}
 
-	// Suiveur de périmètre navigateur : lecture seule.
-	lea := e.compte("lea@exemple.org", "Léa")
-	e.suivre(nav, lea, "lea@exemple.org", "navigateur", "")
+	// Suiveur de périmètre navigateur (accès antérieur au départ, RG-PAR-09) : lecture seule.
 	if code, _ := e.appel("GET", "/navigations/"+id, lea, nil); code != 200 {
 		t.Fatalf("lecture par le suiveur : %d", code)
 	}
@@ -333,5 +334,59 @@ func TestNomsDeLieux(t *testing.T) {
 	_, nv := e.appel("GET", "/navigations/"+id, nav, nil)
 	if l := nv["lieuDepart"].(map[string]any); l["nom"] != "Concarneau" {
 		t.Fatalf("lieu de départ : %v", l)
+	}
+}
+
+// Périmètre navigateur : seulement les navigations commencées depuis qu'il a
+// pris effet ; la navigation partagée avant un changement de périmètre reste
+// visible (RG-PAR-09, D-111).
+func TestPerimetreNavigateurDepuisLAcces(t *testing.T) {
+	e := nouvelEssai(t)
+	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
+	ancienne := uuid(t)
+	d := demarrage(bateau, tel, time.Now().Add(-time.Hour), 47, -3)
+	d["debut"].(map[string]any)["id"] = uuid(t)
+	if code, _ := e.appel("PUT", "/navigations/"+ancienne, nav, d); code != 201 {
+		t.Fatal("démarrage")
+	}
+	ana := e.compte("ana@exemple.org", "Ana")
+	e.suivre(nav, ana, "ana@exemple.org", "navigateur", "")
+	tom := e.compte("tom@exemple.org", "Tom")
+	e.suivre(nav, tom, "tom@exemple.org", "navigation", ancienne)
+	if code, _ := e.appel("GET", "/navigations/"+ancienne, ana, nil); code != 404 {
+		t.Fatalf("navigation commencée avant l'accès : %d", code)
+	}
+	_, l := e.liste("GET", "/navigations/"+ancienne+"/suiveurs", nav, nil)
+	if len(l) != 1 || l[0]["nom"] != "Tom" {
+		t.Fatalf("suiveurs de l'ancienne navigation : %v", l)
+	}
+	// Tom passe au périmètre navigateur : l'ancienne navigation reste visible.
+	_, acces := e.liste("GET", "/acces?role=navigateur", nav, nil)
+	for _, ac := range acces {
+		if ac["suiveur"].(map[string]any)["nom"] == "Tom" {
+			if code, r := e.appel("PATCH", "/acces/"+ac["id"].(string), nav, map[string]any{"perimetre": "navigateur"}); code != 200 {
+				t.Fatalf("changement de périmètre : %d %v", code, r)
+			}
+		}
+	}
+	if code, _ := e.appel("GET", "/navigations/"+ancienne, tom, nil); code != 200 {
+		t.Fatalf("navigation partagée avant le changement : %d", code)
+	}
+	fin := map[string]any{"id": uuid(t), "type": "fin", "heureAcquisition": heure(time.Now()), "numeroOrdre": 2,
+		"position": map[string]any{"latitude": 47.1, "longitude": -3.1, "heureAcquisition": heure(time.Now())}}
+	if code, _ := e.appel("PUT", "/navigations/"+ancienne+"/fin", nav, fin); code != 200 {
+		t.Fatal("fin")
+	}
+	// Nouvelle navigation : visible des deux.
+	nouvelle := uuid(t)
+	d = demarrage(bateau, tel, time.Now().Add(time.Second), 47, -3)
+	d["debut"].(map[string]any)["id"] = uuid(t)
+	if code, r := e.appel("PUT", "/navigations/"+nouvelle, nav, d); code != 201 {
+		t.Fatalf("nouvelle navigation : %d %v", code, r)
+	}
+	for _, s := range []string{ana, tom} {
+		if code, _ := e.appel("GET", "/navigations/"+nouvelle, s, nil); code != 200 {
+			t.Fatalf("navigation commencée après l'accès : %d", code)
+		}
 	}
 }

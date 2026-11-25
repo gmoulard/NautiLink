@@ -99,12 +99,12 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 
 ## 4. API et synchronisation
 
-**Proposition, non validée** ([Q-22](06-questions-ouvertes.md#q-22), TODO-3.2). Description complète : [`api/openapi.yaml`](api/openapi.yaml) (OpenAPI 3.1) ; chaque opération cite les règles qu'elle sert (`x-regles`), les traitements faits par le serveur seul sont listés dans `x-traitements`, et les règles sans échange avec le serveur dans `x-regles-sans-serveur`. Chaque règle `RG-…` figure dans l'une de ces trois listes.
+**Validé** ([D-115](07-decisions.md#d-115)). Description complète : [`api/openapi.yaml`](api/openapi.yaml) (OpenAPI 3.1) ; chaque opération cite les règles qu'elle sert (`x-regles`), les traitements faits par le serveur seul sont listés dans `x-traitements`, et les règles sans échange avec le serveur dans `x-regles-sans-serveur`. Chaque règle `RG-…` figure dans l'une de ces trois listes.
 
 - **Un seul point d'entrée** : `https://vdl.moulard.org/nautilink/api`, chemins versionnés `/v1/…` ; le point de santé `/api/sante` du squelette est gardé.
 - **Formats** : JSON en UTF-8, heures RFC 3339 avec décalage horaire, positions en degrés décimaux WGS 84, durées en minutes, distances en mètres ; photos en JPEG et notes vocales en AAC (`audio/mp4`), déposées à part (`PUT /v1/fichiers/{evenementId}`).
 - **Identifiants tirés par le téléphone** pour ce qu'il crée (navigation, événement, alerte SOS, contact ajouté hors connexion) : tout envoi peut être rejoué sans doublon (§5).
-- **Sessions** : jeton porteur pour les applications mobiles, cookie pour la plateforme Web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; expiration après 90 jours sans usage, jamais sur le téléphone associé pendant une navigation en cours ; la déconnexion ne vide pas la file d'attente (RG-CPT-08, [D-100](07-decisions.md#d-100)).
+- **Sessions** : jeton porteur pour les applications mobiles, cookie pour la plateforme Web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; expiration après 90 jours sans usage, jamais sur le téléphone associé pendant une navigation en cours ; la déconnexion ne vide pas la file d'attente (RG-CPT-08, [D-100](07-decisions.md#d-100)). Sur le téléphone, les jetons d'accès et de renouvellement sont gardés dans les préférences de l'application, sans chiffrement matériel ; le jeton d'accès est présenté en `Authorization: Bearer`, `POST /v1/sessions/renouvellement` en donne une nouvelle paire (RG-CPT-12, [D-116](07-decisions.md#d-116)).
 - **Comptes** (réalisé, TODO-4.1) : mots de passe hachés par argon2id (19 Mio, 2 passes : réglage minimal de l'OWASP, tenable sur le Pi) ; jetons de session, de renouvellement et des liens envoyés par e-mail tirés au hasard (256 bits), seule leur empreinte SHA-256 est gardée en base ; protection contre les essais répétés (5 mots de passe faux par compte ou 20 par adresse IP en 15 minutes, 10 créations de compte par adresse IP et par heure, 5 e-mails de vérification par compte et par heure) ; formulaires Web refusés s'ils viennent d'un autre site (cookie `SameSite=Lax` et contrôle de l'origine) ; connexion Google et Apple par vérification du jeton d'identité (OpenID Connect) avec les clés publiques du fournisseur, désactivée sans identifiant client configuré. Le schéma de la base est créé et mis à jour au démarrage du serveur (migrations numérotées, jamais modifiées une fois publiées).
 - **Synchronisation** :
   - téléphone → serveur : file d'attente (§5) ;
@@ -114,11 +114,11 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
   - événements reçus après une clôture automatique : ceux acquis avant l'heure de clôture sont gardés, ceux d'après refusés (`navigation_cloturee`) ; un SOS acquis après la clôture devient un SOS depuis l'accueil (RG-ECO-12, [D-102](07-decisions.md#d-102)) ;
   - annonces de l'administrateur : `GET /v1/annonces` rend celles à afficher en bandeau, `POST /v1/annonces/{annonceId}/fermeture` la ferme pour l'utilisateur (RG-ADM-06, [D-103](07-decisions.md#d-103)) ;
   - désinscriptions du suiveur : réglages du profil, valables pour tous les navigateurs suivis (RG-NOT-04, [D-104](07-decisions.md#d-104)).
-- **Point qui attend une décision** : fonctionnement hors connexion ([Q-29](06-questions-ouvertes.md#q-29)) ; les autres points de l'API sont tranchés (D-99 à D-104), reste sa validation d'ensemble (TODO-3.2).
+- **Hors connexion** : comportement de chaque écran mobile, RG-COM-06 ([D-114](07-decisions.md#d-114)).
 
 ## 5. File d'attente et doublons
 
-**Proposition, non validée** ([Q-10](06-questions-ouvertes.md#q-10), TODO-2.7). Les règles : enregistrement sur le téléphone que le serveur soit joignable ou non (RG-GPS-03), envoi dès que possible dans l'ordre d'acquisition (RG-GPS-04), fin transmise avec son heure réelle (RG-NAV-14), SOS de l'iPhone envoyé au retour de la connexion (RG-IOS-03).
+**Validé** ([D-110](07-decisions.md#d-110), RG-COM-05). Les règles : enregistrement sur le téléphone que le serveur soit joignable ou non (RG-GPS-03), envoi dès que possible dans l'ordre d'acquisition (RG-GPS-04), fin transmise avec son heure réelle (RG-NAV-14), SOS de l'iPhone envoyé au retour de la connexion (RG-IOS-03).
 
 - **Enregistrer d'abord** : chaque envoi vers le serveur (démarrage, événement, fichier de photo ou de note vocale, fin, alerte SOS, statuts des SMS SOS) est écrit dans la base locale du téléphone (SQLite) avant toute tentative ; une fermeture forcée ou un redémarrage ne le perd pas (RG-NAV-12).
 - **Identifiant unique par événement** : l'application tire un UUID (version 4) à la création de la navigation, de chaque événement et de chaque alerte SOS, et l'envoie avec lui. Le serveur garde cet identifiant comme clé unique (contrainte d'unicité de PostgreSQL) :
@@ -135,7 +135,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 
 ## 6. Environnements
 
-**Proposition, non validée** ([Q-22](06-questions-ouvertes.md#q-22), TODO-3.4), sauf la production de la bêta, décidée ([D-62](07-decisions.md#d-62)).
+**Validé** ([D-115](07-decisions.md#d-115)) ; production de la bêta : [D-62](07-decisions.md#d-62).
 
 | | Développement | Test | Production |
 |---|---|---|---|
