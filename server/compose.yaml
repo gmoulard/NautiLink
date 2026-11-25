@@ -9,13 +9,9 @@
 #     (pi-appliance-mail, l'adresse du Pi vue des conteneurs) et PI_SMTP_PORT
 #     (2525) ; 60 e-mails par heure au plus pour tout le Pi ;
 #   - « Domaines renvoyés vers le service » : nautilink.moulard.org.
-# Aucun mot de passe dans ce fichier. Dans le fichier .env du service, poser
-#   NAUTILINK_BASE_MOT_DE_PASSE=<lettres et chiffres seulement, 24 au moins>
-# (il entre tel quel dans l'URL de la base). Sans lui, la liste des images se lit
-# quand même (la console la lit avant le .env), mais la base refuse de démarrer
-# (« superuser password is not specified ») et api/sante dit "base":"erreur".
-# Le mot de passe est fixé à la création du volume : le changer ensuite demande
-# ALTER USER dans la base.
+# Rien à poser dans .env pour la base : elle n'a pas de mot de passe et n'est
+# joignable que par le serveur, sur le réseau interne « base-interne » (sans
+# accès à internet, aucun port publié, aucun autre conteneur dessus).
 # Connexion par Google ou par Apple : identifiants clients OAuth (pas des
 # secrets) à poser dans .env ; vides, ces connexions sont désactivées.
 services:
@@ -31,7 +27,7 @@ services:
       NAUTILINK_CHEMIN: "/nautilink"
       # Adresse des liens envoyés par e-mail (vérification, invitations).
       NAUTILINK_ADRESSE_PUBLIQUE: "https://vdl.moulard.org/nautilink"
-      NAUTILINK_BASE: "postgres://nautilink:${NAUTILINK_BASE_MOT_DE_PASSE:-}@base:5432/nautilink?sslmode=disable"
+      NAUTILINK_BASE: "postgres://nautilink@base:5432/nautilink?sslmode=disable"
       NAUTILINK_SMTP_HOTE: "${PI_SMTP_HOST:-}"
       NAUTILINK_SMTP_PORT: "${PI_SMTP_PORT:-2525}"
       NAUTILINK_EXPEDITEUR: "nautilink@moulard.org"
@@ -40,9 +36,13 @@ services:
       # Noms des lieux (géocodage inverse, D-96) ; vide : coordonnées seules.
       NAUTILINK_NOMINATIM: "https://nominatim.openstreetmap.org"
       NAUTILINK_ADMINS: "${NAUTILINK_ADMINS:-}"
+    # Le serveur réessaie toutes les 5 secondes tant que la base n'est pas prête
+    # (premier démarrage plus long sur le Pi) : pas d'attente de « healthy ».
     depends_on:
-      base:
-        condition: service_healthy
+      - base
+    networks:
+      - default
+      - base-interne
     extra_hosts:
       - "pi-appliance-mail:host-gateway"
     ports:
@@ -54,14 +54,15 @@ services:
     cap_drop:
       - ALL
 
-  # PostgreSQL propre à NautiLink (D-130), joint par le seul réseau du service,
-  # aucun port publié. Sauvegarde du volume : Q-85.
+  # PostgreSQL propre à NautiLink (D-130), sur le seul réseau interne partagé
+  # avec le serveur, aucun port publié. Sauvegarde du volume : Q-85.
   base:
     image: postgres:16.6-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: nautilink
-      POSTGRES_PASSWORD: "${NAUTILINK_BASE_MOT_DE_PASSE:-}"
+      # Sans mot de passe : seul le serveur joint la base (réseau base-interne).
+      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_DB: nautilink
     volumes:
       - nautilink-base:/var/lib/postgresql/data
@@ -70,9 +71,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 30
+      start_period: 120s
+    networks:
+      - base-interne
     mem_limit: 256m
     security_opt:
       - no-new-privileges:true
 
 volumes:
   nautilink-base:
+
+networks:
+  base-interne:
+    internal: true
