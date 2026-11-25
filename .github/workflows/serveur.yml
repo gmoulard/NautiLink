@@ -36,6 +36,15 @@ jobs:
       - run: go vet ./...
       - run: go test ./...
 
+  essai:
+    # Déploiement de test reproductible (TODO-3.4) : image construite, base
+    # PostgreSQL jetable, e-mails capturés par Mailpit.
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./server/essai-test.sh
+
   image:
     needs: tests
     if: github.event_name != 'pull_request'

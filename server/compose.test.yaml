@@ -1,0 +1,51 @@
+# Environnement de test de NautiLink (TODO-3.4, docs/08-architecture.md §6).
+# Reproductible sur tout poste avec Docker : image construite depuis ce dossier,
+# PostgreSQL vide et jetable, e-mails capturés par Mailpit (aucun e-mail réel).
+# Lancer et vérifier : ./essai-test.sh   (ou docker compose -f compose.test.yaml up --build)
+name: nautilink-test
+services:
+  nautilink:
+    build:
+      context: .
+      args:
+        VERSION: test
+    environment:
+      NAUTILINK_ADRESSE: ":8080"
+      NAUTILINK_CHEMIN: "/nautilink"
+      NAUTILINK_BASE: "postgres://nautilink:essai@base:5432/nautilink?sslmode=disable"
+      NAUTILINK_SMTP_HOTE: "courrier"
+      NAUTILINK_SMTP_PORT: "1025"
+      NAUTILINK_EXPEDITEUR: "nautilink-test@example.org"
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      base:
+        condition: service_healthy
+      courrier:
+        condition: service_started
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+  base:
+    image: postgres:16.6-alpine
+    environment:
+      POSTGRES_USER: nautilink
+      # Mot de passe d'essai, base jetable sans données réelles.
+      POSTGRES_PASSWORD: essai
+      POSTGRES_DB: nautilink
+    tmpfs:
+      - /var/lib/postgresql/data
+    ports:
+      # Pour le développement : go run . avec la base de test (08-architecture.md §6).
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "nautilink"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  courrier:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "127.0.0.1:8025:8025"

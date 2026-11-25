@@ -108,7 +108,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-86) : photos et notes vocales stockées dans PostgreSQL ; notifications push par APNs pour l'iPhone et Firebase Cloud Messaging pour Android (contenu sur Android : D-92, RG-AND-08) ; sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
 - Décidé (D-96) : [08-architecture.md](08-architecture.md) validé, propositions comprises (serveur virtuel dans l'Union européenne après la bêta, relais d'e-mails avec SPF, DKIM et DMARC, géocodage par Nominatim).
 - Proposition (non validée, TODO-3.2) : API et formats de données, synchronisation : [08-architecture.md §4](08-architecture.md#4-api-et-synchronisation) et [`api/openapi.yaml`](api/openapi.yaml) ; points fonctionnels ouverts : Q-29, Q-42 à Q-47.
-- Reste : nom de l'hébergeur et date du passage après la bêta ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration (TODO-3.11) ; validation de l'API ; environnements de développement, test et production.
+- Reste : nom de l'hébergeur et date du passage après la bêta ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration (TODO-3.11) ; validation de l'API ; validation des environnements de développement, de test et de production proposés ([08-architecture.md §6](08-architecture.md#6-environnements), TODO-3.4).
 
 ## 3. Données, sécurité, conformité
 

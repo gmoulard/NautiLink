@@ -11,6 +11,16 @@ NAUTILINK_CHEMIN=/nautilink go run .
 # http://localhost:8080/nautilink/  et  http://localhost:8080/nautilink/api/sante
 ```
 
+## Environnement de test
+
+```bash
+cd server
+./essai-test.sh          # construit, lance, vérifie santé et e-mail, arrête
+GARDER=1 ./essai-test.sh # garde l'environnement lancé (base sur 127.0.0.1:5432, Mailpit sur http://127.0.0.1:8025)
+```
+
+[`compose.test.yaml`](compose.test.yaml) : image construite depuis ce dossier, PostgreSQL jetable, e-mails capturés par Mailpit. Les trois environnements : [08-architecture.md §6](../docs/08-architecture.md#6-environnements).
+
 ## Réglages (variables d'environnement)
 
 | Variable | Rôle | Par défaut |

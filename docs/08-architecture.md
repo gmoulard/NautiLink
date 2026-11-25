@@ -6,7 +6,7 @@ Ce document décrit comment les pièces techniques de NautiLink s'assemblent : a
 - **Proposition validée** : choix proposé puis validé par l'utilisateur le 2026-11-25 ([D-96](07-decisions.md#d-96)).
 - **Proposition, non validée** : choix technique proposé, à valider par l'utilisateur ([Q-22](06-questions-ouvertes.md#q-22)).
 
-Mise à jour : 2026-11-25 (TODO-3.1, TODO-3.2, TODO-2.7).
+Mise à jour : 2026-11-25 (TODO-3.1, TODO-3.2, TODO-2.7, TODO-3.4).
 
 ## 1. Schéma
 
@@ -129,4 +129,20 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 - **Chronomètre du dernier envoi** (RG-NAV-10) : un envoi réussi par le circuit Internet est une réponse 200 ou 201 du serveur.
 - **Essai** : scénario TS-GPS-07 ([scénarios](tests/scenarios-fonctionnels.md)), à jouer sur un vrai téléphone avec 2 heures de coupure une fois l'application et le serveur écrits (TODO-5.3).
 
-Environnements de développement, de test et de production : TODO-3.4.
+## 6. Environnements
+
+**Proposition, non validée** ([Q-22](06-questions-ouvertes.md#q-22), TODO-3.4), sauf la production de la bêta, décidée ([D-62](07-decisions.md#d-62)).
+
+| | Développement | Test | Production |
+|---|---|---|---|
+| Où | Poste du développeur | Tout poste avec Docker, et le workflow « Serveur » de GitHub (tâche `essai`) | Bêta : Raspberry Pi sous pi-appliance ([D-62](07-decisions.md#d-62)) ; après la bêta : serveur virtuel dans l'Union européenne ([D-96](07-decisions.md#d-96)) |
+| Serveur | `go run .` dans `server/` | Image construite depuis `server/` ([`compose.test.yaml`](../server/compose.test.yaml)) | Image publiée `ghcr.io/gmoulard/nautilink-serveur`, installée par « Docker Compose libre » ([`compose.yaml`](../server/compose.yaml)) |
+| Base | PostgreSQL de `compose.test.yaml`, joint sur `127.0.0.1:5432` | PostgreSQL vide et jetable (en mémoire), effacé à l'arrêt | PostgreSQL partagé de pi-appliance, sauvegardé chaque nuit (RG-DON-02) |
+| E-mails | Mailpit de `compose.test.yaml` (`http://127.0.0.1:8025`) | Mailpit : capturés, aucun e-mail réel | Relais de pi-appliance, puis celui de l'hébergeur (SPF, DKIM, DMARC) |
+| Notifications push, paiements | Aucun envoi réel ; Stripe en mode test | Aucun envoi réel ; Stripe en mode test | APNs, FCM, Stripe, Google Play et App Store réels |
+| SMS | Téléphone d'essai, vers des numéros de l'équipe | Téléphone d'essai, vers des numéros de l'équipe | Téléphones des navigateurs |
+| Applications mobiles | Prototype de démonstration sans serveur (`app/`, [D-57](07-decisions.md#d-57)) ; plus tard, adresse du serveur de développement | Version de test pointée sur le serveur de test | Versions publiées sur Google Play et l'App Store |
+| Données | D'essai seulement | D'essai seulement, jamais copiées de la production | Réelles |
+| Secrets | Aucun dans le dépôt | Mots de passe d'essai de `compose.test.yaml`, sans valeur | Posés par la console de pi-appliance, jamais dans le dépôt |
+
+**Déploiement de test reproductible** : `server/essai-test.sh` construit et lance l'environnement de test, vérifie le point de santé (base `ok`), envoie un e-mail d'essai et vérifie qu'il arrive dans Mailpit, puis arrête tout. Essayé le 2026-11-25 sous Docker, plusieurs fois de suite, avec succès (image faite d'un binaire construit hors de Docker, le réseau du poste d'essai empêchant `go mod download` dans la construction) ; la construction complète par le `Dockerfile` sera vérifiée par la tâche `essai` du workflow « Serveur ».
