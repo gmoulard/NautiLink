@@ -44,6 +44,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : à la création d'un compte, l'interrupteur des SMS, les préférences par type, le MMS de photo et la fréquence par défaut (RG-PRM-01, RG-SMS-02, RG-NAV-05) n'ont pas de valeur décidée.
 - Proposition (non validée), d'après le prototype : SMS activés, tous les types cochés, photo jointe en MMS non cochée, fréquence de 30 minutes. Ce qui est fait (TODO-4.4) : aucun paramètre réglé (`null`) tant que le navigateur ne les a pas choisis ; la page Web les fait choisir.
 
+### <a id="q-53"></a>Q-53 — Désignation des administrateurs
+
+- Priorité : lancement (TODO-7.1).
+- Cas : RG-ADM-03 prévoit un seul profil d'administrateur, mais rien ne dit qui l'obtient ni comment, sans secret dans le dépôt.
+- Proposition (non validée) : variable d'environnement `NAUTILINK_ADMINS`, posée sur le serveur, qui liste les adresses e-mail des administrateurs ; l'administrateur se connecte à `<chemin>/admin/` avec son compte NautiLink, dont l'adresse doit être confirmée ; retirer une adresse retire l'accès aussitôt ; session de l'espace administrateur fermée après 12 heures sans usage. Ce qui est fait (TODO-7.1) : cette proposition, appliquée en attendant.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

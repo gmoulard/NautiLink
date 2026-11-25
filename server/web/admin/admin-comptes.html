@@ -1,0 +1,171 @@
+{{define "admin-utilisateurs.html"}}{{template "admin-haut" .}}
+<h1>Utilisateurs</h1>
+{{template "admin-recherche" .Recherche}}
+<div class="carte">
+{{if .D}}
+<table>
+  <thead><tr><th scope="col">Nom</th><th scope="col">Adresse e-mail</th><th scope="col">Téléphone</th><th scope="col">Créé le</th><th scope="col">Bateaux</th><th scope="col">Contacts</th></tr></thead>
+  <tbody>
+  {{range .D}}
+  <tr><td><a class="lien" href="{{$.Base}}/admin/utilisateurs/{{.ID}}">{{.Nom}}</a></td>
+      <td>{{.Email}}{{if not .EmailVerifie}} (non confirmée){{end}}</td>
+      <td>{{deref .Telephone}}</td>
+      <td>{{.CreeLe.Format "02/01/2006"}}</td>
+      <td>{{.Bateaux}}</td><td>{{.Contacts}}</td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}
+<p>Aucun compte.</p>
+{{end}}
+</div>
+{{template "admin-bas" .}}{{end}}
+
+{{define "admin-utilisateur.html"}}{{template "admin-haut" .}}
+{{with .D}}
+<h1>{{.Profil.Nom}}</h1>
+<div class="carte">
+<h2>Compte</h2>
+<dl class="chiffres">
+  <dt>Adresse e-mail</dt><dd>{{.Profil.Email}}{{if not .Profil.EmailVerifie}} (non confirmée){{end}}</dd>
+  <dt>Langue</dt><dd>{{.Profil.Langue}}</dd>
+  <dt>Avertissement accepté</dt><dd>version {{.Profil.AvertissementVersionAcceptee}}, le {{.Profil.AvertissementAccepteLe.Format "02/01/2006"}}</dd>
+</dl>
+<form method="post" action="{{$.Base}}/admin/utilisateurs/{{.Profil.ID}}">
+  <label for="nom">Nom</label>
+  <input id="nom" name="nom" type="text" required maxlength="200" value="{{.Profil.Nom}}">
+  <label for="telephone">Téléphone</label>
+  <input id="telephone" name="telephone" type="tel" value="{{deref .Profil.Telephone}}">
+  <button type="submit">Enregistrer</button>
+</form>
+</div>
+<div class="carte">
+<h2>Bateaux</h2>
+{{if .Bateaux}}
+<ul>{{range .Bateaux}}<li><a class="lien" href="{{$.Base}}/admin/bateaux/{{.ID}}">{{.Nom}}</a></li>{{end}}</ul>
+{{else}}<p>Aucun bateau.</p>{{end}}
+</div>
+<div class="carte">
+<h2>Contacts</h2>
+{{if .Contacts}}
+<table>
+  <thead><tr><th scope="col">Nom</th><th scope="col">Téléphone</th><th scope="col">Adresse e-mail</th><th scope="col">Rôle</th><th scope="col"></th></tr></thead>
+  <tbody>
+  {{range .Contacts}}
+  <tr><td>{{.Nom}}</td><td>{{deref .Telephone}}</td><td>{{deref .Email}}</td>
+      <td>{{if .Suiveur}}Suiveur{{end}}{{if and .Suiveur .ContactSos}}, {{end}}{{if .ContactSos}}Contact SOS{{end}}</td>
+      <td><form class="enligne" method="post" action="{{$.Base}}/admin/contacts/{{.ID}}/suppression"><button class="danger" type="submit">Supprimer</button></form></td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}<p>Aucun contact.</p>{{end}}
+</div>
+<div class="carte">
+<h2>Supprimer le compte</h2>
+<p>Le compte, ses bateaux, ses contacts et ses sessions sont supprimés définitivement.</p>
+<form method="post" action="{{$.Base}}/admin/utilisateurs/{{.Profil.ID}}/suppression">
+  <label class="case"><input type="checkbox" name="confirmation" value="oui"> Je confirme la suppression de ce compte</label>
+  <button class="danger" type="submit">Supprimer le compte</button>
+</form>
+</div>
+{{end}}
+{{template "admin-bas" .}}{{end}}
+
+{{define "admin-bateaux.html"}}{{template "admin-haut" .}}
+<h1>Bateaux</h1>
+{{template "admin-recherche" .Recherche}}
+<div class="carte">
+{{if .D}}
+<table>
+  <thead><tr><th scope="col">Nom</th><th scope="col">Type</th><th scope="col">Immatriculation</th><th scope="col">Propriétaire</th></tr></thead>
+  <tbody>
+  {{range .D}}
+  <tr><td><a class="lien" href="{{$.Base}}/admin/bateaux/{{.ID}}">{{.Nom}}</a></td>
+      <td>{{if eq .Type "voilier"}}Voilier{{else}}Bateau à moteur{{end}}</td>
+      <td>{{.Immatriculation}}</td>
+      <td><a class="lien" href="{{$.Base}}/admin/utilisateurs/{{.ProprietaireID}}">{{.ProprietaireEmail}}</a></td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}
+<p>Aucun bateau.</p>
+{{end}}
+</div>
+{{template "admin-bas" .}}{{end}}
+
+{{define "admin-bateau.html"}}{{template "admin-haut" .}}
+{{with .D}}
+<h1>{{.Nom}}</h1>
+<div class="carte">
+<p>Propriétaire : <a class="lien" href="{{$.Base}}/admin/utilisateurs/{{.ProprietaireID}}">{{.ProprietaireEmail}}</a> · Téléphone associé : {{if .AppareilAssocieID}}oui{{else}}aucun{{end}}</p>
+<form method="post" action="{{$.Base}}/admin/bateaux/{{.ID}}">
+  {{template "fiche-bateau" .}}
+  <label for="proprietaireEmail">Rattacher à un autre compte (adresse e-mail)</label>
+  <input id="proprietaireEmail" name="proprietaireEmail" type="email">
+  <p class="aide">Le téléphone associé est alors retiré : le nouveau propriétaire en associe un.</p>
+  <button type="submit">Enregistrer</button>
+</form>
+</div>
+<div class="carte">
+<h2>Supprimer le bateau</h2>
+<form method="post" action="{{$.Base}}/admin/bateaux/{{.ID}}/suppression">
+  <label class="case"><input type="checkbox" name="confirmation" value="oui"> Je confirme la suppression de ce bateau</label>
+  <button class="danger" type="submit">Supprimer le bateau</button>
+</form>
+</div>
+{{end}}
+{{template "admin-bas" .}}{{end}}
+
+{{define "admin-annonces.html"}}{{template "admin-haut" .}}
+<h1>Annonces</h1>
+<div class="carte">
+<h2>Publier une annonce</h2>
+<p class="aide">Elle s'affiche en bandeau en haut de l'accueil de l'application mobile et du tableau de bord Web, jusqu'à la date de fin ou jusqu'à ce que l'utilisateur la ferme.</p>
+<form method="post" action="{{.Base}}/admin/annonces">
+  <label for="texte">Texte</label>
+  <textarea id="texte" name="texte" rows="3" maxlength="500" required>{{index .F "texte"}}</textarea>
+  <label for="fin">Dernier jour d'affichage (facultatif)</label>
+  <input id="fin" name="fin" type="date" value="{{index .F "fin"}}">
+  <button type="submit">Publier</button>
+</form>
+</div>
+<div class="carte">
+<h2>Annonces publiées</h2>
+{{if .D}}
+<table>
+  <thead><tr><th scope="col">Texte</th><th scope="col">Publiée le</th><th scope="col">Fin</th><th scope="col"></th></tr></thead>
+  <tbody>
+  {{range .D}}
+  <tr><td>{{.Texte}}</td><td>{{.CreeeLe.Format "02/01/2006"}}</td>
+      <td>{{if .FinLe}}{{.FinLe.UTC.Format "02/01/2006 15:04"}} UTC{{else}}Aucune{{end}}{{if not .EnCours}} (terminée){{end}}</td>
+      <td>{{if .EnCours}}<form class="enligne" method="post" action="{{$.Base}}/admin/annonces/{{.ID}}/fin"><button class="secondaire" type="submit">Terminer</button></form>{{end}}
+          <form class="enligne" method="post" action="{{$.Base}}/admin/annonces/{{.ID}}/suppression"><button class="danger" type="submit">Supprimer</button></form></td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}
+<p>Aucune annonce.</p>
+{{end}}
+</div>
+{{template "admin-bas" .}}{{end}}
+
+{{define "admin-journal.html"}}{{template "admin-haut" .}}
+<h1>Journal des actions</h1>
+<p class="aide">Chaque action de l'espace administrateur, gardée 3 ans.</p>
+{{template "admin-recherche" .Recherche}}
+<div class="carte">
+{{if .D}}
+<table>
+  <thead><tr><th scope="col">Date (UTC)</th><th scope="col">Administrateur</th><th scope="col">Action</th><th scope="col">Sur</th><th scope="col">Détails</th></tr></thead>
+  <tbody>
+  {{range .D}}
+  <tr><td>{{.Le.UTC.Format "02/01/2006 15:04:05"}}</td><td>{{.Admin}}</td><td>{{.Action}}</td>
+      <td>{{.Ressource}} {{.Cible}}</td><td><code>{{.DetailsTxt}}</code></td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}
+<p>Aucune action.</p>
+{{end}}
+</div>
+{{template "admin-bas" .}}{{end}}

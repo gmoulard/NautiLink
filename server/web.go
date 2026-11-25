@@ -43,6 +43,7 @@ type donneesPage struct {
 	Message, Erreur        string
 	Retour                 string
 	DemanderAvertissement  bool
+	Annonces               []annonceJSON     // bandeau du tableau de bord (RG-ADM-06)
 	F                      map[string]string // valeurs saisies, renvoyées après une erreur
 	D                      any               // données propres à la page
 }
@@ -147,6 +148,12 @@ func ajouterOK(adresse, ok string) string {
 
 func (a *app) routesWebComptes(mux *http.ServeMux, c string) {
 	mux.HandleFunc("GET "+c+"/{$}", a.web(false, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
+		if s != nil {
+			var err error
+			if d.Annonces, err = a.annonces(r.Context(), s.utilisateur); err != nil {
+				return err
+			}
+		}
 		a.rendre(w, "accueil.html", d)
 		return nil
 	}))

@@ -11,7 +11,7 @@ import (
 //go:embed web
 var fichiersWeb embed.FS
 
-var pages = template.Must(template.New("").Funcs(fonctionsPages).ParseFS(fichiersWeb, "web/*.html"))
+var pages = template.Must(template.New("").Funcs(fonctionsPages).ParseFS(fichiersWeb, "web/*.html", "web/admin/*.html"))
 
 // nouveauRouteur : tout est servi sous cfg.Chemin (ex. /nautilink), car
 // pi-appliance publie le service sous https://vdl.moulard.org/nautilink/
@@ -47,7 +47,8 @@ func (a *app) routeur() http.Handler {
 	a.routesParametres(mux, c+"/api/v1")
 	a.routesWebParametres(mux, c)
 
-	mux.HandleFunc("GET "+c+"/admin/{$}", page("admin.html"))
+	a.routesAdmin(mux, c+"/api/v1")
+	a.routesWebAdmin(mux, c)
 
 	if c != "" {
 		// Adresse sans chemin (à la maison, ou sans la barre finale) : renvoi
@@ -56,15 +57,6 @@ func (a *app) routeur() http.Handler {
 		mux.HandleFunc("GET "+c, rediriger(c+"/"))
 	}
 	return entetes(mux)
-}
-
-func page(nom string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		if err := pages.ExecuteTemplate(w, nom, map[string]string{"Version": version}); err != nil {
-			http.Error(w, "erreur interne", http.StatusInternalServerError)
-		}
-	}
 }
 
 func rediriger(vers string) http.HandlerFunc {

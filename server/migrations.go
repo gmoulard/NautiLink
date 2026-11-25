@@ -155,6 +155,41 @@ var migrations = []string{
 		version integer NOT NULL DEFAULT 0,
 		modifie_le timestamptz NOT NULL DEFAULT now()
 	);`,
+
+	// 5 — TODO-7.1 : espace administrateur : sessions distinctes (RG-ADM-01),
+	// journal des actions gardé 3 ans (RG-ADM-03, RG-DON-02), annonces en
+	// bandeau et leur fermeture par l'utilisateur (RG-ADM-06).
+	`CREATE TABLE sessions_admin (
+		id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+		utilisateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		jeton bytea NOT NULL UNIQUE,
+		creee_le timestamptz NOT NULL DEFAULT now(),
+		derniere_utilisation timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE TABLE journal_admin (
+		id bigserial PRIMARY KEY,
+		le timestamptz NOT NULL DEFAULT now(),
+		admin_id uuid,
+		admin_email text NOT NULL,
+		action text NOT NULL,
+		ressource text NOT NULL,
+		cible text NOT NULL DEFAULT '',
+		details jsonb
+	);
+	CREATE INDEX journal_admin_le ON journal_admin (le);
+	CREATE TABLE annonces (
+		id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+		texte text NOT NULL,
+		fin_le timestamptz,
+		creee_par text NOT NULL,
+		creee_le timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE TABLE annonces_fermees (
+		annonce_id uuid NOT NULL REFERENCES annonces ON DELETE CASCADE,
+		utilisateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		fermee_le timestamptz NOT NULL DEFAULT now(),
+		PRIMARY KEY (annonce_id, utilisateur_id)
+	);`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de
