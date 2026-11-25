@@ -475,4 +475,136 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportPdfSoon => 'PDF export: available in the real version.';
+
+  @override
+  String get me => 'Me';
+
+  @override
+  String get eventStart => 'Voyage start';
+
+  @override
+  String get eventAutoPosition => 'Automatic position';
+
+  @override
+  String get eventManualPosition => 'Position sent';
+
+  @override
+  String get eventNote => 'Note';
+
+  @override
+  String get eventPhoto => 'Photo';
+
+  @override
+  String get eventVoice => 'Voice note';
+
+  @override
+  String get eventSos => 'SOS alert';
+
+  @override
+  String get eventEnd => 'Voyage end';
+
+  @override
+  String eventFrequency(String frequency) {
+    return 'Frequency: $frequency';
+  }
+
+  @override
+  String frequencyMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes',
+      one: '1 minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String frequencyHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours',
+      one: '1 hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String frequencyDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, String minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String dateTime(String date, String time) {
+    return '$date, $time';
+  }
+
+  @override
+  String nearPlace(String distance, String place) {
+    return '$distance nm from $place';
+  }
+
+  @override
+  String get smsTypeStart => 'Voyage start';
+
+  @override
+  String get smsTypeAutoPosition => 'Automatic positions';
+
+  @override
+  String get smsTypeManualPosition => 'Manual positions';
+
+  @override
+  String get smsTypeNote => 'Written notes';
+
+  @override
+  String get smsTypePhoto => 'Photos';
+
+  @override
+  String get smsTypeVoice => 'Voice notes';
+
+  @override
+  String get smsTypeEnd => 'Voyage end';
+
+  @override
+  String sosSmsBoat(
+    String name,
+    String type,
+    String length,
+    String registration,
+  ) {
+    return 'SOS $name, $type, $length, $registration.';
+  }
+
+  @override
+  String sosSmsPersons(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people on board.',
+      one: '1 person on board.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String sosSmsProblem(String problem) {
+    return 'Problem: $problem.';
+  }
+
+  @override
+  String sosSmsPosition(String position, String time) {
+    return 'Position $position at $time.';
+  }
 }

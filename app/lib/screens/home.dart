@@ -64,7 +64,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       subtitle: Text(
-                        l.homeFreeLeft(fmtDuration(Duration(minutes: left))),
+                        l.homeFreeLeft(fmtDuration(l, Duration(minutes: left))),
                       ),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => Navigator.of(context).push(
@@ -244,8 +244,8 @@ class SettingsScreen extends StatelessWidget {
               border: const OutlineInputBorder(),
             ),
             items: [
-              for (final e in frequencies.entries)
-                DropdownMenuItem(value: e.key, child: Text(e.value)),
+              for (final f in frequencies)
+                DropdownMenuItem(value: f, child: Text(frequencyLabel(l, f))),
             ],
             onChanged: (v) {
               state.defaultFrequency = v ?? state.defaultFrequency;
@@ -283,7 +283,7 @@ class SmsSettings extends StatelessWidget {
         ),
         for (final k in state.smsByType.keys)
           SwitchListTile(
-            title: Text(k),
+            title: Text(smsTypeLabel(AppLocalizations.of(context), k)),
             value: state.smsByType[k]!,
             onChanged: state.smsEnabled
                 ? (v) {
@@ -324,10 +324,10 @@ class QuotaScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(7),
             ),
             const SizedBox(height: 12),
-            Text(l.quotaUsed(fmtDuration(Duration(minutes: used)))),
+            Text(l.quotaUsed(fmtDuration(l, Duration(minutes: used)))),
             Text(
               l.quotaLeft(
-                fmtDuration(Duration(minutes: AppState.quotaMinutes - used)),
+                fmtDuration(l, Duration(minutes: AppState.quotaMinutes - used)),
               ),
             ),
             const SizedBox(height: 8),

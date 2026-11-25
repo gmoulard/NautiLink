@@ -96,7 +96,7 @@ class _StartScreenState extends State<StartScreen> {
             isExpanded: true,
             initialValue: frequency,
             decoration: InputDecoration(labelText: l.autoFrequency, border: const OutlineInputBorder()),
-            items: [for (final e in frequencies.entries) DropdownMenuItem(value: e.key, child: Text(e.value))],
+            items: [for (final f in frequencies) DropdownMenuItem(value: f, child: Text(frequencyLabel(l, f)))],
             onChanged: (v) => setState(() => frequency = v),
           ),
           const SizedBox(height: 20),
@@ -597,15 +597,16 @@ class LogTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final sos = event.kind == EventKind.sos;
     final pos = event.position;
-    final details = [event.text, if (pos != null) placeName(pos)].whereType<String>().join('\n');
+    final details = [event.details(l), if (pos != null) placeName(l, pos)].whereType<String>().join('\n');
     final openable = event.kind == EventKind.photo || event.kind == EventKind.voice;
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: sos ? NlColors.alert : NlColors.teal),
       title: Text(
-        '${fmtTime(event.time)} · ${event.label}',
+        '${fmtTime(event.time)} · ${event.label(l)}',
         style: TextStyle(fontWeight: FontWeight.w600, color: sos ? NlColors.alert : null),
       ),
       subtitle: details.isEmpty ? null : Text(details),
@@ -673,7 +674,7 @@ Future<void> confirmSos(BuildContext context) async {
   if (problem == null || !context.mounted) return; // annulé
   ScaffoldMessenger.of(context).clearSnackBars(); // rien ne doit masquer l'écran SOS
   final state = AppScope.of(context);
-  state.addEvent(EventKind.sos, text: problem.isEmpty ? null : 'Problème : $problem');
+  state.addEvent(EventKind.sos, text: problem.isEmpty ? null : AppLocalizations.of(context).sosSmsProblem(problem));
   Navigator.of(context).push(MaterialPageRoute(builder: (_) => SosResultScreen(problem: problem)));
 }
 
@@ -743,12 +744,12 @@ class SosResultScreen extends StatelessWidget {
     final boat = v?.boat ?? state.boats.first;
     final persons = v?.personsOnBoard ?? state.lastPersonsOnBoard;
     final pos = v?.track.last ?? state.nextPosition();
-    // Contenu du SMS envoyé, pas texte d'interface : reste en français (langue des messages : Q-27).
+    // SMS dans la langue du navigateur, celle de l'interface (RG-PRM-04).
     final sms = [
-      'SOS ${boat.name}, ${boat.type}, ${boat.length}, ${boat.registration}.',
-      '$persons personne${persons > 1 ? 's' : ''} à bord.',
-      if (problem.isNotEmpty) 'Problème : $problem.',
-      'Position ${pos.text} à ${fmtTime(pos.time)}.',
+      l.sosSmsBoat(boat.name, boat.type, boat.length, boat.registration),
+      l.sosSmsPersons(persons),
+      if (problem.isNotEmpty) l.sosSmsProblem(problem),
+      l.sosSmsPosition(pos.text, fmtTime(pos.time)),
       'https://maps.google.com/?q=${pos.lat.toStringAsFixed(5)},${pos.lon.toStringAsFixed(5)}',
     ].join('\n');
     return Scaffold(

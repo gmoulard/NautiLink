@@ -123,8 +123,8 @@ class _VoyageCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
         subtitle: Text(
-          '${fmtDate(v.start)} · ${fmtDuration(v.duration)} · ${l.distanceNm(v.distanceNm.toStringAsFixed(1))}'
-          '${v.asFollower ? l.voyageCardFollowed(v.navigator) : ''}',
+          '${fmtDate(l, v.start)} · ${fmtDuration(l, v.duration)} · ${l.distanceNm(v.distanceNm.toStringAsFixed(1))}'
+          '${v.asFollower ? l.voyageCardFollowed(v.navigator ?? '') : ''}',
         ),
         trailing: v.inProgress
             ? Chip(
@@ -152,16 +152,16 @@ class VoyageScreen extends StatelessWidget {
     final info = [
       (l.boat, '${v.boat.name} · ${v.boat.type} · ${v.boat.length}'),
       (l.personsOnBoard, '${v.personsOnBoard}'),
-      (l.infoDeparture, fmtDate(v.start)),
-      if (v.track.isNotEmpty) (l.infoDeparturePlace, placeName(v.track.first)),
+      (l.infoDeparture, fmtDate(l, v.start)),
+      if (v.track.isNotEmpty) (l.infoDeparturePlace, placeName(l, v.track.first)),
       if (v.weatherStart != null) (l.infoWeatherStart, v.weatherStart!),
-      if (v.end != null) (l.infoArrival, fmtDate(v.end!)),
-      if (v.end != null && v.track.isNotEmpty) (l.infoArrivalPlace, placeName(v.track.last)),
+      if (v.end != null) (l.infoArrival, fmtDate(l, v.end!)),
+      if (v.end != null && v.track.isNotEmpty) (l.infoArrivalPlace, placeName(l, v.track.last)),
       if (v.weatherEnd != null) (l.infoWeatherEnd, v.weatherEnd!),
       if (v.destination?.isNotEmpty == true) (l.infoDestination, v.destination!),
-      (l.infoDuration, fmtDuration(v.duration)),
+      (l.infoDuration, fmtDuration(l, v.duration)),
       (l.infoDistance, l.distanceNm(v.distanceNm.toStringAsFixed(1))),
-      (l.infoNavigator, v.navigator),
+      (l.infoNavigator, v.navigator ?? l.me),
     ];
     return Scaffold(
       appBar: AppBar(

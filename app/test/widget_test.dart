@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nautilink/data.dart';
+import 'package:nautilink/l10n/app_localizations.dart';
 import 'package:nautilink/main.dart';
 import 'package:nautilink/screens/dashboard.dart';
 
@@ -52,11 +53,21 @@ void main() {
   setUpAll(() => SeaMap.tilesEnabled = false); // pas de réseau pendant les tests
 
   test('fréquences de 15 minutes à 10 jours (RG-NAV-05)', () {
-    expect(frequencies.values.toList(), [
+    final l = lookupAppLocalizations(const Locale('fr'));
+    expect(frequencies.map((f) => frequencyLabel(l, f)).toList(), [
       '15 minutes', '30 minutes', '1 heure', '2 heures', '3 heures',
       '6 heures', '12 heures', '1 jour', '2 jours', '10 jours',
     ]);
-    expect(frequencies.containsKey(AppState().defaultFrequency), isTrue);
+    expect(frequencies.contains(AppState().defaultFrequency), isTrue);
+  });
+
+  test('textes de data.dart traduits : fréquences, événements, lieux (TODO-9.2)', () {
+    final en = lookupAppLocalizations(const Locale('en'));
+    expect(frequencyLabel(en, 60), '1 hour');
+    expect(frequencyLabel(en, 14400), '10 days');
+    expect(LogEvent(EventKind.start, DateTime.now(), frequency: 30).details(en), 'Frequency: 30 minutes');
+    expect(placeName(en, Position(47.47, -3.08, DateTime.now())), contains(' nm from '));
+    expect(smsTypeLabel(en, SmsType.note), 'Written notes');
   });
 
   test('immobilité : 2 heures dans un rayon de 20 m (RG-NAV-24)', () {
@@ -70,9 +81,10 @@ void main() {
   });
 
   test('nom du lieu le plus proche (RG-JRN-10) et météo au début et à la fin (RG-NAV-28)', () {
-    expect(placeName(Position(47.488, -3.100, DateTime.now())), 'Port-Haliguen');
-    expect(placeName(Position(47.47, -3.08, DateTime.now())), startsWith('à '));
-    expect(placeName(Position(45.0, -6.0, DateTime.now())), contains('N'));
+    final l = lookupAppLocalizations(const Locale('fr'));
+    expect(placeName(l, Position(47.488, -3.100, DateTime.now())), 'Port-Haliguen');
+    expect(placeName(l, Position(47.47, -3.08, DateTime.now())), startsWith('à '));
+    expect(placeName(l, Position(45.0, -6.0, DateTime.now())), contains('N'));
     final s = AppState();
     s.startVoyage(boat: s.boats.first, frequency: 30, persons: 3);
     final v = s.current!;

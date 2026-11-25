@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
+
+import 'l10n/app_localizations.dart';
 
 /// Données d'exemple et état du prototype. Rien n'est envoyé : chaque
 /// « envoi » est simulé et seulement ajouté au journal (D-57).
@@ -63,22 +66,30 @@ enum EventKind {
 }
 
 class LogEvent {
-  LogEvent(this.kind, this.time, {this.text, this.position});
+  LogEvent(this.kind, this.time, {this.text, this.position, this.frequency});
   final EventKind kind;
   final DateTime time;
   final String? text;
   final Position? position;
 
-  String get label => switch (kind) {
-    EventKind.start => 'Début de navigation',
-    EventKind.autoPosition => 'Position automatique',
-    EventKind.manualPosition => 'Position envoyée',
-    EventKind.note => 'Note',
-    EventKind.photo => 'Photo',
-    EventKind.voice => 'Note vocale',
-    EventKind.sos => 'Alerte SOS',
-    EventKind.end => 'Fin de navigation',
+  /// Fréquence choisie, pour l'événement de début (RG-NAV-05).
+  final int? frequency;
+
+  /// Libellé du type d'événement, dans la langue de l'interface.
+  String label(AppLocalizations l) => switch (kind) {
+    EventKind.start => l.eventStart,
+    EventKind.autoPosition => l.eventAutoPosition,
+    EventKind.manualPosition => l.eventManualPosition,
+    EventKind.note => l.eventNote,
+    EventKind.photo => l.eventPhoto,
+    EventKind.voice => l.eventVoice,
+    EventKind.sos => l.eventSos,
+    EventKind.end => l.eventEnd,
   };
+
+  /// Détail affiché sous le libellé : texte saisi, ou fréquence du début.
+  String? details(AppLocalizations l) =>
+      frequency != null ? l.eventFrequency(frequencyLabel(l, frequency!)) : text;
 }
 
 class Voyage {
@@ -88,7 +99,7 @@ class Voyage {
     required this.start,
     this.end,
     this.destination,
-    required this.navigator,
+    this.navigator,
     this.asFollower = false,
     this.personsOnBoard = 1,
     this.weatherStart,
@@ -104,7 +115,7 @@ class Voyage {
   final DateTime start;
   DateTime? end;
   String? destination;
-  final String navigator;
+  final String? navigator; // null : le navigateur est l'utilisateur lui-même
   final bool asFollower;
   final int personsOnBoard; // RG-NAV-27
   String? weatherStart; // RG-NAV-28
@@ -139,11 +150,10 @@ class Voyage {
   }
 }
 
-String fmtDuration(Duration d) {
-  final h = d.inHours;
+String fmtDuration(AppLocalizations l, Duration d) {
   final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
   final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-  return h > 0 ? '$h h $m min' : '$m:$s';
+  return d.inHours > 0 ? l.durationHoursMinutes(d.inHours, m) : '$m:$s';
 }
 
 String fmtClock(Duration d) {
@@ -153,41 +163,33 @@ String fmtClock(Duration d) {
   return '$h:$m:$s';
 }
 
-String fmtDate(DateTime t) {
-  const months = [
-    'janv.',
-    'févr.',
-    'mars',
-    'avr.',
-    'mai',
-    'juin',
-    'juil.',
-    'août',
-    'sept.',
-    'oct.',
-    'nov.',
-    'déc.',
-  ];
-  final hh = t.hour.toString().padLeft(2, '0');
-  final mm = t.minute.toString().padLeft(2, '0');
-  return '${t.day} ${months[t.month - 1]} ${t.year}, $hh:$mm';
-}
+/// Date et heure, au format de la langue de l'interface.
+String fmtDate(AppLocalizations l, DateTime t) =>
+    l.dateTime(DateFormat.yMMMd(l.localeName).format(t), fmtTime(t));
 
 String fmtTime(DateTime t) =>
     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
 /// Fréquences possibles, en minutes (RG-NAV-05).
-const frequencies = <int, String>{
-  15: '15 minutes',
-  30: '30 minutes',
-  60: '1 heure',
-  120: '2 heures',
-  180: '3 heures',
-  360: '6 heures',
-  720: '12 heures',
-  1440: '1 jour',
-  2880: '2 jours',
-  14400: '10 jours',
+const frequencies = [15, 30, 60, 120, 180, 360, 720, 1440, 2880, 14400];
+
+String frequencyLabel(AppLocalizations l, int minutes) => minutes % 1440 == 0
+    ? l.frequencyDays(minutes ~/ 1440)
+    : minutes % 60 == 0
+    ? l.frequencyHours(minutes ~/ 60)
+    : l.frequencyMinutes(minutes);
+
+/// Types de messages réglables un par un (RG-SMS-02).
+enum SmsType { start, autoPosition, manualPosition, note, photo, voice, end }
+
+String smsTypeLabel(AppLocalizations l, SmsType t) => switch (t) {
+  SmsType.start => l.smsTypeStart,
+  SmsType.autoPosition => l.smsTypeAutoPosition,
+  SmsType.manualPosition => l.smsTypeManualPosition,
+  SmsType.note => l.smsTypeNote,
+  SmsType.photo => l.smsTypePhoto,
+  SmsType.voice => l.smsTypeVoice,
+  SmsType.end => l.smsTypeEnd,
 };
 
 /// Page d'information sur l'abonnement du site de présentation (RG-ECO-10).
@@ -233,14 +235,14 @@ class AppState extends ChangeNotifier {
   bool firstVoyageReminderSeen = false; // RG-NAV-23
   int defaultFrequency = 30;
   bool smsEnabled = true;
-  final smsByType = <String, bool>{
-    'Début de navigation': true,
-    'Positions automatiques': false,
-    'Positions manuelles': true,
-    'Notes écrites': true,
-    'Photos': false,
-    'Notes vocales': true,
-    'Fin de navigation': true,
+  final smsByType = <SmsType, bool>{
+    SmsType.start: true,
+    SmsType.autoPosition: false,
+    SmsType.manualPosition: true,
+    SmsType.note: true,
+    SmsType.photo: false,
+    SmsType.voice: true,
+    SmsType.end: true,
   };
 
   /// Quota simulé : minutes consommées sur les 7 derniers jours (RG-ECO-01).
@@ -298,11 +300,10 @@ class AppState extends ChangeNotifier {
     _cursor = p;
     final v = Voyage(
       name:
-          '${boat.name} — ${destination?.isNotEmpty == true ? destination : fmtDate(now)}',
+          '${boat.name} — ${destination?.isNotEmpty == true ? destination : DateFormat('yyyy-MM-dd HH:mm').format(now)}',
       boat: boat,
       start: now,
       destination: destination,
-      navigator: 'Moi',
       personsOnBoard: persons,
       alerted: alerted ?? alertable.map((c) => c.name).toSet(),
       weatherStart: demoWeather(p),
@@ -312,7 +313,7 @@ class AppState extends ChangeNotifier {
           EventKind.start,
           now,
           position: p,
-          text: 'Fréquence : ${frequencies[frequency]}',
+          frequency: frequency,
         ),
       ],
     );
@@ -412,7 +413,6 @@ class AppState extends ChangeNotifier {
         start: base,
         end: base.add(const Duration(hours: 3, minutes: 40)),
         destination: 'Le Palais, Belle-Île',
-        navigator: 'Moi',
         personsOnBoard: 3,
         weatherStart: 'Ouest 12 nœuds · mer peu agitée · 1016 hPa',
         weatherEnd: 'Ouest 15 nœuds · mer agitée · 1014 hPa',
@@ -422,7 +422,7 @@ class AppState extends ChangeNotifier {
             EventKind.start,
             t1.first.time,
             position: t1.first,
-            text: 'Fréquence : 30 minutes',
+            frequency: 30,
           ),
           LogEvent(EventKind.autoPosition, t1[6].time, position: t1[6]),
           LogEvent(
@@ -487,7 +487,6 @@ class AppState extends ChangeNotifier {
         boat: boats[1],
         start: base3,
         end: base3.add(const Duration(hours: 2, minutes: 15)),
-        navigator: 'Moi',
         personsOnBoard: 2,
         weatherStart: 'Nord-Ouest 8 nœuds · mer belle · 1019 hPa',
         weatherEnd: 'Nord-Ouest 10 nœuds · mer belle · 1018 hPa',
@@ -517,7 +516,7 @@ const _places = <(String, double, double)>[
 ];
 
 /// Nom du lieu le plus proche à moins de 8 milles, sinon les coordonnées.
-String placeName(Position p) {
+String placeName(AppLocalizations l, Position p) {
   var best = '';
   var bestNm = double.infinity;
   for (final (name, lat, lon) in _places) {
@@ -528,10 +527,11 @@ String placeName(Position p) {
     }
   }
   if (bestNm > 8) return p.text;
-  return bestNm < 0.5 ? best : 'à ${bestNm.toStringAsFixed(1)} milles de $best';
+  return bestNm < 0.5 ? best : l.nearPlace(bestNm.toStringAsFixed(1), best);
 }
 
 /// Météo de démonstration : en vrai, relevée par le serveur (RG-NAV-28, Q-39).
+/// Donnée d'exemple, comme les noms de bateaux et de lieux : non traduite.
 String demoWeather(Position p) {
   final r = Random(p.lat.hashCode ^ p.lon.hashCode);
   const dirs = ['Nord', 'Nord-Ouest', 'Ouest', 'Sud-Ouest', 'Sud'];

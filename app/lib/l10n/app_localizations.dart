@@ -961,6 +961,173 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Export PDF : disponible dans la version réelle.'**
   String get exportPdfSoon;
+
+  /// No description provided for @me.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moi'**
+  String get me;
+
+  /// No description provided for @eventStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Début de navigation'**
+  String get eventStart;
+
+  /// No description provided for @eventAutoPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Position automatique'**
+  String get eventAutoPosition;
+
+  /// No description provided for @eventManualPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Position envoyée'**
+  String get eventManualPosition;
+
+  /// No description provided for @eventNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note'**
+  String get eventNote;
+
+  /// No description provided for @eventPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo'**
+  String get eventPhoto;
+
+  /// No description provided for @eventVoice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note vocale'**
+  String get eventVoice;
+
+  /// No description provided for @eventSos.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alerte SOS'**
+  String get eventSos;
+
+  /// No description provided for @eventEnd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fin de navigation'**
+  String get eventEnd;
+
+  /// No description provided for @eventFrequency.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fréquence : {frequency}'**
+  String eventFrequency(String frequency);
+
+  /// No description provided for @frequencyMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 minute} other{{count} minutes}}'**
+  String frequencyMinutes(int count);
+
+  /// No description provided for @frequencyHours.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 heure} other{{count} heures}}'**
+  String frequencyHours(int count);
+
+  /// No description provided for @frequencyDays.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 jour} other{{count} jours}}'**
+  String frequencyDays(int count);
+
+  /// No description provided for @durationHoursMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String durationHoursMinutes(int hours, String minutes);
+
+  /// No description provided for @dateTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'{date}, {time}'**
+  String dateTime(String date, String time);
+
+  /// No description provided for @nearPlace.
+  ///
+  /// In fr, this message translates to:
+  /// **'à {distance} milles de {place}'**
+  String nearPlace(String distance, String place);
+
+  /// No description provided for @smsTypeStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Début de navigation'**
+  String get smsTypeStart;
+
+  /// No description provided for @smsTypeAutoPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Positions automatiques'**
+  String get smsTypeAutoPosition;
+
+  /// No description provided for @smsTypeManualPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Positions manuelles'**
+  String get smsTypeManualPosition;
+
+  /// No description provided for @smsTypeNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes écrites'**
+  String get smsTypeNote;
+
+  /// No description provided for @smsTypePhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photos'**
+  String get smsTypePhoto;
+
+  /// No description provided for @smsTypeVoice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes vocales'**
+  String get smsTypeVoice;
+
+  /// No description provided for @smsTypeEnd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fin de navigation'**
+  String get smsTypeEnd;
+
+  /// No description provided for @sosSmsBoat.
+  ///
+  /// In fr, this message translates to:
+  /// **'SOS {name}, {type}, {length}, {registration}.'**
+  String sosSmsBoat(
+    String name,
+    String type,
+    String length,
+    String registration,
+  );
+
+  /// No description provided for @sosSmsPersons.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 personne à bord.} other{{count} personnes à bord.}}'**
+  String sosSmsPersons(int count);
+
+  /// No description provided for @sosSmsProblem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Problème : {problem}.'**
+  String sosSmsProblem(String problem);
+
+  /// No description provided for @sosSmsPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Position {position} à {time}.'**
+  String sosSmsPosition(String position, String time);
 }
 
 class _AppLocalizationsDelegate
