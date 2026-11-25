@@ -72,6 +72,9 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-CPT-07** ([RG-CPT-07](../02-regles-metier.md#rg-cpt-07)) — Étant donné NautiLink en bêta, quand un utilisateur ouvre l'application mobile ou le Web, alors la mention « Version bêta » est visible et l'avertissement se consulte depuis l'assistance.
 - **TS-CPT-08** ([RG-CPT-07](../02-regles-metier.md#rg-cpt-07)) — Étant donné un compte ayant accepté une version de l'avertissement bêta, quand le texte change, alors à la connexion suivante il est de nouveau présenté et doit être accepté.
 - **TS-CPT-09** ([RG-CPT-08](../02-regles-metier.md#rg-cpt-08)) — Étant donné une session inutilisée depuis plus de 90 jours, quand l'utilisateur ouvre l'application ou le Web, alors il doit se reconnecter ; sur le téléphone associé pendant une navigation en cours, la session reste ouverte ; après une déconnexion, les envois en attente du téléphone restent dans la file.
+- **TS-CPT-10** ([RG-CPT-09](../02-regles-metier.md#rg-cpt-09)) — Étant donné un compte dont l'adresse n'est pas confirmée, quand il invite un suiveur ou démarre une navigation, alors c'est refusé avec « Confirmez votre adresse e-mail » ; il peut ajouter un bateau, un contact SOS, régler ses paramètres et envoyer un SOS ; après le lien (valable 7 jours, une seule fois), l'invitation part.
+- **TS-CPT-11** ([RG-CPT-10](../02-regles-metier.md#rg-cpt-10)) — Étant donné un compte par e-mail connecté sur deux supports, quand l'utilisateur demande « Mot de passe oublié ? » et choisit un nouveau mot de passe par le lien reçu, alors les deux sessions sont fermées, le nouveau mot de passe ouvre une session, l'ancien est refusé ; le même lien ne sert pas deux fois ni après 1 heure.
+- **TS-CPT-12** ([RG-CPT-11](../02-regles-metier.md#rg-cpt-11)) — Étant donné un compte inscrit par e-mail, quand l'utilisateur se connecte par Google ou par Apple avec la même adresse, alors il retrouve son compte si le fournisseur garantit l'adresse vérifiée ; sinon la connexion est refusée et l'invite à se connecter par e-mail.
 
 ## 5. Bateaux (RG-BAT)
 
@@ -79,6 +82,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-BAT-02** ([RG-BAT-02](../02-regles-metier.md#rg-bat-02)) — Étant donné un bateau associé au téléphone A, quand le navigateur associe le téléphone B à ce bateau, alors le bateau n'est plus associé qu'au téléphone B.
 - **TS-BAT-03** ([RG-BAT-02](../02-regles-metier.md#rg-bat-02)) — Étant donné un compte à deux bateaux, quand le navigateur associe le même téléphone aux deux, alors les deux associations coexistent.
 - **TS-BAT-04** ([RG-BAT-03](../02-regles-metier.md#rg-bat-03)) — Étant donné un compte à deux bateaux ayant chacun des navigations et des alertes, quand on consulte les données d'un bateau, alors seules ses propres navigations, journaux, positions et alertes apparaissent.
+- **TS-BAT-05** ([RG-BAT-04](../02-regles-metier.md#rg-bat-04)) — Étant donné un téléphone associé au bateau d'un compte A, quand un compte B se connecte sur ce téléphone, alors le téléphone passe au compte B, le bateau de A n'a plus de téléphone associé et A reçoit un e-mail qui le dit.
 
 ## 6. Navigations (RG-NAV)
 
@@ -173,6 +177,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-PRM-03** ([RG-PRM-03](../02-regles-metier.md#rg-prm-03)) — Étant donné un téléphone réglé en anglais, quand l'utilisateur ouvre l'application pour la première fois, alors elle s'affiche en anglais ; quand il choisit le français dans les paramètres, alors elle s'affiche en français.
 - **TS-PRM-04** ([RG-PRM-04](../02-regles-metier.md#rg-prm-04)) — Étant donné un navigateur dont l'application est en anglais, quand il démarre une navigation, alors les SMS et les e-mails envoyés à ses suiveurs sont en anglais, quelle que soit la langue des suiveurs.
 - **TS-PRM-05** ([RG-PRM-05](../02-regles-metier.md#rg-prm-05)) — Étant donné chaque écran de l'application mobile et de la plateforme Web, quand on le contrôle selon WCAG 2.2 niveau AA, alors contrastes, zones à toucher, lecture par TalkBack ou VoiceOver et textes agrandis sont conformes.
+- **TS-PRM-06** ([RG-PRM-06](../02-regles-metier.md#rg-prm-06)) — Étant donné un compte qui vient d'être créé, quand il ouvre les paramètres généraux, alors les SMS sont activés, tous les types sont cochés, la photo en MMS ne l'est pas et la fréquence est de 30 minutes.
 
 ## 13. Notifications (RG-NOT)
 

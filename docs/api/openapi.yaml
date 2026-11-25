@@ -120,9 +120,9 @@ paths:
     post:
       tags: [Comptes]
       summary: 'Créer un compte par e-mail et mot de passe.'
-      description: 'Refusé sans acceptation de la version en vigueur de l''avertissement bêta (`avertissement_a_accepter`) ou si l''adresse a déjà un compte (409 `email_deja_utilise`). Ouvre une session et envoie l''e-mail de vérification de l''adresse (Q-48). Mot de passe haché (argon2id) ; 10 créations par adresse IP et par heure au plus.'
+      description: 'Refusé sans acceptation de la version en vigueur de l''avertissement bêta (`avertissement_a_accepter`) ou si l''adresse a déjà un compte (409 `email_deja_utilise`). Ouvre une session et envoie l''e-mail de vérification de l''adresse : tant qu''elle n''est pas confirmée, le compte ne peut ni démarrer une navigation ni inviter (403 `email_non_verifie`, RG-CPT-09). Mot de passe haché (argon2id) ; 10 créations par adresse IP et par heure au plus.'
       security: []
-      x-regles: [RG-CPT-01, RG-CPT-02, RG-CPT-06, RG-PRM-03]
+      x-regles: [RG-CPT-01, RG-CPT-02, RG-CPT-06, RG-CPT-09, RG-PRM-03, RG-PRM-06]
       requestBody:
         required: true
         content:
@@ -144,13 +144,14 @@ paths:
       description: |
         E-mail et mot de passe, ou jeton d'identité Google ou Apple. Une première connexion par Google
         ou Apple crée le compte, avec la même acceptation de l'avertissement que `POST /v1/comptes` ;
-        une adresse déjà prise par un compte NautiLink est refusée (409 `email_deja_utilise`, Q-51).
+        l''adresse d''un compte NautiLink existant est rattachée à ce compte si le fournisseur la garantit
+        vérifiée, sinon refusée (409 `email_deja_utilise`, RG-CPT-11).
         Fournisseur sans identifiant client configuré : 501 `fournisseur_indisponible`. Après 5 mots
         de passe faux pour un compte, ou 20 pour une adresse IP, en 15 minutes : 429.
         Une session expire après 90 jours sans usage, jamais sur le téléphone associé pendant une
         navigation en cours (RG-CPT-08).
       security: []
-      x-regles: [RG-CPT-02, RG-CPT-06, RG-CPT-08, RG-DON-03]
+      x-regles: [RG-CPT-02, RG-CPT-06, RG-CPT-08, RG-CPT-11, RG-DON-03]
       requestBody:
         required: true
         content:
@@ -258,9 +259,9 @@ paths:
     post:
       tags: [Comptes]
       summary: 'Confirmer l''adresse e-mail avec le jeton du lien reçu (page Web `/verification?jeton=…`).'
-      description: 'Lien à usage unique, valable 7 jours (proposition, Q-48).'
+      description: 'Lien à usage unique, valable 7 jours (RG-CPT-09).'
       security: []
-      x-regles: [RG-CPT-02]
+      x-regles: [RG-CPT-02, RG-CPT-09]
       requestBody:
         required: true
         content:
@@ -289,8 +290,8 @@ paths:
     put:
       tags: [Appareils et bateaux]
       summary: 'Enregistrer ou mettre à jour le téléphone de l''utilisateur (plateforme, jeton push).'
-      description: 'L''identifiant est tiré au hasard par l''application à sa première ouverture et gardé sur le téléphone. La session qui l''enregistre lui est rattachée (RG-CPT-08). Un téléphone déjà enregistré par un autre compte est refusé (403, Q-50).'
-      x-regles: [RG-BAT-02, RG-IOS-01, RG-IOS-06, RG-AND-08]
+      description: 'L''identifiant est tiré au hasard par l''application à sa première ouverture et gardé sur le téléphone. La session qui l''enregistre lui est rattachée (RG-CPT-08). Un téléphone déjà enregistré par un autre compte passe à ce compte : il est retiré des bateaux de l''ancien compte, dont le propriétaire est prévenu par e-mail (RG-BAT-04).'
+      x-regles: [RG-BAT-02, RG-BAT-04, RG-IOS-01, RG-IOS-06, RG-AND-08]
       requestBody:
         required: true
         content:
@@ -510,8 +511,9 @@ paths:
         le lien ; sur Android l'application ouvre le SMS prérempli (copie au navigateur), sur le Web
         et l'iPhone le lien est affiché pour que le navigateur le transmette. L'invité est ajouté à
         la liste de contacts, les deux cases cochées (« Contact SOS » seulement avec un numéro). Une
-        nouvelle invitation du même contact annule celle en attente.
-      x-regles: [RG-PAR-02, RG-PAR-03, RG-PAR-04, RG-CTC-04, RG-NOT-02, RG-NOT-03, RG-SMS-08]
+        nouvelle invitation du même contact annule celle en attente. Adresse e-mail du navigateur
+        non confirmée : 403 `email_non_verifie` (RG-CPT-09).
+      x-regles: [RG-CPT-09, RG-PAR-02, RG-PAR-03, RG-PAR-04, RG-CTC-04, RG-NOT-02, RG-NOT-03, RG-SMS-08]
       requestBody:
         required: true
         content:
@@ -647,8 +649,8 @@ paths:
     get:
       tags: [Paramètres]
       summary: 'Paramètres généraux du navigateur.'
-      description: 'Récupérés par l''application mobile au lancement ; la dernière version reçue sert hors connexion. Un paramètre jamais réglé vaut `null` : valeurs d''un nouveau compte non décidées (Q-52).'
-      x-regles: [RG-PRM-01, RG-PRM-02, RG-SMS-02, RG-NAV-05]
+      description: 'Récupérés par l''application mobile au lancement ; la dernière version reçue sert hors connexion. Valeurs d''un nouveau compte : SMS activés, tous les types, pas de MMS de photo, 30 minutes (RG-PRM-06).'
+      x-regles: [RG-PRM-01, RG-PRM-02, RG-PRM-06, RG-SMS-02, RG-NAV-05]
       responses:
         '200':
           description: 'Paramètres.'
@@ -716,10 +718,11 @@ paths:
 
         Le serveur vérifie : propriétaire du bateau (`pas_proprietaire`), téléphone associé, une
         seule navigation en cours par bateau et par téléphone (`navigation_en_cours`), quota
-        (`quota_epuise`, avec l'heure à laquelle des minutes redeviennent disponibles). Il génère le
+        (`quota_epuise`, avec l'heure à laquelle des minutes redeviennent disponibles), adresse
+        e-mail confirmée (`email_non_verifie`, RG-CPT-09). Il génère le
         nom, relève la météo, envoie l'e-mail et les notifications push de début.
         Démarrage hors connexion et quota non vérifiable : Q-29.
-      x-regles: [RG-NAV-01, RG-NAV-02, RG-NAV-03, RG-NAV-04, RG-NAV-05, RG-NAV-06, RG-NAV-07, RG-NAV-08,
+      x-regles: [RG-CPT-09, RG-NAV-01, RG-NAV-02, RG-NAV-03, RG-NAV-04, RG-NAV-05, RG-NAV-06, RG-NAV-07, RG-NAV-08,
         RG-NAV-11, RG-NAV-17, RG-NAV-25, RG-NAV-27, RG-NAV-28, RG-CPT-05, RG-ECO-04, RG-NOT-02,
         RG-IOS-06, RG-AND-08, RG-BAT-03]
       requestBody:
@@ -1388,7 +1391,7 @@ components:
             pas_proprietaire, telephone_non_associe, navigation_en_cours, quota_epuise,
             evenement_different, evenement_non_modifiable, limite_photos, note_vocale_trop_longue,
             contact_sos_sans_telephone, navigation_cloturee, invitation_deja_acceptee, deja_abonne,
-            email_deja_utilise, trop_d_essais, fournisseur_indisponible, service_indisponible, erreur_interne]
+            email_deja_utilise, email_non_verifie, trop_d_essais, fournisseur_indisponible, service_indisponible, erreur_interne]
         message: {type: string, description: Texte dans la langue de l'utilisateur.}
         disponibleLe:
           type: string
@@ -1453,7 +1456,7 @@ components:
           properties:
             id: {type: string, format: uuid}
             email: {type: string, format: email}
-            emailVerifie: {type: boolean, description: 'Adresse confirmée par le lien reçu (Q-48).'}
+            emailVerifie: {type: boolean, description: 'Adresse confirmée par le lien reçu ; exigée pour démarrer une navigation et pour inviter (RG-CPT-09).'}
             avertissementVersionAcceptee: {type: string}
             avertissementAccepteLe: {type: string, format: date-time}
 
