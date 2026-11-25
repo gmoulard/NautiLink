@@ -22,7 +22,7 @@ flowchart LR
   subgraph PI[Raspberry Pi sous pi-appliance - bêta]
     T[Traefik<br/>HTTPS]
     S[Serveur NautiLink<br/>Go, image Docker]
-    P[(PostgreSQL partagé<br/>données, photos,<br/>notes vocales)]
+    P[(PostgreSQL du service<br/>données, photos,<br/>notes vocales)]
     R[Relais d'e-mails<br/>de pi-appliance]
   end
   A -- API HTTPS --> T
@@ -48,14 +48,14 @@ flowchart LR
 | Serveur | Serveur maison, pas de service tout fait ; écrit en Go ; un seul exemplaire qui porte l'API, la plateforme Web et l'espace administrateur sous un chemin réservé. Squelette dans [`server/`](../server/README.md) (TODO-3.7). | [D-59](07-decisions.md#d-59), [D-62](07-decisions.md#d-62) |
 | Hébergement pendant la bêta | Raspberry Pi 4 de `vdl.moulard.org` sous pi-appliance, installé par « Docker Compose libre » ; adresse publique `https://nautilink.moulard.org`, redirigée par Traefik vers `https://vdl.moulard.org/nautilink/`. | [D-62](07-decisions.md#d-62) |
 | Hébergement après la bêta | Passage chez un hébergeur avant l'ouverture au grand public ; hébergeur non choisi (§3.2). | [D-62](07-decisions.md#d-62) |
-| Base de données | PostgreSQL partagé de pi-appliance pendant la bêta. | [D-62](07-decisions.md#d-62) |
+| Base de données | PostgreSQL propre au service pendant la bêta : service `base` de [`compose.yaml`](../server/compose.yaml), volume `nautilink-base`, sans port publié ; mot de passe dans le `.env` du service. | [D-62](07-decisions.md#d-62), [D-130](07-decisions.md#d-130) |
 | E-mails | Envoyés par le serveur via le relais d'envoi de pi-appliance pendant la bêta (invitations, accès, SOS, début de navigation, copie au navigateur). | [D-62](07-decisions.md#d-62), [D-10](07-decisions.md#d-10), [D-14](07-decisions.md#d-14), [D-41](07-decisions.md#d-41), [D-55](07-decisions.md#d-55) |
 | SMS et MMS | Envoyés par la carte SIM du téléphone Android, sans prestataire ; SMS SOS et de positions automatiques envoyés automatiquement, autres SMS ordinaires préremplis ; pas de SMS depuis l'iPhone. | [D-48](07-decisions.md#d-48), [D-82](07-decisions.md#d-82), [D-32](07-decisions.md#d-32), RG-COM-01, RG-SMS-03 |
 | Notifications push | Envoyées par le serveur : APNs pour l'iPhone, Firebase Cloud Messaging pour Android. Pour le suiveur sur iPhone : SOS, début, fin, nouvelle photo, position en retard ; contenu sur Android non décidé (§3.3). | [D-44](07-decisions.md#d-44), [D-86](07-decisions.md#d-86), RG-IOS-06 |
 | Stockage des photos et notes vocales | Dans PostgreSQL (§3.1). | [D-86](07-decisions.md#d-86) |
 | Photos | 20 par navigation au plus, environ 1 Mo chacune, envoyées au serveur ; le SMS peut donner un lien vers la photo hébergée. | [D-40](07-decisions.md#d-40), [D-49](07-decisions.md#d-49), RG-JRN-08, RG-SMS-05 |
 | Notes vocales | AAC `.m4a`, 1 minute au plus, enregistrement seul, conservé sur le serveur ; le SMS donne un lien d'écoute sur la plateforme Web. | [D-53](07-decisions.md#d-53), [D-71](07-decisions.md#d-71), RG-JRN-04, RG-SMS-06 |
-| Conservation et sauvegarde | Sauvegarde quotidienne gardée 30 jours : celle de pi-appliance pendant la bêta (§3.4) ; journaux techniques 1 an, d'administration 3 ans ; export JSON et GPX. | [D-46](07-decisions.md#d-46), [D-86](07-decisions.md#d-86), RG-DON-02 |
+| Conservation et sauvegarde | Sauvegarde quotidienne gardée 30 jours, moyen à décider pendant la bêta (§3.4, [Q-85](06-questions-ouvertes.md#q-85)) ; journaux techniques 1 an, d'administration 3 ans ; export JSON et GPX. | [D-46](07-decisions.md#d-46), [D-86](07-decisions.md#d-86), RG-DON-02 |
 | Carte de la plateforme Web | Fond OpenStreetMap et balisage OpenSeaMap. | [D-79](07-decisions.md#d-79), RG-NAV-29 |
 
 Risque accepté pendant la bêta : une coupure du Pi ou de la box arrête tout le circuit Internet, e-mails SOS compris ; les SMS partent quand même depuis Android ([D-62](07-decisions.md#d-62), RG-COM-01).
@@ -83,9 +83,9 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 
 ### 3.4 Sauvegardes
 
-**Décidé** ([D-86](07-decisions.md#d-86)) : les sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
+**Décidé** ([D-86](07-decisions.md#d-86)) : sauvegarde chaque nuit, gardée 30 jours (RG-DON-02). La base n'étant plus le PostgreSQL partagé de pi-appliance mais celle du service ([D-130](07-decisions.md#d-130)), le moyen est à décider : [Q-85](06-questions-ouvertes.md#q-85).
 
-- Reste : vérifier qu'elles couvrent la base NautiLink (photos et notes vocales comprises, §3.1), puis faire un essai de restauration.
+- Reste : sauvegarde couvrant le volume `nautilink-base` (photos et notes vocales comprises, §3.1), puis essai de restauration.
 
 ### 3.5 E-mails après la bêta
 
@@ -141,12 +141,12 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 |---|---|---|---|
 | Où | Poste du développeur | Tout poste avec Docker, et le workflow « Serveur » de GitHub (tâche `essai`) | Bêta : Raspberry Pi sous pi-appliance ([D-62](07-decisions.md#d-62)) ; après la bêta : serveur virtuel dans l'Union européenne ([D-96](07-decisions.md#d-96)) |
 | Serveur | `go run .` dans `server/` | Image construite depuis `server/` ([`compose.test.yaml`](../server/compose.test.yaml)) | Image publiée `ghcr.io/gmoulard/nautilink-serveur`, installée par « Docker Compose libre » ([`compose.yaml`](../server/compose.yaml)) |
-| Base | PostgreSQL de `compose.test.yaml`, joint sur `127.0.0.1:5432` | PostgreSQL vide et jetable (en mémoire), effacé à l'arrêt | PostgreSQL partagé de pi-appliance, sauvegardé chaque nuit (RG-DON-02) |
+| Base | PostgreSQL de `compose.test.yaml`, joint sur `127.0.0.1:5432` | PostgreSQL vide et jetable (en mémoire), effacé à l'arrêt | Bêta : service `base` de `compose.yaml`, volume `nautilink-base`, sauvegarde chaque nuit (RG-DON-02, [Q-85](06-questions-ouvertes.md#q-85)) |
 | E-mails | Mailpit de `compose.test.yaml` (`http://127.0.0.1:8025`) | Mailpit : capturés, aucun e-mail réel | Relais de pi-appliance, puis celui de l'hébergeur (SPF, DKIM, DMARC) |
 | Notifications push, paiements | Aucun envoi réel ; Stripe en mode test | Aucun envoi réel ; Stripe en mode test | APNs, FCM, Stripe, Google Play et App Store réels |
 | SMS | Téléphone d'essai, vers des numéros de l'équipe | Téléphone d'essai, vers des numéros de l'équipe | Téléphones des navigateurs |
 | Applications mobiles | Prototype de démonstration sans serveur (`app/`, [D-57](07-decisions.md#d-57)) ; plus tard, adresse du serveur de développement | Version de test pointée sur le serveur de test | Versions publiées sur Google Play et l'App Store |
 | Données | D'essai seulement | D'essai seulement, jamais copiées de la production | Réelles |
-| Secrets | Aucun dans le dépôt | Mots de passe d'essai de `compose.test.yaml`, sans valeur | Posés par la console de pi-appliance, jamais dans le dépôt |
+| Secrets | Aucun dans le dépôt | Mots de passe d'essai de `compose.test.yaml`, sans valeur | Posés dans le `.env` du service sur le Pi (mot de passe de la base compris), jamais dans le dépôt |
 
 **Déploiement de test reproductible** : `server/essai-test.sh` construit et lance l'environnement de test, vérifie le point de santé (base `ok`), envoie un e-mail d'essai et vérifie qu'il arrive dans Mailpit, puis arrête tout. Essayé le 2026-11-25 sous Docker, plusieurs fois de suite, avec succès (image faite d'un binaire construit hors de Docker, le réseau du poste d'essai empêchant `go mod download` dans la construction) ; la construction complète par le `Dockerfile` sera vérifiée par la tâche `essai` du workflow « Serveur ».

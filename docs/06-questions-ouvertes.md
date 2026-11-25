@@ -71,13 +71,19 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant.
 - Décidé (D-58, D-59) : applications mobiles Android et iPhone en Flutter, un seul code ; serveur maison.
-- Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL.
+- Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL ; base propre au service dans `server/compose.yaml` (D-130).
 - Décidé (D-86) : photos et notes vocales stockées dans PostgreSQL ; notifications push par APNs pour l'iPhone et Firebase Cloud Messaging pour Android (contenu sur Android : D-92, RG-AND-08) ; sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
 - Décidé (D-96) : [08-architecture.md](08-architecture.md) validé, propositions comprises (serveur virtuel dans l'Union européenne après la bêta, relais d'e-mails avec SPF, DKIM et DMARC, géocodage par Nominatim).
 - Décidé (D-115) : API ([`api/openapi.yaml`](api/openapi.yaml)) et environnements de développement, de test et de production ([08-architecture.md §6](08-architecture.md#6-environnements)) validés.
-- Reste : nom de l'hébergeur et date du passage après la bêta ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration (TODO-3.11).
+- Reste : nom de l'hébergeur et date du passage après la bêta ; sauvegarde de la base du Pi ([Q-85](#q-85)), puis essai de restauration (TODO-3.11).
 
 ## 3. Données, sécurité, conformité
+
+### <a id="q-85"></a>Q-85 — Sauvegarde de la base du Pi
+
+- Priorité : avant la mise en service sur le Pi (TODO-3.7).
+- Cas : depuis [D-130](07-decisions.md#d-130), la base est le service `base` de `server/compose.yaml` (volume `nautilink-base`) et non plus le PostgreSQL partagé de pi-appliance, sauvegardé chaque nuit. RG-DON-02 demande une sauvegarde quotidienne gardée 30 jours.
+- Proposition (non validée) : vérifier d'abord si les sauvegardes de pi-appliance couvrent les volumes des services « Docker Compose libre » ; sinon, un service de sauvegarde dans `compose.yaml` qui fait chaque nuit un `pg_dump` de la base dans un second volume, en gardant les 30 derniers, et un essai de restauration (TODO-3.11).
 
 ## 4. Marque et interface
 

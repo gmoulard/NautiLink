@@ -3,14 +3,17 @@
 # Dans la fiche du service, panneau « Hébergement » de la console pi-appliance :
 #   - cocher « Ce service marche sous le chemin /nautilink/ » (nom du service :
 #     nautilink) : publié à https://vdl.moulard.org/nautilink/, chemin gardé ;
-#   - « Créer sa base dans PostgreSQL » : la console pose PI_DATABASE_URL (et
-#     PI_DATABASE_HOST, _PORT, _NAME, _USER, _PASSWORD) dans le fichier .env du
-#     service et le relie au réseau de la base ;
+#   - ne pas cocher « Créer sa base dans PostgreSQL » : la base est le service
+#     « base » de ce fichier (D-130), données dans le volume nautilink-base ;
 #   - cocher « Envoi d'e-mails » : la console pose PI_SMTP_HOST
 #     (pi-appliance-mail, l'adresse du Pi vue des conteneurs) et PI_SMTP_PORT
 #     (2525) ; 60 e-mails par heure au plus pour tout le Pi ;
 #   - « Domaines renvoyés vers le service » : nautilink.moulard.org.
-# Aucun mot de passe dans ce fichier : la console les pose dans .env.
+# Aucun mot de passe dans ce fichier. Dans le fichier .env du service, poser
+#   NAUTILINK_BASE_MOT_DE_PASSE=<lettres et chiffres seulement, 24 au moins>
+# (il entre tel quel dans l'URL de la base) ; sans lui, le service ne démarre pas.
+# Le mot de passe est fixé à la création du volume : le changer ensuite demande
+# ALTER USER dans la base.
 # Connexion par Google ou par Apple : identifiants clients OAuth (pas des
 # secrets) à poser dans .env ; vides, ces connexions sont désactivées.
 services:
@@ -26,7 +29,7 @@ services:
       NAUTILINK_CHEMIN: "/nautilink"
       # Adresse des liens envoyés par e-mail (vérification, invitations).
       NAUTILINK_ADRESSE_PUBLIQUE: "https://vdl.moulard.org/nautilink"
-      NAUTILINK_BASE: "${PI_DATABASE_URL:-}"
+      NAUTILINK_BASE: "postgres://nautilink:${NAUTILINK_BASE_MOT_DE_PASSE:?à poser dans .env}@base:5432/nautilink?sslmode=disable"
       NAUTILINK_SMTP_HOTE: "${PI_SMTP_HOST:-}"
       NAUTILINK_SMTP_PORT: "${PI_SMTP_PORT:-2525}"
       NAUTILINK_EXPEDITEUR: "nautilink@moulard.org"
@@ -35,6 +38,9 @@ services:
       # Noms des lieux (géocodage inverse, D-96) ; vide : coordonnées seules.
       NAUTILINK_NOMINATIM: "https://nominatim.openstreetmap.org"
       NAUTILINK_ADMINS: "${NAUTILINK_ADMINS:-}"
+    depends_on:
+      base:
+        condition: service_healthy
     extra_hosts:
       - "pi-appliance-mail:host-gateway"
     ports:
@@ -45,3 +51,26 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+
+  # PostgreSQL propre à NautiLink (D-130), joint par le seul réseau du service,
+  # aucun port publié. Sauvegarde du volume : Q-85.
+  base:
+    image: postgres:16.6-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nautilink
+      POSTGRES_PASSWORD: "${NAUTILINK_BASE_MOT_DE_PASSE:?à poser dans .env}"
+      POSTGRES_DB: nautilink
+    volumes:
+      - nautilink-base:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "nautilink", "-d", "nautilink"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    mem_limit: 256m
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  nautilink-base:

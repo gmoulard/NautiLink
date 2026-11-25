@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// base : connexion à PostgreSQL (PostgreSQL partagé de pi-appliance, D-62).
+// base : connexion à PostgreSQL (service « base » de compose.yaml sur le Pi, D-130).
 // Le serveur démarre même sans base : le point de santé dit alors pourquoi.
 // Les migrations (migrations.go) sont appliquées au démarrage, puis
 // réessayées toutes les 5 secondes tant que la base n'est pas joignable.
