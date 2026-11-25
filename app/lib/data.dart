@@ -88,8 +88,9 @@ class LogEvent {
   };
 
   /// Détail affiché sous le libellé : texte saisi, ou fréquence du début.
-  String? details(AppLocalizations l) =>
-      frequency != null ? l.eventFrequency(frequencyLabel(l, frequency!)) : text;
+  String? details(AppLocalizations l) => frequency != null
+      ? l.eventFrequency(frequencyLabel(l, frequency!))
+      : text;
 }
 
 class Voyage {
@@ -275,7 +276,8 @@ class AppState extends ChangeNotifier {
   int lastPersonsOnBoard = 1;
 
   /// Contacts alertés par défaut : suiveurs et contacts SOS (RG-NAV-25).
-  List<Contact> get alertable => contacts.where((c) => c.follower || c.sos).toList();
+  List<Contact> get alertable =>
+      contacts.where((c) => c.follower || c.sos).toList();
 
   void addContact(Contact c) {
     contacts.add(c);
@@ -285,7 +287,9 @@ class AppState extends ChangeNotifier {
   /// Contacts SOS alertés pendant la navigation en cours.
   List<Contact> get sosContactsNow {
     final v = current;
-    return contacts.where((c) => c.sos && (v == null || v.alerted.contains(c.name))).toList();
+    return contacts
+        .where((c) => c.sos && (v == null || v.alerted.contains(c.name)))
+        .toList();
   }
 
   void startVoyage({
@@ -308,14 +312,7 @@ class AppState extends ChangeNotifier {
       alerted: alerted ?? alertable.map((c) => c.name).toSet(),
       weatherStart: demoWeather(p),
       track: [p],
-      log: [
-        LogEvent(
-          EventKind.start,
-          now,
-          position: p,
-          frequency: frequency,
-        ),
-      ],
+      log: [LogEvent(EventKind.start, now, position: p, frequency: frequency)],
     );
     lastPersonsOnBoard = persons;
     current = v;
@@ -435,11 +432,7 @@ class AppState extends ChangeNotifier {
             t1[12].time,
             text: 'Phare de Kerdonis par le travers',
           ),
-          LogEvent(
-            EventKind.voice,
-            t1[16].time,
-            text: 'Enregistrement · 0:14',
-          ),
+          LogEvent(EventKind.voice, t1[16].time, text: 'Enregistrement · 0:14'),
           LogEvent(EventKind.end, t1.last.time, position: t1.last),
         ],
       ),
@@ -498,7 +491,77 @@ class AppState extends ChangeNotifier {
         ],
       ),
     );
+
+    // Navigation en Méditerranée : Port du Niel (Giens) → Toulon, Vieille Darse,
+    // par la pointe d'Escampobariou et le Cap Brun, à 5,5 nœuds.
+    final d = DateTime.now().subtract(const Duration(days: 6));
+    final base4 = DateTime(d.year, d.month, d.day, 9, 10);
+    final t4 = route(const [
+      (43.0368, 6.1285), // Port du Niel
+      (43.0280, 6.1200),
+      (43.0250, 6.0900),
+      (43.0360, 6.0680), // pointe d'Escampobariou
+      (43.0580, 6.0580),
+      (43.0740, 6.0350),
+      (43.0770, 6.0000), // au large du Pradet
+      (43.0870, 5.9650), // Cap Brun
+      (43.0960, 5.9500),
+      (43.1040, 5.9400), // passe de la Grande Jetée
+      (43.1120, 5.9340),
+      (43.1197, 5.9330), // Vieille Darse
+    ], base4);
+    voyages.add(
+      Voyage(
+        name: 'Alizé — Toulon, Vieille Darse',
+        boat: boats[0],
+        start: base4,
+        end: t4.last.time,
+        destination: 'Toulon, Vieille Darse',
+        personsOnBoard: 2,
+        weatherStart: 'Est 10 nœuds · mer belle · 1018 hPa',
+        weatherEnd: 'Est 12 nœuds · mer peu agitée · 1017 hPa',
+        track: t4,
+        log: [
+          LogEvent(
+            EventKind.start,
+            t4.first.time,
+            position: t4.first,
+            frequency: 30,
+          ),
+          LogEvent(EventKind.autoPosition, t4[3].time, position: t4[3]),
+          LogEvent(
+            EventKind.note,
+            t4[5].time.add(const Duration(minutes: 3)),
+            text: 'Vent d\'est 10 nœuds, mer belle. Génois seul.',
+          ),
+          LogEvent(EventKind.autoPosition, t4[7].time, position: t4[7]),
+          LogEvent(EventKind.autoPosition, t4[9].time, position: t4[9]),
+          LogEvent(EventKind.end, t4.last.time, position: t4.last),
+        ],
+      ),
+    );
   }
+}
+
+/// Positions d'un trajet donné point par point, datées selon la distance
+/// parcourue à [knots] nœuds.
+List<Position> route(
+  List<(double, double)> points,
+  DateTime start, {
+  double knots = 5.5,
+}) {
+  final out = <Position>[];
+  var t = start;
+  for (var i = 0; i < points.length; i++) {
+    final (lat, lon) = points[i];
+    if (i > 0) {
+      final prev = out.last;
+      final nm = Voyage.distanceMeters(prev, Position(lat, lon, t)) / 1852;
+      t = t.add(Duration(seconds: (nm / knots * 3600).round()));
+    }
+    out.add(Position(lat, lon, t));
+  }
+  return out;
 }
 
 /// Lieux connus pour le géocodage inverse de démonstration (RG-NAV-16, RG-JRN-10).
@@ -513,6 +576,13 @@ const _places = <(String, double, double)>[
   ('La Trinité-sur-Mer', 47.585, -3.029),
   ('Plateau des Birvideaux', 47.490, -3.290),
   ('Baie de Quiberon', 47.530, -3.050),
+  ('Port du Niel, Giens', 43.037, 6.128),
+  ('Pointe d\'Escampobariou', 43.030, 6.075),
+  ('Carqueiranne', 43.088, 6.073),
+  ('Le Pradet', 43.090, 6.020),
+  ('Cap Brun', 43.093, 5.968),
+  ('Grande Jetée de Toulon', 43.102, 5.943),
+  ('Toulon, Vieille Darse', 43.1197, 5.933),
 ];
 
 /// Nom du lieu le plus proche à moins de 8 milles, sinon les coordonnées.
@@ -538,4 +608,3 @@ String demoWeather(Position p) {
   const seas = ['mer belle', 'mer peu agitée', 'mer agitée'];
   return '${dirs[r.nextInt(dirs.length)]} ${8 + r.nextInt(12)} nœuds · ${seas[r.nextInt(seas.length)]} · ${1008 + r.nextInt(14)} hPa';
 }
-
