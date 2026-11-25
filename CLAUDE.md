@@ -26,6 +26,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
 | Localisation en arrière-plan sur iPhone, App Store | `docs/etudes/localisation-arriere-plan-iphone.md` |
 | Notes vocales : format audio, transcription | `docs/etudes/notes-vocales.md` |
+| Disponibilité du nom NautiLink : marques, domaines, réseaux sociaux | `docs/etudes/nom-nautilink.md` |
 
 ## Ordre de priorité en cas d'écart
 

@@ -110,6 +110,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : lancement.
 - À vérifier : disponibilité juridique du nom NautiLink, noms de domaine, comptes sur les réseaux sociaux.
+- Étude : [nom NautiLink](etudes/nom-nautilink.md) (2026-11-25) : pas d'homonyme exact repéré parmi les applications ; quasi-homonyme Nauti-Link (conseil en cession d'entreprises du nautisme, France) ; bases de marques, domaines et comptes non consultés.
+- Proposition (non validée) : garder le nom NautiLink sous réserve de la consultation des bases INPI, EUIPO et OMPI et d'un avis juridique, puis réserver les domaines et comptes libres.
 
 ### <a id="q-30"></a>Q-30 — Maquettes et accessibilité
 

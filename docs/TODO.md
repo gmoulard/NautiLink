@@ -166,8 +166,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 - [!] **TODO-8.1**: Logo, icône Android, déclinaisons, couleurs du thème sombre ([Q-25](06-questions-ouvertes.md#q-25)). Dépend de : aucune.
   - Critères d'acceptation : fichiers vectoriels et icônes Android et iPhone dans `docs/assets/`, palette complétée dans l'identité de marque. Bloqué par : validation du logo par l'utilisateur.
-- [ ] **TODO-8.2**: Disponibilité du nom, domaines, réseaux sociaux ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : aucune.
+- [~] **TODO-8.2**: Disponibilité du nom, domaines, réseaux sociaux ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : aucune.
   - Critères d'acceptation : recherche d'antériorité faite, domaines et comptes réservés.
+  - Fait : [étude documentaire](etudes/nom-nautilink.md) (moteur de recherche ; quasi-homonyme Nauti-Link) (2026-11-25). Reste : consulter INPI, EUIPO, OMPI ; vérifier domaines et comptes ; vérification juridique ; décision Q-26 ; réservations par l'utilisateur.
 - [ ] **TODO-8.3**: Conditions d'utilisation, politique de confidentialité et [avertissement bêta](textes/avertissement-beta.md) relus par un juriste (RG-DON-03, D-56). Dépend de : TODO-1.17.
   - Critères d'acceptation : textes publiés sur le Web et accessibles depuis Android.
 - [~] **TODO-8.5**: Site de présentation sur GitHub Pages : accueil, mémo sécurité en mer, avertissement bêta (`site/`, D-56). Dépend de : aucune.
