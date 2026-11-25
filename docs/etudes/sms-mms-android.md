@@ -51,6 +51,8 @@ Les voies peuvent se combiner (par exemple A sur Play Store et D pour un public 
 
 ## 6. Ce qui reste à faire pour TODO-2.1
 
+Voie retenue : A (D-48), élargie par [D-82](../07-decisions.md#d-82) : `SEND_SMS` sert aussi aux SMS de positions automatiques, qui partent sans appui du navigateur. La déclaration à Google Play doit couvrir ce cas. **Risque accepté** : Google Play peut refuser la permission pour cet usage, qui sort de l'exception « urgence » (§ 2), et le refus peut porter sur toute l'application ; conséquence à décider en [Q-40](../06-questions-ouvertes.md#q-40). La limite d'Android sur le nombre de SMS par période (§ 4) devient plus probable à atteindre.
+
 1. Relire en entier [S1], [S3], [S4] (accès réseau à support.google.com nécessaire).
 2. Choix de la voie par l'utilisateur (§ 3), puis écriture dans les règles métier (RG-COM-01, RG-SMS-03, RG-SMS-07) et tracé en `D-nn`.
 3. Si la voie A est choisie : préparer la déclaration des autorisations (vidéo du SOS, justification) et prévoir le cas d'un refus.

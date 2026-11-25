@@ -13,7 +13,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-1 | Décisions sur les navigations et le partage | TODO-1.4, TODO-1.5, TODO-1.6, TODO-1.7, TODO-1.8, TODO-1.11, TODO-1.19 | aucun | [!] |
 | LOT-2 | Décisions sur les notifications, le quota et l'abonnement | TODO-1.12, TODO-1.13, TODO-1.14, TODO-10.1, TODO-1.20 | aucun | [!] |
 | LOT-3 | Décisions sur l'administration, les données et la conformité | TODO-1.15, TODO-1.16, TODO-1.17 | aucun | [x] |
-| LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21 | aucun | [~] |
+| LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21, TODO-1.26 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
 | LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7 | LOT-4, LOT-5 | [~] |
 | LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10 | aucun | [~] |
@@ -38,7 +38,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 - [!] **TODO-1.19**: Changer les heures d'une navigation : effet sur le quota et les positions ([Q-34](06-questions-ouvertes.md#q-34), RG-NAV-22). Dépend de : aucune.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.21**: SMS préremplis : positions automatiques et nouvelles tentatives ([Q-36](06-questions-ouvertes.md#q-36), RG-SMS-03). Dépend de : aucune.
+- [!] **TODO-1.26**: Positions automatiques sans permission d'envoi de SMS ([Q-40](06-questions-ouvertes.md#q-40), RG-SMS-03). Dépend de : aucune.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
 - [!] **TODO-1.14**: Prix et règles de paiement de l'abonnement ([Q-17](06-questions-ouvertes.md#q-17), RG-ECO-06, RG-ECO-07). Tranché le 2026-11-24 : une seule formule, mensuelle ou annuelle, sans essai (D-43). Dépend de : aucune.
   - Critères d'acceptation : communs, dans le modèle économique. Bloqué par : décision de l'utilisateur.
@@ -51,6 +51,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : règles actuelles de Google Play sur la permission SMS lues et citées ; voie retenue par l'utilisateur (exception demandée, application SMS préremplie, distribution hors Play Store…) et écrite dans les règles métier.
   - Fait : [étude documentaire](etudes/sms-mms-android.md) (règles Google Play, voies A à D, API `SmsManager`). Reste : relire en entier les pages d'aide Google Play (inaccessibles lors de la rédaction) ; choix de la voie par l'utilisateur, puis règles métier et `D-nn`.
   - Tranché le 2026-11-24 (D-48) : exception « urgence » pour les SMS SOS, SMS ordinaires préremplis. Reste : vérifier l'exception sur la page officielle de Google Play.
+  - Tranché le 2026-11-25 (D-82) : SMS de positions automatiques envoyés automatiquement ; la demande de permission à Google Play doit couvrir ce cas ; risque de refus accepté (conséquence : Q-40, TODO-1.26).
 - [~] **TODO-2.2**: GPS en arrière-plan, écran éteint, et consommation de batterie ([Q-09](06-questions-ouvertes.md#q-09), RG-GPS-03). Dépend de : aucune.
   - Critères d'acceptation : prototype qui enregistre une position toutes les 15 minutes pendant 8 heures, écran éteint, sur au moins trois marques de téléphones (dont Samsung et Xiaomi) ; positions manquantes et batterie consommée notées.
   - Fait : [étude documentaire](etudes/gps-arriere-plan-android.md) (service de premier plan `location`, autorisations, Doze, constructeurs, reprise au redémarrage, protocole d'essai). Reste : prototype sur trois marques (dont Samsung et Xiaomi) avec mesures ; relire dontkillmyapp.com et la politique Google Play (inaccessibles lors de la rédaction).

@@ -166,3 +166,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 |----|-------|-------------------------|----------|--------|
 | <a id="d-80"></a>D-80 | Autorisations Android | Version minimale d'Android, moment des demandes d'autorisations, refus de la localisation précise (Q-31, TODO-2.3). | Android 8.0 (API 26) au minimum ; chaque autorisation demandée au moment où elle sert et redemandée chaque fois que l'application en a besoin ; localisation refusée : navigation sans positions. | RG-AND-01, RG-AND-02, RG-AND-03 |
 | <a id="d-81"></a>D-81 | Refus des SMS et réveil du téléphone | Comportement si l'envoi de SMS est refusé ; réveil entre deux positions sans alarme exacte (Q-31, TODO-2.3). | SMS refusé : SOS par Internet plus SMS SOS prérempli ; réveil par une minuterie du service de localisation en continu. | RG-AND-04, RG-AND-05 |
+
+## 2026-11-25 — Réponses aux questions ouvertes
+
+| Id | Sujet | Contradiction ou manque | Décision | Règles |
+|----|-------|-------------------------|----------|--------|
+| <a id="d-82"></a>D-82 | SMS de positions automatiques | Un SMS prérempli demanderait un appui toutes les N minutes, et l'application ne voit pas s'il est parti (ancienne question 36, TODO-1.21). | Les SMS de positions automatiques partent automatiquement (permission d'envoi de SMS), sans appui du navigateur ; risque accepté que Google Play refuse cette permission en dehors de l'exception « urgence ». Nouvelles tentatives limitées aux SMS envoyés automatiquement (SOS et positions automatiques). Les autres SMS ordinaires restent préremplis (D-48). | RG-SMS-03, RG-SMS-07, RG-SMS-08, RG-SOS-16 |

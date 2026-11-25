@@ -123,11 +123,11 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 
 - **TS-SMS-01** ([RG-SMS-01](../02-regles-metier.md#rg-sms-01)) — Étant donné une navigation avec trois suiveurs dont deux ont un numéro de téléphone, quand un SMS ordinaire part, alors il est envoyé à ces deux suiveurs seulement.
 - **TS-SMS-02** ([RG-SMS-02](../02-regles-metier.md#rg-sms-02)) — Étant donné l'interrupteur général désactivé, quand une position automatique est acquise, alors aucun SMS ordinaire ne part ; interrupteur activé et seule la préférence « positions automatiques » cochée, seuls ces SMS partent.
-- **TS-SMS-03** ([RG-SMS-03](../02-regles-metier.md#rg-sms-03)) — Étant donné un SMS de position manuelle prévu par les paramètres, quand le navigateur envoie une position manuelle, alors le SMS part sans confirmation supplémentaire.
+- **TS-SMS-03** ([RG-SMS-03](../02-regles-metier.md#rg-sms-03)) — Étant donné un SMS de position automatique prévu par les paramètres et la permission d'envoi de SMS accordée, quand vient l'heure d'une position automatique, alors le SMS part sans appui du navigateur ; étant donné un SMS de position manuelle prévu, quand le navigateur envoie une position manuelle, alors le SMS s'ouvre prérempli dans l'application SMS du téléphone.
 - **TS-SMS-04** ([RG-SMS-04](../02-regles-metier.md#rg-sms-04)) — Étant donné le GPS indisponible, quand un SMS ordinaire de position part, alors il indique « GPS NON DISPONIBLE » et aucune position ancienne.
 - **TS-SMS-05** ([RG-SMS-05](../02-regles-metier.md#rg-sms-05)) — Étant donné l'envoi d'une photo avec MMS prévu par les paramètres, quand le navigateur l'envoie, alors la photo part au serveur et un MMS la joint.
 - **TS-SMS-06** ([RG-SMS-06](../02-regles-metier.md#rg-sms-06)) — Étant donné une note vocale validée avec SMS prévu, quand elle part, alors le SMS contient la transcription texte, pas l'audio.
-- **TS-SMS-07** ([RG-SMS-07](../02-regles-metier.md#rg-sms-07)) — Aucun scénario tant que [D-50](../07-decisions.md#d-50) et [Q-12](../06-questions-ouvertes.md#q-12) ne sont pas tranchées : la règle ne fixe encore aucun comportement.
+- **TS-SMS-07** ([RG-SMS-07](../02-regles-metier.md#rg-sms-07)) — Étant donné un SMS de position automatique qui échoue, quand l'application le retente, alors elle fait 3 essais puis affiche l'échec avec « Réessayer » ; étant donné un SMS SOS qui échoue, alors il est retenté chaque minute jusqu'à la réussite ou l'arrêt par le navigateur ; un SMS prérempli n'est jamais retenté.
 
 ## 11. Contacts (RG-CTC)
 

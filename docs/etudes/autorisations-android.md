@@ -62,7 +62,7 @@ flowchart TD
     B2 -- "approximative ou refus" --> BX["Navigation sans positions ;<br/>demande renouvelée à chaque<br/>acquisition (RG-AND-03)"] --> C
     B -- oui --> C{"Android 13 ou plus et<br/>notifications non accordées ?"}
     C -- oui --> C1["Demande POST_NOTIFICATIONS"] --> D
-    C -- non --> D{"Contact SOS enregistré et<br/>SEND_SMS non accordée ?"}
+    C -- non --> D{"Contact SOS enregistré ou SMS de<br/>positions automatiques prévus,<br/>et SEND_SMS non accordée ?"}
     D -- oui --> D1["Écran d'explication puis<br/>demande SEND_SMS"] --> E
     D -- non --> E{"Première navigation ?"}
     E -- oui --> E1["Exclusion de l'optimisation<br/>de la batterie et aide par marque<br/>(RG-GPS-05)"] --> F

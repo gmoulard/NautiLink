@@ -8,11 +8,11 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 ## 1. Questions fonctionnelles
 
-### <a id="q-36"></a>Q-36 — SMS préremplis : positions automatiques et nouvelles tentatives
+### <a id="q-40"></a>Q-40 — Positions automatiques sans permission d'envoi de SMS
 
 - Priorité : bloquant pour les SMS sur Android.
-- Question : avec des SMS ordinaires préremplis (RG-SMS-03), un SMS de position automatique demanderait un appui toutes les N minutes, et l'application ne voit pas si un SMS prérempli est parti (nouvelles tentatives de RG-SMS-07). Que faire ?
-- Proposition : les positions automatiques ne partent plus par SMS, seulement au serveur ; les nouvelles tentatives ne concernent que les SMS SOS.
+- Question : si Google Play refuse la permission d'envoi de SMS pour les positions automatiques (risque accepté, D-82), ou si le navigateur la refuse sur son téléphone (RG-AND-04), que deviennent les SMS de positions automatiques (RG-SMS-03) ?
+- Proposition (non validée) : les positions automatiques partent seulement au serveur, sans SMS ; l'écran de démarrage le dit.
 
 ### <a id="q-39"></a>Q-39 — Service météo
 
@@ -61,7 +61,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-12"></a>Q-12 — Restrictions Android sur l'envoi de SMS
 
 - Priorité : bloquant, à étudier en premier.
-- Décidé (D-48) : exception « urgence » de Google Play pour les seuls SMS SOS ; SMS ordinaires préremplis.
+- Décidé (D-48) : exception « urgence » de Google Play pour les SMS SOS ; SMS ordinaires préremplis.
+- Décidé (D-82) : les SMS de positions automatiques partent aussi automatiquement ; la demande de permission auprès de Google Play doit couvrir ce cas, avec le risque accepté d'un refus en dehors de l'exception « urgence » (Q-40).
 - Reste : lire la page officielle de Google Play et vérifier que l'exception existe et couvre NautiLink. Si elle est refusée, revenir vers l'utilisateur.
 - Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md) (voies possibles §3).
 
