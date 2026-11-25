@@ -27,6 +27,10 @@ type app struct {
 	limEnvoi          *limiteur
 
 	verificateurs map[string]*verificateurIdentite
+
+	// maintenant : horloge du serveur (quota, clôture automatique, corbeille) ;
+	// remplacée dans les essais.
+	maintenant func() time.Time
 }
 
 func nouvelleApp(cfg config, b *base) *app {
@@ -40,6 +44,7 @@ func nouvelleApp(cfg config, b *base) *app {
 		limInscription:    nouveauLimiteur(10, time.Hour),
 		limEnvoi:          nouveauLimiteur(5, time.Hour),
 		verificateurs:     nouveauxVerificateurs(cfg),
+		maintenant:        time.Now,
 	}
 	a.envoyer = func(dest, sujet, texte string) error { return envoyerMail(cfg, dest, sujet, texte) }
 	return a
@@ -215,11 +220,13 @@ func (a *app) sessionDe(ctx context.Context, r *http.Request) (*session, error) 
 	return s, nil
 }
 
-// navigationEnCoursSurAppareil : vrai si le téléphone est associé à un bateau
-// dont une navigation est en cours (RG-CPT-08). Les navigations arrivent avec
-// TODO-4.5 : d'ici là, aucune n'est en cours.
+// navigationEnCoursSurAppareil : vrai si une navigation est en cours sur ce
+// téléphone (RG-CPT-08).
 func (a *app) navigationEnCoursSurAppareil(ctx context.Context, appareil string) bool {
-	return false
+	var ok bool
+	_ = a.b.pool.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM navigations WHERE appareil_id = $1 AND fin_enregistree IS NULL)",
+		appareil).Scan(&ok)
+	return ok
 }
 
 // ouvrirSession : crée une session et rend le jeton d'accès et celui de

@@ -58,6 +58,7 @@ GARDER=1 ./essai-test.sh # garde l'environnement lancé
 | `NAUTILINK_GOOGLE_CLIENTS` | Identifiants clients OAuth Google acceptés (Web, Android, iPhone), séparés par des virgules ; vide : connexion Google désactivée | vide |
 | `NAUTILINK_ADMINS` | Adresses e-mail des administrateurs, séparées par des virgules (Q-53, non validée) ; le compte doit exister et son adresse être confirmée ; vide : espace administrateur fermé | vide |
 | `NAUTILINK_APPLE_CLIENTS` | Identifiants clients Apple acceptés (identifiant de l'application, Services ID), séparés par des virgules ; vide : connexion Apple désactivée | vide |
+| `NAUTILINK_NOMINATIM` | Service de géocodage inverse pour les noms de lieux (D-96), une requête par seconde au plus, avec cache. Sur le Pi : `https://nominatim.openstreetmap.org` ; vide : coordonnées à la place des noms | vide |
 
 ## Base de données
 

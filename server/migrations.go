@@ -190,6 +190,122 @@ var migrations = []string{
 		fermee_le timestamptz NOT NULL DEFAULT now(),
 		PRIMARY KEY (annonce_id, utilisateur_id)
 	);`,
+
+	// 6 — LOT-9 (TODO-4.5 à TODO-4.8) : navigations (heures enregistrées par
+	// le téléphone et heures affichées, clôture automatique, corbeille),
+	// journal de bord, fichiers, retraits d'une seule navigation, cache des
+	// noms de lieux, abonnements, alertes SOS et statuts de leurs SMS.
+	// Une navigation est en cours tant que fin_enregistree est vide.
+	`CREATE TABLE navigations (
+		id uuid PRIMARY KEY,
+		navigateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		bateau_id uuid NOT NULL REFERENCES bateaux ON DELETE CASCADE,
+		appareil_id uuid NOT NULL,
+		nom text NOT NULL,
+		destination jsonb,
+		frequence_minutes integer NOT NULL,
+		parametres jsonb,
+		personnes_a_bord integer NOT NULL,
+		personnes_alertees uuid[],
+		debut_enregistre timestamptz NOT NULL,
+		fin_enregistree timestamptz,
+		debut timestamptz NOT NULL,
+		fin timestamptz,
+		meteo_depart jsonb,
+		meteo_arrivee jsonb,
+		epuise_le timestamptz,
+		cloture_automatique_le timestamptz,
+		supprimee_le timestamptz,
+		empreinte bytea NOT NULL,
+		version integer NOT NULL DEFAULT 1,
+		creee_le timestamptz NOT NULL DEFAULT now(),
+		modifiee_le timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE INDEX navigations_navigateur ON navigations (navigateur_id, debut_enregistre);
+	CREATE UNIQUE INDEX navigations_bateau_en_cours ON navigations (bateau_id) WHERE fin_enregistree IS NULL;
+	CREATE UNIQUE INDEX navigations_appareil_en_cours ON navigations (appareil_id) WHERE fin_enregistree IS NULL;
+	CREATE TABLE evenements (
+		id uuid PRIMARY KEY,
+		navigation_id uuid NOT NULL REFERENCES navigations ON DELETE CASCADE,
+		type text NOT NULL,
+		heure_acquisition timestamptz NOT NULL,
+		numero_ordre integer,
+		latitude double precision,
+		longitude double precision,
+		precision_metres double precision,
+		heure_position timestamptz,
+		gps_disponible boolean,
+		lieu text,
+		lieu_cherche boolean NOT NULL DEFAULT false,
+		texte text,
+		fichier_type text,
+		fichier_taille integer,
+		fichier_duree integer,
+		origine text,
+		alerte_sos_id uuid,
+		empreinte bytea NOT NULL,
+		recu_le timestamptz NOT NULL DEFAULT now(),
+		modification bigint NOT NULL DEFAULT nextval('modifications'),
+		supprime_le timestamptz
+	);
+	CREATE INDEX evenements_navigation ON evenements (navigation_id, heure_acquisition);
+	CREATE INDEX evenements_modification ON evenements (navigation_id, modification);
+	CREATE INDEX evenements_lieu ON evenements (id) WHERE latitude IS NOT NULL AND NOT lieu_cherche;
+	CREATE TABLE fichiers (
+		evenement_id uuid PRIMARY KEY REFERENCES evenements ON DELETE CASCADE,
+		type_media text NOT NULL,
+		contenu bytea NOT NULL,
+		recu_le timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE TABLE retraits_navigation (
+		navigation_id uuid NOT NULL REFERENCES navigations ON DELETE CASCADE,
+		suiveur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		retire_le timestamptz NOT NULL DEFAULT now(),
+		PRIMARY KEY (navigation_id, suiveur_id)
+	);
+	CREATE TABLE lieux (
+		latitude integer NOT NULL,
+		longitude integer NOT NULL,
+		nom text,
+		cherche_le timestamptz NOT NULL DEFAULT now(),
+		PRIMARY KEY (latitude, longitude)
+	);
+	CREATE TABLE abonnements (
+		utilisateur_id uuid PRIMARY KEY REFERENCES utilisateurs ON DELETE CASCADE,
+		canal text NOT NULL,
+		debut timestamptz NOT NULL,
+		fin timestamptz NOT NULL,
+		reference text NOT NULL DEFAULT ''
+	);
+	CREATE TABLE alertes_sos (
+		id uuid PRIMARY KEY,
+		navigateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		bateau_id uuid NOT NULL REFERENCES bateaux ON DELETE CASCADE,
+		navigation_id uuid REFERENCES navigations ON DELETE SET NULL,
+		appareil_id uuid,
+		heure_declenchement timestamptz NOT NULL,
+		latitude double precision,
+		longitude double precision,
+		precision_metres double precision,
+		heure_position timestamptz,
+		nature_position text NOT NULL,
+		probleme text,
+		personnes_a_bord integer,
+		emails_envoyes_a text[] NOT NULL DEFAULT '{}',
+		empreinte bytea NOT NULL,
+		recue_le timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE INDEX alertes_sos_bateau ON alertes_sos (bateau_id, heure_declenchement);
+	CREATE TABLE statuts_sms (
+		alerte_id uuid NOT NULL REFERENCES alertes_sos ON DELETE CASCADE,
+		telephone text NOT NULL,
+		rang integer NOT NULL,
+		contact_id uuid,
+		statut text NOT NULL,
+		essais integer NOT NULL DEFAULT 0,
+		mis_a_jour_le timestamptz NOT NULL DEFAULT now(),
+		PRIMARY KEY (alerte_id, telephone, rang)
+	);`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

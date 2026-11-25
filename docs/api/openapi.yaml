@@ -931,6 +931,10 @@ paths:
                   evenements:
                     type: array
                     items: {$ref: '#/components/schemas/Evenement'}
+                  supprimes:
+                    type: array
+                    description: 'Avec `depuis` : identifiants des événements supprimés depuis ce curseur.'
+                    items: {type: string, format: uuid}
                   curseur: {type: string, description: À renvoyer dans `depuis` à l'appel suivant.}
   /v1/navigations/{navigationId}/evenements/{evenementId}:
     parameters:
