@@ -269,5 +269,8 @@
   "voyageRefused": "Refusé par le serveur : {message}",
   "@voyageRefused": {"placeholders": {"message": {"type": "String"}}},
   "nextAutoPosition": "Prochaine position automatique : {time}",
-  "@nextAutoPosition": {"placeholders": {"time": {"type": "String"}}}
+  "@nextAutoPosition": {"placeholders": {"time": {"type": "String"}}},
+  "sendRefused": "Envoi refusé",
+  "micRefused": "Accès au micro refusé : la note vocale ne peut pas être enregistrée.",
+  "recordingHintReal": "1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription."
 }

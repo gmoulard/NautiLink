@@ -802,4 +802,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String nextAutoPosition(String time) {
     return 'Next automatic position: $time';
   }
+
+  @override
+  String get sendRefused => 'Sending refused';
+
+  @override
+  String get micRefused =>
+      'Microphone access refused: the voice note cannot be recorded.';
+
+  @override
+  String get recordingHintReal =>
+      '1 minute at most, stops automatically. Your voice is sent as is, without transcription.';
 }

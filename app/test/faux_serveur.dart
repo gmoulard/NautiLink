@@ -8,6 +8,7 @@ import 'package:nautilink/reel/api.dart';
 import 'package:nautilink/reel/base_locale.dart';
 import 'package:nautilink/reel/depot_reel.dart';
 import 'package:nautilink/reel/file_attente.dart';
+import 'package:nautilink/reel/medias.dart';
 import 'package:nautilink/reel/stockage_session.dart';
 
 http.Response reponse(int statut, [Object? corps]) => http.Response.bytes(
@@ -103,7 +104,8 @@ class FauxServeurNautiLink {
     final chemin = r.url.path.replaceFirst(RegExp(r'^.*/api'), '');
     appels.add('${r.method} $chemin');
     adresses.add(r.url);
-    final c = r.body.isEmpty ? null : jsonDecode(r.body);
+    final json = r.headers['Content-Type']?.startsWith('application/json');
+    final c = r.bodyBytes.isEmpty || json != true ? null : jsonDecode(r.body);
     corps['${r.method} $chemin'] = c;
     final auth = r.headers['Authorization'];
     final ouvert =
@@ -306,6 +308,7 @@ class FauxServeurNautiLink {
     BaseLocale base, {
     SourcePosition? positions,
     DateTime Function()? horloge,
+    Medias? medias,
   }) {
     final api = ClientApi(
       base: 'https://essai.example/nautilink/api',
@@ -321,11 +324,14 @@ class FauxServeurNautiLink {
       positions: positions,
       horloge: horloge,
       pasVerification: null,
+      medias: medias,
       file: FileAttente(
         base: base,
         api: api,
         appareilId: session.appareilId,
         planifier: (_, _) {},
+        // Fichiers d'essai : 1 000 octets, quel que soit le chemin.
+        lireFichier: (_) async => List.filled(1000, 7),
       ),
     );
   }
@@ -364,3 +370,27 @@ PositionGps positionEssai([DateTime? t]) => PositionGps(
   heureAcquisition: t ?? DateTime(2026, 11, 25, 10),
   precisionMetres: 8,
 );
+
+/// Appareil photo et micro d'essai.
+class FauxMedias implements Medias {
+  bool micro = true;
+  bool annulee = false;
+  final oublies = <String>[];
+
+  @override
+  Future<FichierMedia?> photo(String evenementId) async =>
+      annulee ? null : FichierMedia('/essai/$evenementId.jpg', 950000);
+
+  @override
+  Future<bool> commencerVocal(String evenementId) async => micro;
+
+  @override
+  Future<FichierMedia?> arreterVocal() async =>
+      const FichierMedia('/essai/vocal.m4a', 120000);
+
+  @override
+  Future<void> annulerVocal() async {}
+
+  @override
+  Future<void> oublier(String evenementId) async => oublies.add(evenementId);
+}

@@ -12,6 +12,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- « Vocal » : micro, demandé au premier enregistrement (n° 8). « Photo »
+         ouvre l'appareil photo du téléphone, sans autorisation CAMERA
+         (RG-AND-06). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <application
         android:label="${appLabel}"
         android:name="${applicationName}"
@@ -53,6 +57,10 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- « Photo » : application appareil photo du téléphone (RG-AND-06). -->
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE"/>
         </intent>
         <!-- Ouvrir la page d'information sur l'abonnement (RG-ECO-10). -->
         <intent>

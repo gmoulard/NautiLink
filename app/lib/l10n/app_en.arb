@@ -239,5 +239,8 @@
   "noSosContact": "You have no SOS contact: nobody will receive your SOS text messages. Add one to your contacts on the web platform.",
   "noAlertablePerson": "No follower or SOS contact.",
   "voyageRefused": "Refused by the server: {message}",
-  "nextAutoPosition": "Next automatic position: {time}"
+  "nextAutoPosition": "Next automatic position: {time}",
+  "sendRefused": "Sending refused",
+  "micRefused": "Microphone access refused: the voice note cannot be recorded.",
+  "recordingHintReal": "1 minute at most, stops automatically. Your voice is sent as is, without transcription."
 }

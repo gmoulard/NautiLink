@@ -310,4 +310,109 @@ void main() {
       expect(d.conduite.enCours!.journal.length, 2);
     });
   });
+
+  group('position manuelle, NOTE, Photo, Vocal (TODO-5.4)', () {
+    late FauxMedias medias;
+
+    Future<DepotReel> enNavigation() async {
+      medias = FauxMedias();
+      final d = serveur.depot(
+        session,
+        base,
+        positions: gps,
+        horloge: () => heure,
+        medias: medias,
+      );
+      await d.ouvrir();
+      await d.connexion('marin@example.org', 'secret123');
+      await demarrer(d);
+      serveur.elements.clear();
+      return d;
+    }
+
+    test('position manuelle : autorisation redemandée, envoyée au serveur (RG-NAV-11, RG-AND-03)', () async {
+      final d = await enNavigation();
+      final demandes = gps.demandes;
+      final etat = await d.conduite.positionManuelle();
+      expect(etat.recu, isTrue);
+      expect(gps.demandes, demandes + 1);
+      final e = evenements().single;
+      expect(e['type'], 'position_manuelle');
+      expect(e['gpsDisponible'], isTrue);
+      expect((e['position'] as Map)['longitude'], -2.95);
+    });
+
+    test(
+      'NOTE : texte envoyé au journal ; hors connexion, en attente',
+      () async {
+        final d = await enNavigation();
+        expect((await d.conduite.note('  Mouillage à Houat ')).recu, isTrue);
+        expect(evenements().single['texte'], 'Mouillage à Houat');
+        serveur.coupe = true;
+        final etat = await d.conduite.note('Grain');
+        expect(etat.recu, isFalse);
+        expect(etat.refuse, isFalse);
+        expect(d.conduite.enCours!.journal.last.texte, 'Grain');
+      },
+    );
+
+    test('Photo : événement puis fichier JPEG, copie locale effacée après dépôt (RG-COM-05)', () async {
+      final d = await enNavigation();
+      final id = d.file.nouvelId();
+      final f = await medias.photo(id);
+      final etat = await d.conduite.photo(id, f!.chemin, f.tailleOctets);
+      expect(etat.recu, isTrue);
+      await d.file.attendrePasse();
+      final e = evenements().single;
+      expect(e['id'], id);
+      expect(e['type'], 'photo');
+      expect(e['fichier'], {'typeMedia': 'image/jpeg', 'tailleOctets': 950000});
+      expect(serveur.fichiers[id], ('image/jpeg', 1000));
+      // Le fichier part après son événement.
+      final i = serveur.appels.indexOf('PUT /v1/fichiers/$id');
+      expect(
+        i,
+        greaterThan(serveur.appels.lastIndexOf('POST /v1/synchronisation')),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(medias.oublies, [id]);
+    });
+
+    test(
+      'Photo refusée au-delà de 20 (RG-JRN-08) : message du serveur',
+      () async {
+        final d = await enNavigation();
+        serveur.refusEvenements = (
+          409,
+          'limite_photos',
+          'Une navigation compte au plus 20 photos.',
+        );
+        final id = d.file.nouvelId();
+        final etat = await d.conduite.photo(id, '/essai/$id.jpg', 900000);
+        expect(etat.refuse, isTrue);
+        expect(etat.refus!.message, 'Une navigation compte au plus 20 photos.');
+      },
+    );
+
+    test(
+      'Vocal : note vocale AAC, durée, fichier audio/mp4 (RG-JRN-04)',
+      () async {
+        final d = await enNavigation();
+        final id = d.file.nouvelId();
+        final etat = await d.conduite.noteVocale(
+          id,
+          '/essai/$id.m4a',
+          120000,
+          75,
+        );
+        expect(etat.recu, isTrue);
+        await d.file.attendrePasse();
+        final e = evenements().single;
+        expect(e['type'], 'note_vocale');
+        expect((e['fichier'] as Map)['typeMedia'], 'audio/mp4');
+        expect((e['fichier'] as Map)['dureeSecondes'], 60); // 1 minute au plus
+        expect(serveur.fichiers[id]?.$1, 'audio/mp4');
+      },
+    );
+  });
 }

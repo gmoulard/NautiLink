@@ -9,6 +9,7 @@ import 'base_locale.dart';
 import 'conduite.dart';
 import 'file_attente.dart';
 import 'gps.dart';
+import 'medias.dart';
 import 'stockage_session.dart';
 
 /// Dépôt de la vraie application (D-127) : données relues sur le serveur,
@@ -26,6 +27,7 @@ class DepotReel extends Depot {
     SourcePosition? positions,
     DateTime Function()? horloge,
     Duration? pasVerification = const Duration(minutes: 1),
+    this.medias,
   }) : positions = positions ?? const PositionsIndisponibles() {
     this.file =
         file ??
@@ -40,6 +42,10 @@ class DepotReel extends Depot {
       maintenant: horloge,
       pasVerification: pasVerification,
     )..addListener(_notifier);
+    // Photo ou note vocale déposée : sa copie locale n'est plus utile.
+    _fichiersDeposes = this.file.reussis
+        .where((e) => e.operation == 'fichier')
+        .listen((e) => medias?.oublier(e.id));
   }
 
   /// Dépôt du téléphone : préférences, base SQLite (en mémoire sur le Web,
@@ -58,6 +64,7 @@ class DepotReel extends Depot {
       base: base,
       plateforme: plateformeDuTelephone(),
       positions: kIsWeb ? null : GpsTelephone(),
+      medias: kIsWeb ? null : MediasTelephone(),
     );
   }
 
@@ -75,6 +82,10 @@ class DepotReel extends Depot {
   final StockageSession session;
   final BaseLocale base;
   late final FileAttente file;
+
+  /// Appareil photo et micro (TODO-5.4) ; vide sur le Web.
+  final Medias? medias;
+  StreamSubscription<EnvoiReussi>? _fichiersDeposes;
 
   /// Navigation en cours sur ce téléphone : démarrage, journal, envois (TODO-5.2 à TODO-5.6).
   late final ConduiteNavigation conduite;
@@ -485,6 +496,7 @@ class DepotReel extends Depot {
   void dispose() {
     _ferme = true;
     conduite.dispose();
+    _fichiersDeposes?.cancel();
     file.fermer();
     super.dispose();
   }

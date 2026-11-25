@@ -13,3 +13,8 @@ Future<String> dossierEnvois() async {
 }
 
 Future<int> tailleFichier(String chemin) => File(chemin).length();
+
+Future<void> effacerFichier(String chemin) async {
+  final f = File(chemin);
+  if (await f.exists()) await f.delete();
+}

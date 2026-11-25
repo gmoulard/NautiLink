@@ -9,6 +9,7 @@ import '../reel/conduite.dart';
 import '../reel/depot_reel.dart';
 import '../reel/file_attente.dart';
 import '../reel/gps.dart';
+import '../reel/medias.dart';
 import '../theme.dart';
 import 'connexion.dart';
 import 'home.dart';
@@ -466,6 +467,139 @@ class NavigationReelScreen extends StatefulWidget {
 
 class _NavigationReelScreenState extends State<NavigationReelScreen> {
   Timer? ticker;
+  bool envoi = false;
+
+  /// Envoi par le navigateur, puis résultat de chaque circuit (RG-COM-03).
+  Future<void> _envoyer(String titre, Future<EtatEnvoi?> Function() f) async {
+    if (envoi) return;
+    final l = AppLocalizations.of(context);
+    setState(() => envoi = true);
+    EtatEnvoi? etat;
+    try {
+      etat = await f();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(messageErreur(l, e))));
+      }
+    } finally {
+      if (mounted) setState(() => envoi = false);
+    }
+    if (etat == null || !mounted) return;
+    await showSendResult(
+      context,
+      etat.refuse ? l.sendRefused : titre,
+      lignesResultat(l, etat),
+    );
+  }
+
+  Future<String?> _texte(String titre, String aide) {
+    final c = TextEditingController();
+    final l = AppLocalizations.of(context);
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(titre),
+        content: TextField(
+          key: const Key('note-text'),
+          controller: c,
+          autofocus: true,
+          maxLines: 3,
+          decoration: InputDecoration(hintText: aide),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, c.text.trim()),
+            child: Text(l.validateSend),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _boutons(DepotReel depot, AppLocalizations l) {
+    final c = depot.conduite;
+    final medias = depot.medias;
+    return [
+      FilledButton.icon(
+        icon: const Icon(Icons.my_location),
+        label: Text(l.sendPosition),
+        onPressed: envoi
+            ? null
+            : () => _envoyer(l.positionSent, c.positionManuelle),
+      ),
+      const SizedBox(height: 12),
+      Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.edit_note),
+              label: Text(l.noteButton),
+              onPressed: envoi
+                  ? null
+                  : () => _envoyer(l.noteSent, () async {
+                      final t = await _texte(l.noteTitle, l.noteHint);
+                      if (t == null || t.isEmpty) return null;
+                      return c.note(t);
+                    }),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.photo_camera_outlined),
+              label: Text(l.photoButton),
+              onPressed: envoi || medias == null
+                  ? null
+                  : () => _envoyer(l.photoSent, () async {
+                      final id = depot.file.nouvelId();
+                      final f = await medias.photo(id);
+                      if (f == null) return null;
+                      return c.photo(id, f.chemin, f.tailleOctets);
+                    }),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.mic_none),
+              label: Text(l.voiceButton),
+              onPressed: envoi || medias == null
+                  ? null
+                  : () => _envoyer(l.voiceSent, () async {
+                      final id = depot.file.nouvelId();
+                      if (!await medias.commencerVocal(id)) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(l.micRefused)));
+                        }
+                        return null;
+                      }
+                      if (!mounted) return null;
+                      final r = await showDialog<(FichierMedia, int)>(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => _EnregistrementVocal(medias: medias),
+                      );
+                      if (r == null) return null;
+                      return c.noteVocale(
+                        id,
+                        r.$1.chemin,
+                        r.$1.tailleOctets,
+                        r.$2,
+                      );
+                    }),
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -572,6 +706,8 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                           key: const Key('next-auto-position'),
                         ),
                       ],
+                      const SizedBox(height: 16),
+                      ..._boutons(depot, l),
                       const SizedBox(height: 20),
                       Text(
                         l.logbook,
@@ -587,6 +723,84 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Note vocale en cours d'enregistrement : 1 minute au plus, arrêt
+/// automatique (RG-JRN-04). Rend le fichier et la durée en secondes.
+class _EnregistrementVocal extends StatefulWidget {
+  const _EnregistrementVocal({required this.medias});
+  final Medias medias;
+
+  @override
+  State<_EnregistrementVocal> createState() => _EnregistrementVocalState();
+}
+
+class _EnregistrementVocalState extends State<_EnregistrementVocal> {
+  int secondes = 0;
+  Timer? minuterie;
+  bool fini = false;
+
+  @override
+  void initState() {
+    super.initState();
+    minuterie = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() => secondes++);
+      if (secondes >= 60) _arreter(); // 1 minute au plus
+    });
+  }
+
+  Future<void> _arreter() async {
+    if (fini) return;
+    fini = true;
+    minuterie?.cancel();
+    final f = await widget.medias.arreterVocal();
+    if (mounted) {
+      Navigator.of(context)
+          .pop(f == null ? null : (f, secondes == 0 ? 1 : secondes));
+    }
+  }
+
+  @override
+  void dispose() {
+    minuterie?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      icon: const Icon(Icons.mic, color: NlColors.alert, size: 40),
+      title: Text(l.recording),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            fmtSeconds(secondes),
+            style: const TextStyle(
+              fontFamily: kMonoFont,
+              fontSize: 32,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(l.recordingHintReal),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            fini = true;
+            minuterie?.cancel();
+            await widget.medias.annulerVocal();
+            if (context.mounted) Navigator.of(context).pop();
+          },
+          child: Text(l.cancel),
+        ),
+        TextButton(onPressed: _arreter, child: Text(l.stopAndSend)),
+      ],
     );
   }
 }

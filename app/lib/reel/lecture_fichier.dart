@@ -11,3 +11,6 @@ Future<String> dossierEnvois() => impl.dossierEnvois();
 
 /// Taille du fichier, en octets.
 Future<int> tailleFichier(String chemin) => impl.tailleFichier(chemin);
+
+/// Efface un fichier déposé sur le serveur ; sans erreur s'il n'existe plus.
+Future<void> effacerFichier(String chemin) => impl.effacerFichier(chemin);

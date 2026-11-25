@@ -12,11 +12,13 @@ import 'reel_widget_test.dart' show reveal, setPhone;
 void main() {
   late FauxServeurNautiLink serveur;
   late FauxGps gps;
+  late FauxMedias medias;
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     serveur = FauxServeurNautiLink()..navigationEnCours = false;
     gps = FauxGps(positionEssai());
+    medias = FauxMedias();
   });
 
   /// Quelques images, sans attendre la fin : l'écran de navigation a des chronomètres.
@@ -38,7 +40,12 @@ void main() {
     final session = await tester.runAsync(StockageSession.ouvrir);
     await tester.pumpWidget(
       NautiLinkApp(
-        depot: serveur.depot(session!, BaseMemoire(), positions: gps),
+        depot: serveur.depot(
+          session!,
+          BaseMemoire(),
+          positions: gps,
+          medias: medias,
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -125,6 +132,75 @@ void main() {
     await toucher(tester, 'Envoi message – Début de navigation');
     expect(
       find.text('Vérifiez d\'abord votre adresse e-mail.'),
+      findsOneWidget,
+    );
+  });
+
+  Future<void> naviguer(WidgetTester tester) async {
+    await connecter(tester);
+    await toucher(tester, 'Démarrer navigation');
+    await toucher(tester, 'J\'ai compris');
+    await toucher(tester, 'Envoi message – Début de navigation');
+    await toucher(tester, 'OK');
+    serveur.elements.clear();
+  }
+
+  List<Map> evenements() => [
+    for (final (op, _, c) in serveur.elements)
+      if (op == 'evenement') c as Map,
+  ];
+
+  testWidgets(
+    'position, NOTE, Photo, Vocal : envoi et résultat de chaque circuit (TODO-5.4, RG-COM-03)',
+    (tester) async {
+      await naviguer(tester);
+      await toucher(tester, 'Envoyer information position');
+      expect(find.text('Position envoyée'), findsWidgets);
+      expect(find.text('Serveur : envoyé'), findsOneWidget);
+      expect(
+        find.text(
+          'SMS : pas encore envoyés par cette version de l\'application',
+        ),
+        findsOneWidget,
+      );
+      await toucher(tester, 'OK');
+
+      await toucher(tester, 'NOTE');
+      await tester.enterText(find.byKey(const Key('note-text')), 'Cap au 270');
+      await toucher(tester, 'Valider l\'envoi');
+      expect(find.text('Note envoyée'), findsOneWidget);
+      await toucher(tester, 'OK');
+      expect(find.text('Cap au 270'), findsOneWidget); // journal
+
+      await toucher(tester, 'Photo');
+      expect(find.text('Photo envoyée'), findsOneWidget);
+      await toucher(tester, 'OK');
+
+      await toucher(tester, 'Vocal');
+      expect(find.text('Enregistrement en cours'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 3));
+      await toucher(tester, 'Arrêter et envoyer');
+      expect(find.text('Note vocale envoyée'), findsOneWidget);
+      await toucher(tester, 'OK');
+
+      expect(evenements().map((e) => e['type']), [
+        'position_manuelle',
+        'note',
+        'photo',
+        'note_vocale',
+      ]);
+      expect(serveur.fichiers.length, 2);
+    },
+  );
+
+  testWidgets('Vocal : micro refusé, message', (tester) async {
+    await naviguer(tester);
+    medias.micro = false;
+    await toucher(tester, 'Vocal');
+    expect(
+      find.text(
+        'Accès au micro refusé : la note vocale ne peut pas être enregistrée.',
+      ),
       findsOneWidget,
     );
   });

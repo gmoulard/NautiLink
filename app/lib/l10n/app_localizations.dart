@@ -1452,6 +1452,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Prochaine position automatique : {time}'**
   String nextAutoPosition(String time);
+
+  /// No description provided for @sendRefused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoi refusé'**
+  String get sendRefused;
+
+  /// No description provided for @micRefused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès au micro refusé : la note vocale ne peut pas être enregistrée.'**
+  String get micRefused;
+
+  /// No description provided for @recordingHintReal.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription.'**
+  String get recordingHintReal;
 }
 
 class _AppLocalizationsDelegate

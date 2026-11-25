@@ -448,6 +448,70 @@ class ConduiteNavigation extends ChangeNotifier {
     return n;
   }
 
+  // ------------------------------------------------ envois du navigateur
+
+  Future<EtatEnvoi> _etat(String? cle) async => cle == null
+      ? EtatEnvoi.enAttente
+      : file.etatApresPasse(cle, attenteEnvoi);
+
+  /// « Envoyer information position » (RG-NAV-11) : position acquise à
+  /// l'écran, l'autorisation refusée est redemandée (RG-AND-03).
+  Future<EtatEnvoi> positionManuelle() async {
+    final p = await positions.positionActuelle(demander: true);
+    return _etat(
+      await enregistrer('position_manuelle', position: p, gps: true),
+    );
+  }
+
+  /// « NOTE » : note écrite (RG-JRN-02).
+  Future<EtatEnvoi> note(String texte) async =>
+      _etat(await enregistrer('note', texte: texte.trim()));
+
+  /// « Photo » : l'événement part avec les éléments légers, son fichier
+  /// JPEG ensuite (RG-COM-05) ; 20 photos au plus par navigation, refus du
+  /// serveur au-delà (RG-JRN-08).
+  Future<EtatEnvoi> photo(String evenementId, String chemin, int taille) =>
+      _media(evenementId, 'photo', chemin, 'image/jpeg', taille);
+
+  /// « Vocal » : note vocale AAC (`audio/mp4`), 1 minute au plus, sans
+  /// transcription (RG-JRN-04).
+  Future<EtatEnvoi> noteVocale(
+    String evenementId,
+    String chemin,
+    int taille,
+    int dureeSecondes,
+  ) => _media(
+    evenementId,
+    'note_vocale',
+    chemin,
+    'audio/mp4',
+    taille,
+    dureeSecondes: dureeSecondes.clamp(1, 60),
+  );
+
+  Future<EtatEnvoi> _media(
+    String id,
+    String type,
+    String chemin,
+    String typeMedia,
+    int taille, {
+    int? dureeSecondes,
+  }) async {
+    final cle = await enregistrer(
+      type,
+      id: id,
+      fichier: {
+        'typeMedia': typeMedia,
+        'tailleOctets': taille,
+        'dureeSecondes': ?dureeSecondes,
+      },
+      dureeSecondes: dureeSecondes,
+    );
+    if (cle == null) return EtatEnvoi.enAttente;
+    await file.fichier(id, chemin, typeMedia);
+    return _etat(cle);
+  }
+
   /// Démarrage parti hors connexion puis refusé par le serveur à sa réception
   /// (adresse non confirmée, bateau d'un autre, navigation déjà en cours…) :
   /// le message du serveur est gardé et affiché sur l'écran de navigation ;
