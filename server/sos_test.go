@@ -242,7 +242,7 @@ func TestAlerteSos(t *testing.T) {
 	memes(t, "e-mails du SOS depuis l'accueil", e.courrier.recusPar(n0, "SOS — Alizé"), "lea@exemple.org", "zoe@exemple.org",
 		"marc@exemple.org", "secours@exemple.org", "decoche@exemple.org", "tardif@exemple.org", "nav@exemple.org")
 	// Historique du bateau : Marc (périmètre navigateur) voit les trois, Paul
-	// (périmètre navigation) seulement ceux de sa navigation (Q-59).
+	// (périmètre navigation) seulement ceux de sa navigation (RG-SOS-20).
 	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, marc, nil); len(l) != 3 {
 		t.Fatalf("historique de Marc : %v", l)
 	}
@@ -302,7 +302,7 @@ func TestAlerteSosRelanceEtLot(t *testing.T) {
 	e.suivre(nav, lea, "lea@exemple.org", "navigateur", "")
 
 	// Relais en panne pour Léa : l'adresse n'est pas comptée envoyée, puis
-	// la relance de la minute suivante la rattrape (Q-57).
+	// la relance de la minute suivante la rattrape (RG-SOS-18).
 	envoyer := e.a.envoyer
 	e.a.envoyer = func(dest, sujet, texte string) error {
 		if dest == "lea@exemple.org" {

@@ -21,8 +21,8 @@ import (
 // RG-NOT-03, RG-PRM-04. Une alerte est acceptée quel que soit le quota,
 // l'abonnement ou la confirmation de l'adresse e-mail (RG-SOS-03,
 // RG-CPT-09) ; elle est rejouable sans doublon (08-architecture.md §5).
-// Contenu des e-mails : Q-56 ; relance des e-mails en échec : Q-57 ;
-// historique vu des suiveurs : Q-59 (propositions appliquées en attendant).
+// Contenu des e-mails : RG-SOS-17 ; relance des e-mails en échec : RG-SOS-18 ;
+// historique vu des suiveurs : RG-SOS-20 (D-118, D-119, D-121).
 // SOS après la fin : RG-SOS-19, D-120 ; personnes ajoutées pendant la
 // navigation : RG-SOS-21, D-122.
 
@@ -313,7 +313,7 @@ func texteOuVide(p *string) string {
 // alertes : GET /v1/alertes-sos (RG-SOS-12, RG-SOS-13) : alertes du
 // navigateur, et pour un suiveur celles des navigations qu'il voit
 // (RG-PAR-07) et, hors navigation, celles des navigateurs qu'il suit avec
-// le périmètre navigateur (Q-59).
+// le périmètre navigateur (RG-SOS-20).
 func (a *app) alertes(ctx context.Context, utilisateur, bateau, navigation string) ([]alerteSosJSON, error) {
 	if (bateau != "" && !estUUID(bateau)) || (navigation != "" && !estUUID(navigation)) {
 		return []alerteSosJSON{}, nil
@@ -414,7 +414,7 @@ func sansDoublon(adresses []string) []string {
 
 // emailsSos : envoie les e-mails de l'alerte qui ne sont pas encore partis
 // (emails_envoyes_a : adresses acceptées par le relais) ; un échec est
-// relancé chaque minute (Q-57).
+// relancé chaque minute (RG-SOS-18).
 func (a *app) emailsSos(ctx context.Context, adresse, id string) error {
 	verrouEmailsSos.Lock()
 	defer verrouEmailsSos.Unlock()
@@ -476,7 +476,7 @@ func (a *app) emailsSos(ctx context.Context, adresse, id string) error {
 }
 
 // relanceEmailsSos : délai pendant lequel les e-mails SOS en échec sont
-// relancés chaque minute (Q-57).
+// relancés chaque minute (RG-SOS-18).
 const relanceEmailsSos = 24 * time.Hour
 
 // relancerEmailsSos : tâche de fond, chaque minute ; les alertes reçues
@@ -500,7 +500,7 @@ func (a *app) relancerEmailsSos(ctx context.Context) error {
 	return nil
 }
 
-// ------------------------------------------------------------------ textes (Q-56)
+// ------------------------------------------------------------------ textes (RG-SOS-17)
 
 func enLangue(lng, fr, en string) string {
 	if lng == "en" {
@@ -520,7 +520,7 @@ func nombreTexte(v *float64, unite string) string {
 
 // texteSos : contenu des deux SMS SOS (RG-SOS-07, RG-SOS-08, RG-SOS-09 à
 // RG-SOS-11) dans la langue du navigateur (RG-PRM-04), avec le lien vers la
-// page de la navigation (Q-56, proposition).
+// page de la navigation (RG-SOS-17).
 func texteSos(d donneesSos, adresse string) (string, string) {
 	l, al, b := d.lng, d.al, d.bateau
 	sujet := enLangue(l, "SOS — "+b.Nom+" : alerte de "+d.navigateur, "SOS — "+b.Nom+": distress alert from "+d.navigateur)
