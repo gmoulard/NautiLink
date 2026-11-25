@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -163,5 +164,49 @@ func TestCorbeille(t *testing.T) {
 	}
 	if code, _ := e.appel("GET", "/navigations/"+id, nav, nil); code != 404 {
 		t.Fatalf("navigation supprimée définitivement : %d", code)
+	}
+}
+
+func TestDateFrancaise(t *testing.T) {
+	for d, attendu := range map[time.Time]string{
+		time.Date(2026, 12, 25, 12, 0, 0, 0, time.UTC): "25 décembre 2026",
+		time.Date(2026, 7, 31, 23, 30, 0, 0, time.UTC): "1er août 2026", // heure de Paris
+	} {
+		if got := dateFrancaise(d); got != attendu {
+			t.Errorf("%v : %q", d, got)
+		}
+	}
+}
+
+func TestCorbeilleWeb(t *testing.T) {
+	e := nouvelEssai(t)
+	t0 := time.Date(2026, 11, 16, 8, 0, 0, 0, time.UTC)
+	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
+	horloge(e, t0)
+	fin := t0.Add(time.Hour)
+	id, _, _ := e.naviguer(nav, bateau, tel, t0, &fin)
+	horloge(e, t0.Add(2*time.Hour))
+	web := e.webConnecte("nav@exemple.org")
+	if page := web.envoyer("GET", "/nautilink/corbeille", nil).Body.String(); !strings.Contains(page, "La corbeille est vide.") {
+		t.Fatalf("corbeille vide : %s", page)
+	}
+	rec := web.envoyer("POST", "/nautilink/navigations/"+id+"/suppression", map[string]string{})
+	if rec.Code != 303 || rec.Header().Get("Location") != "/nautilink/corbeille?ok=corbeille" {
+		t.Fatalf("suppression : %d %s", rec.Code, rec.Header().Get("Location"))
+	}
+	page := web.envoyer("GET", "/nautilink/corbeille?ok=corbeille", nil).Body.String()
+	for _, attendu := range []string{"Alizé — Glénan", "16 novembre 2026", "le 16 décembre 2026", "Restaurer", "restaurer pendant 30 jours"} {
+		if !strings.Contains(page, attendu) {
+			t.Fatalf("page de la corbeille sans %q : %s", attendu, page)
+		}
+	}
+	if rec := web.envoyer("POST", "/nautilink/corbeille/"+id+"/restauration", map[string]string{}); rec.Code != 303 {
+		t.Fatalf("restauration : %d", rec.Code)
+	}
+	if code, n := e.appel("GET", "/navigations/"+id, nav, nil); code != 200 || n["etat"] != "terminee" {
+		t.Fatalf("après restauration : %d %v", code, n)
+	}
+	if rec := web.envoyer("POST", "/nautilink/corbeille/"+id+"/restauration", map[string]string{}); rec.Code != 404 {
+		t.Fatalf("restauration hors corbeille : %d", rec.Code)
 	}
 }

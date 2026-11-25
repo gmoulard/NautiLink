@@ -48,6 +48,7 @@ func (a *app) routeur() http.Handler {
 	a.routesWebParametres(mux, c)
 	a.routesNavigations(mux, c+"/api/v1")
 	a.routesCorbeille(mux, c+"/api/v1")
+	a.routesWebCorbeille(mux, c)
 	a.routesQuota(mux, c+"/api/v1")
 
 	a.routesAdmin(mux, c+"/api/v1")
