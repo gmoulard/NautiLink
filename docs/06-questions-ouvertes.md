@@ -110,9 +110,10 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-27"></a>Q-27 — Autres langues
 
 - Priorité : plus tard.
-- Étude : ajout de langues après le lancement ; architecture multilingue dès le départ, sans gestion des langues dans l'espace administrateur (RG-ADM-04).
-- Essai dans le prototype (TODO-9.2, **non validé**) : textes des écrans dans `app/lib/l10n/app_fr.arb` (français, langue de référence, libellés identiques à la spécification), traduction d'essai en anglais dans `app_en.arb`, code généré par `flutter gen-l10n` ; français par défaut, anglais au lancement avec `--dart-define=NAUTILINK_LANG=en`.
-- Reste à décider : langues proposées ; choix de la langue (celle du téléphone ou un réglage) ; langue des SMS, e-mails et du journal envoyés aux suiveurs et contacts SOS (restés en français dans le prototype) ; relecture des traductions.
+- Décidé (D-90) : français et anglais au lancement ; langue du téléphone par défaut, modifiable dans les paramètres ; messages envoyés aux suiveurs et aux contacts SOS dans la langue du navigateur (RG-PRM-03, RG-PRM-04).
+- Essai dans le prototype (TODO-9.2) : textes des écrans dans `app/lib/l10n/app_fr.arb` (français, langue de référence) et `app_en.arb` (anglais), code généré par `flutter gen-l10n`.
+- Reste : relecture de la traduction anglaise ; ajout d'autres langues après le lancement, sans gestion des langues dans l'espace administrateur (RG-ADM-04) ; langue par défaut sur la plateforme Web, où il n'y a pas de téléphone.
+- Proposition (non validée) : sur la plateforme Web, la langue du navigateur Internet par défaut.
 
 ### <a id="q-28"></a>Q-28 — Versions multiples du Web
 

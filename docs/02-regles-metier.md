@@ -8,7 +8,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 - <a id="rg-cpt-01"></a>**RG-CPT-01** — Il existe un seul type de compte utilisateur. Un utilisateur est navigateur quand il conduit ses propres navigations et suiveur quand il consulte celles d'un autre ([D-01](07-decisions.md#d-01)).
 - <a id="rg-cpt-02"></a>**RG-CPT-02** — Connexion par e-mail et mot de passe, par Google ou par Apple, sur le Web et sur les applications mobiles ([D-18](07-decisions.md#d-18)).
-- <a id="rg-cpt-03"></a>**RG-CPT-03** — Les interfaces sont en français au lancement. La signature de marque reste en anglais.
+- <a id="rg-cpt-03"></a>**RG-CPT-03** — ~~Les interfaces sont en français au lancement.~~ Remplacé par [RG-PRM-03](#rg-prm-03) ([D-90](07-decisions.md#d-90)). La signature de marque reste en anglais.
 - <a id="rg-cpt-04"></a>**RG-CPT-04** — Un compte peut posséder plusieurs bateaux. Un bateau a un seul propriétaire.
 - <a id="rg-cpt-05"></a>**RG-CPT-05** — Seul le propriétaire d'un bateau peut démarrer une navigation avec ce bateau ([D-11](07-decisions.md#d-11)).
 - <a id="rg-cpt-06"></a>**RG-CPT-06** — À la création du compte, sur le Web comme sur l'application mobile, l'utilisateur lit l'[avertissement bêta](textes/avertissement-beta.md) et l'accepte en cochant une case ; le compte n'est pas créé sans cette acceptation. La date d'acceptation et la version du texte sont enregistrées ([D-56](07-decisions.md#d-56)).
@@ -152,6 +152,8 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 - <a id="rg-prm-01"></a>**RG-PRM-01** — Les paramètres généraux (interrupteur SMS, préférences par type, fréquence par défaut) sont modifiables depuis l'application mobile et depuis le Web et synchronisés par le serveur.
 - <a id="rg-prm-02"></a>**RG-PRM-02** — L'application mobile récupère les paramètres généraux au lancement et à chaque modification lorsque Internet est disponible ; il utilise la dernière version reçue hors connexion.
+- <a id="rg-prm-03"></a>**RG-PRM-03** — Les interfaces sont en français et en anglais au lancement. Par défaut, la langue est celle du téléphone ; l'utilisateur peut la changer dans les paramètres ([D-90](07-decisions.md#d-90)). Langue par défaut sur la plateforme Web : [Q-27](06-questions-ouvertes.md#q-27).
+- <a id="rg-prm-04"></a>**RG-PRM-04** — Les SMS, les e-mails et le journal envoyés aux suiveurs et aux contacts SOS partent dans la langue du navigateur ([RG-PRM-03](#rg-prm-03), [D-90](07-decisions.md#d-90)).
 
 ## 11. Modèle économique
 

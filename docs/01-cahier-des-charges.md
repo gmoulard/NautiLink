@@ -28,7 +28,7 @@ Elle comprend :
 
 ## 3. Périmètre
 
-**Inclus** : application Android, plateforme Web, application iPhone (construite après l'application Android et le Web), espace administrateur, interfaces en français, thème clair et thème sombre, offre gratuite et abonnement.
+**Inclus** : application Android, plateforme Web, application iPhone (construite après l'application Android et le Web), espace administrateur, interfaces en français et en anglais (RG-PRM-03), thème clair et thème sombre, offre gratuite et abonnement.
 
 **Exclus au lancement** :
 
@@ -37,7 +37,7 @@ Elle comprend :
 - prestataire d'envoi de SMS : les SMS partent de la carte SIM du téléphone (RG-COM-01) ;
 - accès anonyme aux navigations (RG-PAR-01) ;
 - gestion de plusieurs versions de l'application Web (RG-ADM-05) ;
-- autres langues que le français.
+- autres langues que le français et l'anglais.
 
 Les évolutions futures sont listées au §9.
 
@@ -166,7 +166,7 @@ Fonctions au lancement : RG-ADM-01 à RG-ADM-04. Profils d'administrateurs et tr
 
 - **Fiabilité** : le SOS et l'enregistrement des positions fonctionnent sans Internet (RG-GPS-01, RG-SOS-05) ; aucune étape d'une transmission n'en bloque une autre (RG-COM-02).
 - **Ergonomie à bord** : gros boutons, bonne lisibilité, confirmation avant le SOS et la fin de navigation, résultat de chaque transmission affiché, distinction nette entre navigation et suivi.
-- **Interface** : identité visuelle de [05-identite-marque.md](05-identite-marque.md), thème clair et thème sombre, français.
+- **Interface** : identité visuelle de [05-identite-marque.md](05-identite-marque.md), thème clair et thème sombre, français et anglais (RG-PRM-03).
 - **Sécurité** : API HTTPS ; les accès respectent les droits donnés par le navigateur ; un retrait d'accès empêche toute consultation ultérieure (RG-PAR-06). Le reste : [D-45](07-decisions.md#d-45).
 - **Conservation** : RG-DON-01, RG-DON-02.
 

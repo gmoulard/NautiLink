@@ -59,7 +59,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 
 - **TS-CPT-01** ([RG-CPT-01](../02-regles-metier.md#rg-cpt-01)) — Étant donné un compte qui a démarré ses propres navigations, quand il accepte une invitation d'un autre navigateur, alors le même compte consulte la navigation de l'autre comme suiveur, sans second compte.
 - **TS-CPT-02** ([RG-CPT-02](../02-regles-metier.md#rg-cpt-02)) — Étant donné un utilisateur, quand il se connecte par e-mail et mot de passe, par Google ou par Apple, sur le Web et sur les applications mobiles, alors la connexion réussit par chacun des trois moyens et sur chaque support.
-- **TS-CPT-03** ([RG-CPT-03](../02-regles-metier.md#rg-cpt-03)) — Étant donné les interfaces au lancement, quand on les parcourt, alors tous les libellés sont en français, sauf la signature de marque, en anglais.
+- **TS-CPT-03** ([RG-CPT-03](../02-regles-metier.md#rg-cpt-03)) — Étant donné les interfaces au lancement, quand on les parcourt dans l'une ou l'autre langue (RG-PRM-03), alors la signature de marque reste en anglais.
 - **TS-CPT-04** ([RG-CPT-04](../02-regles-metier.md#rg-cpt-04)) — Étant donné un compte avec un bateau, quand il en ajoute un second, alors le compte possède les deux bateaux et chacun n'a que ce compte pour propriétaire.
 - **TS-CPT-05** ([RG-CPT-05](../02-regles-metier.md#rg-cpt-05)) — Étant donné un suiveur ayant accès aux navigations d'un bateau dont il n'est pas propriétaire, quand il tente de démarrer une navigation avec ce bateau, alors c'est impossible.
 
@@ -141,6 +141,8 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 
 - **TS-PRM-01** ([RG-PRM-01](../02-regles-metier.md#rg-prm-01)) — Étant donné la fréquence par défaut changée sur le Web, quand le navigateur ouvre les paramètres sur l'application mobile, alors la nouvelle valeur apparaît ; et inversement.
 - **TS-PRM-02** ([RG-PRM-02](../02-regles-metier.md#rg-prm-02)) — Étant donné un téléphone sans Internet ayant reçu les paramètres la veille, quand le navigateur démarre une navigation, alors la dernière version reçue est utilisée.
+- **TS-PRM-03** ([RG-PRM-03](../02-regles-metier.md#rg-prm-03)) — Étant donné un téléphone réglé en anglais, quand l'utilisateur ouvre l'application pour la première fois, alors elle s'affiche en anglais ; quand il choisit le français dans les paramètres, alors elle s'affiche en français.
+- **TS-PRM-04** ([RG-PRM-04](../02-regles-metier.md#rg-prm-04)) — Étant donné un navigateur dont l'application est en anglais, quand il démarre une navigation, alors les SMS et les e-mails envoyés à ses suiveurs sont en anglais, quelle que soit la langue des suiveurs.
 
 ## 13. Notifications (RG-NOT)
 
