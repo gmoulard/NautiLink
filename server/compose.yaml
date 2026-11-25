@@ -9,9 +9,12 @@
 #     (pi-appliance-mail, l'adresse du Pi vue des conteneurs) et PI_SMTP_PORT
 #     (2525) ; 60 e-mails par heure au plus pour tout le Pi ;
 #   - « Domaines renvoyés vers le service » : nautilink.moulard.org.
-# Rien à poser dans .env pour la base : elle n'a pas de mot de passe et n'est
-# joignable que par le serveur, sur le réseau interne « base-interne » (sans
-# accès à internet, aucun port publié, aucun autre conteneur dessus).
+# Base : joignable par le seul serveur, sur le réseau interne « base-interne »
+# (sans accès à internet, aucun port publié). Mot de passe « nautilink » par
+# défaut, remplaçable par NAUTILINK_BASE_MOT_DE_PASSE dans .env (lettres et
+# chiffres seulement : il entre tel quel dans l'URL ; fixé à la création du
+# volume, le changer ensuite demande ALTER USER dans la base).
+# Administrateurs (RG-ADM-07) : NAUTILINK_ADMINS=<adresse> dans .env.
 # Connexion par Google ou par Apple : identifiants clients OAuth (pas des
 # secrets) à poser dans .env ; vides, ces connexions sont désactivées.
 services:
@@ -27,7 +30,7 @@ services:
       NAUTILINK_CHEMIN: "/nautilink"
       # Adresse des liens envoyés par e-mail (vérification, invitations).
       NAUTILINK_ADRESSE_PUBLIQUE: "https://vdl.moulard.org/nautilink"
-      NAUTILINK_BASE: "postgres://nautilink@base:5432/nautilink?sslmode=disable"
+      NAUTILINK_BASE: "postgres://nautilink:${NAUTILINK_BASE_MOT_DE_PASSE:-nautilink}@base:5432/nautilink?sslmode=disable"
       NAUTILINK_SMTP_HOTE: "${PI_SMTP_HOST:-}"
       NAUTILINK_SMTP_PORT: "${PI_SMTP_PORT:-2525}"
       NAUTILINK_EXPEDITEUR: "nautilink@moulard.org"
@@ -61,8 +64,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: nautilink
-      # Sans mot de passe : seul le serveur joint la base (réseau base-interne).
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD: "${NAUTILINK_BASE_MOT_DE_PASSE:-nautilink}"
       POSTGRES_DB: nautilink
     volumes:
       - nautilink-base:/var/lib/postgresql/data
