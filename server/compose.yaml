@@ -15,7 +15,9 @@
 # secrets) à poser dans .env ; vides, ces connexions sont désactivées.
 services:
   nautilink:
-    image: ghcr.io/gmoulard/nautilink-serveur:latest
+    # Version figée (SHA court du commit, image publiée par serveur.yml) :
+    # la changer ici pour mettre à jour ; « :latest » resterait en cache sur le Pi.
+    image: ghcr.io/gmoulard/nautilink-serveur:a95a167
     restart: unless-stopped
     environment:
       NAUTILINK_ADRESSE: ":8080"
