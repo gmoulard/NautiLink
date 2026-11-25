@@ -92,7 +92,7 @@ Les propositions (non validées) sont reprises dans [Q-22](06-questions-ouvertes
 
 ### 3.6 Services externes appelés par le serveur
 
-- Météo marine : [Q-39](06-questions-ouvertes.md#q-39).
+- Météo marine : API de Météo-France ([D-88](07-decisions.md#d-88)) ; conditions d'accès (clé, quotas) à vérifier ([Q-39](06-questions-ouvertes.md#q-39)).
 - Cartes du SHOM : [Q-23](06-questions-ouvertes.md#q-23).
 - Géocodage inverse (nom du lieu, RG-NAV-16, RG-JRN-10) : **proposition (non validée)** : Nominatim (OpenStreetMap), appelé par le serveur avec un cache des noms, en respectant sa limite d'usage ; service à confirmer.
 

@@ -14,11 +14,11 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Question : si Google Play refuse la permission d'envoi de SMS pour les positions automatiques (risque accepté, D-82), ou si le navigateur la refuse sur son téléphone (RG-AND-04), que deviennent les SMS de positions automatiques (RG-SMS-03) ?
 - Proposition (non validée) : les positions automatiques partent seulement au serveur, sans SMS ; l'écran de démarrage le dit.
 
-### <a id="q-39"></a>Q-39 — Service météo
+### <a id="q-39"></a>Q-39 — Service météo : conditions d'accès
 
 - Priorité : avant la version réelle.
-- Question : quel service fournit la météo marine relevée au début et à la fin d'une navigation (RG-NAV-28) : gratuit, utilisable par un serveur, avec vent, état de la mer et pression ?
-- Proposition : Open-Meteo (API météo et API marine), sans clé pour un usage non commercial ; à vérifier pour un usage commercial.
+- Décidé (D-88) : la météo du début et de la fin d'une navigation (RG-NAV-28) vient de l'API de Météo-France.
+- Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 
 ### <a id="q-17"></a>Q-17 — Formules d'abonnement
 
