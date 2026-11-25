@@ -45,6 +45,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-ECO-12** ([RG-ECO-06](../02-regles-metier.md#rg-eco-06)) — Étant donné un compte qui a payé l'abonnement de 15 € il y a 10 ans, quand les 10 ans sont écoulés, alors aucun renouvellement n'est prélevé et le compte revient à la version gratuite (24 h sur 7 jours glissants).
 - **TS-ECO-13** ([RG-ECO-11](../02-regles-metier.md#rg-eco-11)) — Étant donné un navigateur sur le Web, quand il achète l'abonnement, alors il paie par carte bancaire avec Stripe ; sur Android et iPhone, l'achat passe par Google Play ou l'App Store en achat unique.
 - **TS-ECO-14** ([RG-ECO-11](../02-regles-metier.md#rg-eco-11)) — Étant donné un paiement refusé par la banque ou le magasin, quand l'achat échoue, alors aucun abonnement n'est ouvert et le compte reste en version gratuite.
+- **TS-ECO-15** ([RG-ECO-12](../02-regles-metier.md#rg-eco-12)) — Étant donné une navigation clôturée automatiquement pendant que le téléphone était hors connexion, quand il envoie ensuite des positions acquises avant et après l'heure de clôture et un SOS acquis après, alors les positions d'avant sont gardées, celles d'après refusées, l'application arrête les positions automatiques et le dit au navigateur, et le SOS est enregistré comme un SOS depuis l'accueil.
 
 ## 3. Partage et suiveurs (RG-PAR)
 
@@ -70,6 +71,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-CPT-06** ([RG-CPT-06](../02-regles-metier.md#rg-cpt-06)) — Étant donné une personne qui crée un compte sur le Web ou sur l'application mobile, quand elle valide sans cocher la case d'acceptation de l'avertissement bêta, alors le compte n'est pas créé ; quand elle coche la case, alors le compte est créé avec la date d'acceptation et la version du texte enregistrées.
 - **TS-CPT-07** ([RG-CPT-07](../02-regles-metier.md#rg-cpt-07)) — Étant donné NautiLink en bêta, quand un utilisateur ouvre l'application mobile ou le Web, alors la mention « Version bêta » est visible et l'avertissement se consulte depuis l'assistance.
 - **TS-CPT-08** ([RG-CPT-07](../02-regles-metier.md#rg-cpt-07)) — Étant donné un compte ayant accepté une version de l'avertissement bêta, quand le texte change, alors à la connexion suivante il est de nouveau présenté et doit être accepté.
+- **TS-CPT-09** ([RG-CPT-08](../02-regles-metier.md#rg-cpt-08)) — Étant donné une session inutilisée depuis plus de 90 jours, quand l'utilisateur ouvre l'application ou le Web, alors il doit se reconnecter ; sur le téléphone associé pendant une navigation en cours, la session reste ouverte ; après une déconnexion, les envois en attente du téléphone restent dans la file.
 
 ## 5. Bateaux (RG-BAT)
 
@@ -141,6 +143,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-COM-01** ([RG-COM-01](../02-regles-metier.md#rg-com-01)) — Étant donné un téléphone Android, quand une transmission part, alors elle passe par l'API HTTPS et, si les paramètres le prévoient, par SMS ou MMS via la carte SIM, sans prestataire externe ; sur iPhone, seul le circuit Internet existe.
 - **TS-COM-02** ([RG-COM-02](../02-regles-metier.md#rg-com-02)) — Étant donné Internet indisponible et le réseau mobile disponible, quand une position doit partir avec SMS prévu, alors le SMS part ; inversement, sans réseau mobile, l'envoi Internet est tenté ; sans aucun des deux, le GPS acquiert quand même la position.
 - **TS-COM-03** ([RG-COM-03](../02-regles-metier.md#rg-com-03)) — Étant donné l'envoi d'une position, d'une note, d'une photo, d'une note vocale, d'un SOS, du début ou de la fin, quand l'envoi se termine, alors l'écran affiche le résultat de chaque circuit (par exemple « Position envoyée »).
+- **TS-COM-04** ([RG-COM-04](../02-regles-metier.md#rg-com-04)) — Étant donné un contact dont le nom est changé sur le Web puis le téléphone changé sur l'application mobile hors connexion, quand le téléphone retrouve Internet, alors le contact garde le nouveau nom et le nouveau téléphone ; si le même champ a changé des deux côtés, la modification reçue en dernier l'emporte, et l'application affiche la version du serveur sans message.
 
 ## 10. SMS ordinaires (RG-SMS)
 
@@ -153,6 +156,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-SMS-07** ([RG-SMS-07](../02-regles-metier.md#rg-sms-07)) — Étant donné un SMS de position automatique qui échoue, quand l'application le retente, alors elle fait 3 essais puis affiche l'échec avec « Réessayer » ; étant donné un SMS SOS qui échoue, alors il est retenté chaque minute jusqu'à la réussite ou l'arrêt par le navigateur ; un SMS prérempli n'est jamais retenté.
 - **TS-SMS-08** ([RG-SMS-08](../02-regles-metier.md#rg-sms-08)) — Étant donné un navigateur dont le profil porte un numéro de téléphone, quand un SMS SOS, un SMS de position automatique, un SMS ordinaire ou une invitation par SMS part, alors une copie part à ce numéro, automatiquement pour le SOS et les positions automatiques, préremplie sinon ; la copie ne se désactive pas.
 - **TS-SMS-09** ([RG-SMS-08](../02-regles-metier.md#rg-sms-08)) — Étant donné un navigateur sans numéro de téléphone dans son profil, quand un SMS part, alors aucune copie SMS ne part.
+- **TS-SMS-10** ([RG-SMS-09](../02-regles-metier.md#rg-sms-09)) — Étant donné un destinataire SMS non connecté, quand il ouvre le lien d'un SMS de photo ou de note vocale, alors il arrive sur la connexion, puis, une fois connecté avec un compte ayant accès, sur la photo ou la note vocale dans la page de la navigation ; sans compte, rien n'est montré.
 
 ## 11. Contacts (RG-CTC)
 
@@ -175,6 +179,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-NOT-01** ([RG-NOT-01](../02-regles-metier.md#rg-not-01)) — Étant donné un événement notifié, quand il survient, alors la notification est un e-mail envoyé par le serveur.
 - **TS-NOT-02** ([RG-NOT-02](../02-regles-metier.md#rg-not-02)) — Étant donné une invitation, un nouvel accès accordé ou une alerte SOS, quand l'événement survient, alors l'e-mail correspondant est envoyé ; un suiveur sur iPhone reçoit aussi une notification push pour l'alerte SOS (voir TS-IOS-07).
 - **TS-NOT-03** ([RG-NOT-03](../02-regles-metier.md#rg-not-03)) — Étant donné un navigateur, quand le serveur envoie un e-mail d'invitation, de nouvel accès, d'alerte SOS ou de début de navigation, alors une copie part à l'adresse du compte du navigateur, sans réglage pour la désactiver.
+- **TS-NOT-04** ([RG-NOT-04](../02-regles-metier.md#rg-not-04)) — Étant donné un suiveur de deux navigateurs, quand il se désinscrit des e-mails de début ou désactive un type de notification push, alors il ne les reçoit plus pour aucun des deux.
 
 ## 14. Administration (RG-ADM)
 
@@ -183,6 +188,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-ADM-03** ([RG-ADM-03](../02-regles-metier.md#rg-adm-03)) — Étant donné un administrateur, quand il consulte, modifie puis supprime une navigation d'un utilisateur, alors les trois actions sont possibles et tracées.
 - **TS-ADM-04** ([RG-ADM-04](../02-regles-metier.md#rg-adm-04)) — Étant donné l'espace administrateur, quand on le parcourt, alors aucune fonction de gestion des langues n'y figure.
 - **TS-ADM-05** ([RG-ADM-05](../02-regles-metier.md#rg-adm-05)) — Étant donné l'espace administrateur au lancement, quand on le parcourt, alors aucune gestion de plusieurs versions de l'application Web n'y figure.
+- **TS-ADM-06** ([RG-ADM-06](../02-regles-metier.md#rg-adm-06)) — Étant donné une annonce publiée avec une date de fin, quand un utilisateur ouvre l'accueil de l'application mobile ou le tableau de bord Web, alors l'annonce s'affiche en bandeau en haut ; elle disparaît après la date de fin, ou dès que l'utilisateur la ferme.
 
 ## 15. Conservation des données (RG-DON)
 

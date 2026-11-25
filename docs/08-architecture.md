@@ -69,7 +69,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 **Décidé** ([D-86](07-decisions.md#d-86)) : photos et notes vocales stockées dans PostgreSQL, comme les autres données ; elles sont donc couvertes par la même sauvegarde que la base (§3.4).
 
 - Ordre de grandeur : au plus 20 Mo de photos par navigation (RG-JRN-08), et environ 0,5 Mo par minute de note vocale en AAC à 64 kbit/s ([étude](etudes/notes-vocales.md)).
-- À préciser : comment s'ouvrent les liens envoyés par SMS (RG-SMS-05, RG-SMS-06) ; ce choix d'accès relève des règles : [Q-44](06-questions-ouvertes.md#q-44).
+- Liens envoyés par SMS (RG-SMS-05, RG-SMS-06) : ils mènent à la connexion, puis à la photo ou à la note vocale dans la page de la navigation, jamais à un accès sans compte (RG-SMS-09, [D-101](07-decisions.md#d-101)).
 
 ### 3.2 Hébergeur après la bêta
 
@@ -104,13 +104,16 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 - **Un seul point d'entrée** : `https://vdl.moulard.org/nautilink/api`, chemins versionnés `/v1/…` ; le point de santé `/api/sante` du squelette est gardé.
 - **Formats** : JSON en UTF-8, heures RFC 3339 avec décalage horaire, positions en degrés décimaux WGS 84, durées en minutes, distances en mètres ; photos en JPEG et notes vocales en AAC (`audio/mp4`), déposées à part (`PUT /v1/fichiers/{evenementId}`).
 - **Identifiants tirés par le téléphone** pour ce qu'il crée (navigation, événement, alerte SOS, contact ajouté hors connexion) : tout envoi peut être rejoué sans doublon (§5).
-- **Sessions** : jeton porteur pour les applications mobiles, cookie pour la plateforme Web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; durée : [Q-43](06-questions-ouvertes.md#q-43).
+- **Sessions** : jeton porteur pour les applications mobiles, cookie pour la plateforme Web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; expiration après 90 jours sans usage, jamais sur le téléphone associé pendant une navigation en cours ; la déconnexion ne vide pas la file d'attente (RG-CPT-08, [D-100](07-decisions.md#d-100)).
 - **Synchronisation** :
   - téléphone → serveur : file d'attente (§5) ;
   - serveur → téléphone : contacts et paramètres généraux relus au lancement et après chaque modification quand Internet est disponible (RG-CTC-03, RG-PRM-02), avec un curseur `depuis` qui ne rend que les changements ; la dernière copie reçue sert hors connexion ;
   - serveur → Web : la page d'une navigation en cours relit le journal avec `depuis` à intervalles réguliers (de l'ordre de 30 secondes) ;
-  - modifications concurrentes (même contact, mêmes paramètres ou même navigation changés sur deux supports) : chaque objet porte un numéro de version et une modification fondée sur une version dépassée est refusée (409) ; laquelle doit l'emporter : [Q-42](06-questions-ouvertes.md#q-42).
-- **Points qui attendent une décision** : liens des SMS de photo et de note vocale ([Q-44](06-questions-ouvertes.md#q-44)) ; événements reçus après une clôture automatique ([Q-45](06-questions-ouvertes.md#q-45)) ; affichage des annonces ([Q-46](06-questions-ouvertes.md#q-46)) ; portée des désinscriptions du suiveur ([Q-47](06-questions-ouvertes.md#q-47)) ; fonctionnement hors connexion ([Q-29](06-questions-ouvertes.md#q-29)).
+  - modifications concurrentes (même contact, mêmes paramètres ou même navigation changés sur deux supports) : la dernière modification reçue par le serveur l'emporte, champ par champ ; le client n'envoie que les champs qu'il a changés (`PATCH`), aucune modification n'est refusée pour ce motif, et l'application mobile affiche ensuite la version du serveur, sans message (RG-COM-04, [D-99](07-decisions.md#d-99)) ;
+  - événements reçus après une clôture automatique : ceux acquis avant l'heure de clôture sont gardés, ceux d'après refusés (`navigation_cloturee`) ; un SOS acquis après la clôture devient un SOS depuis l'accueil (RG-ECO-12, [D-102](07-decisions.md#d-102)) ;
+  - annonces de l'administrateur : `GET /v1/annonces` rend celles à afficher en bandeau, `POST /v1/annonces/{annonceId}/fermeture` la ferme pour l'utilisateur (RG-ADM-06, [D-103](07-decisions.md#d-103)) ;
+  - désinscriptions du suiveur : réglages du profil, valables pour tous les navigateurs suivis (RG-NOT-04, [D-104](07-decisions.md#d-104)).
+- **Point qui attend une décision** : fonctionnement hors connexion ([Q-29](06-questions-ouvertes.md#q-29)) ; les autres points de l'API sont tranchés (D-99 à D-104), reste sa validation d'ensemble (TODO-3.2).
 
 ## 5. File d'attente et doublons
 

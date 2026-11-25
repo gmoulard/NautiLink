@@ -51,8 +51,8 @@ tags:
 # Traitements faits par le serveur lui-même, sans appel d'un client.
 x-traitements:
   - nom: 'Clôture automatique par épuisement du quota'
-    description: '24 heures après l''épuisement du quota pendant une navigation en cours, sauf abonnement souscrit entre-temps ; notification au navigateur à l''épuisement et 1 heure avant. Événements reçus ensuite → Q-45.'
-    x-regles: [RG-NAV-15, RG-ECO-05]
+    description: '24 heures après l''épuisement du quota pendant une navigation en cours, sauf abonnement souscrit entre-temps ; notification au navigateur à l''épuisement et 1 heure avant. Ensuite, événements acquis après l''heure de clôture refusés (`navigation_cloturee`) ; un SOS acquis après la clôture est enregistré comme un SOS depuis l''accueil.'
+    x-regles: [RG-NAV-15, RG-ECO-05, RG-ECO-12]
   - nom: 'Calcul du quota'
     description: 'Minutes entre début et fin enregistrés par le téléphone, sur 7 jours glissants, par compte, comme navigateur seulement.'
     x-regles: [RG-ECO-01, RG-ECO-02, RG-ECO-03, RG-NAV-21]
@@ -143,9 +143,10 @@ paths:
       description: |
         E-mail et mot de passe, ou jeton d'identité Google ou Apple. Une première connexion par Google
         ou Apple crée le compte, avec la même acceptation de l'avertissement que `POST /v1/comptes`.
-        Durée des sessions : Q-43.
+        Une session expire après 90 jours sans usage, jamais sur le téléphone associé pendant une
+        navigation en cours (RG-CPT-08).
       security: []
-      x-regles: [RG-CPT-02, RG-CPT-06, RG-DON-03]
+      x-regles: [RG-CPT-02, RG-CPT-06, RG-CPT-08, RG-DON-03]
       requestBody:
         required: true
         content:
@@ -166,9 +167,9 @@ paths:
   /v1/sessions/renouvellement:
     post:
       tags: [Comptes]
-      summary: 'Renouveler une session avec le jeton de renouvellement (Q-43).'
+      summary: 'Renouveler une session avec le jeton de renouvellement (90 jours sans usage, RG-CPT-08).'
       security: []
-      x-regles: [RG-DON-03]
+      x-regles: [RG-CPT-08, RG-DON-03]
       requestBody:
         required: true
         content:
@@ -189,14 +190,15 @@ paths:
     delete:
       tags: [Comptes]
       summary: 'Se déconnecter.'
-      x-regles: [RG-DON-03]
+      description: 'La déconnexion ne vide pas la file d''attente du téléphone (RG-CPT-08).'
+      x-regles: [RG-CPT-08, RG-DON-03]
       responses:
         '204': {description: Session fermée.}
   /v1/compte:
     get:
       tags: [Comptes]
       summary: 'Profil de l''utilisateur connecté.'
-      x-regles: [RG-CPT-01, RG-SMS-01, RG-SMS-08, RG-PRM-03, RG-NOT-02, RG-IOS-06, RG-AND-08, RG-CPT-07]
+      x-regles: [RG-CPT-01, RG-SMS-01, RG-SMS-08, RG-PRM-03, RG-NOT-02, RG-NOT-04, RG-IOS-06, RG-AND-08, RG-CPT-07]
       responses:
         '200':
           description: 'Profil.'
@@ -209,8 +211,8 @@ paths:
       description: |
         « Recevoir les SMS » passe à vrai dès qu'un numéro est renseigné pour la première fois
         (RG-SMS-01). Le SOS ne se désactive ni par e-mail ni par push (RG-NOT-02, RG-IOS-06,
-        RG-AND-08). Portée des désinscriptions : Q-47.
-      x-regles: [RG-SMS-01, RG-PRM-03, RG-NOT-02, RG-IOS-06, RG-AND-08]
+        RG-AND-08). Les désinscriptions valent pour tous les navigateurs suivis (RG-NOT-04).
+      x-regles: [RG-SMS-01, RG-PRM-03, RG-NOT-02, RG-NOT-04, RG-IOS-06, RG-AND-08]
       requestBody:
         required: true
         content:
@@ -409,10 +411,10 @@ paths:
       tags: [Contacts et partage]
       summary: 'Modifier un contact, cocher ou décocher ses cases.'
       description: |
-        Décocher « Suiveur » retire le suiveur de toutes les navigations, immédiatement. Envoyer
-        `versionConnue` : si le contact a changé entre-temps sur un autre support, réponse 409 ;
-        règle de résolution non décidée (Q-42).
-      x-regles: [RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-PAR-06, RG-CTC-03]
+        Décocher « Suiveur » retire le suiveur de toutes les navigations, immédiatement. Seuls les
+        champs envoyés sont modifiés : la dernière modification reçue l'emporte, champ par champ,
+        sans refus si le contact a changé entre-temps sur un autre support (RG-COM-04).
+      x-regles: [RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-PAR-06, RG-CTC-03, RG-COM-04]
       requestBody:
         required: true
         content:
@@ -424,7 +426,6 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Contact'}
-        '409': {$ref: '#/components/responses/Conflit'}
         '422': {$ref: '#/components/responses/Invalide'}
     delete:
       tags: [Contacts et partage]
@@ -591,11 +592,11 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Parametres'}
-    put:
+    patch:
       tags: [Paramètres]
-      summary: 'Remplacer les paramètres généraux (application mobile ou Web).'
-      description: 'Envoyer `version` ; si les paramètres ont changé entre-temps sur un autre support, réponse 409 (résolution : Q-42).'
-      x-regles: [RG-PRM-01, RG-SMS-02, RG-SMS-05, RG-NAV-05, RG-SOS-14]
+      summary: 'Modifier les paramètres généraux (application mobile ou Web).'
+      description: 'Seuls les champs envoyés sont modifiés : la dernière modification reçue l''emporte, champ par champ, sans refus (RG-COM-04).'
+      x-regles: [RG-PRM-01, RG-SMS-02, RG-SMS-05, RG-NAV-05, RG-SOS-14, RG-COM-04]
       requestBody:
         required: true
         content:
@@ -607,7 +608,7 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Parametres'}
-        '409': {$ref: '#/components/responses/Conflit'}
+        '422': {$ref: '#/components/responses/Invalide'}
 
   # ------------------------------------------------------------ Navigations
   /v1/navigations:
@@ -692,8 +693,8 @@ paths:
     patch:
       tags: [Navigations]
       summary: 'Modifier nom, destination, bateau (parmi les siens) et heures (navigateur seulement).'
-      description: 'Un changement d''heures ne change pas le quota ; les événements hors de la nouvelle plage sont gardés et marqués `masque`.'
-      x-regles: [RG-NAV-17, RG-NAV-22, RG-ECO-02, RG-PAR-07]
+      description: 'Un changement d''heures ne change pas le quota ; les événements hors de la nouvelle plage sont gardés et marqués `masque`. Seuls les champs envoyés sont modifiés ; la dernière modification reçue l''emporte, champ par champ (RG-COM-04).'
+      x-regles: [RG-NAV-17, RG-NAV-22, RG-ECO-02, RG-PAR-07, RG-COM-04]
       requestBody:
         required: true
         content:
@@ -706,7 +707,6 @@ paths:
             application/json:
               schema: {$ref: '#/components/schemas/Navigation'}
         '403': {$ref: '#/components/responses/Interdit'}
-        '409': {$ref: '#/components/responses/Conflit'}
     delete:
       tags: [Navigations]
       summary: 'Mettre une navigation terminée dans la corbeille (Web, navigateur seulement).'
@@ -725,8 +725,9 @@ paths:
         Porte l'événement de fin, avec son heure réelle même s'il arrive tard. Clôture la navigation
         même si un SMS a échoué. Rejouable. Rend l'adresse de la page de la navigation sur la
         plateforme Web, que l'application ouvre. Le serveur relève la météo d'arrivée et envoie les
-        notifications push de fin.
-      x-regles: [RG-NAV-13, RG-NAV-14, RG-NAV-28, RG-NAV-16, RG-IOS-06, RG-AND-08]
+        notifications push de fin. Après une clôture automatique, une fin acquise après l'heure de
+        clôture est refusée (`navigation_cloturee`, RG-ECO-12).
+      x-regles: [RG-NAV-13, RG-NAV-14, RG-NAV-28, RG-NAV-16, RG-IOS-06, RG-AND-08, RG-ECO-12]
       requestBody:
         required: true
         content:
@@ -743,6 +744,7 @@ paths:
                   - type: object
                     properties:
                       adressePage: {type: string, format: uri}
+        '409': {$ref: '#/components/responses/Conflit'}
   /v1/navigations/{navigationId}/restauration:
     parameters:
       - {$ref: '#/components/parameters/NavigationId'}
@@ -834,9 +836,12 @@ paths:
         note vocale suit par `PUT /v1/fichiers/{evenementId}`. Refusé au-delà de 20 photos
         (`limite_photos`). Une nouvelle photo déclenche la notification push des suiveurs ; une
         position remet à zéro le délai de « position en retard ». Ajouts depuis le Web : navigation
-        terminée, navigateur seulement. Événement reçu après une clôture automatique : Q-45.
+        terminée, navigateur seulement. Après une clôture automatique, un événement acquis avant
+        l'heure de clôture est gardé, un événement acquis après est refusé (409
+        `navigation_cloturee`) ; l'application arrête alors les positions automatiques et le dit
+        au navigateur (RG-ECO-12).
       x-regles: [RG-JRN-02, RG-JRN-05, RG-JRN-08, RG-GPS-02, RG-GPS-04, RG-NAV-10, RG-NAV-11,
-        RG-COM-01, RG-IOS-06, RG-AND-08, RG-SMS-05, RG-SMS-06]
+        RG-COM-01, RG-IOS-06, RG-AND-08, RG-SMS-05, RG-SMS-06, RG-ECO-12]
       requestBody:
         required: true
         content:
@@ -903,8 +908,8 @@ paths:
     get:
       tags: [Journal de bord]
       summary: 'Lire une photo ou écouter une note vocale (navigateur et suiveurs ayant accès).'
-      description: 'Adresse donnée par les SMS de photo et de note vocale ; accès des destinataires de ces liens : Q-44.'
-      x-regles: [RG-JRN-04, RG-JRN-09, RG-PAR-01, RG-PAR-07, RG-SMS-05, RG-SMS-06]
+      description: 'Réservé aux comptes ayant accès. Le lien des SMS de photo et de note vocale mène à la page de la navigation sur la plateforme Web, après connexion ; aucun accès sans compte (RG-SMS-09).'
+      x-regles: [RG-JRN-04, RG-JRN-09, RG-PAR-01, RG-PAR-07, RG-SMS-05, RG-SMS-06, RG-SMS-09]
       responses:
         '200':
           description: 'Fichier.'
@@ -983,8 +988,10 @@ paths:
         Rejouable sans doublon. Le serveur enregistre l'alerte dans le journal (ou dans l'historique
         du bateau hors navigation), envoie l'e-mail aux suiveurs (de la navigation, ou de périmètre
         navigateur hors navigation) et aux contacts SOS dont l'e-mail est connu, sauf les personnes
-        décochées au démarrage, avec copie au navigateur, et les notifications push SOS.
-      x-regles: [RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
+        décochées au démarrage, avec copie au navigateur, et les notifications push SOS. Un SOS
+        acquis après une clôture automatique est enregistré comme un SOS depuis l'accueil
+        (RG-ECO-12).
+      x-regles: [RG-ECO-12, RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
         RG-SOS-15, RG-NAV-25, RG-NAV-27, RG-IOS-01, RG-IOS-03, RG-IOS-06, RG-AND-08, RG-NOT-02, RG-NOT-03,
         RG-JRN-02, RG-JRN-07, RG-PRM-04]
       requestBody:
@@ -1125,6 +1132,33 @@ paths:
             application/gpx+xml: {schema: {type: string}}
 
   # ------------------------------------------------------- Administration
+  /v1/annonces:
+    get:
+      tags: [Comptes]
+      summary: 'Annonces de l''administrateur à afficher en bandeau (accueil mobile, tableau de bord Web).'
+      description: 'Annonces dont la date de fin n''est pas passée et que l''utilisateur n''a pas fermées.'
+      x-regles: [RG-ADM-02, RG-ADM-06]
+      responses:
+        '200':
+          description: 'Annonces.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Annonce'}
+  /v1/annonces/{annonceId}/fermeture:
+    parameters:
+      - name: annonceId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+    post:
+      tags: [Comptes]
+      summary: 'Fermer une annonce pour l''utilisateur connecté.'
+      x-regles: [RG-ADM-06]
+      responses:
+        '204': {description: Annonce fermée.}
+        '404': {$ref: '#/components/responses/Introuvable'}
   /v1/admin/{ressource}:
     parameters:
       - name: ressource
@@ -1137,7 +1171,7 @@ paths:
     get:
       tags: [Administration]
       summary: 'Consulter (espace administrateur, profil unique d''administrateur).'
-      description: 'Appelée par l''espace administrateur (`/admin/`), distinct de l''espace utilisateur. Chaque appel est tracé et gardé 3 ans. Affichage des annonces aux utilisateurs : Q-46.'
+      description: 'Appelée par l''espace administrateur (`/admin/`), distinct de l''espace utilisateur. Chaque appel est tracé et gardé 3 ans. Les annonces s''affichent aux utilisateurs par `GET /v1/annonces` (RG-ADM-06).'
       x-regles: [RG-ADM-01, RG-ADM-02, RG-ADM-03, RG-DON-02]
       security:
         - cookieAdmin: []
@@ -1200,7 +1234,7 @@ components:
     jeton:
       type: http
       scheme: bearer
-      description: 'Jeton de session des applications mobiles (durée : Q-43).'
+      description: 'Jeton de session des applications mobiles ; expire après 90 jours sans usage, jamais sur le téléphone associé pendant une navigation en cours (RG-CPT-08).'
     cookieSession:
       type: apiKey
       in: cookie
@@ -1285,12 +1319,19 @@ components:
           enum: [non_authentifie, avertissement_a_accepter, interdit, introuvable, invalide,
             pas_proprietaire, telephone_non_associe, navigation_en_cours, quota_epuise,
             evenement_different, evenement_non_modifiable, limite_photos, note_vocale_trop_longue,
-            contact_sos_sans_telephone, modifie_ailleurs, invitation_deja_acceptee, deja_abonne]
+            contact_sos_sans_telephone, navigation_cloturee, invitation_deja_acceptee, deja_abonne]
         message: {type: string, description: Texte dans la langue de l'utilisateur.}
         disponibleLe:
           type: string
           format: date-time
           description: 'Pour `quota_epuise` — heure à laquelle des minutes redeviennent disponibles (RG-ECO-04).'
+
+    Annonce:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        texte: {type: string}
+        finLe: {type: [string, 'null'], format: date-time, description: 'Date de fin choisie par l''administrateur (RG-ADM-06).'}
 
     Avertissement:
       type: object
@@ -1412,7 +1453,6 @@ components:
         contactSos: {type: boolean, default: true}
         perimetre: {$ref: '#/components/schemas/Perimetre'}
         navigationId: {type: [string, 'null'], format: uuid}
-        versionConnue: {type: integer, description: Version sur laquelle porte la modification (Q-42).}
 
     Contact:
       allOf:
@@ -1483,7 +1523,7 @@ components:
       type: object
       description: 'Paramètres généraux ; leur copie modifiée au démarrage forme les paramètres de navigation (RG-NAV-06). Ne s''appliquent jamais aux SMS SOS (RG-SOS-14).'
       properties:
-        version: {type: integer}
+        version: {type: integer, readOnly: true, description: 'Numéro incrémenté à chaque modification ; ne sert jamais à refuser une modification (RG-COM-04).'}
         smsActifs: {type: boolean, description: Interrupteur général des SMS ordinaires.}
         smsParType:
           type: object
@@ -1555,7 +1595,6 @@ components:
         bateauId: {type: string, format: uuid}
         debut: {type: string, format: date-time}
         fin: {type: string, format: date-time}
-        versionConnue: {type: integer, description: Q-42.}
 
     ResumeNavigation:
       type: object
