@@ -58,7 +58,7 @@ x-traitements:
     x-regles: [RG-ECO-01, RG-ECO-02, RG-ECO-03, RG-NAV-21]
   - nom: 'Lieux et distance'
     description: 'Géocodage inverse par Nominatim avec cache (D-96) pour le lieu de départ, d''arrivée et de chaque position ; distance = somme des distances entre positions successives.'
-    x-regles: [RG-NAV-16, RG-JRN-10]
+    x-regles: [RG-NAV-16, RG-NAV-31, RG-JRN-10]
   - nom: 'Météo de début et de fin'
     description: 'Relevée auprès de l''API de Météo-France au point de départ et d''arrivée (Q-39).'
     x-regles: [RG-NAV-28]
