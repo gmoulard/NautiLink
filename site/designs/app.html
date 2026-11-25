@@ -17,15 +17,15 @@
   --page: #DCE9F3; --surface: #FFFFFF; --sos: #D94343; --beta: #F2C14E; --srt-blue: #1E3296; --srt-yellow: #F8D818;
   --display: "Space Grotesk", system-ui, sans-serif; --body: Inter, system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
   --chrome: #E6EEF4; --chrome-dot: #C3D3E0; --track: #D5E4EF; --map: #DCEFF8; --scrim: rgba(8,24,40,.45); --ok: #1E8E4E;
-  --live-bg: #DFF3E4; --live: #1E7A3C; --navbar: #9AB0C3; --on-accent: #FFFFFF;
+  --live-bg: #DFF3E4; --live: #1E7A3C; --navbar: #9AB0C3; --on-accent: #FFFFFF; --sponsor-text: var(--srt-blue);
   color-scheme: light;
 }
-/* Thème sombre : PROPOSITION NON VALIDÉE (Q-25). Suit le réglage du système, ou le bouton en haut de page. */
+/* Thème sombre validé (D-97). Suit le réglage du système, ou le bouton en haut de page. */
 :root[data-theme="dark"] {
   --sky: #0F2438; --ink: #E3EEF7; --accent: #5AAEE6; --muted: #9BB4C9; --line: #24476A;
   --page: #08172A; --surface: #15314D; --sos: #E35D5D; --beta: #F2C14E;
   --chrome: #1B3550; --chrome-dot: #33597D; --track: #24476A; --map: #12324D; --scrim: rgba(0,0,0,.6); --ok: #4CC57E;
-  --live-bg: #173F2A; --live: #6FD69A; --navbar: #4E6E8C; --on-accent: #08172A;
+  --live-bg: #173F2A; --live: #6FD69A; --navbar: #4E6E8C; --on-accent: #08172A; --sponsor-text: var(--ink);
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -33,7 +33,7 @@
     --sky: #0F2438; --ink: #E3EEF7; --accent: #5AAEE6; --muted: #9BB4C9; --line: #24476A;
     --page: #08172A; --surface: #15314D; --sos: #E35D5D; --beta: #F2C14E;
     --chrome: #1B3550; --chrome-dot: #33597D; --track: #24476A; --map: #12324D; --scrim: rgba(0,0,0,.6); --ok: #4CC57E;
-    --live-bg: #173F2A; --live: #6FD69A; --navbar: #4E6E8C; --on-accent: #08172A;
+    --live-bg: #173F2A; --live: #6FD69A; --navbar: #4E6E8C; --on-accent: #08172A; --sponsor-text: var(--ink);
     color-scheme: dark;
   }
 }
@@ -89,7 +89,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
 .log { display: grid; gap: 4px; }
 .log div { display: grid; grid-template-columns: 34px 1fr; gap: 4px; font-size: 10.5px; }
 .log span { font: 500 10px var(--mono); color: var(--muted); }
-.sponsor { display: flex; align-items: center; justify-content: center; gap: 6px; background: #fff; border-top: 3px solid var(--srt-yellow); padding: 5px; font: 700 10.5px var(--body); color: var(--srt-blue); }
+.sponsor { display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--sky); border-top: 3px solid var(--srt-yellow); padding: 5px; font: 700 10.5px var(--body); color: var(--sponsor-text); }
 .sponsor img { height: 18px; }
 .navbar { display: flex; justify-content: center; gap: 40px; padding: 6px 0 8px; background: var(--sky); }
 .navbar i { width: 14px; height: 4px; border-radius: 2px; background: var(--navbar); display: block; }
@@ -170,7 +170,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
     <button type="button" data-set="light" aria-pressed="false">Clair</button>
     <button type="button" data-set="dark" aria-pressed="false">Sombre</button>
   </div>
-  <p class="note">Thème sombre : proposition de couleurs non validée (<a href="https://github.com/gmoulard/NautiLink/blob/main/docs/06-questions-ouvertes.md#q-25">Q-25</a>).</p>
+  <p class="note">Thème sombre validé le 2026-11-25 (<a href="https://github.com/gmoulard/NautiLink/blob/main/docs/07-decisions.md#d-97">D-97</a>) ; bandeau du sponsor sur le fond de l'application.</p>
 </header>
 
 <main class="wrap">

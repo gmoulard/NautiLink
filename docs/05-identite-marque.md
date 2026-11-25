@@ -70,7 +70,7 @@ Moderne, simple, reconnaissable, lisible en petit, adapté à une icône Android
 - Le turquoise (connexion, partage) est réservé aux actions.
 - Le rouge est réservé au SOS et aux alertes ; jamais décoratif.
 
-Couleurs du thème sombre et place de l'orange du repère GPS de la proposition de logo : [Q-25](06-questions-ouvertes.md#q-25).
+Couleurs du thème sombre : §14 ([D-97](07-decisions.md#d-97)). Place de l'orange du repère GPS de la proposition de logo : [Q-25](06-questions-ouvertes.md#q-25).
 
 ## 7. Typographie
 
@@ -81,7 +81,7 @@ Couleurs du thème sombre et place de l'orange du repère GPS de la proposition 
 ## 8. Style des interfaces
 
 - Thème clair : fonds blancs ou gris très clair, bleu marine pour titres et zones principales.
-- Thème sombre : à définir ([Q-25](06-questions-ouvertes.md#q-25)).
+- Thème sombre : couleurs du §14 ([D-97](07-decisions.md#d-97)).
 - Turquoise pour les actions, rouge pour le SOS.
 - Icônes simples, boutons assez grands pour une utilisation à bord.
 - Cartes et informations GPS clairement présentées (Web).
@@ -133,4 +133,20 @@ Choisi le 2026-11-24 ([D-69](07-decisions.md#d-69)) parmi les [variantes météo
 | Petites mentions, signature | IBM Plex Mono |
 
 Pas de fausse donnée météo « en direct » sur le site : les échos radar restent un décor.
+
+Thème sombre, validé le 2026-11-25 ([D-97](07-decisions.md#d-97)) :
+
+| Rôle | Valeur |
+|------|--------|
+| Fond de la page (Web) | `#08172A` |
+| Fond des écrans de l'application, bandeaux | ciel sombre `#0F2438` |
+| Cartes, champs, surfaces | `#15314D` |
+| Texte | `#E3EEF7` |
+| Texte secondaire | `#9BB4C9` |
+| Filets, séparateurs | `#24476A` |
+| Actions, liens | bleu éclairci `#5AAEE6`, texte `#08172A` dessus |
+| SOS | `#E35D5D` |
+| Bandeau bêta | `#F2C14E`, inchangé |
+
+Bandeau du sponsor SRT : sur le fond de l'application, en thème clair comme en sombre (filet jaune `#F8D818` au-dessus ; texte bleu SRT `#1E3296` en clair, texte `#E3EEF7` en sombre).
 

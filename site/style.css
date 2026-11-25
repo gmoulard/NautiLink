@@ -97,11 +97,12 @@ ol.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: .45rem; }
 code { font-size: .9em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 0 .25rem; }
 .legal .note { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--beta); border-radius: 12px; padding: 1rem 1.2rem; }
 
-.sponsor { background: #FFFFFF; color: #1E3296; border-top: 4px solid #F8D818; }
+.sponsor { background: var(--bg); color: #1E3296; border-top: 4px solid #F8D818; } /* fond du site (D-97) */
 .sponsor .wrap { display: flex; align-items: center; gap: .9rem; padding-block: 1rem; flex-wrap: wrap; }
 .sponsor img { height: 44px; width: auto; }
 .sponsor p { font-weight: 600; }
 .sponsor a { color: #1E3296; }
+@media (prefers-color-scheme: dark) { .sponsor, .sponsor a { color: var(--fg); } }
 footer { background: var(--navy); color: #C9DCE8; font-size: .9rem; }
 footer .wrap { padding-block: 2rem; display: grid; gap: .6rem; }
 footer a { color: var(--aqua); }
@@ -130,7 +131,8 @@ footer a { color: var(--aqua); }
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --sky: #0B2236; --ink: #E3F0FA; --accent: #5DB3EA; --bg: #071827; --fg: #E3F0FA; --muted: #9DB7CC; --line: #1D3B55; --teal: #5DB3EA; --surface: #0E2A43; }
+  /* Thème sombre validé (D-97). */
+  :root { --sky: #0F2438; --ink: #E3EEF7; --accent: #5AAEE6; --bg: #08172A; --fg: #E3EEF7; --muted: #9BB4C9; --line: #24476A; --teal: #5AAEE6; --surface: #15314D; --alert: #E35D5D; }
 }
 .topnav { background: var(--sky); color: var(--ink); border-bottom: 1px solid var(--line); }
 .brand { color: var(--ink); }
@@ -157,4 +159,4 @@ a.pill:hover { border-color: var(--accent); color: var(--accent); }
 .kicker { color: var(--accent); font-family: var(--font-mono); letter-spacing: .08em; }
 .big { color: var(--accent); font-family: var(--font-display); }
 .role.nav { background: var(--ink); }
-@media (prefers-color-scheme: dark) { .role.nav { background: #0E2A43; } .pill { background: rgba(14,42,67,.6); } .button { color: #071827; } }
+@media (prefers-color-scheme: dark) { .role.nav { background: #0E2A43; } .pill { background: rgba(14,42,67,.6); } .button { color: #08172A; } }

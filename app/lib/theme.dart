@@ -8,8 +8,14 @@ class NlColors {
   static const ink = Color(0xFF0E2A47); // texte
   static const accent = Color(0xFF0E6BA8); // actions
   static const line = Color(0xFFCFE0EE);
-  static const skyDark = Color(0xFF0B2236);
-  static const accentDark = Color(0xFF5DB3EA);
+  // Thème sombre validé (D-97).
+  static const skyDark = Color(0xFF0F2438);
+  static const accentDark = Color(0xFF5AAEE6);
+  static const inkDark = Color(0xFFE3EEF7);
+  static const surfaceDark = Color(0xFF15314D);
+  static const lineDark = Color(0xFF24476A);
+  static const onAccentDark = Color(0xFF08172A);
+  static const alertDark = Color(0xFFE35D5D);
   static const radarGreen = Color(0x614CAF50);
   static const radarYellow = Color(0x80F2C14E);
   static const radarRed = Color(0x80D94343);
@@ -40,7 +46,7 @@ TextStyle displayStyle(double size, {double weight = 700, Color? color}) =>
 ThemeData nlTheme(Brightness brightness) {
   final dark = brightness == Brightness.dark;
   final bg = dark ? NlColors.skyDark : NlColors.sky;
-  final fg = dark ? const Color(0xFFE3F0FA) : NlColors.ink;
+  final fg = dark ? NlColors.inkDark : NlColors.ink;
   final accent = dark ? NlColors.accentDark : NlColors.accent;
   final scheme =
       ColorScheme.fromSeed(
@@ -48,10 +54,10 @@ ThemeData nlTheme(Brightness brightness) {
         brightness: brightness,
       ).copyWith(
         primary: accent,
-        onPrimary: dark ? const Color(0xFF071827) : NlColors.white,
+        onPrimary: dark ? NlColors.onAccentDark : NlColors.white,
         secondary: fg,
-        error: NlColors.alert,
-        surface: dark ? const Color(0xFF0E2A43) : NlColors.white,
+        error: dark ? NlColors.alertDark : NlColors.alert,
+        surface: dark ? NlColors.surfaceDark : NlColors.white,
         onSurface: fg,
       );
   final base = ThemeData(
@@ -74,7 +80,7 @@ ThemeData nlTheme(Brightness brightness) {
       titleTextStyle: displayStyle(20, color: fg),
       shape: Border(
         bottom: BorderSide(
-          color: dark ? const Color(0xFF1D3B55) : NlColors.line,
+          color: dark ? NlColors.lineDark : NlColors.line,
         ),
       ),
     ),
@@ -101,7 +107,7 @@ ThemeData nlTheme(Brightness brightness) {
       color: scheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: dark ? const Color(0xFF1D3B55) : NlColors.line),
+        side: BorderSide(color: dark ? NlColors.lineDark : NlColors.line),
       ),
     ),
   );
@@ -159,7 +165,7 @@ class SosButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton.icon(
       style: FilledButton.styleFrom(
-        backgroundColor: NlColors.alert,
+        backgroundColor: Theme.of(context).colorScheme.error,
         foregroundColor: NlColors.white,
         minimumSize: const Size.fromHeight(64),
         textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -182,11 +188,14 @@ class SponsorFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: NlColors.white,
-        border: Border(top: BorderSide(color: Color(0xFFF8D818), width: 3)),
+      // Fond de l'application, en thème clair comme en sombre (D-97).
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        border: const Border(top: BorderSide(color: Color(0xFFF8D818), width: 3)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -201,8 +210,8 @@ class SponsorFooter extends StatelessWidget {
           Flexible(
             child: Text(
               l.sponsorText,
-              style: const TextStyle(
-                color: Color(0xFF1E3296),
+              style: TextStyle(
+                color: dark ? NlColors.inkDark : const Color(0xFF1E3296),
                 fontWeight: FontWeight.w700,
               ),
             ),
