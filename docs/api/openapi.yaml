@@ -69,7 +69,7 @@ x-traitements:
     description: 'APNs (iPhone) et FCM (Android) — SOS, début, fin, nouvelle photo, position en retard (aucune position reçue pendant deux fois la fréquence, une seule notification jusqu''à la position suivante).'
     x-regles: [RG-IOS-06, RG-AND-08, RG-NOT-02]
   - nom: 'Purge de la corbeille'
-    description: 'Suppression définitive 30 jours après le passage dans la corbeille.'
+    description: 'Suppression définitive 30 jours après le passage dans la corbeille, avec le journal de bord, les positions et les fichiers ; les alertes SOS restent dans l''historique du bateau ; les accès de périmètre navigation sur elle sont retirés (Q-71).'
     x-regles: [RG-NAV-20, RG-DON-01]
   - nom: 'Conservation'
     description: 'Navigations, journaux et positions sans limite ; journaux techniques 1 an ; journaux d''administration 3 ans ; sauvegarde quotidienne gardée 30 jours (pi-appliance pendant la bêta).'
@@ -819,10 +819,11 @@ paths:
     delete:
       tags: [Navigations]
       summary: 'Mettre une navigation terminée dans la corbeille (Web, navigateur seulement).'
-      description: 'Refusé pour une navigation en cours (`navigation_en_cours`). Le temps reste décompté du quota.'
+      description: 'Refusé pour une navigation en cours (`navigation_en_cours`) et depuis une session des applications mobiles (`web_seulement`). Rejouable : une navigation déjà dans la corbeille y reste, sans repousser sa suppression définitive. Le temps reste décompté du quota. Dans la corbeille, la navigation ne se modifie plus avant sa restauration (`navigation_corbeille`, Q-70).'
       x-regles: [RG-NAV-20, RG-NAV-21]
       responses:
         '204': {description: 'Navigation dans la corbeille, restaurable 30 jours.'}
+        '403': {$ref: '#/components/responses/Interdit'}
         '409': {$ref: '#/components/responses/Conflit'}
   /v1/navigations/{navigationId}/fin:
     parameters:

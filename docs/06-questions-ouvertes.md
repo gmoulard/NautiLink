@@ -21,6 +21,18 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : l'utilisateur a demandé (2026-11-25) que le mémo sécurité en mer du site (`site/securite.html`) soit accessible dans les applications mobiles. Rien ne dit s'il faut ouvrir la page du site, qui demande Internet, ou l'intégrer à l'application pour qu'il reste lisible hors connexion, en mer ; ni où le placer (accueil, assistance).
 - Proposition (non validée) : intégrer le mémo à l'application, lisible hors connexion, ouvert depuis l'accueil par « Mémo sécurité en mer » ; le contenu reste rédigé une seule fois, sur le site, et copié dans l'application à chaque construction. Ce qui est fait (TODO-3.12) : dans le prototype, le lien de l'accueil ouvre la page du site dans le navigateur du téléphone.
 
+### <a id="q-70"></a>Q-70 — Navigation dans la corbeille, côté navigateur
+
+- Priorité : avant la plateforme Web (TODO-4.8, TODO-6.5).
+- Cas : RG-NAV-20 retire l'accès aux suiveurs pendant le séjour dans la corbeille, mais ne dit pas ce que peut encore faire le navigateur : ouvrir la page de la navigation, la modifier (nom, heures, journal de bord, suiveurs), et ce que deviennent les envois du téléphone encore en attente pour elle.
+- Proposition (non validée) : le navigateur voit encore la page de la navigation (état « corbeille ») mais ne la modifie plus avant de l'avoir restaurée ; les envois en attente du téléphone (positions, notes, photos, notes vocales, fin rejouée) restent acceptés, pour que rien ne manque après une restauration. Ce qui est fait (TODO-4.8) : cette proposition, appliquée en attendant.
+
+### <a id="q-71"></a>Q-71 — Accès de périmètre *navigation* après la suppression définitive
+
+- Priorité : avant la plateforme Web (TODO-4.8).
+- Cas : RG-NAV-20 supprime définitivement la navigation au bout de 30 jours dans la corbeille ; rien ne dit ce que deviennent les accès de périmètre *navigation* (RG-PAR-02) donnés sur elle.
+- Proposition (non validée) : ils sont retirés avec la navigation ; le contact reste dans la liste des contacts du navigateur, et les accès de périmètre *navigateur* ne changent pas. Ce qui est fait (TODO-4.8) : cette proposition, appliquée en attendant.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

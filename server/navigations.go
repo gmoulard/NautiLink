@@ -791,7 +791,7 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 // evenementModifiable : notes, photos, notes vocales et ajouts, quelle que
 // soit leur origine (RG-JRN-06) ; jamais début, fin, positions ni SOS (RG-JRN-07).
 func (a *app) evenementModifiable(ctx context.Context, utilisateur, navID, id string) (navLigne, error) {
-	n, err := a.navigationDuNavigateur(ctx, utilisateur, navID)
+	n, err := a.navigationModifiable(ctx, utilisateur, navID)
 	if err != nil {
 		return n, err
 	}
@@ -871,7 +871,7 @@ func (a *app) navigations(ctx context.Context, utilisateur, role, etat, bateau s
 // destination, bateau (parmi les siens) et heures une fois la navigation
 // terminée. Le quota reste calculé sur les heures enregistrées (RG-ECO-02).
 func (a *app) modifierNavigation(ctx context.Context, utilisateur, id string, c champs) (navigationJSON, error) {
-	n, err := a.navigationDuNavigateur(ctx, utilisateur, id)
+	n, err := a.navigationModifiable(ctx, utilisateur, id)
 	if err != nil {
 		return navigationJSON{}, err
 	}
@@ -1211,7 +1211,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		return nil
 	}))
 	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/suiveurs/{utilisateurId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
-		n, err := a.navigationDuNavigateur(r.Context(), s.utilisateur, r.PathValue("navigationId"))
+		n, err := a.navigationModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"))
 		if err != nil {
 			return err
 		}
