@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'data.dart';
+import 'depot/depot.dart';
+import 'depot/depot_demo.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/dashboard.dart';
 import 'screens/home.dart';
@@ -21,11 +23,21 @@ class AppScope extends InheritedNotifier<AppState> {
 
 /// Langue de l'interface : français par défaut (langue de référence, TODO-9.2).
 /// Essai d'une autre langue : `--dart-define=NAUTILINK_LANG=en`.
-const kDefaultLanguage = String.fromEnvironment('NAUTILINK_LANG', defaultValue: 'fr');
+const kDefaultLanguage = String.fromEnvironment(
+  'NAUTILINK_LANG',
+  defaultValue: 'fr',
+);
 
 class NautiLinkApp extends StatefulWidget {
-  const NautiLinkApp({super.key, this.locale = const Locale(kDefaultLanguage)});
+  const NautiLinkApp({
+    super.key,
+    this.locale = const Locale(kDefaultLanguage),
+    this.depot,
+  });
   final Locale locale;
+
+  /// Dépôt de données ; par défaut celui du mode choisi à la construction (D-127).
+  final Depot? depot;
 
   @override
   State<NautiLinkApp> createState() => _NautiLinkAppState();
@@ -33,20 +45,30 @@ class NautiLinkApp extends StatefulWidget {
 
 class _NautiLinkAppState extends State<NautiLinkApp> {
   final state = AppState();
+  late final Depot depot = widget.depot ?? DepotDemo(state);
+
+  @override
+  void initState() {
+    super.initState();
+    depot.ouvrir();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppScope(
       state: state,
-      child: MaterialApp(
-        onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-        locale: widget.locale,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        debugShowCheckedModeBanner: false,
-        theme: nlTheme(Brightness.light),
-        darkTheme: nlTheme(Brightness.dark),
-        home: const _Root(),
+      child: DepotScope(
+        depot: depot,
+        child: MaterialApp(
+          onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+          locale: widget.locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          debugShowCheckedModeBanner: false,
+          theme: nlTheme(Brightness.light),
+          darkTheme: nlTheme(Brightness.dark),
+          home: const _Root(),
+        ),
       ),
     );
   }

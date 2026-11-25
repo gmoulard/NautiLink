@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
+import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../theme.dart';
@@ -15,8 +16,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final depot = DepotScope.of(context);
     final l = AppLocalizations.of(context);
-    final left = AppState.quotaMinutes - state.usedMinutes;
+    final left = depot.quota?.disponibleMinutes ?? 0;
     return Scaffold(
       appBar: AppBar(
         title: Text(l.appTitle),
