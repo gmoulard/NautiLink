@@ -378,7 +378,19 @@ func (a *app) inviterContact(ctx context.Context, tx pgx.Tx, r *http.Request, na
 	return a.inviter(ctx, tx, r, navigateur, k, canal)
 }
 
+// errInvitationEmail : un compte dont l'adresse n'est pas confirmée n'envoie
+// pas d'invitation, par aucun canal (RG-CPT-09, D-105).
+var errInvitationEmail = &erreurAPI{http.StatusForbidden, "email_non_verifie",
+	"Confirmez d'abord votre adresse e-mail : ouvrez le lien que NautiLink vous a envoyé, puis invitez vos suiveurs.", 0}
+
 func (a *app) inviter(ctx context.Context, tx pgx.Tx, r *http.Request, navigateur string, k contactJSON, canal string) (invitationJSON, func(), error) {
+	var confirmee bool
+	if err := tx.QueryRow(ctx, "SELECT email_verifie_le IS NOT NULL FROM utilisateurs WHERE id = $1", navigateur).Scan(&confirmee); err != nil {
+		return invitationJSON{}, nil, err
+	}
+	if !confirmee {
+		return invitationJSON{}, nil, errInvitationEmail
+	}
 	if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
 		return invitationJSON{}, nil, err
 	}

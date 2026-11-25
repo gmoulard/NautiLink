@@ -9,7 +9,7 @@
 <h1>Bonjour {{.Nom}}</h1>
 {{if not .EmailVerifie}}
 <div class="carte">
-  <p>Confirmez votre adresse e-mail : ouvrez le lien que nous vous avons envoyé.</p>
+  <p>Confirmez votre adresse e-mail : ouvrez le lien que nous vous avons envoyé. D'ici là, vous ne pouvez ni démarrer une navigation ni inviter un suiveur.</p>
   <form method="post" action="{{.Base}}/verification/envoi"><button class="secondaire" type="submit">Recevoir un nouveau lien</button></form>
 </div>
 {{end}}

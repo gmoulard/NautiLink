@@ -17,8 +17,26 @@ func TestContacts(t *testing.T) {
 	if code, _ := e.appel("POST", "/contacts", j, map[string]any{"nom": "Léa", "email": "lea@exemple.org"}); code != 422 {
 		t.Fatalf("suiveur sans périmètre : %d", code)
 	}
+	// Adresse non confirmée (RG-CPT-09) : un suiveur ne peut pas être invité,
+	// un contact SOS seul s'ajoute ; rien n'est créé par le refus.
+	if code, r := e.appel("POST", "/contacts", j, map[string]any{"nom": "Léa", "email": "lea@exemple.org",
+		"telephone": "06 11 22 33 44", "perimetre": "navigateur"}); code != 403 || r["code"] != "email_non_verifie" {
+		t.Fatalf("suiveur sans adresse confirmée : %d %v", code, r)
+	}
+	code, k := e.appel("POST", "/contacts", j, map[string]any{"nom": "Secours", "telephone": "06 99 88 77 66", "suiveur": false})
+	if code != 201 || k["contactSos"] != true {
+		t.Fatalf("contact SOS sans adresse confirmée : %d %v", code, k)
+	}
+	if _, l := e.appel("GET", "/contacts", j, nil); len(l["contacts"].([]any)) != 1 {
+		t.Fatalf("contact créé malgré le refus : %v", l)
+	}
+	if code, _ := e.appel("DELETE", "/contacts/"+k["id"].(string), j, nil); code != 204 {
+		t.Fatalf("suppression du contact SOS : %d", code)
+	}
+	e.verifier("nav@exemple.org")
+
 	// Par défaut suiveur et contact SOS (RG-CTC-01) ; invitation envoyée par e-mail, copie au navigateur.
-	code, k := e.appel("POST", "/contacts", j, map[string]any{"nom": "Léa", "email": "lea@exemple.org",
+	code, k = e.appel("POST", "/contacts", j, map[string]any{"nom": "Léa", "email": "lea@exemple.org",
 		"telephone": "06 11 22 33 44", "perimetre": "navigateur"})
 	if code != 201 || k["suiveur"] != true || k["contactSos"] != true || k["etatInvitation"] != "envoyee" || k["telephone"] != "+33611223344" {
 		t.Fatalf("contact : %d %v", code, k)
@@ -90,6 +108,15 @@ func TestInvitationsEtAcces(t *testing.T) {
 	nav := e.compte("nav@exemple.org", "Navigateur")
 	_, b := e.appel("POST", "/bateaux", nav, map[string]any{"nom": "Alizé", "type": "voilier"})
 	bateau := b["id"].(string)
+
+	// Adresse non confirmée : aucune invitation, ni par e-mail ni par lien (RG-CPT-09).
+	for _, canal := range []map[string]any{{"canal": "email", "email": "lea@exemple.org", "perimetre": "navigateur"},
+		{"canal": "telephone", "telephone": "+33611223344", "perimetre": "navigateur"}} {
+		if code, r := e.appel("POST", "/invitations", nav, canal); code != 403 || r["code"] != "email_non_verifie" {
+			t.Fatalf("invitation sans adresse confirmée : %d %v", code, r)
+		}
+	}
+	e.verifier("nav@exemple.org")
 
 	// Invitation par e-mail sans contact : l'invité est ajouté aux contacts (RG-PAR-03).
 	code, inv := e.appel("POST", "/invitations", nav, map[string]any{"canal": "email", "email": "lea@exemple.org", "perimetre": "navigateur"})
@@ -207,8 +234,14 @@ func TestPagesWebContacts(t *testing.T) {
 	nav := e.navigateur()
 	nav.envoyer("POST", "/nautilink/inscription", map[string]string{"nom": "Navigateur", "email": "nav@exemple.org",
 		"motdepasse": "motdepasse", "avertissement": versionAvertissement})
-	rec := nav.envoyer("POST", "/nautilink/contacts", map[string]string{"nom": "Paul", "telephone": "+33612345678",
-		"suiveur": "on", "contactSos": "on", "perimetre": "navigateur"})
+	formulaire := map[string]string{"nom": "Paul", "telephone": "+33612345678",
+		"suiveur": "on", "contactSos": "on", "perimetre": "navigateur"}
+	// Adresse non confirmée : pas d'invitation, message affiché (RG-CPT-09).
+	if rec := nav.envoyer("POST", "/nautilink/contacts", formulaire); rec.Code == 303 || !strings.Contains(rec.Body.String(), "Confirmez d&#39;abord votre adresse e-mail") {
+		t.Fatalf("invitation sans adresse confirmée : %d %s", rec.Code, rec.Body.String())
+	}
+	e.verifier("nav@exemple.org")
+	rec := nav.envoyer("POST", "/nautilink/contacts", formulaire)
 	if rec.Code != 303 {
 		t.Fatalf("ajout : %d %s", rec.Code, rec.Body.String())
 	}
