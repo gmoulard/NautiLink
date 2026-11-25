@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nautilink/depot/depot.dart';
 import 'package:nautilink/reel/base_locale.dart';
 import 'package:nautilink/reel/conduite.dart';
 import 'package:nautilink/reel/depot_reel.dart';
@@ -13,8 +14,10 @@ void main() {
   late BaseLocale base;
   late StockageSession session;
   late FauxGps gps;
+  late DateTime heure;
 
   setUp(() async {
+    heure = DateTime(2026, 11, 25, 10);
     SharedPreferences.setMockInitialValues({});
     session = await StockageSession.ouvrir();
     base = BaseMemoire();
@@ -23,11 +26,22 @@ void main() {
   });
 
   Future<DepotReel> connecte() async {
-    final d = serveur.depot(session, base, positions: gps);
+    final d = serveur.depot(
+      session,
+      base,
+      positions: gps,
+      horloge: () => heure,
+    );
     await d.ouvrir();
     await d.connexion('marin@example.org', 'secret123');
     return d;
   }
+
+  /// Éléments `evenement` reçus par le serveur, dans l'ordre.
+  List<Map> evenements() => [
+    for (final (op, _, c) in serveur.elements)
+      if (op == 'evenement') c as Map,
+  ];
 
   Future<NavigationLocale> demarrer(DepotReel d, {String? destination}) async =>
       d.demarrer(
@@ -183,6 +197,117 @@ void main() {
       );
       expect(serveur.appels, contains('PUT /v1/bateaux/b2/telephone'));
       expect((serveur.elements.single.$3 as Map)['bateauId'], 'b2');
+    });
+  });
+
+  group('positions automatiques (TODO-5.3)', () {
+    test('position enregistrée à la fréquence de la navigation et envoyée au serveur (RG-GPS-02, RG-GPS-03)', () async {
+      final d = await connecte();
+      await demarrer(d);
+      expect(gps.frequenceSuivie, const Duration(minutes: 60)); // suivi lancé
+      final c = d.conduite;
+
+      heure = heure.add(const Duration(minutes: 30));
+      await c.verifierPositionAutomatique();
+      expect(evenements(), isEmpty); // pas encore due
+
+      heure = heure.add(const Duration(minutes: 29)); // tolérance d'une minute
+      gps.position = positionEssai(heure);
+      await c.verifierPositionAutomatique();
+      await d.file.attendrePasse();
+      final e = evenements().single;
+      expect(e['type'], 'position_automatique');
+      expect(e['numeroOrdre'], 2);
+      expect(e['gpsDisponible'], isTrue);
+      expect(e['origine'], 'android');
+      expect((e['position'] as Map)['heureAcquisition'], heureRfc3339(heure));
+      expect(c.enCours!.journal.last.type, 'position_automatique');
+      expect(c.prochaineAutomatique, heure.add(const Duration(hours: 1)));
+    });
+
+    test(
+      'position remise par le suivi du téléphone : pas de nouvelle acquisition',
+      () async {
+        final d = await connecte();
+        await demarrer(d);
+        final avant = gps.acquisitions;
+        heure = heure.add(const Duration(hours: 1));
+        gps.suivi.add(positionEssai(heure));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        await d.file.attendrePasse();
+        expect(evenements().single['type'], 'position_automatique');
+        expect(gps.acquisitions, avant);
+      },
+    );
+
+    test(
+      'GPS sans réponse : position automatique « GPS non disponible » (Q-86)',
+      () async {
+        final d = await connecte();
+        await demarrer(d);
+        gps.position = null;
+        heure = heure.add(const Duration(hours: 1));
+        await d.conduite.verifierPositionAutomatique();
+        await d.file.attendrePasse();
+        final e = evenements().single;
+        expect(e['gpsDisponible'], isFalse);
+        expect(e.containsKey('position'), isFalse);
+      },
+    );
+
+    test('hors connexion : positions gardées sur le téléphone, envoyées au retour dans l\'ordre d\'acquisition (RG-GPS-04)', () async {
+      final d = await connecte();
+      await demarrer(d);
+      serveur.coupe = true;
+      for (var i = 1; i <= 3; i++) {
+        heure = heure.add(const Duration(hours: 1));
+        gps.position = positionEssai(heure);
+        await d.conduite.verifierPositionAutomatique();
+      }
+      expect(await d.envois.enAttente(), 3);
+      expect(d.conduite.enCours!.journal.length, 4);
+
+      // Fermeture forcée puis réouverture : rien n'est perdu (RG-NAV-12).
+      final d2 = serveur.depot(
+        session,
+        base,
+        positions: gps,
+        horloge: () => heure,
+      );
+      gps.frequenceSuivie = null;
+      await d2.ouvrir();
+      expect(gps.frequenceSuivie, const Duration(minutes: 60)); // suivi repris
+      expect(
+        d2.conduite.prochaineAutomatique,
+        heure.add(const Duration(hours: 1)),
+      );
+
+      serveur.coupe = false;
+      await d2.file.relancer();
+      expect(evenements().map((e) => e['numeroOrdre']), [2, 3, 4]);
+      expect(await d2.envois.enAttente(), 0);
+    });
+
+    test('clôture automatique : envois refusés, positions automatiques arrêtées, navigateur prévenu (RG-ECO-12)', () async {
+      final d = await connecte();
+      await demarrer(d);
+      serveur.refusEvenements = (
+        409,
+        'navigation_cloturee',
+        'Navigation clôturée : quota épuisé depuis 24 heures.',
+      );
+      heure = heure.add(const Duration(hours: 1));
+      await d.conduite.verifierPositionAutomatique();
+      await d.file.attendrePasse();
+      await d.actualiser();
+      expect(
+        d.conduite.enCours?.refus,
+        'Navigation clôturée : quota épuisé depuis 24 heures.',
+      );
+      expect(d.conduite.suiviActif, isFalse);
+      heure = heure.add(const Duration(hours: 1));
+      await d.conduite.verifierPositionAutomatique();
+      expect(d.conduite.enCours!.journal.length, 2);
     });
   });
 }

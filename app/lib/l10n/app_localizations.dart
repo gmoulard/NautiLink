@@ -1446,6 +1446,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Refusé par le serveur : {message}'**
   String voyageRefused(String message);
+
+  /// No description provided for @nextAutoPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaine position automatique : {time}'**
+  String nextAutoPosition(String time);
 }
 
 class _AppLocalizationsDelegate

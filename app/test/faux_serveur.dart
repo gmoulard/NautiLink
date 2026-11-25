@@ -305,6 +305,7 @@ class FauxServeurNautiLink {
     StockageSession session,
     BaseLocale base, {
     SourcePosition? positions,
+    DateTime Function()? horloge,
   }) {
     final api = ClientApi(
       base: 'https://essai.example/nautilink/api',
@@ -318,6 +319,8 @@ class FauxServeurNautiLink {
       plateforme: 'android',
       nomAppareil: 'Essai',
       positions: positions,
+      horloge: horloge,
+      pasVerification: null,
       file: FileAttente(
         base: base,
         api: api,

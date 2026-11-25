@@ -43,6 +43,13 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : à l'ouverture de l'application, à la connexion, au retour de l'application au premier plan, et quand le navigateur tire l'accueil ou la liste « Navigations enregistrées » vers le bas ; la file d'attente est relancée aux mêmes moments.
 - Appliqué en attendant dans l'application (`app/lib/main.dart`, `app/lib/screens/home.dart`).
 
+### <a id="q-86"></a>Q-86 — Position automatique sans réponse du GPS
+
+- Priorité : avant la version Android réelle (TODO-5.3).
+- Cas : les positions sont enregistrées à la fréquence de la navigation (RG-GPS-03) et le GPS n'est allumé que le temps d'une acquisition (RG-GPS-06). Rien ne dit combien de temps attendre le GPS, ni ce qui est enregistré quand il ne répond pas (sous un pont, téléphone au fond d'un sac) ; seul le SMS a sa règle (« GPS NON DISPONIBLE », RG-SMS-04).
+- Proposition (non validée) : le GPS est attendu 45 secondes au plus ; sans réponse, la position automatique est quand même enregistrée et envoyée, sans coordonnées, marquée « GPS non disponible » (`gpsDisponible` faux), et la suivante est attendue à la fréquence normale. Une position remise par le service de localisation du téléphone depuis moins de 2 minutes sert de position automatique sans nouvelle acquisition ; une position automatique peut partir jusqu'à 1 minute avant son heure.
+- Appliqué en attendant dans l'application (`app/lib/reel/conduite.dart`, `app/lib/reel/gps.dart`).
+
 ### <a id="q-87"></a>Q-87 — Démarrage refusé par le serveur, attente de sa réponse
 
 - Priorité : avant la version Android réelle (TODO-5.2).

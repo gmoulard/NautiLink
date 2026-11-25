@@ -797,4 +797,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String voyageRefused(String message) {
     return 'Refused by the server: $message';
   }
+
+  @override
+  String nextAutoPosition(String time) {
+    return 'Next automatic position: $time';
+  }
 }

@@ -24,6 +24,8 @@ class DepotReel extends Depot {
     this.nomAppareil,
     this.versionApplication = '1.0.0',
     SourcePosition? positions,
+    DateTime Function()? horloge,
+    Duration? pasVerification = const Duration(minutes: 1),
   }) : positions = positions ?? const PositionsIndisponibles() {
     this.file =
         file ??
@@ -35,6 +37,8 @@ class DepotReel extends Depot {
       positions: this.positions,
       appareilId: session.appareilId,
       origine: plateforme ?? 'android',
+      maintenant: horloge,
+      pasVerification: pasVerification,
     )..addListener(_notifier);
   }
 

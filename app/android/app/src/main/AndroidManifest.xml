@@ -5,6 +5,13 @@
          servent (RG-AND-02, étude des autorisations Android n° 1). -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- Positions automatiques écran éteint : service de premier plan de type
+         « location » (service de geolocator), avec sa notification permanente
+         et un verrou de réveil (étude des autorisations Android n° 3 et 4,
+         RG-AND-05). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <application
         android:label="${appLabel}"
         android:name="${applicationName}"

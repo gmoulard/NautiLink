@@ -803,4 +803,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String voyageRefused(String message) {
     return 'Refusé par le serveur : $message';
   }
+
+  @override
+  String nextAutoPosition(String time) {
+    return 'Prochaine position automatique : $time';
+  }
 }

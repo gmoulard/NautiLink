@@ -172,8 +172,9 @@ class RefusDemarrage implements Exception {
 }
 
 /// Conduite de la navigation sur le téléphone, en mode réel : démarrage
-/// (TODO-5.2), journal tenu sur le téléphone, envois par la file d'attente
-/// (RG-COM-05) et état gardé dans la base locale (RG-NAV-12).
+/// (TODO-5.2), positions automatiques (TODO-5.3), journal tenu sur le
+/// téléphone, envois par la file d'attente (RG-COM-05) et état gardé dans
+/// la base locale (RG-NAV-12).
 class ConduiteNavigation extends ChangeNotifier {
   ConduiteNavigation({
     required this.file,
@@ -183,6 +184,7 @@ class ConduiteNavigation extends ChangeNotifier {
     this.origine = 'android',
     DateTime Function()? maintenant,
     this.attenteEnvoi = const Duration(seconds: 20),
+    this.pasVerification = const Duration(minutes: 1),
   }) : _maintenant = maintenant ?? DateTime.now {
     _abonnementReussis = file.reussis.listen(_envoiReussi);
   }
@@ -200,11 +202,30 @@ class ConduiteNavigation extends ChangeNotifier {
   /// passé ce délai, l'envoi reste en file et part plus tard.
   final Duration attenteEnvoi;
 
+  /// Intervalle de la vérification des positions automatiques dues, en plus
+  /// des positions remises par le suivi ; vide : pas de minuterie (essais).
+  final Duration? pasVerification;
+
+  /// Avance tolérée sur l'heure d'une position automatique : le suivi du
+  /// téléphone remet ses positions à peu près à la fréquence demandée.
+  static const tolerance = Duration(minutes: 1);
+
+  /// Âge maximal d'une position remise par le suivi pour servir de position
+  /// automatique ; plus ancienne, une nouvelle acquisition est faite.
+  static const fraicheur = Duration(minutes: 2);
+
   static const _cle = 'navigation_locale';
 
   NavigationLocale? _nav;
   StreamSubscription<EnvoiReussi>? _abonnementReussis;
+  StreamSubscription<PositionGps>? _suivi;
+  Timer? _minuterie;
+  PositionGps? _derniereRecue;
+  bool _acquisition = false;
   bool _ferme = false;
+
+  /// Vrai pendant le suivi des positions automatiques.
+  bool get suiviActif => _suivi != null;
 
   /// Navigation en cours sur ce téléphone, s'il y en a une.
   NavigationLocale? get enCours => _nav;
@@ -225,6 +246,112 @@ class ConduiteNavigation extends ChangeNotifier {
   Future<void> charger() async {
     _nav = NavigationLocale.depuisJson((await base.lireCopie(_cle))?.valeur);
     _notifier();
+    // Les positions automatiques reprennent à la réouverture (RG-NAV-12).
+    if (_nav != null && _nav!.refus == null) _lancerAutomatiques();
+  }
+
+  // ------------------------------------------------ positions automatiques
+
+  /// Positions automatiques (RG-GPS-01 à RG-GPS-04, RG-NAV-11) : à la
+  /// fréquence de la navigation, une position est acquise et enregistrée sur
+  /// le téléphone, puis envoyée par la file d'attente, dans l'ordre
+  /// d'acquisition, que le serveur soit joignable ou non.
+  void _lancerAutomatiques() {
+    final n = _nav;
+    if (n == null || _suivi != null) return;
+    _suivi = positions.suivre(Duration(minutes: n.frequenceMinutes)).listen((
+      p,
+    ) {
+      _derniereRecue = p;
+      unawaited(verifierPositionAutomatique());
+    });
+    final pas = pasVerification;
+    if (pas != null) {
+      _minuterie = Timer.periodic(
+        pas,
+        (_) => unawaited(verifierPositionAutomatique()),
+      );
+    }
+  }
+
+  void _arreterAutomatiques() {
+    unawaited(_suivi?.cancel());
+    _suivi = null;
+    _minuterie?.cancel();
+    _minuterie = null;
+    _derniereRecue = null;
+  }
+
+  /// Heure de la prochaine position automatique.
+  DateTime? get prochaineAutomatique {
+    final n = _nav;
+    if (n == null) return null;
+    return (n.derniereAutomatique ?? n.debut).add(
+      Duration(minutes: n.frequenceMinutes),
+    );
+  }
+
+  /// Enregistre une position automatique si elle est due. Position remise
+  /// par le suivi si elle est récente, sinon acquisition ; sans réponse du
+  /// GPS, la position automatique est enregistrée « GPS non disponible »
+  /// (Q-86).
+  Future<void> verifierPositionAutomatique() async {
+    final n = _nav;
+    final due = prochaineAutomatique;
+    if (n == null || due == null || n.refus != null || _acquisition) return;
+    if (maintenant.isBefore(due.subtract(tolerance))) return;
+    _acquisition = true;
+    try {
+      var p = _derniereRecue;
+      if (p == null || maintenant.difference(p.heureAcquisition) > fraicheur) {
+        p = await positions.positionActuelle();
+      }
+      if (_nav?.id != n.id) return; // navigation terminée pendant l'acquisition
+      n.derniereAutomatique = maintenant;
+      _derniereRecue = null;
+      await enregistrer('position_automatique', position: p, gps: true);
+    } finally {
+      _acquisition = false;
+    }
+  }
+
+  /// Ajoute un événement au journal de la navigation en cours : enregistré
+  /// sur le téléphone et mis en file (RG-COM-05) ; rend sa clé dans la file.
+  Future<String?> enregistrer(
+    String type, {
+    PositionGps? position,
+    bool gps = false,
+    String? texte,
+    Map<String, Object?>? fichier,
+    int? dureeSecondes,
+    String? id,
+  }) async {
+    final n = _nav;
+    if (n == null) return null;
+    final heure = maintenant;
+    final e = await file.evenement(n.id, {
+      'id': id ?? file.nouvelId(),
+      'type': type,
+      'heureAcquisition': heureRfc3339(heure),
+      if (position != null) 'position': position.versJson(),
+      if (gps) 'gpsDisponible': position != null,
+      if (texte != null && texte.isNotEmpty) 'texte': texte,
+      'fichier': ?fichier,
+      'origine': origine,
+    });
+    n.journal.add(
+      EvenementLocal(
+        id: e['id'] as String,
+        type: type,
+        heure: heure,
+        position: position,
+        texte: texte,
+        dureeSecondes: dureeSecondes,
+      ),
+    );
+    await _garder();
+    _notifier();
+    return 'evenement:${e['id']}';
   }
 
   /// Chronomètre du dernier envoi : remis à zéro par tout envoi de cette
@@ -317,6 +444,7 @@ class ConduiteNavigation extends ChangeNotifier {
     _nav = n;
     await _garder();
     _notifier();
+    _lancerAutomatiques(); // RG-NAV-08 : activation des positions automatiques
     return n;
   }
 
@@ -328,10 +456,21 @@ class ConduiteNavigation extends ChangeNotifier {
   Future<void> verifierRefus() async {
     final n = _nav;
     if (n == null || n.refus != null) return;
-    final etat = await file.etat('demarrage:${n.id}');
-    if (!etat.refuse) return;
-    final m = etat.refus!.message;
-    n.refus = m.isEmpty ? etat.refus!.code : m;
+    var refus = (await file.etat('demarrage:${n.id}')).refus;
+    if (refus == null) {
+      // Clôture automatique : les envois acquis après sont refusés ;
+      // les positions automatiques s'arrêtent et le navigateur est prévenu
+      // (RG-ECO-12).
+      for (final e in await base.elementsMisDeCote()) {
+        if (e.navigationId == n.id && e.operation == 'evenement') {
+          final r = (await file.etat(e.cle)).refus;
+          if (r?.code == 'navigation_cloturee') refus = r;
+        }
+      }
+    }
+    if (refus == null) return;
+    n.refus = refus.message.isEmpty ? refus.code : refus.message;
+    _arreterAutomatiques();
     await _garder();
     _notifier();
   }
@@ -348,6 +487,7 @@ class ConduiteNavigation extends ChangeNotifier {
   @override
   void dispose() {
     _ferme = true;
+    _arreterAutomatiques();
     _abonnementReussis?.cancel();
     super.dispose();
   }

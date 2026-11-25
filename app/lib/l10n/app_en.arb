@@ -238,5 +238,6 @@
   "gpsUnavailable": "GPS unavailable",
   "noSosContact": "You have no SOS contact: nobody will receive your SOS text messages. Add one to your contacts on the web platform.",
   "noAlertablePerson": "No follower or SOS contact.",
-  "voyageRefused": "Refused by the server: {message}"
+  "voyageRefused": "Refused by the server: {message}",
+  "nextAutoPosition": "Next automatic position: {time}"
 }

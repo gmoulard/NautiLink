@@ -561,6 +561,17 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                           ),
                         ],
                       ),
+                      if (refus == null &&
+                          depot.conduite.prochaineAutomatique != null) ...[
+                        const SizedBox(height: 8),
+                        // RG-GPS-03 : positions automatiques à la fréquence choisie.
+                        Text(
+                          l.nextAutoPosition(
+                            fmtTime(depot.conduite.prochaineAutomatique!),
+                          ),
+                          key: const Key('next-auto-position'),
+                        ),
+                      ],
                       const SizedBox(height: 20),
                       Text(
                         l.logbook,

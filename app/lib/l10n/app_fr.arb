@@ -267,5 +267,7 @@
   "noSosContact": "Vous n'avez aucun contact SOS : personne ne recevra vos SMS SOS. Ajoutez-en un dans vos contacts sur la plateforme Web.",
   "noAlertablePerson": "Aucun contact suiveur ou contact SOS.",
   "voyageRefused": "Refusé par le serveur : {message}",
-  "@voyageRefused": {"placeholders": {"message": {"type": "String"}}}
+  "@voyageRefused": {"placeholders": {"message": {"type": "String"}}},
+  "nextAutoPosition": "Prochaine position automatique : {time}",
+  "@nextAutoPosition": {"placeholders": {"time": {"type": "String"}}}
 }
