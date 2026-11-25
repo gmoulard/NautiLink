@@ -434,9 +434,12 @@ paths:
       tags: [Contacts et partage]
       summary: 'Ajouter un contact (depuis le Web, l''application mobile ou l''écran de démarrage).'
       description: |
-        Les deux cases sont cochées par défaut. « Contact SOS » est refusé sans numéro de téléphone
-        (code `contact_sos_sans_telephone`). Cocher « Suiveur » crée une invitation avec le périmètre
-        donné (`POST /v1/invitations`). Identifiant tiré par le client pour un ajout hors connexion.
+        Les deux cases sont cochées par défaut ; sans numéro, « Contact SOS » est décoché, et refusé
+        s'il est demandé (code `contact_sos_sans_telephone`). Cocher « Suiveur » demande le périmètre
+        et crée une invitation : par e-mail si l'adresse est connue, sinon par téléphone (lien rendu
+        par `GET /v1/invitations`). Identifiant tiré par le client pour un ajout hors connexion : un
+        renvoi rend le contact existant (200), sans doublon. Sans nom, le contact prend son e-mail ou
+        son numéro comme nom.
       x-regles: [RG-CTC-01, RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-NAV-26]
       requestBody:
         required: true
@@ -444,6 +447,11 @@ paths:
           application/json:
             schema: {$ref: '#/components/schemas/ContactModifiable'}
       responses:
+        '200':
+          description: 'Déjà reçu (renvoi d''un ajout hors connexion) ; aucun doublon.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Contact'}
         '201':
           description: 'Contact créé.'
           content:
@@ -459,7 +467,9 @@ paths:
       description: |
         Décocher « Suiveur » retire le suiveur de toutes les navigations, immédiatement. Seuls les
         champs envoyés sont modifiés : la dernière modification reçue l'emporte, champ par champ,
-        sans refus si le contact a changé entre-temps sur un autre support (RG-COM-04).
+        sans refus si le contact a changé entre-temps sur un autre support (RG-COM-04). Retirer le
+        numéro décoche « Contact SOS ». Décocher « Suiveur » annule l'invitation en attente ; le
+        recocher envoie une nouvelle invitation.
       x-regles: [RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-PAR-06, RG-CTC-03, RG-COM-04]
       requestBody:
         required: true
@@ -499,7 +509,8 @@ paths:
         Par e-mail : le serveur envoie l'e-mail (copie au navigateur). Par téléphone : le serveur rend
         le lien ; sur Android l'application ouvre le SMS prérempli (copie au navigateur), sur le Web
         et l'iPhone le lien est affiché pour que le navigateur le transmette. L'invité est ajouté à
-        la liste de contacts, les deux cases cochées.
+        la liste de contacts, les deux cases cochées (« Contact SOS » seulement avec un numéro). Une
+        nouvelle invitation du même contact annule celle en attente.
       x-regles: [RG-PAR-02, RG-PAR-03, RG-PAR-04, RG-CTC-04, RG-NOT-02, RG-NOT-03, RG-SMS-08]
       requestBody:
         required: true
@@ -530,6 +541,10 @@ paths:
     post:
       tags: [Contacts et partage]
       summary: 'Accepter une invitation, une fois connecté (le lien mène à la connexion ou à la création d''un compte).'
+      description: |
+        Le lien d'invitation ouvre la page Web `/invitation?jeton=…`. Accès accordé ; e-mail « nouvel
+        accès » au suiveur, avec copie au navigateur. Rejouée par le même compte : 200, rien de plus.
+        Acceptée par un autre compte : 409 `invitation_deja_acceptee` ; sa propre invitation : 422.
       x-regles: [RG-PAR-01, RG-PAR-05, RG-NOT-02, RG-NOT-03]
       requestBody:
         required: true
@@ -547,6 +562,8 @@ paths:
             application/json:
               schema: {$ref: '#/components/schemas/Acces'}
         '404': {$ref: '#/components/responses/Introuvable'}
+        '409': {$ref: '#/components/responses/Conflit'}
+        '422': {$ref: '#/components/responses/Invalide'}
   /v1/acces:
     get:
       tags: [Contacts et partage]
@@ -592,7 +609,7 @@ paths:
               schema: {$ref: '#/components/schemas/Acces'}
     delete:
       tags: [Contacts et partage]
-      summary: 'Retirer le suiveur de toutes les navigations présentes et futures ; effet immédiat.'
+      summary: 'Retirer le suiveur de toutes les navigations présentes et futures ; effet immédiat ; son contact n''est plus « Suiveur » (RG-CTC-04).'
       x-regles: [RG-PAR-06]
       responses:
         '204': {description: Accès retiré.}

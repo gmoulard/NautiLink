@@ -1,0 +1,29 @@
+{{template "haut" .}}
+{{with .D}}
+<h1>{{.Saisie.Nom}}</h1>
+<div class="carte">
+<form method="post" action="{{$.Base}}/contacts/{{.Saisie.ID}}">
+  {{template "champs-contact" .Saisie}}
+  <button type="submit">Enregistrer</button>
+</form>
+</div>
+{{if .Invitations}}
+<div class="carte">
+<h2>Invitation</h2>
+{{range .Invitations}}{{if eq .Etat "envoyee"}}
+  {{if eq .Canal "email"}}<p>Invitation envoyée par e-mail à {{deref .Email}} le {{.CreeeLe.Format "02/01/2006"}}, pas encore acceptée.</p>
+  {{else}}<p>Transmettez ce lien d'invitation à {{deref .Telephone}}, par SMS ou autrement :</p>
+  <p><code class="lien-invitation">{{.Lien}}</code></p>{{end}}
+  <form class="enligne" method="post" action="{{$.Base}}/invitations/{{.ID}}/annulation"><button class="secondaire" type="submit">Annuler l'invitation</button></form>
+{{else if eq .Etat "acceptee"}}<p>Invitation acceptée.</p>{{end}}{{end}}
+</div>
+{{end}}
+<div class="carte">
+<form method="post" action="{{$.Base}}/contacts/{{.Saisie.ID}}/suppression">
+  <p>Supprimer ce contact lui retire aussi l'accès à vos navigations.</p>
+  <button class="danger" type="submit">Supprimer le contact</button>
+</form>
+</div>
+<p><a class="lien" href="{{$.Base}}/contacts">Retour aux contacts</a></p>
+{{end}}
+{{template "bas" .}}

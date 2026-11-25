@@ -158,12 +158,6 @@ func (a *app) bateauVisible(ctx context.Context, utilisateur, id string) (bateau
 	return b, nil
 }
 
-// suitLeNavigateur : vrai si suiveur a un accès de périmètre navigateur
-// donné par navigateur (RG-PAR-02). Les accès arrivent avec TODO-4.3.
-func (a *app) suitLeNavigateur(ctx context.Context, suiveur, navigateur string) bool {
-	return false
-}
-
 // bateauDuProprietaire : fiche modifiable par son seul propriétaire (RG-CPT-04).
 func (a *app) bateauDuProprietaire(ctx context.Context, utilisateur, id string) (bateauJSON, error) {
 	b, err := a.bateauVisible(ctx, utilisateur, id)

@@ -1,0 +1,20 @@
+{{define "champs-contact"}}
+  <div class="grille">
+  <div><label for="nom">Nom</label>
+  <input id="nom" name="nom" type="text" maxlength="100" value="{{.Nom}}"></div>
+  <div><label for="telephone">Téléphone</label>
+  <input id="telephone" name="telephone" type="tel" value="{{deref .Telephone}}"></div>
+  <div><label for="email">Adresse e-mail</label>
+  <input id="email" name="email" type="email" value="{{deref .Email}}"></div>
+  </div>
+  <p class="aide">Un numéro de téléphone ou une adresse e-mail au moins. Un contact SOS doit avoir un numéro.</p>
+  <label class="case"><input type="checkbox" name="suiveur" {{if .Suiveur}}checked{{end}}>
+    <span>Suiveur : suit vos navigations et reçoit vos SMS et e-mails (une invitation lui est envoyée)</span></label>
+  <label class="case"><input type="checkbox" name="contactSos" {{if .ContactSos}}checked{{end}}>
+    <span>Contact SOS : reçoit vos alertes SOS par SMS</span></label>
+  <label for="perimetre">Le suiveur voit</label>
+  <select id="perimetre" name="perimetre">
+    <option value="navigateur">Toutes mes navigations, présentes et futures</option>
+  </select>
+  <p class="aide">Le choix d'une seule navigation viendra avec les navigations.</p>
+{{end}}

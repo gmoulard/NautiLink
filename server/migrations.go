@@ -88,6 +88,56 @@ var migrations = []string{
 		modifie_le timestamptz NOT NULL DEFAULT now()
 	);
 	CREATE INDEX bateaux_proprietaire ON bateaux (proprietaire_id);`,
+
+	// 3 — TODO-4.3 : contacts (suppressions gardées pour la synchronisation),
+	// invitations, accès des suiveurs. « modification » : rang de la dernière
+	// modification, curseur « depuis » de la synchronisation (RG-CTC-03).
+	`CREATE SEQUENCE modifications;
+	CREATE TABLE contacts (
+		id uuid PRIMARY KEY,
+		navigateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		nom text NOT NULL,
+		telephone text,
+		email text,
+		suiveur boolean NOT NULL,
+		contact_sos boolean NOT NULL,
+		perimetre text,
+		navigation_id uuid,
+		utilisateur_id uuid REFERENCES utilisateurs ON DELETE SET NULL,
+		version integer NOT NULL DEFAULT 1,
+		modification bigint NOT NULL DEFAULT nextval('modifications'),
+		modifie_le timestamptz NOT NULL DEFAULT now(),
+		supprime_le timestamptz
+	);
+	CREATE INDEX contacts_navigateur ON contacts (navigateur_id, modification);
+	CREATE TABLE invitations (
+		id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+		navigateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		contact_id uuid REFERENCES contacts ON DELETE SET NULL,
+		canal text NOT NULL,
+		email text,
+		telephone text,
+		perimetre text NOT NULL,
+		navigation_id uuid,
+		jeton text NOT NULL UNIQUE,
+		etat text NOT NULL DEFAULT 'envoyee',
+		creee_le timestamptz NOT NULL DEFAULT now(),
+		acceptee_le timestamptz,
+		acceptee_par uuid REFERENCES utilisateurs ON DELETE SET NULL
+	);
+	CREATE INDEX invitations_contact ON invitations (contact_id);
+	CREATE TABLE acces (
+		id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+		navigateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		suiveur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		perimetre text NOT NULL,
+		navigation_id uuid,
+		contact_id uuid REFERENCES contacts ON DELETE SET NULL,
+		accorde_le timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE UNIQUE INDEX acces_unique ON acces (navigateur_id, suiveur_id,
+		coalesce(navigation_id, '00000000-0000-0000-0000-000000000000'));
+	CREATE INDEX acces_suiveur ON acces (suiveur_id);`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

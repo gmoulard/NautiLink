@@ -1,0 +1,18 @@
+{{template "haut" .}}
+<h1>Invitation</h1>
+{{with .D}}
+<div class="carte">
+  <p><strong>{{.Navigateur}}</strong> vous invite à suivre ses navigations sur NautiLink.</p>
+  {{if $.Connecte}}
+  <form method="post" action="{{$.Base}}/invitation">
+    <input type="hidden" name="jeton" value="{{.Jeton}}">
+    <button type="submit">Accepter l'invitation</button>
+  </form>
+  {{else}}
+  <p>Pour accepter, connectez-vous ou créez votre compte NautiLink : le suivi est réservé aux personnes qui ont un compte.</p>
+  <p><a class="bouton" href="{{$.Base}}/inscription?retour={{.Retour}}">Créer un compte</a></p>
+  <p>Déjà inscrit ? <a class="lien" href="{{$.Base}}/connexion?retour={{.Retour}}">Se connecter</a></p>
+  {{end}}
+</div>
+{{end}}
+{{template "bas" .}}
