@@ -10,28 +10,37 @@ name: Site GitHub Pages
 #
 # Paramètres :
 #   - lancement manuel (Actions → Site GitHub Pages → Run workflow) : cases
-#     « android » et « iphone » pour construire ou non chaque application ;
-#   - push sur main : les applications ne sont reconstruites que si app/ ou ce
-#     fichier ont changé.
-# Une application non reconstruite reprend le fichier déjà publié sur le site,
-# pour que les liens de telecharger.html restent valides.
+#     « website » (pages du site et démonstration Web), « android » et « iphone »,
+#     cochées par défaut, pour reconstruire ou non chaque livrable ;
+#   - push sur main : le site est toujours reconstruit, les applications Android
+#     et iPhone seulement si app/ ou ce fichier ont changé.
+# Un livrable non reconstruit reprend la version déjà publiée, avec son commit :
+#   - APK et IPA : téléchargés depuis le site publié ;
+#   - site et démonstration Web : artefact « site-source » de la dernière
+#     exécution réussie (conservé 90 jours ; relancer avec « website » cochée
+#     s'il a expiré).
 on:
   push:
     branches: [main]
     paths: ["site/**", "app/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
     inputs:
+      website:
+        description: "Reconstruire le site et la démonstration Web"
+        type: boolean
+        default: true
       android:
-        description: "Construire l'APK Android"
+        description: "Reconstruire l'APK Android"
         type: boolean
         default: true
       iphone:
-        description: "Construire l'IPA iPhone (macOS, plus long)"
+        description: "Reconstruire l'IPA iPhone (macOS, plus long)"
         type: boolean
         default: true
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -48,8 +57,10 @@ jobs:
   choix:
     runs-on: ubuntu-latest
     outputs:
+      website: ${{ steps.choix.outputs.website }}
       android: ${{ steps.choix.outputs.android }}
       iphone: ${{ steps.choix.outputs.iphone }}
+      flutter: ${{ steps.choix.outputs.flutter }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,21 +68,30 @@ jobs:
       - id: choix
         env:
           EVENEMENT: ${{ github.event_name }}
+          WEBSITE: ${{ inputs.website }}
           ANDROID: ${{ inputs.android }}
           IPHONE: ${{ inputs.iphone }}
           AVANT: ${{ github.event.before }}
         run: |
           if [ "$EVENEMENT" = workflow_dispatch ]; then
-            android="$ANDROID"; iphone="$IPHONE"
-          elif [ -z "$AVANT" ] || ! git cat-file -e "$AVANT^{commit}" 2>/dev/null \
-               || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|\.github/workflows/pages\.yml$)'; then
-            android=true; iphone=true
+            website="$WEBSITE"; android="$ANDROID"; iphone="$IPHONE"
           else
-            android=false; iphone=false
+            website=true
+            if [ -z "$AVANT" ] || ! git cat-file -e "$AVANT^{commit}" 2>/dev/null \
+               || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|\.github/workflows/pages\.yml$)'; then
+              android=true; iphone=true
+            else
+              android=false; iphone=false
+            fi
           fi
-          echo "android=$android" >> "$GITHUB_OUTPUT"
-          echo "iphone=$iphone" >> "$GITHUB_OUTPUT"
-          echo "Android : $android, iPhone : $iphone"
+          # Flutter sur Ubuntu (tests, Web, APK) seulement si le site ou l'APK est reconstruit.
+          flutter=false
+          if [ "$website" = true ] || [ "$android" = true ]; then flutter=true; fi
+          {
+            echo "website=$website"; echo "android=$android"
+            echo "iphone=$iphone"; echo "flutter=$flutter"
+          } >> "$GITHUB_OUTPUT"
+          echo "Site : $website, Android : $android, iPhone : $iphone"
 
   ios:
     needs: choix
@@ -103,6 +123,11 @@ jobs:
     # s'exécute aussi quand la construction iPhone a été sautée
     if: ${{ !cancelled() && needs.choix.result == 'success' && needs.ios.result != 'failure' }}
     runs-on: ubuntu-latest
+    env:
+      WEBSITE: ${{ needs.choix.outputs.website }}
+      ANDROID: ${{ needs.choix.outputs.android }}
+      IPHONE: ${{ needs.choix.outputs.iphone }}
+      COMMIT: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -111,17 +136,20 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: subosito/flutter-action@v2
+        if: needs.choix.outputs.flutter == 'true'
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - name: Tests
+        if: needs.choix.outputs.flutter == 'true'
         working-directory: app
         run: |
           flutter pub get
           flutter analyze
           flutter test
       - name: Démonstration Web
+        if: needs.choix.outputs.website == 'true'
         working-directory: app
         run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
       - name: APK Android de démonstration
@@ -133,18 +161,48 @@ jobs:
         with:
           name: ipa
           path: ipa
+      - name: Trouver le site déjà publié
+        id: precedent
+        if: needs.choix.outputs.website != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for id in $(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/pages.yml/runs?status=success&per_page=30" --jq '.workflow_runs[].id'); do
+            if gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id/artifacts" \
+                 --jq '.artifacts[] | select(.name == "site-source" and (.expired | not)) | .id' | grep -q .; then
+              echo "run=$id" >> "$GITHUB_OUTPUT"; echo "Site repris de l'exécution $id"; exit 0
+            fi
+          done
+          echo "::error::Aucun site publié à reprendre (artefact site-source expiré ou absent) : relancer avec la case « website » cochée"
+          exit 1
+      - uses: actions/download-artifact@v4
+        if: needs.choix.outputs.website != 'true'
+        with:
+          name: site-source
+          path: precedent
+          run-id: ${{ steps.precedent.outputs.run }}
+          github-token: ${{ github.token }}
       - id: pages
         uses: actions/configure-pages@v5
       - name: Assembler le site
         env:
-          ANDROID: ${{ needs.choix.outputs.android }}
-          IPHONE: ${{ needs.choix.outputs.iphone }}
           SITE: ${{ steps.pages.outputs.base_url }}
-          COMMIT: ${{ github.sha }}
         run: |
+          # source/ : pages du site non complétées, démonstration Web et commit
+          # du site ; publiée en artefact pour être reprise quand le site n'est
+          # pas reconstruit.
+          mkdir -p source
+          if [ "$WEBSITE" = true ]; then
+            cp -r site source/site
+            cp -r app/build/web source/web
+            echo "$COMMIT" > source/SITE_COMMIT
+          else
+            cp -r precedent/. source/
+          fi
+          site_commit=$(cat source/SITE_COMMIT)
           mkdir -p _site/downloads
-          cp -r site/. _site/
-          cp -r app/build/web _site/app
+          cp -r source/site/. _site/
+          cp -r source/web _site/app
           # COMMITS.txt : commit de construction de chaque application, repris
           # avec le fichier quand l'application n'est pas reconstruite.
           curl -fsSL "$SITE/downloads/COMMITS.txt" -o anciens-commits.txt || : > anciens-commits.txt
@@ -174,7 +232,7 @@ jobs:
           commit_de() { awk -v f="$1" '$1 == f { print $2 }' _site/downloads/COMMITS.txt; }
           apk=$(commit_de "$APK"); ipa=$(commit_de "$IPA")
           apk=${apk:-inconnu}; ipa=${ipa:-inconnu}
-          sed -i -e "s/@COMMIT_COURT@/${COMMIT::7}/g" -e "s/@COMMIT@/$COMMIT/g" \
+          sed -i -e "s/@COMMIT_COURT@/${site_commit::7}/g" -e "s/@COMMIT@/$site_commit/g" \
                  -e "s/@COMMIT_APK_COURT@/${apk::7}/g" -e "s/@COMMIT_APK@/$apk/g" \
                  -e "s/@COMMIT_IPA_COURT@/${ipa::7}/g" -e "s/@COMMIT_IPA@/$ipa/g" _site/*.html
           cat _site/downloads/COMMITS.txt
@@ -184,6 +242,12 @@ jobs:
           if [ ${#fichiers[@]} -gt 0 ]; then
             sha256sum "${fichiers[@]}" > SHA256SUMS.txt && cat SHA256SUMS.txt
           fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-source
+          path: source
+          include-hidden-files: true
+          retention-days: 90
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
