@@ -97,7 +97,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Fait (2026-11-24) : serveur Go dans `server/` (accueil, espace administrateur vide, `api/sante`, PostgreSQL par pgx, commande `mail-essai`, tests), image `ghcr.io/gmoulard/nautilink-serveur` construite par le workflow « Serveur », `server/compose.yaml` ; essayé sous Docker (arm64 et amd64 construits, base jointe puis arrêtée, renvoi vers `/nautilink/`). Reste : premier passage du workflow sur GitHub, puis installation sur le Pi une fois TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance faits.
 - [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
-  - Fait : 117 scénarios `TS-…`, les 105 règles citées, domaines SOS, ECO et PAR en tête. Reste : scénarios pour les règles tranchées ou ajoutées le 2026-11-24 après leur écriture (RG-NAV-16, RG-NAV-22, RG-JRN-04, RG-JRN-08, RG-SMS-03, RG-SMS-05, RG-SMS-07, RG-GPS-05, RG-SOS-16, RG-DON-02, RG-DON-03, RG-ADM-03, RG-IOS-06, RG-IOS-08, RG-SMS-08, RG-NOT-03, RG-CPT-06, RG-CPT-07, RG-NAV-23, RG-NAV-24, RG-ECO-10, et RG-NAV-10, RG-COM-03 modifiées) ; validation par l'utilisateur.
+  - Fait : 152 scénarios `TS-…`, les 137 règles citées (dont la section Android RG-AND, ajoutée le 2026-11-25), domaines SOS, ECO et PAR en tête. Reste : validation par l'utilisateur.
 
 ## 4. Étape 1 — Serveur
 

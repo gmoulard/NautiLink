@@ -27,6 +27,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-SOS-17** ([RG-SOS-11](../02-regles-metier.md#rg-sos-11)) — Étant donné un GPS indisponible et aucune position connue, quand un SOS part, alors le SMS indique que le GPS est indisponible et qu'aucune position n'est connue.
 - **TS-SOS-18** ([RG-SOS-12](../02-regles-metier.md#rg-sos-12)) — Étant donné un SOS envoyé à deux contacts SOS, dont un seul téléphone fournit l'accusé de réception, quand on consulte l'alerte, alors elle porte sa date et son heure, la position transmise et, par SMS, le statut « livraison confirmée » pour l'un et « accepté pour envoi » pour l'autre.
 - **TS-SOS-19** ([RG-SOS-13](../02-regles-metier.md#rg-sos-13)) — Étant donné une alerte enregistrée, quand le navigateur ouvre l'historique des alertes sur l'application mobile puis sur le Web, alors l'alerte y figure dans les deux cas.
+- **TS-SOS-20** ([RG-SOS-16](../02-regles-metier.md#rg-sos-16)) — Étant donné un téléphone Android disposant de la permission d'envoi de SMS, quand le navigateur confirme un SOS, alors les SMS SOS partent sans ouvrir l'application SMS du téléphone et sans action supplémentaire du navigateur.
 
 ## 2. Modèle économique (RG-ECO)
 
@@ -40,6 +41,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-ECO-08** ([RG-ECO-07](../02-regles-metier.md#rg-eco-07)) — Étant donné un abonnement souscrit sur Google Play, quand le navigateur se connecte sur le Web puis sur un iPhone, alors le même état d'abonnement actif est affiché partout ; de même pour un abonnement souscrit sur le Web ou par achat intégré de l'App Store.
 - **TS-ECO-09** ([RG-ECO-08](../02-regles-metier.md#rg-eco-08)) — Étant donné un suiveur sans abonnement et au quota épuisé comme navigateur, quand il consulte les positions, traces, notes, notes vocales, photos, alertes SOS et journaux des navigations auxquelles il a accès, alors tout est consultable sans limite.
 - **TS-ECO-10** ([RG-ECO-09](../02-regles-metier.md#rg-eco-09)) — Étant donné un compte ayant consommé du quota, quand le navigateur ouvre l'application mobile puis le Web, alors chacun affiche le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement, avec les valeurs calculées par le serveur.
+- **TS-ECO-11** ([RG-ECO-10](../02-regles-metier.md#rg-eco-10)) — Étant donné l'écran d'accueil de l'application mobile, quand le navigateur touche « Version gratuite - abonnement », alors l'écran « Quota et abonnement » s'ouvre ; le lien de cet écran ouvre la page d'information sur l'abonnement du site de présentation.
 
 ## 3. Partage et suiveurs (RG-PAR)
 
@@ -62,6 +64,9 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-CPT-03** ([RG-CPT-03](../02-regles-metier.md#rg-cpt-03)) — Étant donné les interfaces au lancement, quand on les parcourt dans l'une ou l'autre langue (RG-PRM-03), alors la signature de marque reste en anglais.
 - **TS-CPT-04** ([RG-CPT-04](../02-regles-metier.md#rg-cpt-04)) — Étant donné un compte avec un bateau, quand il en ajoute un second, alors le compte possède les deux bateaux et chacun n'a que ce compte pour propriétaire.
 - **TS-CPT-05** ([RG-CPT-05](../02-regles-metier.md#rg-cpt-05)) — Étant donné un suiveur ayant accès aux navigations d'un bateau dont il n'est pas propriétaire, quand il tente de démarrer une navigation avec ce bateau, alors c'est impossible.
+- **TS-CPT-06** ([RG-CPT-06](../02-regles-metier.md#rg-cpt-06)) — Étant donné une personne qui crée un compte sur le Web ou sur l'application mobile, quand elle valide sans cocher la case d'acceptation de l'avertissement bêta, alors le compte n'est pas créé ; quand elle coche la case, alors le compte est créé avec la date d'acceptation et la version du texte enregistrées.
+- **TS-CPT-07** ([RG-CPT-07](../02-regles-metier.md#rg-cpt-07)) — Étant donné NautiLink en bêta, quand un utilisateur ouvre l'application mobile ou le Web, alors la mention « Version bêta » est visible et l'avertissement se consulte depuis l'assistance.
+- **TS-CPT-08** ([RG-CPT-07](../02-regles-metier.md#rg-cpt-07)) — Étant donné un compte ayant accepté une version de l'avertissement bêta, quand le texte change, alors à la connexion suivante il est de nouveau présenté et doit être accepté.
 
 ## 5. Bateaux (RG-BAT)
 
@@ -95,6 +100,15 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-NAV-21** ([RG-NAV-20](../02-regles-metier.md#rg-nav-20)) — Étant donné une navigation terminée, quand le navigateur la supprime depuis le Web, alors elle passe dans la corbeille, ses suiveurs n'y ont plus accès, elle reste restaurable 30 jours puis est supprimée définitivement.
 - **TS-NAV-22** ([RG-NAV-20](../02-regles-metier.md#rg-nav-20)) — Étant donné une navigation en cours, quand le navigateur tente de la supprimer, alors c'est refusé.
 - **TS-NAV-23** ([RG-NAV-21](../02-regles-metier.md#rg-nav-21)) — Étant donné une navigation de 3 h supprimée hier, quand on consulte le quota, alors ces 3 h restent décomptées.
+- **TS-NAV-24** ([RG-NAV-22](../02-regles-metier.md#rg-nav-22)) — Étant donné une navigation terminée, quand le navigateur modifie sur le Web ou l'application mobile son nom, sa destination, son bateau (parmi les siens) et ses heures, alors les modifications sont enregistrées ; le quota reste calculé sur les heures enregistrées par le téléphone, et les positions et événements hors de la nouvelle plage sont gardés mais masqués du tracé.
+- **TS-NAV-25** ([RG-NAV-23](../02-regles-metier.md#rg-nav-23)) — Étant donné un téléphone sur lequel aucune navigation n'a encore été démarrée, quand le navigateur démarre sa première navigation, alors les points 1 et 2 de l'avertissement bêta s'affichent et la navigation ne continue qu'après « J'ai compris » ; au démarrage suivant, ils ne s'affichent plus.
+- **TS-NAV-26** ([RG-NAV-24](../02-regles-metier.md#rg-nav-24)) — Étant donné une navigation en cours dont les positions restent à moins de 20 mètres pendant 2 heures, quand ce délai est atteint, alors l'application propose « Terminer la navigation » ou « Continuer » et ne termine jamais la navigation d'elle-même ; après « Continuer », la proposition revient après 2 nouvelles heures sans éloignement de plus de 20 mètres.
+- **TS-NAV-27** ([RG-NAV-25](../02-regles-metier.md#rg-nav-25)) — Étant donné un navigateur avec deux suiveurs et deux contacts SOS, quand il ouvre l'écran de démarrage, alors les quatre personnes sont listées et cochées ; s'il décoche un contact SOS et démarre, ce contact ne reçoit ni SMS ni alerte de cette navigation, SOS compris.
+- **TS-NAV-28** ([RG-NAV-25](../02-regles-metier.md#rg-nav-25)) — Étant donné l'écran de démarrage, quand le navigateur décoche tous les contacts SOS, alors l'avertissement de RG-SOS-14 s'affiche.
+- **TS-NAV-29** ([RG-NAV-26](../02-regles-metier.md#rg-nav-26)) — Étant donné l'écran de démarrage, quand le navigateur ajoute une personne par « Ajouter une personne », alors elle devient un contact permanent de sa liste et elle est cochée pour cette navigation.
+- **TS-NAV-30** ([RG-NAV-27](../02-regles-metier.md#rg-nav-27)) — Étant donné un navigateur qui démarre sa première navigation, quand l'écran de démarrage s'ouvre, alors le nombre de personnes à bord vaut 1 ; s'il saisit 3, alors 3 figure dans le SMS SOS et sur la page de la navigation, et la navigation suivante propose 3.
+- **TS-NAV-31** ([RG-NAV-28](../02-regles-metier.md#rg-nav-28)) — Étant donné une navigation démarrée puis terminée, quand le navigateur ouvre sa page sur la plateforme Web, alors la météo (vent, état de la mer, pression) relevée par le serveur au point de départ au début et au point d'arrivée à la fin est affichée.
+- **TS-NAV-32** ([RG-NAV-29](../02-regles-metier.md#rg-nav-29)) — Étant donné la page d'une navigation sur la plateforme Web, quand la carte s'affiche, alors elle montre le fond OpenStreetMap et le balisage d'OpenSeaMap, avec leurs mentions de source.
 
 ## 7. Journal de bord (RG-JRN)
 
@@ -105,6 +119,9 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-JRN-05** ([RG-JRN-05](../02-regles-metier.md#rg-jrn-05)) — Étant donné une navigation terminée, quand le navigateur ajoute depuis le Web un texte, une photo, une note vocale ou une information, alors l'ajout complémentaire apparaît dans le journal.
 - **TS-JRN-06** ([RG-JRN-06](../02-regles-metier.md#rg-jrn-06)) — Étant donné une note écrite envoyée depuis le téléphone, quand le navigateur la modifie depuis le Web puis supprime une photo depuis l'application mobile, alors les deux opérations sont acceptées.
 - **TS-JRN-07** ([RG-JRN-07](../02-regles-metier.md#rg-jrn-07)) — Étant donné un journal avec début, fin, positions et alerte SOS, quand le navigateur tente de modifier ou supprimer l'un de ces événements, alors c'est impossible ; ils ne disparaissent qu'avec la suppression de la navigation.
+- **TS-JRN-08** ([RG-JRN-08](../02-regles-metier.md#rg-jrn-08)) — Étant donné une navigation qui compte déjà 20 photos, ajouts depuis le Web compris, quand le navigateur veut en ajouter une autre, alors l'ajout est refusé ; une photo acceptée est enregistrée compressée à environ 1 Mo.
+- **TS-JRN-09** ([RG-JRN-09](../02-regles-metier.md#rg-jrn-09)) — Étant donné le journal d'une navigation sur la plateforme Web, quand on l'ouvre, alors les notes se lisent, les photos s'affichent en grand et les notes vocales s'écoutent.
+- **TS-JRN-10** ([RG-JRN-10](../02-regles-metier.md#rg-jrn-10)) — Étant donné une position proche d'un lieu connu, quand elle s'affiche dans le journal, alors le nom du lieu le plus proche l'accompagne ; sans lieu trouvé, ses coordonnées s'affichent.
 
 ## 8. GPS et positions (RG-GPS)
 
@@ -112,6 +129,8 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-GPS-02** ([RG-GPS-02](../02-regles-metier.md#rg-gps-02)) — Étant donné une position acquise, quand on la consulte, alors elle porte la date et l'heure de son acquisition.
 - **TS-GPS-03** ([RG-GPS-03](../02-regles-metier.md#rg-gps-03)) — Étant donné une fréquence de 5 minutes et un serveur injoignable pendant 30 minutes, quand ces 30 minutes passent, alors six positions sont enregistrées sur le téléphone.
 - **TS-GPS-04** ([RG-GPS-04](../02-regles-metier.md#rg-gps-04)) — Étant donné ces six positions non transmises, quand Internet revient, alors elles sont envoyées au serveur dans l'ordre d'acquisition.
+- **TS-GPS-05** ([RG-GPS-05](../02-regles-metier.md#rg-gps-05)) — Étant donné un téléphone Android sur lequel aucune navigation n'a encore été démarrée, quand le navigateur démarre la première, alors l'application demande l'exclusion de l'optimisation de la batterie et affiche les réglages propres à la marque du téléphone.
+- **TS-GPS-06** ([RG-GPS-06](../02-regles-metier.md#rg-gps-06)) — Étant donné une navigation en cours avec une fréquence de 15 minutes, quand une position automatique, une position manuelle ou un SOS est acquis, alors le GPS est allumé le temps de l'acquisition et éteint entre deux acquisitions.
 
 ## 9. Circuits de communication (RG-COM)
 
@@ -128,6 +147,8 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-SMS-05** ([RG-SMS-05](../02-regles-metier.md#rg-sms-05)) — Étant donné l'envoi d'une photo avec MMS prévu par les paramètres, quand le navigateur l'envoie, alors la photo part au serveur et un MMS la joint.
 - **TS-SMS-06** ([RG-SMS-06](../02-regles-metier.md#rg-sms-06)) — Étant donné une note vocale validée avec SMS prévu, quand elle part, alors le SMS contient la transcription texte, pas l'audio.
 - **TS-SMS-07** ([RG-SMS-07](../02-regles-metier.md#rg-sms-07)) — Étant donné un SMS de position automatique qui échoue, quand l'application le retente, alors elle fait 3 essais puis affiche l'échec avec « Réessayer » ; étant donné un SMS SOS qui échoue, alors il est retenté chaque minute jusqu'à la réussite ou l'arrêt par le navigateur ; un SMS prérempli n'est jamais retenté.
+- **TS-SMS-08** ([RG-SMS-08](../02-regles-metier.md#rg-sms-08)) — Étant donné un navigateur dont le profil porte un numéro de téléphone, quand un SMS SOS, un SMS de position automatique, un SMS ordinaire ou une invitation par SMS part, alors une copie part à ce numéro, automatiquement pour le SOS et les positions automatiques, préremplie sinon ; la copie ne se désactive pas.
+- **TS-SMS-09** ([RG-SMS-08](../02-regles-metier.md#rg-sms-08)) — Étant donné un navigateur sans numéro de téléphone dans son profil, quand un SMS part, alors aucune copie SMS ne part.
 
 ## 11. Contacts (RG-CTC)
 
@@ -148,6 +169,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 
 - **TS-NOT-01** ([RG-NOT-01](../02-regles-metier.md#rg-not-01)) — Étant donné un événement notifié, quand il survient, alors la notification est un e-mail envoyé par le serveur.
 - **TS-NOT-02** ([RG-NOT-02](../02-regles-metier.md#rg-not-02)) — Étant donné une invitation, un nouvel accès accordé ou une alerte SOS, quand l'événement survient, alors l'e-mail correspondant est envoyé ; un suiveur sur iPhone reçoit aussi une notification push pour l'alerte SOS (voir TS-IOS-07).
+- **TS-NOT-03** ([RG-NOT-03](../02-regles-metier.md#rg-not-03)) — Étant donné un navigateur, quand le serveur envoie un e-mail d'invitation, de nouvel accès, d'alerte SOS ou de début de navigation, alors une copie part à l'adresse du compte du navigateur, sans réglage pour la désactiver.
 
 ## 14. Administration (RG-ADM)
 
@@ -161,6 +183,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 
 - **TS-DON-01** ([RG-DON-01](../02-regles-metier.md#rg-don-01)) — Étant donné une navigation et son journal jamais supprimés, quand des années passent, alors ils sont toujours conservés ; seule une suppression par le navigateur (TS-NAV-21) ou par un administrateur (TS-ADM-03) les retire.
 - **TS-DON-02** ([RG-DON-02](../02-regles-metier.md#rg-don-02)) — Aucun scénario tant que [D-46](../07-decisions.md#d-46) n'est pas tranchée : la règle ne fixe encore aucun comportement.
+- **TS-DON-03** ([RG-DON-03](../02-regles-metier.md#rg-don-03)) — Étant donné le lancement, quand un utilisateur consulte le Web ou l'application mobile, alors les conditions d'utilisation et la politique de confidentialité relues par un juriste sont consultables ; une session inactive expire et demande une nouvelle connexion.
 
 ## 16. Application iPhone (RG-IOS)
 
@@ -172,3 +195,16 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-IOS-06** ([RG-IOS-05](../02-regles-metier.md#rg-ios-05)) — Étant donné un suiveur sur iPhone, quand il ouvre une navigation à laquelle il a accès, alors il voit les mêmes informations que sur le Web, carte comprise.
 - **TS-IOS-07** ([RG-IOS-06](../02-regles-metier.md#rg-ios-06)) — Étant donné un suiveur sur iPhone d'une navigation, quand une alerte SOS est émise, alors il reçoit une notification push en plus de l'e-mail.
 - **TS-IOS-08** ([RG-IOS-07](../02-regles-metier.md#rg-ios-07)) — Étant donné un abonnement souscrit par achat intégré de l'App Store, quand le navigateur se connecte sur Android et sur le Web, alors l'abonnement y est reconnu.
+
+## 17. Application Android (RG-AND)
+
+- **TS-AND-01** ([RG-AND-01](../02-regles-metier.md#rg-and-01)) — Étant donné un téléphone sous Android 8.0, quand on installe l'application, alors elle s'installe et fonctionne ; sous Android 7, elle ne s'installe pas.
+- **TS-AND-02** ([RG-AND-02](../02-regles-metier.md#rg-and-02)) — Étant donné une première ouverture de l'application, quand elle se lance, alors aucune autorisation n'est demandée ; chaque autorisation est demandée, après une explication, au moment où elle sert, et redemandée à chaque besoin si elle a été refusée.
+- **TS-AND-03** ([RG-AND-03](../02-regles-metier.md#rg-and-03)) — Étant donné la localisation précise refusée, quand le navigateur démarre une navigation, alors elle démarre sans positions, et l'autorisation est redemandée à chaque position automatique, position manuelle et SOS.
+- **TS-AND-04** ([RG-AND-04](../02-regles-metier.md#rg-and-04)) — Étant donné l'envoi de SMS refusé et Internet disponible, quand le navigateur confirme un SOS, alors l'alerte part par Internet et l'application SMS du téléphone s'ouvre avec le SMS SOS prérempli ; l'autorisation est redemandée au besoin suivant.
+- **TS-AND-05** ([RG-AND-05](../02-regles-metier.md#rg-and-05)) — Étant donné une navigation en cours écran éteint, quand l'heure d'une position automatique arrive, alors le téléphone est réveillé par la minuterie du service de localisation, sans alarme à l'heure exacte.
+- **TS-AND-06** ([RG-AND-06](../02-regles-metier.md#rg-and-06)) — Étant donné une navigation en cours, quand le navigateur touche « Photo », alors l'application appareil photo du téléphone s'ouvre, sans demande d'autorisation d'accès à l'appareil photo par NautiLink.
+- **TS-AND-07** ([RG-AND-07](../02-regles-metier.md#rg-and-07)) — Étant donné un téléphone à deux cartes SIM dont la seconde est choisie pour les SMS dans les réglages, quand un SMS part, alors il part par la seconde SIM.
+- **TS-AND-08** ([RG-AND-08](../02-regles-metier.md#rg-and-08)) — Étant donné un suiveur sur Android, quand une alerte SOS, un début ou une fin de navigation, une nouvelle photo ou une position en retard survient, alors il reçoit la notification push correspondante ; il peut désactiver chaque type sauf le SOS.
+- **TS-IOS-09** ([RG-IOS-08](../02-regles-metier.md#rg-ios-08)) — Étant donné un iPhone, quand le navigateur démarre sa première navigation, alors l'autorisation de localisation « Pendant l'utilisation » est demandée ; une fois l'application en arrière-plan ou l'écran verrouillé, les positions automatiques continuent.
+- **TS-IOS-10** ([RG-IOS-09](../02-regles-metier.md#rg-ios-09)) — Étant donné un iPhone sous la version minimale d'iOS fixée par défaut par Flutter 3.47.9, quand on installe l'application, alors elle s'installe et fonctionne ; sous une version antérieure, elle ne s'installe pas.
