@@ -79,7 +79,7 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 | `<chemin>/invitation?jeton=…` | Lien d'invitation : connexion ou création d'un compte, puis acceptation |
 | `<chemin>/api/v1/…` | API ([`openapi.yaml`](../docs/api/openapi.yaml)) |
 | `<chemin>/admin/` | Espace administrateur : `connexion`, `utilisateurs`, `bateaux`, `annonces`, `journal` (TODO-7.1) |
-| `<chemin>/api/sante` | État en JSON : `etat`, `version`, `base` (`ok`, `absente`, `erreur`) |
+| `<chemin>/api/sante` | État en JSON : `etat`, `version`, `build`, `commit`, `base` (`ok`, `absente`, `erreur`) |
 | `/` | Renvoi vers `<chemin>/` |
 
 ## Sécurité
@@ -90,8 +90,8 @@ Mots de passe hachés par argon2id ; jetons tirés au hasard, seule leur emprein
 
 - `nautilink-server sante` : vérifie le serveur local (healthcheck de l'image, qui n'a pas de shell) ;
 - `nautilink-server mail-essai <adresse>` : envoie un e-mail d'essai par le relais (sur le Pi : `docker exec <conteneur> /nautilink-server mail-essai …`) ;
-- `nautilink-server version`.
+- `nautilink-server version` : version, build et commit, par exemple `0.0.1 (build 12, commit 93b0f97)`.
 
 ## Image et déploiement
 
-L'image `ghcr.io/gmoulard/nautilink-serveur` (`arm64` et `amd64`) est construite par le workflow « Serveur » (`.github/workflows/serveur.yml`) à chaque push sur `main` qui touche `server/`. Sur le Pi, NautiLink s'installe par « Docker Compose libre » avec [`compose.yaml`](compose.yaml), dont l'en-tête dit quoi cocher dans le panneau « Hébergement » de la console pi-appliance (chemin `/nautilink/`, base PostgreSQL, envoi d'e-mails, domaine `nautilink.moulard.org`). Pour passer à une nouvelle version : dans la console, mettre à jour le service (nouvelle image `latest`), ou `docker compose pull && docker compose up -d` ; les migrations de la base se font au démarrage.
+L'image `ghcr.io/gmoulard/nautilink-serveur` (`arm64` et `amd64`) est construite par le workflow « Serveur » (`.github/workflows/serveur.yml`) à chaque push sur `main` qui touche `server/`. Sur le Pi, NautiLink s'installe par « Docker Compose libre » avec [`compose.yaml`](compose.yaml), dont l'en-tête dit quoi cocher dans le panneau « Hébergement » de la console pi-appliance (chemin `/nautilink/`, base PostgreSQL, envoi d'e-mails, domaine `nautilink.moulard.org`). L'image porte la version de [`VERSION`](VERSION) (étiquettes `:<version>`, `:<version>-<build>`, `:<sha court>`, `:latest`, voir [docs/09-versions.md](../docs/09-versions.md)) ; `compose.yaml` pose l'étiquette `:<version>`, pas `:latest` qui resterait en cache sur le Pi. Pour passer à une nouvelle version : changer `VERSION`, l'étiquette de `compose.yaml` et la matrice de compatibilité, puis sur le Pi `docker compose pull && docker compose up -d` ; les migrations de la base se font au démarrage. Le pied de page de chaque page donne la licence, le dépôt, la version, le build et le commit.

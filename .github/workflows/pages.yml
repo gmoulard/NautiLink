@@ -5,8 +5,10 @@ name: Site GitHub Pages
 #   site/downloads/nautilink-demo.apk          Android, signature de débogage
 #   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, non signé (AltStore, Sideloadly)
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
-#   site/downloads/COMMITS.txt                 commit de construction de chaque application
+#   site/downloads/COMMITS.txt                 « fichier commit version build » de chaque application
 # Aucune publication dans les stores (D-61).
+# Versions (D-110, docs/09-versions.md) : site/VERSION pour le site, version de
+# app/pubspec.yaml pour l'application ; build = numéro d'exécution de ce workflow.
 #
 # Paramètres :
 #   - lancement manuel (Actions → Site GitHub Pages → Run workflow) : cases
@@ -61,6 +63,7 @@ jobs:
       android: ${{ steps.choix.outputs.android }}
       iphone: ${{ steps.choix.outputs.iphone }}
       flutter: ${{ steps.choix.outputs.flutter }}
+      app_version: ${{ steps.choix.outputs.app_version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -87,10 +90,14 @@ jobs:
           # Flutter sur Ubuntu (tests, Web, APK) seulement si le site ou l'APK est reconstruit.
           flutter=false
           if [ "$website" = true ] || [ "$android" = true ]; then flutter=true; fi
+          # Version de l'application : partie avant « + » de app/pubspec.yaml.
+          app_version=$(sed -nE 's/^version: *([^+ ]+).*/\1/p' app/pubspec.yaml)
           {
             echo "website=$website"; echo "android=$android"
             echo "iphone=$iphone"; echo "flutter=$flutter"
+            echo "app_version=$app_version"
           } >> "$GITHUB_OUTPUT"
+          echo "Application V$app_version, build $GITHUB_RUN_NUMBER"
           echo "Site : $website, Android : $android, iPhone : $iphone"
 
   ios:
@@ -106,9 +113,11 @@ jobs:
           cache: true
       - name: Application iPhone non signée
         working-directory: app
+        env:
+          DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
         run: |
           flutter pub get
-          flutter build ios --release --no-codesign --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
+          flutter build ios --release --no-codesign $DEFINES
           mkdir -p ipa/Payload
           cp -R build/ios/iphoneos/Runner.app ipa/Payload/
           cd ipa && zip -qr "../$IPA" Payload
@@ -128,6 +137,9 @@ jobs:
       ANDROID: ${{ needs.choix.outputs.android }}
       IPHONE: ${{ needs.choix.outputs.iphone }}
       COMMIT: ${{ github.sha }}
+      BUILD: ${{ github.run_number }}
+      APP_VERSION: ${{ needs.choix.outputs.app_version }}
+      DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -151,11 +163,11 @@ jobs:
       - name: Démonstration Web
         if: needs.choix.outputs.website == 'true'
         working-directory: app
-        run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
+        run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES
       - name: APK Android de démonstration
         if: needs.choix.outputs.android == 'true'
         working-directory: app
-        run: flutter build apk --release --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
+        run: flutter build apk --release $DEFINES
       - uses: actions/download-artifact@v4
         if: needs.choix.outputs.iphone == 'true'
         with:
@@ -196,21 +208,27 @@ jobs:
             cp -r site source/site
             cp -r app/build/web source/web
             echo "$COMMIT" > source/SITE_COMMIT
+            tr -d '[:space:]' < site/VERSION > source/SITE_VERSION
+            echo "$BUILD" > source/SITE_BUILD
           else
             cp -r precedent/. source/
           fi
           site_commit=$(cat source/SITE_COMMIT)
+          # SITE_VERSION et SITE_BUILD manquent dans les artefacts d'avant D-110.
+          site_version=$(cat source/SITE_VERSION 2>/dev/null || echo inconnue)
+          site_build=$(cat source/SITE_BUILD 2>/dev/null || echo inconnu)
           mkdir -p _site/downloads
           cp -r source/site/. _site/
           cp -r source/web _site/app
-          # COMMITS.txt : commit de construction de chaque application, repris
-          # avec le fichier quand l'application n'est pas reconstruite.
+          # COMMITS.txt : « fichier commit version build » de chaque application,
+          # repris avec le fichier quand l'application n'est pas reconstruite
+          # (version et build absents des lignes d'avant D-110).
           curl -fsSL "$SITE/downloads/COMMITS.txt" -o anciens-commits.txt || : > anciens-commits.txt
           reprendre() {
             if curl -fsSL "$SITE/downloads/$1" -o "_site/downloads/$1"; then
               echo "$1 repris du site publié"
-              ancien=$(awk -v f="$1" '$1 == f { print $2 }' anciens-commits.txt)
-              echo "$1 ${ancien:-inconnu}" >> _site/downloads/COMMITS.txt
+              ancien=$(awk -v f="$1" '$1 == f { print ($2 ? $2 : "inconnu"), ($3 ? $3 : "inconnue"), ($4 ? $4 : "inconnu") }' anciens-commits.txt)
+              echo "$1 ${ancien:-inconnu inconnue inconnu}" >> _site/downloads/COMMITS.txt
             else
               rm -f "_site/downloads/$1"
               echo "::warning::$1 absent du site publié : lien de téléchargement cassé, relancer avec la case cochée"
@@ -218,23 +236,26 @@ jobs:
           }
           if [ "$ANDROID" = true ]; then
             cp app/build/app/outputs/flutter-apk/app-release.apk "_site/downloads/$APK"
-            echo "$APK $COMMIT" >> _site/downloads/COMMITS.txt
+            echo "$APK $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
           else
             reprendre "$APK"
           fi
           if [ "$IPHONE" = true ]; then
             cp "ipa/$IPA" _site/downloads/
-            echo "$IPA $COMMIT" >> _site/downloads/COMMITS.txt
+            echo "$IPA $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
           else
             reprendre "$IPA"
           fi
-          # Pieds de page : commit du site ; telecharger.html : commit de chaque application.
-          commit_de() { awk -v f="$1" '$1 == f { print $2 }' _site/downloads/COMMITS.txt; }
-          apk=$(commit_de "$APK"); ipa=$(commit_de "$IPA")
-          apk=${apk:-inconnu}; ipa=${ipa:-inconnu}
+          # Pieds de page : version, build et commit du site ; telecharger.html :
+          # ceux de chaque application.
+          champ() { v=$(awk -v f="$1" -v n="$2" '$1 == f { print $n }' _site/downloads/COMMITS.txt); echo "${v:-$3}"; }
+          apk=$(champ "$APK" 2 inconnu); ipa=$(champ "$IPA" 2 inconnu)
           sed -i -e "s/@COMMIT_COURT@/${site_commit::7}/g" -e "s/@COMMIT@/$site_commit/g" \
+                 -e "s/@VERSION@/$site_version/g" -e "s/@BUILD@/$site_build/g" \
                  -e "s/@COMMIT_APK_COURT@/${apk::7}/g" -e "s/@COMMIT_APK@/$apk/g" \
-                 -e "s/@COMMIT_IPA_COURT@/${ipa::7}/g" -e "s/@COMMIT_IPA@/$ipa/g" _site/*.html
+                 -e "s/@VERSION_APK@/$(champ "$APK" 3 inconnue)/g" -e "s/@BUILD_APK@/$(champ "$APK" 4 inconnu)/g" \
+                 -e "s/@COMMIT_IPA_COURT@/${ipa::7}/g" -e "s/@COMMIT_IPA@/$ipa/g" \
+                 -e "s/@VERSION_IPA@/$(champ "$IPA" 3 inconnue)/g" -e "s/@BUILD_IPA@/$(champ "$IPA" 4 inconnu)/g" _site/*.html
           cat _site/downloads/COMMITS.txt
           cd _site/downloads
           shopt -s nullglob

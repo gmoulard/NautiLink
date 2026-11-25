@@ -460,6 +460,8 @@ var demarreLe = time.Now()
 
 type supervisionJSON struct {
 	Version         string    `json:"version"`
+	Build           string    `json:"build"`
+	Commit          string    `json:"commit"`
 	Base            string    `json:"base"`
 	Schema          int       `json:"schema"`
 	DemarreLe       time.Time `json:"demarreLe"`
@@ -471,7 +473,7 @@ type supervisionJSON struct {
 // (RG-ADM-02) restent à faire : les journaux techniques ne sont pas encore
 // gardés en base.
 func (a *app) supervision(ctx context.Context) (supervisionJSON, error) {
-	s := supervisionJSON{Version: version, Base: a.b.etat(ctx), DemarreLe: demarreLe.UTC().Truncate(time.Second)}
+	s := supervisionJSON{Version: version, Build: build, Commit: commit, Base: a.b.etat(ctx), DemarreLe: demarreLe.UTC().Truncate(time.Second)}
 	err := a.b.pool.QueryRow(ctx, `SELECT (SELECT coalesce(max(version), 0) FROM schema_migrations),
 		(SELECT count(*) FROM sessions WHERE support = 'web'), (SELECT count(*) FROM sessions WHERE support = 'mobile')`).Scan(
 		&s.Schema, &s.SessionsWeb, &s.SessionsMobiles)

@@ -35,7 +35,8 @@ var fonctionsPages = template.FuncMap{
 
 // donneesPage : données communes à toutes les pages.
 type donneesPage struct {
-	Titre, Base, Version   string
+	Titre, Base            string
+	Version                construction
 	Avertissement          string
 	VersionAvertissement   string
 	Connecte, EmailVerifie bool
@@ -65,7 +66,7 @@ type pageWeb func(w http.ResponseWriter, r *http.Request, s *session, d *donnees
 // cookie de session prolongé.
 func (a *app) web(connecte bool, p pageWeb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		d := &donneesPage{Base: a.cfg.Chemin, Version: version, Avertissement: adresseAvertissement,
+		d := &donneesPage{Base: a.cfg.Chemin, Version: constructionServeur(), Avertissement: adresseAvertissement,
 			VersionAvertissement: versionAvertissement, Message: messages[r.URL.Query().Get("ok")], F: map[string]string{}}
 		if !a.b.prete() && (connecte || r.Method != http.MethodGet) {
 			w.WriteHeader(http.StatusServiceUnavailable)

@@ -32,7 +32,10 @@
 
 {{define "admin-bas"}}
 </main>
-<footer>NautiLink {{.Version}} · Espace administrateur · Chaque action est enregistrée dans le journal.</footer>
+<footer>
+<p>NautiLink · Espace administrateur · Chaque action est enregistrée dans le journal.</p>
+<p class="construction">Tous droits réservés · <a href="{{.Version.Depot}}">{{.Version.Depot}}</a> · V{{.Version.Numero}} · build {{.Version.Build}} · commit {{if .Version.Commit}}<a href="{{.Version.Depot}}/commit/{{.Version.Commit}}">{{.Version.CommitCourt}}</a>{{else}}local{{end}}</p>
+</footer>
 </body>
 </html>
 {{end}}
@@ -84,7 +87,7 @@
 <div class="carte">
 <h2>Supervision</h2>
 <dl class="chiffres">
-  <dt>Version du serveur</dt><dd>{{.Supervision.Version}}</dd>
+  <dt>Version du serveur</dt><dd>V{{.Supervision.Version}} · build {{.Supervision.Build}} · commit {{if .Supervision.Commit}}{{slice .Supervision.Commit 0 7}}{{else}}local{{end}}</dd>
   <dt>Base de données</dt><dd>{{.Supervision.Base}} (schéma {{.Supervision.Schema}})</dd>
   <dt>Démarré le</dt><dd>{{.Supervision.DemarreLe.Format "02/01/2006 15:04"}} UTC</dd>
   <dt>Sessions Web</dt><dd>{{.Supervision.SessionsWeb}}</dd>

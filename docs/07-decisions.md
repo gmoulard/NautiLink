@@ -209,3 +209,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-107"></a>D-107 | Téléphone déjà associé à un autre compte | Un autre utilisateur se connecte sur un téléphone déjà enregistré (ancienne question 50). | Le téléphone passe au nouveau compte ; il est retiré des bateaux du premier compte, dont le propriétaire est prévenu par e-mail. | RG-BAT-04 |
 | <a id="d-108"></a>D-108 | Google ou Apple avec l'adresse d'un compte existant | Connexion par un fournisseur avec l'adresse d'un compte inscrit par e-mail (ancienne question 51). | Rattachée au compte si le fournisseur garantit que l'adresse est vérifiée ; sinon refus. | RG-CPT-11 |
 | <a id="d-109"></a>D-109 | Paramètres d'un nouveau compte | Valeurs de départ de l'interrupteur SMS, des types, du MMS de photo et de la fréquence (ancienne question 52). | SMS activés, tous les types cochés, pas de MMS de photo, fréquence de 30 minutes. | RG-PRM-06 |
+
+## 2026-11-25 — Versions et licence (TODO-3.12)
+
+| Id | Sujet | Demande | Décision | Règles |
+|----|-------|---------|----------|--------|
+| <a id="d-110"></a>D-110 | Versions, licence et pied de page | Demande de l'utilisateur du 2026-11-25 : l'image `:latest` restée en cache sur le Pi a fait déployer une ancienne version du serveur ; rien n'identifiait la version d'un composant ; aucune licence. | Serveur, application et site versionnés chacun en `MAJEUR.MINEUR.CORRECTIF`, à partir de 0.0.1 ; build = numéro d'exécution du workflow ; matrice de compatibilité tenue à jour. Licence : tous droits réservés. Pied de page partout (site, plateforme Web, espace administrateur, tous les écrans de l'application) : « Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 · build n · commit abcdef0 ». Image du serveur posée par sa version dans `compose.yaml`. | [09-versions.md](09-versions.md), `LICENSE` |

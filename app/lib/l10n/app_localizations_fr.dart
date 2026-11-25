@@ -23,12 +23,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sponsorLogoLabel => 'Guidon de la SRT';
 
   @override
-  String buildCommit(String commit) {
-    return 'Commit $commit';
+  String get rightsReserved => 'Tous droits réservés';
+
+  @override
+  String buildInfo(String version, String build, String commit) {
+    return 'V$version · build $build · commit $commit';
   }
 
   @override
-  String get buildLocal => 'Version locale, sans commit';
+  String get buildLocal => 'version locale';
 
   @override
   String get sosButton => 'Envoyer un SOS';

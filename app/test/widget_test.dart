@@ -127,9 +127,14 @@ void main() {
     setPhone(tester);
     await openHome(tester);
     expect(find.text('Sponsorisée par la SRT'), findsOneWidget);
+    // Pied de page de tous les écrans (D-110) : licence, dépôt, version.
+    expect(find.text('Tous droits réservés · '), findsOneWidget);
+    expect(find.text('https://github.com/gmoulard/NautiLink'), findsOneWidget);
+    expect(find.text(' · version locale'), findsOneWidget);
     await tester.tap(find.text('Version gratuite - abonnement'));
     await tester.pumpAndSettle();
     expect(find.text('Quota et abonnement'), findsOneWidget);
+    expect(find.text('Tous droits réservés · '), findsOneWidget);
     await reveal(tester, find.text('En savoir plus sur l\'abonnement'));
     expect(find.text('En savoir plus sur l\'abonnement'), findsOneWidget);
   });

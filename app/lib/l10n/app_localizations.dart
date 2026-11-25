@@ -122,16 +122,22 @@ abstract class AppLocalizations {
   /// **'Guidon de la SRT'**
   String get sponsorLogoLabel;
 
-  /// No description provided for @buildCommit.
+  /// No description provided for @rightsReserved.
   ///
   /// In fr, this message translates to:
-  /// **'Commit {commit}'**
-  String buildCommit(String commit);
+  /// **'Tous droits réservés'**
+  String get rightsReserved;
+
+  /// No description provided for @buildInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'V{version} · build {build} · commit {commit}'**
+  String buildInfo(String version, String build, String commit);
 
   /// No description provided for @buildLocal.
   ///
   /// In fr, this message translates to:
-  /// **'Version locale, sans commit'**
+  /// **'version locale'**
   String get buildLocal;
 
   /// No description provided for @sosButton.

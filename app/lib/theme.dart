@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'l10n/app_localizations.dart';
 
@@ -185,11 +186,17 @@ class SosButton extends StatelessWidget {
   }
 }
 
-/// Commit dont l'application est construite, fourni par le workflow
-/// « Site GitHub Pages » (`--dart-define=NAUTILINK_COMMIT=<sha>`) ; vide en local.
+/// Version, build et commit de l'application (D-110, docs/09-versions.md),
+/// fournis par le workflow « Site GitHub Pages » (`--dart-define=NAUTILINK_VERSION=…`,
+/// `NAUTILINK_BUILD`, `NAUTILINK_COMMIT`) ; vides en construction locale.
+const String buildVersion = String.fromEnvironment('NAUTILINK_VERSION');
+const String buildNumber = String.fromEnvironment('NAUTILINK_BUILD');
 const String buildCommit = String.fromEnvironment('NAUTILINK_COMMIT');
 
-/// Mention du sponsor : la SRT et son guidon, puis le commit de construction.
+/// Dépôt affiché dans le pied de page.
+const String repositoryUrl = 'https://github.com/gmoulard/NautiLink';
+
+/// Mention du sponsor : la SRT et son guidon.
 class SponsorFooter extends StatelessWidget {
   const SponsorFooter({super.key});
 
@@ -208,39 +215,23 @@ class SponsorFooter extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/sponsor-srt.png',
-                height: 30,
-                semanticLabel: l.sponsorLogoLabel,
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  l.sponsorText,
-                  style: TextStyle(
-                    color: dark ? NlColors.inkDark : const Color(0xFF1E3296),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
+          Image.asset(
+            'assets/sponsor-srt.png',
+            height: 30,
+            semanticLabel: l.sponsorLogoLabel,
           ),
-          const SizedBox(height: 2),
-          Text(
-            buildCommit.isEmpty
-                ? l.buildLocal
-                : l.buildCommit(
-                    buildCommit.length > 7
-                        ? buildCommit.substring(0, 7)
-                        : buildCommit,
-                  ),
-            style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+          const SizedBox(width: 10),
+          Flexible(
+            child: Text(
+              l.sponsorText,
+              style: TextStyle(
+                color: dark ? NlColors.inkDark : const Color(0xFF1E3296),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ),
@@ -267,6 +258,81 @@ class DemoBanner extends StatelessWidget {
         ),
         textAlign: TextAlign.center,
       ),
+    );
+  }
+}
+
+/// Cadre de tous les écrans (`MaterialApp.builder`) : l'écran, puis le pied de
+/// page [BuildFooterLine] (D-110).
+class AppFrame extends StatelessWidget {
+  const AppFrame({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Expanded(
+          // Le pied de page prend la marge du bas (barre de gestes) à sa charge.
+          child: MediaQuery.removePadding(
+            context: context,
+            removeBottom: true,
+            child: child,
+          ),
+        ),
+        Material(
+          color: theme.scaffoldBackgroundColor,
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: BuildFooterLine(
+                style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// « Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 ·
+/// build 12 · commit 93b0f97 » ; le dépôt s'ouvre dans le navigateur.
+class BuildFooterLine extends StatelessWidget {
+  const BuildFooterLine({super.key, this.style});
+
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final linkStyle = (style ?? const TextStyle()).copyWith(
+      decoration: TextDecoration.underline,
+    );
+    final build = buildVersion.isEmpty
+        ? l.buildLocal
+        : l.buildInfo(
+            buildVersion,
+            buildNumber,
+            buildCommit.length > 7 ? buildCommit.substring(0, 7) : buildCommit,
+          );
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Text('${l.rightsReserved} · ', style: style),
+        InkWell(
+          onTap: () => launchUrl(
+            Uri.parse(repositoryUrl),
+            mode: LaunchMode.externalApplication,
+          ),
+          child: Text(repositoryUrl, style: linkStyle),
+        ),
+        Text(' · $build', style: style),
+      ],
     );
   }
 }

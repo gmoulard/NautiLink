@@ -1,0 +1,12 @@
+NautiLink
+Copyright (c) 2026 gmoulard (https://github.com/gmoulard). Tous droits réservés.
+
+Le code source, la documentation, les textes, le logo et les images de ce
+dépôt (https://github.com/gmoulard/NautiLink) sont la propriété de leur auteur.
+Ils sont visibles publiquement pour information seulement : aucune licence
+n'est accordée. Toute reproduction, modification, distribution ou utilisation,
+en tout ou en partie, demande l'autorisation écrite préalable de l'auteur.
+
+Les composants de tiers gardent leur propre licence (par exemple les polices
+sous licence OFL dans app/assets/fonts/ et les bibliothèques citées dans
+app/pubspec.yaml et server/go.mod).

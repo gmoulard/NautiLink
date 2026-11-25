@@ -15,6 +15,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Ce qui n'est pas décidé | `docs/06-questions-ouvertes.md` (`Q-nn`) |
 | Pourquoi une règle est ainsi | `docs/07-decisions.md` (`D-nn`) |
 | Architecture technique : serveur, base, fichiers, e-mails, push | `docs/08-architecture.md` |
+| Versions des composants, numéros de build, matrice de compatibilité, licence | `docs/09-versions.md`, `LICENSE` |
 | API du serveur (OpenAPI), formats de données, synchronisation | `docs/api/openapi.yaml`, `docs/08-architecture.md` §4 |
 | Scénarios de tests fonctionnels | `docs/tests/scenarios-fonctionnels.md` (`TS-<DOMAINE>-<nn>`) |
 | Ce qu'il reste à faire, dans quel ordre | `docs/TODO.md` (`TODO-x.y`), `docs/Todo-done.md` |
@@ -64,6 +65,10 @@ Dans un même commit :
 3. mettre à jour les autres documents qui citent le sujet (`grep -rn "Q-nn\|<mot-clé>" docs README.md`) ;
 4. supprimer la question de `06-questions-ouvertes.md` ;
 5. cocher l'action correspondante du TODO et la déplacer dans `docs/Todo-done.md`.
+
+## Versions
+
+Serveur (`server/VERSION`), application (`version:` de `app/pubspec.yaml`) et site (`site/VERSION`) ont chacun leur version (D-110). Changer une version : dans le même commit, ajouter une ligne à la matrice de `docs/09-versions.md` ; pour le serveur, changer aussi l'étiquette de l'image dans `server/compose.yaml`.
 
 ## Vérifications avant commit
 

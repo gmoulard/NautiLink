@@ -34,6 +34,8 @@ func (a *app) routeur() http.Handler {
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"etat":    "ok",
 			"version": version,
+			"build":   build,
+			"commit":  commit,
 			"base":    b.etat(r.Context()),
 		})
 	})

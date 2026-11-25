@@ -100,7 +100,9 @@ paths:
                 type: object
                 properties:
                   etat: {type: string, const: ok}
-                  version: {type: string}
+                  version: {type: string, description: 'Version du serveur (server/VERSION, D-110), par exemple 0.0.1.'}
+                  build: {type: string, description: 'Numéro d''exécution du workflow « Serveur » ; « local » hors image.'}
+                  commit: {type: string, description: 'SHA complet du commit construit ; vide hors image.'}
                   base: {type: string, enum: [ok, absente, erreur]}
 
   # ---------------------------------------------------------------- Comptes

@@ -11,13 +11,14 @@ import (
 // les mêmes fonctions que l'API d'administration et tracent chaque action.
 
 type donneesAdmin struct {
-	Titre, Base, Version string
-	Connecte             bool
-	Email                string
-	Message, Erreur      string
-	Recherche            string
-	F                    map[string]string
-	D                    any
+	Titre, Base     string
+	Version         construction
+	Connecte        bool
+	Email           string
+	Message, Erreur string
+	Recherche       string
+	F               map[string]string
+	D               any
 }
 
 var messagesAdmin = map[string]string{
@@ -34,7 +35,7 @@ type pageAdmin func(w http.ResponseWriter, r *http.Request, s *sessionAdmin, d *
 // d'un autre site, cookie prolongé.
 func (a *app) webAdmin(connecte bool, p pageAdmin) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		d := &donneesAdmin{Base: a.cfg.Chemin, Version: version, Message: messagesAdmin[r.URL.Query().Get("ok")],
+		d := &donneesAdmin{Base: a.cfg.Chemin, Version: constructionServeur(), Message: messagesAdmin[r.URL.Query().Get("ok")],
 			Recherche: r.URL.Query().Get("recherche"), F: map[string]string{}}
 		w.Header().Set("X-Robots-Tag", "noindex")
 		if !a.b.prete() {

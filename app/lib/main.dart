@@ -21,7 +21,10 @@ class AppScope extends InheritedNotifier<AppState> {
 
 /// Langue de l'interface : français par défaut (langue de référence, TODO-9.2).
 /// Essai d'une autre langue : `--dart-define=NAUTILINK_LANG=en`.
-const kDefaultLanguage = String.fromEnvironment('NAUTILINK_LANG', defaultValue: 'fr');
+const kDefaultLanguage = String.fromEnvironment(
+  'NAUTILINK_LANG',
+  defaultValue: 'fr',
+);
 
 class NautiLinkApp extends StatefulWidget {
   const NautiLinkApp({super.key, this.locale = const Locale(kDefaultLanguage)});
@@ -46,6 +49,8 @@ class _NautiLinkAppState extends State<NautiLinkApp> {
         debugShowCheckedModeBanner: false,
         theme: nlTheme(Brightness.light),
         darkTheme: nlTheme(Brightness.dark),
+        // Pied de page de tous les écrans : licence, dépôt, version (D-110).
+        builder: (context, child) => AppFrame(child: child!),
         home: const _Root(),
       ),
     );

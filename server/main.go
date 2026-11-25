@@ -22,9 +22,6 @@ import (
 	"time"
 )
 
-// version est posée à la construction (-ldflags "-X main.version=...").
-var version = "dev"
-
 func main() {
 	cfg := configDepuisEnv()
 	args := os.Args[1:]
@@ -36,7 +33,7 @@ func main() {
 	}
 	switch args[0] {
 	case "version":
-		fmt.Println(version)
+		fmt.Println(constructionServeur())
 	case "sante":
 		os.Exit(sante(cfg))
 	case "mail-essai":
@@ -76,7 +73,7 @@ func servir(cfg config) error {
 		defer annuler()
 		_ = srv.Shutdown(arret)
 	}()
-	log.Printf("NautiLink %s à l'écoute sur %s, chemin %q", version, cfg.Adresse, cfg.Chemin+"/")
+	log.Printf("NautiLink %s à l'écoute sur %s, chemin %q", constructionServeur(), cfg.Adresse, cfg.Chemin+"/")
 	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

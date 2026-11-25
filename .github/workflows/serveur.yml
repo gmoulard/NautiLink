@@ -1,8 +1,11 @@
 name: Serveur
 
 # Teste le serveur Go (server/) et publie son image arm64 + amd64 sur
-# ghcr.io/gmoulard/nautilink-serveur (D-62, TODO-3.7) :
-#   :latest, :<sha court>   à chaque push sur main qui touche server/
+# ghcr.io/gmoulard/nautilink-serveur (D-62, TODO-3.7) à chaque push sur main
+# qui touche server/, avec la version de server/VERSION (D-110) :
+#   :<version>-<build>   immuable, celle à poser dans compose.yaml
+#   :<version>           dernière construction de cette version
+#   :<sha court>, :latest
 # Les pull requests sont seulement testées.
 on:
   push:
@@ -71,16 +74,25 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - id: sha
-        run: echo "court=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - id: v
+        run: |
+          version=$(tr -d '[:space:]' < server/VERSION)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "court=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "Serveur V$version, build $GITHUB_RUN_NUMBER, commit ${GITHUB_SHA::7}"
       - uses: docker/build-push-action@v6
         with:
           context: server
           platforms: linux/arm64,linux/amd64
           push: true
-          build-args: VERSION=${{ steps.sha.outputs.court }}
+          build-args: |
+            VERSION=${{ steps.v.outputs.version }}
+            BUILD=${{ github.run_number }}
+            COMMIT=${{ github.sha }}
           tags: |
             ghcr.io/gmoulard/nautilink-serveur:latest
-            ghcr.io/gmoulard/nautilink-serveur:${{ steps.sha.outputs.court }}
+            ghcr.io/gmoulard/nautilink-serveur:${{ steps.v.outputs.court }}
+            ghcr.io/gmoulard/nautilink-serveur:${{ steps.v.outputs.version }}
+            ghcr.io/gmoulard/nautilink-serveur:${{ steps.v.outputs.version }}-${{ github.run_number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
