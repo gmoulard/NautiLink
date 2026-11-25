@@ -111,7 +111,7 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 32),
         SosButton(
-          onPressed: () => demo ? confirmSos(context) : showNotYet(context),
+          onPressed: () => demo ? confirmSos(context) : confirmSosReel(context),
         ),
         const SizedBox(height: 8),
         Text(

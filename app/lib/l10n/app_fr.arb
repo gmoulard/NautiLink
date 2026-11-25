@@ -272,5 +272,19 @@
   "@nextAutoPosition": {"placeholders": {"time": {"type": "String"}}},
   "sendRefused": "Envoi refusé",
   "micRefused": "Accès au micro refusé : la note vocale ne peut pas être enregistrée.",
-  "recordingHintReal": "1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription."
+  "recordingHintReal": "1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription.",
+  "sosReelNoBoat": "Aucun bateau dans votre compte : NautiLink ne peut pas envoyer l'alerte. Alertez les secours : canal 16 de la VHF ou 196.",
+  "sosReelChooseBoat": "Bateau en détresse",
+  "sosReelSearching": "Recherche de la position…",
+  "sosReelSending": "Envoi de l'alerte au serveur…",
+  "sosReelServerReceived": "Serveur : alerte reçue, e-mails envoyés aux suiveurs et aux contacts SOS",
+  "sosReelServerQueued": "Serveur : alerte gardée sur le téléphone, envoyée en priorité au retour de la connexion",
+  "sosReelSmsOpened": "SMS SOS prérempli ouvert dans l'application SMS : appuyez sur « Envoyer ».",
+  "sosReelSmsFailed": "L'application SMS n'a pas pu s'ouvrir : aucun SMS SOS n'est parti.",
+  "sosReelSmsNoContact": "Aucun contact SOS avec un numéro : pas de SMS SOS.",
+  "sosReelSmsLastKnown": "Dernière position connue, pas nécessairement la position actuelle : {position} le {date}.",
+  "@sosReelSmsLastKnown": {"placeholders": {"position": {"type": "String"}, "date": {"type": "String"}}},
+  "sosReelSmsNoPosition": "GPS indisponible : aucune position connue.",
+  "sosReelSailboat": "voilier",
+  "sosReelMotorboat": "bateau à moteur"
 }

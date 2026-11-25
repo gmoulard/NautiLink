@@ -813,4 +813,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recordingHintReal =>
       '1 minute at most, stops automatically. Your voice is sent as is, without transcription.';
+
+  @override
+  String get sosReelNoBoat =>
+      'No boat in your account: NautiLink cannot send the alert. Alert the rescue services: VHF channel 16 or 196.';
+
+  @override
+  String get sosReelChooseBoat => 'Boat in distress';
+
+  @override
+  String get sosReelSearching => 'Looking for the position…';
+
+  @override
+  String get sosReelSending => 'Sending the alert to the server…';
+
+  @override
+  String get sosReelServerReceived =>
+      'Server: alert received, e-mails sent to followers and SOS contacts';
+
+  @override
+  String get sosReelServerQueued =>
+      'Server: alert kept on the phone, sent first when the connection is back';
+
+  @override
+  String get sosReelSmsOpened =>
+      'Pre-filled SOS text message opened in the messaging app: tap \"Send\".';
+
+  @override
+  String get sosReelSmsFailed =>
+      'The messaging app could not open: no SOS text message was sent.';
+
+  @override
+  String get sosReelSmsNoContact =>
+      'No SOS contact with a number: no SOS text message.';
+
+  @override
+  String sosReelSmsLastKnown(String position, String date) {
+    return 'Last known position, not necessarily the current one: $position on $date.';
+  }
+
+  @override
+  String get sosReelSmsNoPosition => 'GPS unavailable: no known position.';
+
+  @override
+  String get sosReelSailboat => 'sailboat';
+
+  @override
+  String get sosReelMotorboat => 'motorboat';
 }

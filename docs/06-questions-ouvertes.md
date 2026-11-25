@@ -43,26 +43,33 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : à l'ouverture de l'application, à la connexion, au retour de l'application au premier plan, et quand le navigateur tire l'accueil ou la liste « Navigations enregistrées » vers le bas ; la file d'attente est relancée aux mêmes moments.
 - Appliqué en attendant dans l'application (`app/lib/main.dart`, `app/lib/screens/home.dart`).
 
-### <a id="q-86"></a>Q-86 — Position automatique sans réponse du GPS
+### <a id="q-89"></a>Q-89 — Position automatique sans réponse du GPS
 
 - Priorité : avant la version Android réelle (TODO-5.3).
 - Cas : les positions sont enregistrées à la fréquence de la navigation (RG-GPS-03) et le GPS n'est allumé que le temps d'une acquisition (RG-GPS-06). Rien ne dit combien de temps attendre le GPS, ni ce qui est enregistré quand il ne répond pas (sous un pont, téléphone au fond d'un sac) ; seul le SMS a sa règle (« GPS NON DISPONIBLE », RG-SMS-04).
 - Proposition (non validée) : le GPS est attendu 45 secondes au plus ; sans réponse, la position automatique est quand même enregistrée et envoyée, sans coordonnées, marquée « GPS non disponible » (`gpsDisponible` faux), et la suivante est attendue à la fréquence normale. Une position remise par le service de localisation du téléphone depuis moins de 2 minutes sert de position automatique sans nouvelle acquisition ; une position automatique peut partir jusqu'à 1 minute avant son heure.
 - Appliqué en attendant dans l'application (`app/lib/reel/conduite.dart`, `app/lib/reel/gps.dart`).
 
-### <a id="q-87"></a>Q-87 — Démarrage refusé par le serveur, attente de sa réponse
+### <a id="q-90"></a>Q-90 — Démarrage refusé par le serveur, attente de sa réponse
 
 - Priorité : avant la version Android réelle (TODO-5.2).
 - Cas : le démarrage part par la file d'attente (RG-COM-05, RG-COM-06), mais le serveur peut le refuser (quota épuisé, adresse non confirmée RG-CPT-09, pas propriétaire, téléphone non associé, navigation déjà en cours). Rien ne dit combien de temps l'application attend la réponse avant d'ouvrir l'écran de navigation, ni ce qui se passe quand un démarrage fait hors connexion est refusé à sa réception.
 - Proposition (non validée) : avec Internet, l'application attend la réponse du serveur 20 secondes au plus ; un refus affiche le message du serveur (« Démarrage refusé ») et rien ne démarre ; sans réponse, la navigation démarre sur le téléphone. Un démarrage refusé plus tard, à sa réception, laisse la navigation sur le téléphone avec, sur l'écran de navigation, « Refusé par le serveur : <message> » ; le navigateur la termine lui-même ; les positions et notes déjà enregistrées restent mises de côté sur le téléphone.
 - Appliqué en attendant dans l'application (`app/lib/reel/conduite.dart`).
 
-### <a id="q-88"></a>Q-88 — Bateau proposé au démarrage quand le téléphone n'en a pas
+### <a id="q-91"></a>Q-91 — Bateau proposé au démarrage quand le téléphone n'en a pas
 
 - Priorité : avant la version Android réelle (TODO-5.2, TODO-5.5).
 - Cas : au démarrage, le navigateur choisit le bateau, sans choix si le téléphone n'est associé qu'à un seul (RG-NAV-02) ; le SOS depuis l'accueil est rattaché au bateau du téléphone (RG-SOS-15). Rien ne dit quels bateaux proposer quand le téléphone n'est associé à aucun bateau (bateaux tous associés à un autre téléphone, Q-81), ni quoi faire quand le compte n'a aucun bateau.
 - Proposition (non validée) : le choix porte sur les bateaux associés à ce téléphone ; s'il n'y en a aucun, sur tous les bateaux du compte, et le bateau choisi passe à ce téléphone au démarrage (Q-81). Sans bateau dans le compte, « Démarrer navigation » affiche « Aucun bateau dans votre compte : créez d'abord la fiche de votre bateau sur la plateforme Web (« Bateaux »). ».
 - Appliqué en attendant dans l'application (`app/lib/reel/depot_reel.dart`, `app/lib/screens/navigation_reel.dart`).
+
+### <a id="q-92"></a>Q-92 — SOS : attente du GPS, choix du bateau, SMS sans envoi automatique
+
+- Priorité : avant la version Android réelle (TODO-5.5).
+- Cas : après confirmation, la position est acquise, puis les SMS et l'alerte partent « sans qu'une étape en bloque une autre » (RG-SOS-04) ; rien ne dit combien de temps attendre le GPS avant de passer à la dernière position connue (RG-SOS-10), à quel moment choisir le bateau d'un SOS depuis l'accueil quand le téléphone en a plusieurs (RG-SOS-15), quel nombre de personnes à bord mettre hors navigation (RG-SOS-07), ni ce que fait l'application tant que l'envoi automatique des SMS SOS (RG-SOS-16) n'est pas réalisé ou que la permission manque, alors qu'elle ne peut pas être demandée (Q-12).
+- Proposition (non validée) : le GPS est attendu 20 secondes au plus, puis la dernière position connue (GPS ou journal de la navigation) est prise ; le choix du bateau vient avant la boîte de confirmation ; hors navigation, le nombre de personnes à bord est celui de la navigation précédente ; un SOS depuis l'accueil pendant une navigation du téléphone est rattaché à cette navigation ; compte sans bateau : « Aucun bateau dans votre compte : NautiLink ne peut pas envoyer l'alerte. Alertez les secours : canal 16 de la VHF ou 196. ». Sans envoi automatique, l'application ouvre le SMS SOS prérempli dans l'application SMS du téléphone (comportement de RG-AND-04), adressé aux contacts SOS cochés ayant un numéro, et l'écran de résultat le dit ; l'alerte part au serveur en même temps.
+- Appliqué en attendant dans l'application (`app/lib/reel/conduite.dart`, `app/lib/screens/navigation_reel.dart`).
 
 ## 2. Études techniques
 

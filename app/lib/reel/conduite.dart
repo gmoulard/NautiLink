@@ -90,7 +90,7 @@ class NavigationLocale {
   DateTime? dernierEnvoi;
 
   /// Message du serveur qui a refusé cette navigation ou ses envois
-  /// (démarrage refusé après coup, clôture automatique : Q-87, RG-ECO-12).
+  /// (démarrage refusé après coup, clôture automatique : Q-90, RG-ECO-12).
   String? refus;
 
   Map<String, Object?> versJson() => {
@@ -169,6 +169,24 @@ class RefusDemarrage implements Exception {
 
   @override
   String toString() => 'RefusDemarrage(${erreur ?? 'quota'})';
+}
+
+/// Nature de la position transmise avec une alerte SOS (RG-SOS-09 à RG-SOS-11).
+enum NaturePosition { actuelle, derniereConnue, aucune }
+
+/// Alerte SOS envoyée (TODO-5.5) : position transmise, sa nature, et état
+/// de l'envoi au serveur.
+class AlerteEnvoyee {
+  const AlerteEnvoyee({
+    required this.id,
+    required this.nature,
+    required this.etat,
+    this.position,
+  });
+  final String id;
+  final PositionGps? position;
+  final NaturePosition nature;
+  final EtatEnvoi etat;
 }
 
 /// Conduite de la navigation sur le téléphone, en mode réel : démarrage
@@ -294,7 +312,7 @@ class ConduiteNavigation extends ChangeNotifier {
   /// Enregistre une position automatique si elle est due. Position remise
   /// par le suivi si elle est récente, sinon acquisition ; sans réponse du
   /// GPS, la position automatique est enregistrée « GPS non disponible »
-  /// (Q-86).
+  /// (Q-89).
   Future<void> verifierPositionAutomatique() async {
     final n = _nav;
     final due = prochaineAutomatique;
@@ -512,11 +530,98 @@ class ConduiteNavigation extends ChangeNotifier {
     return _etat(cle);
   }
 
+  // ------------------------------------------------ alerte SOS
+
+  /// Attente maximale du GPS pour une alerte SOS, avant de prendre la
+  /// dernière position connue (Q-92).
+  static const attenteGpsSos = Duration(seconds: 20);
+
+  /// Position d'une alerte SOS : actuelle (RG-SOS-09), sinon la dernière
+  /// connue, du GPS ou du journal de la navigation (RG-SOS-10), sinon aucune
+  /// (RG-SOS-11).
+  Future<(PositionGps?, NaturePosition)> positionSos() async {
+    PositionGps? p;
+    try {
+      p = await positions
+          .positionActuelle(demander: true)
+          .timeout(attenteGpsSos);
+    } on TimeoutException {
+      p = null;
+    }
+    if (p != null) return (p, NaturePosition.actuelle);
+    var derniere = positions.derniereConnue;
+    for (final e in _nav?.journal.reversed ?? const <EvenementLocal>[]) {
+      final q = e.position;
+      if (q == null) continue;
+      if (derniere == null ||
+          q.heureAcquisition.isAfter(derniere.heureAcquisition)) {
+        derniere = q;
+      }
+      break;
+    }
+    return derniere == null
+        ? (null, NaturePosition.aucune)
+        : (derniere, NaturePosition.derniereConnue);
+  }
+
+  /// Alerte SOS (RG-SOS-02 à RG-SOS-04) : pendant la navigation en cours,
+  /// rattachée à elle ; sinon au bateau [bateauId] (SOS depuis l'accueil,
+  /// RG-SOS-15). Elle part avant tout le reste, sans attendre la file
+  /// (RG-COM-05) ; acceptée quel que soit le quota (RG-SOS-03). Le serveur
+  /// l'inscrit au journal ; le téléphone l'ajoute au sien.
+  Future<AlerteEnvoyee> envoyerSos({
+    required PositionGps? position,
+    required NaturePosition nature,
+    String? bateauId,
+    String? probleme,
+    int? personnesABord,
+  }) async {
+    final n = _nav;
+    final id = file.nouvelId();
+    final heure = maintenant;
+    final p = probleme?.trim();
+    final alerte = <String, Object?>{
+      'id': id,
+      'bateauId': n?.bateauId ?? bateauId,
+      'navigationId': ?n?.id,
+      'appareilId': await appareilId(),
+      'heureDeclenchement': heureRfc3339(heure),
+      'position': ?position?.versJson(),
+      'naturePosition': switch (nature) {
+        NaturePosition.actuelle => 'actuelle',
+        NaturePosition.derniereConnue => 'derniere_connue',
+        NaturePosition.aucune => 'aucune',
+      },
+      if (p != null && p.isNotEmpty) 'problemeRencontre': p,
+      'personnesABord': ?(n?.personnesABord ?? personnesABord),
+    };
+    if (n != null) {
+      n.journal.add(
+        EvenementLocal(
+          id: id,
+          type: 'sos',
+          heure: heure,
+          position: position,
+          texte: p == null || p.isEmpty ? null : p,
+        ),
+      );
+      await _garder();
+      _notifier();
+    }
+    await file.alerteSos(id, alerte);
+    return AlerteEnvoyee(
+      id: id,
+      position: position,
+      nature: nature,
+      etat: await file.etat('alerte_sos:$id'),
+    );
+  }
+
   /// Démarrage parti hors connexion puis refusé par le serveur à sa réception
   /// (adresse non confirmée, bateau d'un autre, navigation déjà en cours…) :
   /// le message du serveur est gardé et affiché sur l'écran de navigation ;
   /// la navigation reste sur le téléphone jusqu'à « Terminer la navigation »
-  /// (Q-87).
+  /// (Q-90).
   Future<void> verifierRefus() async {
     final n = _nav;
     if (n == null || n.refus != null) return;

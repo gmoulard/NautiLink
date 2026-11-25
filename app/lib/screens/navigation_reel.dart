@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
 import '../depot/depot.dart';
@@ -71,7 +72,7 @@ Future<void> openStartReel(BuildContext context) async {
   final bateaux = await depot.bateauxDuTelephone();
   if (!context.mounted) return;
   if (bateaux.isEmpty) {
-    // Compte sans bateau : la fiche se crée sur le Web (Q-81, Q-88).
+    // Compte sans bateau : la fiche se crée sur le Web (Q-81, Q-91).
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -708,6 +709,8 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                       ],
                       const SizedBox(height: 16),
                       ..._boutons(depot, l),
+                      const SizedBox(height: 24),
+                      SosButton(onPressed: () => confirmSosReel(context)),
                       const SizedBox(height: 20),
                       Text(
                         l.logbook,
@@ -723,6 +726,280 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+// ---------------------------------------------------------------- SOS
+
+/// Ouverture d'un lien (application SMS) ; remplacée dans les essais.
+Future<bool> Function(Uri) ouvrirLien = (u) =>
+    launchUrl(u, mode: LaunchMode.externalApplication);
+
+/// « Envoyer un SOS » de la vraie application, depuis l'accueil ou l'écran
+/// de navigation (RG-SOS-01, RG-SOS-15). Pendant la navigation du téléphone,
+/// l'alerte lui est rattachée ; sinon au bateau du téléphone, choisi s'il y
+/// en a plusieurs, avant la confirmation (Q-92).
+Future<void> confirmSosReel(BuildContext context) async {
+  final depot = _depot(context);
+  final l = AppLocalizations.of(context);
+  BateauNl? bateau;
+  if (depot.conduite.enCours == null) {
+    final bateaux = await depot.bateauxDuTelephone();
+    if (!context.mounted) return;
+    if (bateaux.isEmpty) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          icon: const Icon(Icons.sos, color: NlColors.alert, size: 40),
+          content: Text(l.sosReelNoBoat),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.ok)),
+          ],
+        ),
+      );
+      return;
+    }
+    bateau = bateaux.length == 1
+        ? bateaux.single
+        : await showDialog<BateauNl>(
+            context: context,
+            builder: (ctx) => SimpleDialog(
+              title: Text(l.sosReelChooseBoat),
+              children: [
+                for (final b in bateaux)
+                  SimpleDialogOption(
+                    onPressed: () => Navigator.pop(ctx, b),
+                    child: Text(b.nom),
+                  ),
+              ],
+            ),
+          );
+    if (bateau == null || !context.mounted) return;
+  }
+  // RG-SOS-02 : confirmation, « Problème rencontré » facultatif.
+  final probleme = await showDialog<String>(
+    context: context,
+    builder: (_) => const SosDialog(),
+  );
+  if (probleme == null || !context.mounted) return;
+  ScaffoldMessenger.of(context).clearSnackBars();
+  await Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => SosReelScreen(bateau: bateau, probleme: probleme),
+    ),
+  );
+}
+
+/// Envoi et résultat du SOS (RG-SOS-04, RG-COM-03) : position, SMS SOS
+/// prérempli (RG-AND-04 : pas d'envoi automatique dans cette version),
+/// alerte au serveur, journal, résultat de chaque étape.
+class SosReelScreen extends StatefulWidget {
+  const SosReelScreen({super.key, this.bateau, this.probleme = ''});
+
+  /// Bateau d'un SOS depuis l'accueil ; vide pendant la navigation.
+  final BateauNl? bateau;
+  final String probleme;
+
+  @override
+  State<SosReelScreen> createState() => _SosReelScreenState();
+}
+
+class _SosReelScreenState extends State<SosReelScreen> {
+  (PositionGps?, NaturePosition)? position;
+  bool? smsOuvert;
+  bool aucunContact = false;
+  AlerteEnvoyee? alerte;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _lancer());
+  }
+
+  /// Contacts SOS prévenus par SMS : ceux cochés au démarrage (RG-NAV-25),
+  /// tous hors navigation ; seulement avec un numéro (RG-SOS-05).
+  List<ContactNl> _contactsSos(DepotReel d) {
+    final n = d.conduite.enCours;
+    return [
+      for (final c in d.contacts)
+        if (c.contactSos &&
+            (c.telephone?.isNotEmpty ?? false) &&
+            (n == null || n.personnesAlertees.contains(c.id)))
+          c,
+    ];
+  }
+
+  /// Premier SMS SOS (RG-SOS-07, RG-SOS-09 à RG-SOS-11), dans la langue de
+  /// l'interface (RG-PRM-04).
+  String _texteSms(AppLocalizations l, DepotReel d) {
+    final n = d.conduite.enCours;
+    final b =
+        widget.bateau ??
+        d.bateaux.where((x) => x.id == n?.bateauId).firstOrNull;
+    final nom = b?.nom ?? n?.bateauNom ?? '';
+    final type = b?.type == 'moteur' ? l.sosReelMotorboat : l.sosReelSailboat;
+    final longueur = b?.longueurMetres == null
+        ? '—'
+        : '${b!.longueurMetres!.toStringAsFixed(1)} m';
+    final personnes = n?.personnesABord;
+    final p = position?.$1;
+    final coord = p == null
+        ? ''
+        : '${p.latitude.toStringAsFixed(5)}, ${p.longitude.toStringAsFixed(5)}';
+    return [
+      l.sosSmsBoat(nom, type, longueur, b?.immatriculation ?? '—'),
+      if (personnes != null) l.sosSmsPersons(personnes),
+      if (widget.probleme.isNotEmpty) l.sosSmsProblem(widget.probleme),
+      switch (position?.$2) {
+        NaturePosition.actuelle => l.sosSmsPosition(
+          coord,
+          fmtTime(p!.heureAcquisition),
+        ),
+        NaturePosition.derniereConnue => l.sosReelSmsLastKnown(
+          coord,
+          fmtDate(l, p!.heureAcquisition),
+        ),
+        _ => l.sosReelSmsNoPosition,
+      },
+      if (p != null)
+        'https://maps.google.com/?q=${p.latitude.toStringAsFixed(5)},${p.longitude.toStringAsFixed(5)}',
+    ].join('\n');
+  }
+
+  Future<void> _lancer() async {
+    final d = _depot(context);
+    final l = AppLocalizations.of(context);
+    // 1. Position (RG-SOS-09 à RG-SOS-11).
+    final pos = await d.conduite.positionSos();
+    if (!mounted) return;
+    setState(() => position = pos);
+    // 2. Alerte au serveur, partie sans attendre la suite (RG-SOS-04).
+    final envoi = d.conduite.envoyerSos(
+      position: pos.$1,
+      nature: pos.$2,
+      bateauId: widget.bateau?.id,
+      probleme: widget.probleme,
+      personnesABord: d.session.dernierNombrePersonnes,
+    );
+    // 3. SMS SOS prérempli dans l'application SMS (Android, RG-AND-04).
+    if (DepotReel.plateformeDuTelephone() != 'ios') {
+      final contacts = _contactsSos(d);
+      if (contacts.isEmpty) {
+        setState(() => aucunContact = true);
+      } else {
+        final numeros = contacts.map((c) => c.telephone!).join(',');
+        var ok = false;
+        try {
+          ok = await ouvrirLien(
+            Uri.parse(
+              'sms:$numeros?body=${Uri.encodeComponent(_texteSms(l, d))}',
+            ),
+          );
+        } catch (e) {
+          debugPrint('SMS SOS : $e');
+        }
+        if (mounted) setState(() => smsOuvert = ok);
+      }
+    }
+    final a = await envoi;
+    if (mounted) setState(() => alerte = a);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final p = position;
+    final a = alerte;
+    String? textePosition;
+    if (p != null) {
+      final q = p.$1;
+      final coord = q == null
+          ? ''
+          : '${q.latitude.toStringAsFixed(5)}, ${q.longitude.toStringAsFixed(5)}';
+      textePosition = switch (p.$2) {
+        NaturePosition.actuelle => l.sosSmsPosition(
+          coord,
+          fmtTime(q!.heureAcquisition),
+        ),
+        NaturePosition.derniereConnue => l.sosReelSmsLastKnown(
+          coord,
+          fmtDate(l, q!.heureAcquisition),
+        ),
+        NaturePosition.aucune => l.sosReelSmsNoPosition,
+      };
+    }
+    Widget ligne(IconData i, String titre, String? detail, {Color? couleur}) =>
+        ListTile(
+          leading: Icon(i, color: couleur ?? NlColors.teal),
+          title: Text(titre),
+          subtitle: detail == null ? null : Text(detail),
+        );
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l.sosAlert),
+        backgroundColor: NlColors.alert,
+        foregroundColor: NlColors.white,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          // Les secours d'abord : NautiLink n'est pas un équipement de sécurité.
+          Text(
+            l.homeDistressHint,
+            key: const Key('sos-distress'),
+            style: Theme.of(context).textTheme.titleMedium
+                ?.copyWith(color: NlColors.alert),
+          ),
+          const SizedBox(height: 12),
+          if (p == null)
+            ligne(Icons.gps_not_fixed, l.sosReelSearching, null)
+          else
+            ligne(
+              p.$2 == NaturePosition.aucune ? Icons.gps_off : Icons.gps_fixed,
+              textePosition!,
+              null,
+              couleur: p.$2 == NaturePosition.actuelle ? null : NlColors.alert,
+            ),
+          if (aucunContact)
+            ligne(
+              Icons.sms_failed_outlined,
+              l.sosReelSmsNoContact,
+              null,
+              couleur: NlColors.alert,
+            )
+          else if (smsOuvert == true)
+            ligne(Icons.sms_outlined, l.sosReelSmsOpened, null)
+          else if (smsOuvert == false)
+            ligne(
+              Icons.sms_failed_outlined,
+              l.sosReelSmsFailed,
+              null,
+              couleur: NlColors.alert,
+            ),
+          if (a == null)
+            ligne(Icons.cloud_upload_outlined, l.sosReelSending, null)
+          else if (a.etat.refuse)
+            ligne(
+              Icons.cloud_off,
+              l.voyageRefused(a.etat.refus!.message),
+              null,
+              couleur: NlColors.alert,
+            )
+          else
+            ligne(
+              a.etat.recu ? Icons.cloud_done_outlined : Icons.cloud_queue,
+              a.etat.recu ? l.sosReelServerReceived : l.sosReelServerQueued,
+              null,
+              couleur: a.etat.recu ? null : NlColors.alert,
+            ),
+          const SizedBox(height: 12),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l.back),
+          ),
+        ],
+      ),
     );
   }
 }

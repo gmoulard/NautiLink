@@ -115,11 +115,17 @@ class BateauNl {
     required this.nom,
     required this.type,
     this.appareilAssocieId,
+    this.longueurMetres,
+    this.immatriculation,
   });
   final String id;
   final String nom;
   final String type; // voilier ou moteur
   final String? appareilAssocieId; // RG-BAT-02
+
+  /// Repris dans le premier SMS SOS (RG-SOS-07).
+  final double? longueurMetres;
+  final String? immatriculation;
 
   static BateauNl? depuisJson(Object? j) {
     if (j is! Map || j['id'] is! String) return null;
@@ -128,6 +134,8 @@ class BateauNl {
       nom: (j['nom'] as String?) ?? '',
       type: (j['type'] as String?) ?? 'voilier',
       appareilAssocieId: j['appareilAssocieId'] as String?,
+      longueurMetres: (j['longueurMetres'] as num?)?.toDouble(),
+      immatriculation: j['immatriculation'] as String?,
     );
   }
 
@@ -136,6 +144,8 @@ class BateauNl {
     'nom': nom,
     'type': type,
     'appareilAssocieId': appareilAssocieId,
+    'longueurMetres': ?longueurMetres,
+    'immatriculation': ?immatriculation,
   };
 }
 

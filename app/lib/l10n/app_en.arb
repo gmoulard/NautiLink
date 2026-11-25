@@ -242,5 +242,18 @@
   "nextAutoPosition": "Next automatic position: {time}",
   "sendRefused": "Sending refused",
   "micRefused": "Microphone access refused: the voice note cannot be recorded.",
-  "recordingHintReal": "1 minute at most, stops automatically. Your voice is sent as is, without transcription."
+  "recordingHintReal": "1 minute at most, stops automatically. Your voice is sent as is, without transcription.",
+  "sosReelNoBoat": "No boat in your account: NautiLink cannot send the alert. Alert the rescue services: VHF channel 16 or 196.",
+  "sosReelChooseBoat": "Boat in distress",
+  "sosReelSearching": "Looking for the position…",
+  "sosReelSending": "Sending the alert to the server…",
+  "sosReelServerReceived": "Server: alert received, e-mails sent to followers and SOS contacts",
+  "sosReelServerQueued": "Server: alert kept on the phone, sent first when the connection is back",
+  "sosReelSmsOpened": "Pre-filled SOS text message opened in the messaging app: tap \"Send\".",
+  "sosReelSmsFailed": "The messaging app could not open: no SOS text message was sent.",
+  "sosReelSmsNoContact": "No SOS contact with a number: no SOS text message.",
+  "sosReelSmsLastKnown": "Last known position, not necessarily the current one: {position} on {date}.",
+  "sosReelSmsNoPosition": "GPS unavailable: no known position.",
+  "sosReelSailboat": "sailboat",
+  "sosReelMotorboat": "motorboat"
 }

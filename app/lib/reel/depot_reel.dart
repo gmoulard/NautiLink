@@ -283,7 +283,7 @@ class DepotReel extends Depot {
 
   /// Bateaux proposés au démarrage et au SOS depuis l'accueil : ceux du
   /// téléphone (RG-NAV-02, RG-SOS-15) ; si le téléphone n'en a aucun, tous
-  /// ceux du compte (Q-88).
+  /// ceux du compte (Q-91).
   Future<List<BateauNl>> bateauxDuTelephone() async {
     final id = await session.appareilId();
     final miens = _bateaux.where((b) => b.appareilAssocieId == id).toList();
@@ -292,7 +292,7 @@ class DepotReel extends Depot {
 
   /// « Envoi message – Début de navigation » (RG-NAV-08). Un bateau associé à
   /// un autre téléphone passe d'abord à celui-ci (Q-81) ; sans Internet, le
-  /// serveur le refusera, et le refus sera affiché (Q-87).
+  /// serveur le refusera, et le refus sera affiché (Q-90).
   Future<NavigationLocale> demarrer({
     required BateauNl bateau,
     required int frequenceMinutes,

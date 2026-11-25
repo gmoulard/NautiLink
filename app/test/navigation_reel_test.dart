@@ -157,7 +157,7 @@ void main() {
       expect(d2.conduite.enCours?.dernierEnvoi, isNotNull);
     });
 
-    test('démarrage hors connexion refusé à sa réception : message gardé sur l\'écran de navigation (Q-87)', () async {
+    test('démarrage hors connexion refusé à sa réception : message gardé sur l\'écran de navigation (Q-90)', () async {
       final d = await connecte();
       serveur.coupe = true;
       final n = await demarrer(d);
@@ -241,7 +241,7 @@ void main() {
     );
 
     test(
-      'GPS sans réponse : position automatique « GPS non disponible » (Q-86)',
+      'GPS sans réponse : position automatique « GPS non disponible » (Q-89)',
       () async {
         final d = await connecte();
         await demarrer(d);
@@ -414,5 +414,73 @@ void main() {
         expect(serveur.fichiers[id]?.$1, 'audio/mp4');
       },
     );
+  });
+
+  group('alerte SOS (TODO-5.5)', () {
+    test('SOS pendant la navigation : rattaché à elle, position actuelle, personnes à bord, problème (RG-SOS-04, RG-SOS-09)', () async {
+      final d = await connecte();
+      final n = await demarrer(d);
+      final (p, nature) = await d.conduite.positionSos();
+      expect(nature, NaturePosition.actuelle);
+      final a = await d.conduite.envoyerSos(
+        position: p,
+        nature: nature,
+        probleme: ' Voie d\'eau ',
+      );
+      expect(a.etat.recu, isTrue);
+      final c = serveur.alertes[a.id] as Map;
+      expect(c['navigationId'], n.id);
+      expect(c['bateauId'], 'b1');
+      expect(c['naturePosition'], 'actuelle');
+      expect(c['personnesABord'], 3);
+      expect(c['problemeRencontre'], 'Voie d\'eau');
+      expect((c['position'] as Map)['latitude'], 47.38);
+      expect(d.conduite.enCours!.journal.last.type, 'sos');
+    });
+
+    test('GPS indisponible : dernière position connue (RG-SOS-10), sinon aucune (RG-SOS-11)', () async {
+      final d = await connecte();
+      await demarrer(d); // début avec une position
+      gps.position = null;
+      final (p, nature) = await d.conduite.positionSos();
+      expect(nature, NaturePosition.derniereConnue);
+      expect(p?.latitude, 47.38);
+
+      final g2 = FauxGps();
+      final d3 = serveur.depot(session, BaseMemoire(), positions: g2);
+      await d3.ouvrir();
+      expect((await d3.conduite.positionSos()).$2, NaturePosition.aucune);
+    });
+
+    test('SOS depuis l\'accueil, hors connexion : alerte gardée puis partie avant tout le reste (RG-SOS-15, RG-COM-05)', () async {
+      final d = await connecte();
+      serveur.coupe = true;
+      final a = await d.conduite.envoyerSos(
+        position: null,
+        nature: NaturePosition.aucune,
+        bateauId: 'b1',
+        personnesABord: 2,
+      );
+      expect(a.etat.recu, isFalse);
+      expect(await d.envois.enAttente(), 1);
+      serveur.coupe = false;
+      await d.file.relancer();
+      final c = serveur.alertes[a.id] as Map;
+      expect(c.containsKey('navigationId'), isFalse);
+      expect(c['bateauId'], 'b1');
+      expect(c['naturePosition'], 'aucune');
+      expect(await d.envois.enAttente(), 0);
+    });
+
+    test('quota épuisé : le SOS part quand même (RG-SOS-03)', () async {
+      serveur.quotaEpuise = true;
+      final d = await connecte();
+      final a = await d.conduite.envoyerSos(
+        position: positionEssai(),
+        nature: NaturePosition.actuelle,
+        bateauId: 'b1',
+      );
+      expect(a.etat.recu, isTrue);
+    });
   });
 }

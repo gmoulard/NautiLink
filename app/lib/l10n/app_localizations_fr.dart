@@ -819,4 +819,52 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get recordingHintReal =>
       '1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription.';
+
+  @override
+  String get sosReelNoBoat =>
+      'Aucun bateau dans votre compte : NautiLink ne peut pas envoyer l\'alerte. Alertez les secours : canal 16 de la VHF ou 196.';
+
+  @override
+  String get sosReelChooseBoat => 'Bateau en détresse';
+
+  @override
+  String get sosReelSearching => 'Recherche de la position…';
+
+  @override
+  String get sosReelSending => 'Envoi de l\'alerte au serveur…';
+
+  @override
+  String get sosReelServerReceived =>
+      'Serveur : alerte reçue, e-mails envoyés aux suiveurs et aux contacts SOS';
+
+  @override
+  String get sosReelServerQueued =>
+      'Serveur : alerte gardée sur le téléphone, envoyée en priorité au retour de la connexion';
+
+  @override
+  String get sosReelSmsOpened =>
+      'SMS SOS prérempli ouvert dans l\'application SMS : appuyez sur « Envoyer ».';
+
+  @override
+  String get sosReelSmsFailed =>
+      'L\'application SMS n\'a pas pu s\'ouvrir : aucun SMS SOS n\'est parti.';
+
+  @override
+  String get sosReelSmsNoContact =>
+      'Aucun contact SOS avec un numéro : pas de SMS SOS.';
+
+  @override
+  String sosReelSmsLastKnown(String position, String date) {
+    return 'Dernière position connue, pas nécessairement la position actuelle : $position le $date.';
+  }
+
+  @override
+  String get sosReelSmsNoPosition =>
+      'GPS indisponible : aucune position connue.';
+
+  @override
+  String get sosReelSailboat => 'voilier';
+
+  @override
+  String get sosReelMotorboat => 'bateau à moteur';
 }

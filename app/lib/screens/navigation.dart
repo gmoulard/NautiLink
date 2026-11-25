@@ -671,7 +671,7 @@ class _SendResultDialogState extends State<_SendResultDialog> {
 /// SOS : confirmation avec « Problème rencontré » facultatif, puis résultat simulé
 /// (RG-SOS-02, RG-SOS-04, RG-SOS-07).
 Future<void> confirmSos(BuildContext context) async {
-  final problem = await showDialog<String>(context: context, builder: (_) => const _SosDialog());
+  final problem = await showDialog<String>(context: context, builder: (_) => const SosDialog());
   if (problem == null || !context.mounted) return; // annulé
   ScaffoldMessenger.of(context).clearSnackBars(); // rien ne doit masquer l'écran SOS
   final state = AppScope.of(context);
@@ -680,14 +680,14 @@ Future<void> confirmSos(BuildContext context) async {
 }
 
 /// Renvoie le problème saisi (chaîne vide si aucun) à la confirmation, null si annulé.
-class _SosDialog extends StatefulWidget {
-  const _SosDialog();
+class SosDialog extends StatefulWidget {
+  const SosDialog({super.key});
 
   @override
-  State<_SosDialog> createState() => _SosDialogState();
+  State<SosDialog> createState() => _SosDialogState();
 }
 
-class _SosDialogState extends State<_SosDialog> {
+class _SosDialogState extends State<SosDialog> {
   final problem = TextEditingController();
 
   @override

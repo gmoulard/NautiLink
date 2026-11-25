@@ -1470,6 +1470,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription.'**
   String get recordingHintReal;
+
+  /// No description provided for @sosReelNoBoat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun bateau dans votre compte : NautiLink ne peut pas envoyer l\'alerte. Alertez les secours : canal 16 de la VHF ou 196.'**
+  String get sosReelNoBoat;
+
+  /// No description provided for @sosReelChooseBoat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bateau en détresse'**
+  String get sosReelChooseBoat;
+
+  /// No description provided for @sosReelSearching.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche de la position…'**
+  String get sosReelSearching;
+
+  /// No description provided for @sosReelSending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoi de l\'alerte au serveur…'**
+  String get sosReelSending;
+
+  /// No description provided for @sosReelServerReceived.
+  ///
+  /// In fr, this message translates to:
+  /// **'Serveur : alerte reçue, e-mails envoyés aux suiveurs et aux contacts SOS'**
+  String get sosReelServerReceived;
+
+  /// No description provided for @sosReelServerQueued.
+  ///
+  /// In fr, this message translates to:
+  /// **'Serveur : alerte gardée sur le téléphone, envoyée en priorité au retour de la connexion'**
+  String get sosReelServerQueued;
+
+  /// No description provided for @sosReelSmsOpened.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS SOS prérempli ouvert dans l\'application SMS : appuyez sur « Envoyer ».'**
+  String get sosReelSmsOpened;
+
+  /// No description provided for @sosReelSmsFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'application SMS n\'a pas pu s\'ouvrir : aucun SMS SOS n\'est parti.'**
+  String get sosReelSmsFailed;
+
+  /// No description provided for @sosReelSmsNoContact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun contact SOS avec un numéro : pas de SMS SOS.'**
+  String get sosReelSmsNoContact;
+
+  /// No description provided for @sosReelSmsLastKnown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière position connue, pas nécessairement la position actuelle : {position} le {date}.'**
+  String sosReelSmsLastKnown(String position, String date);
+
+  /// No description provided for @sosReelSmsNoPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'GPS indisponible : aucune position connue.'**
+  String get sosReelSmsNoPosition;
+
+  /// No description provided for @sosReelSailboat.
+  ///
+  /// In fr, this message translates to:
+  /// **'voilier'**
+  String get sosReelSailboat;
+
+  /// No description provided for @sosReelMotorboat.
+  ///
+  /// In fr, this message translates to:
+  /// **'bateau à moteur'**
+  String get sosReelMotorboat;
 }
 
 class _AppLocalizationsDelegate

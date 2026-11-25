@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nautilink/main.dart';
+import 'package:nautilink/screens/navigation_reel.dart';
 import 'package:nautilink/reel/base_locale.dart';
 import 'package:nautilink/reel/stockage_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -203,5 +204,70 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets(
+    'SOS depuis l\'accueil : confirmation, SMS SOS prérempli, alerte au serveur (TODO-5.5, RG-SOS-15, RG-AND-04)',
+    (tester) async {
+      final liens = <Uri>[];
+      ouvrirLien = (u) async {
+        liens.add(u);
+        return true;
+      };
+      addTearDown(() => ouvrirLien = (_) async => false);
+      await connecter(tester);
+      await toucher(tester, 'Envoyer un SOS');
+      expect(find.text('Envoyer un SOS ?'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('sos-problem')),
+        'Avarie moteur',
+      );
+      await toucher(tester, 'Confirmer le SOS');
+      await attendre(tester);
+      expect(find.byKey(const Key('sos-distress')), findsOneWidget);
+      expect(
+        find.textContaining('Position 47.38000, -2.95000'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'SMS SOS prérempli ouvert dans l\'application SMS : appuyez sur « Envoyer ».',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'Serveur : alerte reçue, e-mails envoyés aux suiveurs et aux contacts SOS',
+        ),
+        findsOneWidget,
+      );
+      final sms = liens.single;
+      expect(sms.scheme, 'sms');
+      expect(sms.path, '+33612345678');
+      final texte = Uri.decodeComponent(sms.query.substring('body='.length));
+      expect(texte, contains('SOS Alizé'));
+      expect(texte, contains('Problème : Avarie moteur.'));
+      expect(texte, contains('https://maps.google.com/?q=47.38000,-2.95000'));
+      final alerte = serveur.alertes.values.single as Map;
+      expect(alerte['bateauId'], 'b1');
+      expect(alerte['problemeRencontre'], 'Avarie moteur');
+    },
+  );
+
+  testWidgets('SOS pendant la navigation, annulé puis confirmé (RG-SOS-02)', (
+    tester,
+  ) async {
+    ouvrirLien = (_) async => true;
+    addTearDown(() => ouvrirLien = (_) async => false);
+    await naviguer(tester);
+    await toucher(tester, 'Envoyer un SOS');
+    await toucher(tester, 'Annuler');
+    expect(serveur.alertes, isEmpty);
+    await toucher(tester, 'Envoyer un SOS');
+    await toucher(tester, 'Confirmer le SOS');
+    await attendre(tester);
+    final alerte = serveur.alertes.values.single as Map;
+    expect(alerte['navigationId'], isNotNull);
+    expect(alerte['personnesABord'], 1);
   });
 }
