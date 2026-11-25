@@ -70,6 +70,15 @@ void main() {
     expect(smsTypeLabel(en, SmsType.note), 'Written notes');
   });
 
+  test('navigation d\'exemple Port du Niel → Toulon, Vieille Darse', () {
+    final l = lookupAppLocalizations(const Locale('fr'));
+    final v = AppState().voyages.firstWhere((v) => v.name == 'Alizé — Toulon, Vieille Darse');
+    expect(placeName(l, v.track.first), 'Port du Niel, Giens');
+    expect(placeName(l, v.track.last), 'Toulon, Vieille Darse');
+    expect(v.distanceNm, closeTo(11.6, 0.2));
+    expect(v.end!.difference(v.start).inMinutes, closeTo(127, 2));
+  });
+
   test('immobilité : 2 heures dans un rayon de 20 m (RG-NAV-24)', () {
     final s = AppState();
     s.startVoyage(boat: s.boats.first, frequency: 30);
