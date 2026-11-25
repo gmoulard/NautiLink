@@ -47,9 +47,9 @@ Le workflow « Serveur » publie `ghcr.io/gmoulard/nautilink-serveur` avec quatr
 
 | Étiquette | Exemple | Usage |
 |-----------|---------|-------|
-| `<version>-<build>` | `0.0.1-12` | Immuable : une construction précise. |
-| `<version>` | `0.0.1` | Dernière construction de cette version ; étiquette posée dans [`server/compose.yaml`](../server/compose.yaml). |
+| `<version>-<build>` | `0.0.1-13` | Immuable : une construction précise ; étiquette posée dans [`server/compose.yaml`](../server/compose.yaml). |
+| `<version>` | `0.0.1` | Dernière construction de cette version ; à éviter sur le Pi, qui garde en cache l'image déjà téléchargée (build 12 gardé après la publication du 13). |
 | `<sha court>` | `93b0f97` | Construction d'un commit. |
 | `latest` | | Dernière construction ; à éviter sur le Pi, qui garde en cache l'image déjà téléchargée. |
 
-Pour déployer une nouvelle version : changer `server/VERSION`, la matrice et l'étiquette de `server/compose.yaml` dans le même commit ; sur le Pi, `docker compose pull && docker compose up -d`.
+Pour déployer une nouvelle version : changer `server/VERSION`, la matrice et l'étiquette de `server/compose.yaml` dans le même commit ; pour déployer une nouvelle construction de la même version, changer seulement le build de l'étiquette (`0.0.1-13` → `0.0.1-14`) ; sur le Pi, `docker compose pull && docker compose up -d`.
