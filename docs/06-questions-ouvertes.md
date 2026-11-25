@@ -8,12 +8,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 ## 1. Questions fonctionnelles
 
-### <a id="q-40"></a>Q-40 — Positions automatiques sans permission d'envoi de SMS
-
-- Priorité : bloquant pour les SMS sur Android.
-- Question : si Google Play refuse la permission d'envoi de SMS pour les positions automatiques (risque accepté, D-82), ou si le navigateur la refuse sur son téléphone (RG-AND-04), que deviennent les SMS de positions automatiques (RG-SMS-03) ?
-- Proposition (non validée) : les positions automatiques partent seulement au serveur, sans SMS ; l'écran de démarrage le dit.
-
 ### <a id="q-39"></a>Q-39 — Service météo : conditions d'accès
 
 - Priorité : avant la version réelle.
@@ -44,7 +38,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant, à étudier en premier.
 - Décidé (D-48) : exception « urgence » de Google Play pour les SMS SOS ; SMS ordinaires préremplis.
-- Décidé (D-82) : les SMS de positions automatiques partent aussi automatiquement ; la demande de permission auprès de Google Play doit couvrir ce cas, avec le risque accepté d'un refus en dehors de l'exception « urgence » (Q-40).
+- Décidé (D-82) : les SMS de positions automatiques partent aussi automatiquement ; la demande de permission auprès de Google Play doit couvrir ce cas, avec le risque accepté d'un refus en dehors de l'exception « urgence » ; sans cette permission, positions au serveur seulement (D-91).
 - Reste : lire la page officielle de Google Play et vérifier que l'exception existe et couvre NautiLink. Si elle est refusée, revenir vers l'utilisateur.
 - Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md) (voies possibles §3).
 
@@ -65,18 +59,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Décidé (D-58, D-59) : applications mobiles Android et iPhone en Flutter, un seul code ; serveur maison.
 - Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL.
-- Décidé (D-86) : photos et notes vocales stockées dans PostgreSQL ; notifications push par APNs pour l'iPhone et Firebase Cloud Messaging pour Android (contenu sur Android : Q-41) ; sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
+- Décidé (D-86) : photos et notes vocales stockées dans PostgreSQL ; notifications push par APNs pour l'iPhone et Firebase Cloud Messaging pour Android (contenu sur Android : D-92, RG-AND-08) ; sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
 - Reste : cadre du serveur ; hébergeur après la bêta (décidé plus tard) ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration ; API et formats de données ; synchronisation ; environnements de développement, test et production.
 - Propositions (non validées), détaillées dans [08-architecture.md](08-architecture.md) §3 :
   - hébergeur après la bêta : serveur virtuel dans l'Union européenne, même image Docker, PostgreSQL dédié ;
   - e-mails après la bêta : relais de l'hébergeur, SPF, DKIM et DMARC ;
   - géocodage inverse (RG-NAV-16, RG-JRN-10) : Nominatim (OpenStreetMap) appelé par le serveur, avec cache.
-
-### <a id="q-41"></a>Q-41 — Notifications push sur Android
-
-- Priorité : avant la version réelle.
-- Question : Firebase Cloud Messaging est retenu pour Android (D-86), mais aucune règle ne prévoit de notification push pour le suiveur sur Android : lesquelles reçoit-il ?
-- Proposition (non validée) : comme sur iPhone (RG-IOS-06) : alerte SOS (en plus de l'e-mail), début et fin de navigation, nouvelle photo, position en retard (même seuil, D-84) ; chaque type désactivable, sauf le SOS.
 
 ## 3. Données, sécurité, conformité
 
@@ -112,8 +100,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : plus tard.
 - Décidé (D-90) : français et anglais au lancement ; langue du téléphone par défaut, modifiable dans les paramètres ; messages envoyés aux suiveurs et aux contacts SOS dans la langue du navigateur (RG-PRM-03, RG-PRM-04).
 - Essai dans le prototype (TODO-9.2) : textes des écrans dans `app/lib/l10n/app_fr.arb` (français, langue de référence) et `app_en.arb` (anglais), code généré par `flutter gen-l10n`.
-- Reste : relecture de la traduction anglaise ; ajout d'autres langues après le lancement, sans gestion des langues dans l'espace administrateur (RG-ADM-04) ; langue par défaut sur la plateforme Web, où il n'y a pas de téléphone.
-- Proposition (non validée) : sur la plateforme Web, la langue du navigateur Internet par défaut.
+- Décidé (D-93) : sur la plateforme Web, langue du navigateur Internet par défaut (RG-PRM-03).
+- Reste : relecture de la traduction anglaise ; ajout d'autres langues après le lancement, sans gestion des langues dans l'espace administrateur (RG-ADM-04).
 
 ### <a id="q-28"></a>Q-28 — Versions multiples du Web
 

@@ -36,10 +36,6 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 Pour chaque action : critères d'acceptation communs — choix de l'utilisateur tracé en `D-nn`, règle écrite dans les règles métier, question retirée des questions ouvertes.
 
-- [!] **TODO-1.26**: Positions automatiques sans permission d'envoi de SMS ([Q-40](06-questions-ouvertes.md#q-40), RG-SMS-03). Dépend de : aucune.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
-- [!] **TODO-1.27**: Notifications push du suiveur sur Android ([Q-41](06-questions-ouvertes.md#q-41), D-86). Dépend de : aucune.
-  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
 - [!] **TODO-1.14**: Prix et règles de paiement de l'abonnement ([Q-17](06-questions-ouvertes.md#q-17), RG-ECO-06, RG-ECO-07). Tranché le 2026-11-24 : une seule formule, mensuelle ou annuelle, sans essai (D-43). Dépend de : aucune.
   - Critères d'acceptation : communs, dans le modèle économique. Bloqué par : décision de l'utilisateur.
 
@@ -49,7 +45,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : règles actuelles de Google Play sur la permission SMS lues et citées ; voie retenue par l'utilisateur (exception demandée, application SMS préremplie, distribution hors Play Store…) et écrite dans les règles métier.
   - Fait : [étude documentaire](etudes/sms-mms-android.md) (règles Google Play, voies A à D, API `SmsManager`). Reste : relire en entier les pages d'aide Google Play (inaccessibles lors de la rédaction) ; choix de la voie par l'utilisateur, puis règles métier et `D-nn`.
   - Tranché le 2026-11-24 (D-48) : exception « urgence » pour les SMS SOS, SMS ordinaires préremplis. Reste : vérifier l'exception sur la page officielle de Google Play.
-  - Tranché le 2026-11-25 (D-82) : SMS de positions automatiques envoyés automatiquement ; la demande de permission à Google Play doit couvrir ce cas ; risque de refus accepté (conséquence : Q-40, TODO-1.26).
+  - Tranché le 2026-11-25 (D-82) : SMS de positions automatiques envoyés automatiquement ; la demande de permission à Google Play doit couvrir ce cas ; risque de refus accepté (sans permission : positions au serveur seulement, D-91).
 - [~] **TODO-2.2**: GPS en arrière-plan, écran éteint, et consommation de batterie ([Q-09](06-questions-ouvertes.md#q-09), RG-GPS-03). Dépend de : aucune.
   - Critères d'acceptation : prototype qui enregistre une position toutes les 15 minutes pendant 8 heures, écran éteint, sur au moins trois marques de téléphones (dont Samsung et Xiaomi) ; positions manquantes et batterie consommée notées.
   - Fait : [étude documentaire](etudes/gps-arriere-plan-android.md) (service de premier plan `location`, autorisations, Doze, constructeurs, reprise au redémarrage, protocole d'essai). Reste : prototype sur trois marques (dont Samsung et Xiaomi) avec mesures ; relire dontkillmyapp.com et la politique Google Play (inaccessibles lors de la rédaction).
@@ -75,7 +71,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 - [~] **TODO-3.1**: Architecture technique : hébergement, base de données, stockage des photos et notes vocales, envoi des e-mails ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-2.1.
   - Critères d'acceptation : document d'architecture dans `docs/`, schéma Mermaid, choix validés par l'utilisateur.
   - Fait (2026-11-25) : [08-architecture.md](08-architecture.md) avec schéma Mermaid, choix décidés (D-58 à D-62 et suivantes) et propositions non validées reportées dans Q-22 (fichiers, hébergeur après la bêta, push, sauvegardes, e-mails, géocodage). Reste : validation par l'utilisateur.
-  - Tranché le 2026-11-25 (D-86) : photos et notes vocales dans PostgreSQL ; push par APNs (iPhone) et FCM (Android) ; sauvegardes de pi-appliance, chaque nuit, 30 jours. Reste : hébergeur après la bêta (décidé plus tard) ; vérifier que les sauvegardes couvrent la base et faire un essai de restauration ; contenu des push sur Android (Q-41, TODO-1.27).
+  - Tranché le 2026-11-25 (D-86) : photos et notes vocales dans PostgreSQL ; push par APNs (iPhone) et FCM (Android) ; sauvegardes de pi-appliance, chaque nuit, 30 jours. Reste : hébergeur après la bêta (décidé plus tard) ; vérifier que les sauvegardes couvrent la base et faire un essai de restauration . Contenu des push sur Android tranché (D-92).
 - [ ] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-3.1.
   - Critères d'acceptation : description de l'API (OpenAPI) couvrant chaque règle `RG-…` qui passe par le serveur.
 - [~] **TODO-3.3**: Maquettes Android et Web ([Q-30](06-questions-ouvertes.md#q-30)). Dépend de : aucune.
@@ -185,7 +181,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : licence vérifiée, faisabilité et coût chiffrés.
 - [~] **TODO-9.2**: Autres langues ([Q-27](06-questions-ouvertes.md#q-27)). Dépend de : aucune.
   - Critères d'acceptation : textes des interfaces séparés du code dès le départ ; une deuxième langue essayée.
-  - Fait dans le prototype : textes des écrans en fichiers ARB (`app/lib/l10n/`), essai en anglais, test associé. Tranché le 2026-11-25 (D-90) : français et anglais, langue du téléphone par défaut et réglable, messages dans la langue du navigateur (RG-PRM-03, RG-PRM-04). Reste : relecture de la traduction anglaise ; langue par défaut sur le Web (Q-27) ; textes de `app/lib/data.dart` (types d'événements, fréquences, dates, durées) encore dans le code.
+  - Fait dans le prototype : textes des écrans en fichiers ARB (`app/lib/l10n/`), essai en anglais, test associé. Tranché le 2026-11-25 (D-90) : français et anglais, langue du téléphone par défaut et réglable, messages dans la langue du navigateur (RG-PRM-03, RG-PRM-04). Reste : relecture de la traduction anglaise ; (langue par défaut sur le Web tranchée, D-93) ; textes de `app/lib/data.dart` (types d'événements, fréquences, dates, durées) encore dans le code.
 - [ ] **TODO-9.3**: Plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28), RG-ADM-05). Dépend de : TODO-7.1.
   - Critères d'acceptation : stratégie de déploiement et de compatibilité écrite.
 

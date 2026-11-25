@@ -34,6 +34,8 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.19**: Changer les heures d'une navigation : quota sur les heures enregistrées, positions hors plage masquées du tracé (2026-11-25, D-83).
 - [x] **TODO-1.20**: Position en retard : deux fois la fréquence, une seule notification (2026-11-25, D-84).
 - [x] **TODO-1.21**: SMS de positions automatiques envoyés automatiquement, nouvelles tentatives pour les seuls SMS automatiques (2026-11-25, D-82).
+- [x] **TODO-1.26**: Positions automatiques sans permission d'envoi de SMS : envoyées seulement au serveur (2026-11-25, D-91).
+- [x] **TODO-1.27**: Notifications push du suiveur sur Android, les mêmes que sur iPhone (2026-11-25, D-92).
 
 ## 9. Évolutions futures
 

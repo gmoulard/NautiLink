@@ -78,7 +78,7 @@ Les propositions (non validées) sont reprises dans [Q-22](06-questions-ouvertes
 
 **Décidé** ([D-86](07-decisions.md#d-86)) : le serveur Go envoie les notifications push par le service push d'Apple (APNs) pour l'iPhone, avec une clé du compte développeur Apple ([D-60](07-decisions.md#d-60)), et par Firebase Cloud Messaging (FCM), service de Google, pour Android.
 
-- Reste : les notifications reçues par le suiveur sur Android, qu'aucune règle ne prévoit encore ([Q-41](06-questions-ouvertes.md#q-41)).
+- Notifications reçues par le suiveur sur Android : les mêmes que sur iPhone (RG-AND-08, [D-92](07-decisions.md#d-92)).
 
 ### 3.4 Sauvegardes
 
