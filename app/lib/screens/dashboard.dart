@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart' show LatLng;
 
 import '../data.dart';
 import '../main.dart';
@@ -145,8 +147,13 @@ class VoyageScreen extends StatelessWidget {
     final v = voyage;
     final info = [
       ('Bateau', '${v.boat.name} · ${v.boat.type} · ${v.boat.length}'),
+      ('Personnes à bord', '${v.personsOnBoard}'),
       ('Départ', fmtDate(v.start)),
+      if (v.track.isNotEmpty) ('Lieu de départ', placeName(v.track.first)),
+      if (v.weatherStart != null) ('Météo au départ', v.weatherStart!),
       if (v.end != null) ('Arrivée', fmtDate(v.end!)),
+      if (v.end != null && v.track.isNotEmpty) ('Lieu d\'arrivée', placeName(v.track.last)),
+      if (v.weatherEnd != null) ('Météo à l\'arrivée', v.weatherEnd!),
       if (v.destination?.isNotEmpty == true) ('Destination', v.destination!),
       ('Durée', fmtDuration(v.duration)),
       ('Distance', '${v.distanceNm.toStringAsFixed(1)} milles'),
@@ -202,7 +209,7 @@ class VoyageScreen extends StatelessWidget {
           final wide = c.maxWidth > 820;
           final map = AspectRatio(
             aspectRatio: wide ? 1 : 1.3,
-            child: TrackMap(voyage: v),
+            child: SeaMap(voyage: v),
           );
           final details = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,3 +346,82 @@ class _TrackPainter extends CustomPainter {
   bool shouldRepaint(covariant _TrackPainter old) =>
       old.v != v || old.count != count;
 }
+
+/// Carte de la page d'une navigation : fond OpenStreetMap et balisage
+/// OpenSeaMap, avec leurs mentions de source (RG-NAV-29). Données du SHOM : Q-23.
+class SeaMap extends StatelessWidget {
+  const SeaMap({super.key, required this.voyage});
+  final Voyage voyage;
+
+  /// Les tests désactivent les tuiles (aucun accès réseau) : seul le tracé est dessiné.
+  static bool tilesEnabled = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final pts = [for (final p in voyage.track) LatLng(p.lat, p.lon)];
+    if (pts.isEmpty) return TrackMap(voyage: voyage);
+    final bounds = LatLngBounds.fromPoints(pts.length == 1 ? [pts.first, pts.first] : pts);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: FlutterMap(
+        options: MapOptions(
+          initialCameraFit: CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(36), maxZoom: 14),
+          backgroundColor: const Color(0xFFDCEFF8),
+        ),
+        children: [
+          if (tilesEnabled) ...[
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'fr.nautilink.nautilink',
+            ),
+            TileLayer(
+              urlTemplate: 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+              userAgentPackageName: 'fr.nautilink.nautilink',
+            ),
+          ],
+          PolylineLayer(polylines: [Polyline(points: pts, strokeWidth: 3.5, color: NlColors.ink)]),
+          MarkerLayer(
+            markers: [
+              Marker(point: pts.first, width: 16, height: 16, child: const _Dot(color: NlColors.ink)),
+              Marker(
+                point: pts.last,
+                width: 22,
+                height: 22,
+                child: _Dot(color: voyage.inProgress ? NlColors.alert : NlColors.accent, ring: true),
+              ),
+            ],
+          ),
+          const Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: EdgeInsets.all(6),
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: Color(0xCCFFFFFF), borderRadius: BorderRadius.all(Radius.circular(6))),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: Text('© OpenStreetMap · © OpenSeaMap', style: TextStyle(fontSize: 10, color: NlColors.ink)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Dot extends StatelessWidget {
+  const _Dot({required this.color, this.ring = false});
+  final Color color;
+  final bool ring;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: ring ? Border.all(color: NlColors.white, width: 4) : null,
+        ),
+      );
+}
+

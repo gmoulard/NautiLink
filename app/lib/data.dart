@@ -90,9 +90,14 @@ class Voyage {
     this.destination,
     required this.navigator,
     this.asFollower = false,
+    this.personsOnBoard = 1,
+    this.weatherStart,
+    this.weatherEnd,
+    Set<String>? alerted,
     List<Position>? track,
     List<LogEvent>? log,
-  }) : track = track ?? [],
+  }) : alerted = alerted ?? {},
+       track = track ?? [],
        log = log ?? [];
   String name;
   final Boat boat;
@@ -101,6 +106,10 @@ class Voyage {
   String? destination;
   final String navigator;
   final bool asFollower;
+  final int personsOnBoard; // RG-NAV-27
+  String? weatherStart; // RG-NAV-28
+  String? weatherEnd;
+  final Set<String> alerted; // noms des contacts alertés (RG-NAV-25)
   final List<Position> track;
   final List<LogEvent> log;
 
@@ -260,10 +269,29 @@ class AppState extends ChangeNotifier {
     return _cursor;
   }
 
+  /// Nombre de personnes à bord de la navigation précédente (RG-NAV-27).
+  int lastPersonsOnBoard = 1;
+
+  /// Contacts alertés par défaut : suiveurs et contacts SOS (RG-NAV-25).
+  List<Contact> get alertable => contacts.where((c) => c.follower || c.sos).toList();
+
+  void addContact(Contact c) {
+    contacts.add(c);
+    notifyListeners();
+  }
+
+  /// Contacts SOS alertés pendant la navigation en cours.
+  List<Contact> get sosContactsNow {
+    final v = current;
+    return contacts.where((c) => c.sos && (v == null || v.alerted.contains(c.name))).toList();
+  }
+
   void startVoyage({
     required Boat boat,
     String? destination,
     required int frequency,
+    int persons = 1,
+    Set<String>? alerted,
   }) {
     final now = DateTime.now();
     final p = Position(47.4875, -3.0970, now);
@@ -275,6 +303,9 @@ class AppState extends ChangeNotifier {
       start: now,
       destination: destination,
       navigator: 'Moi',
+      personsOnBoard: persons,
+      alerted: alerted ?? alertable.map((c) => c.name).toSet(),
+      weatherStart: demoWeather(p),
       track: [p],
       log: [
         LogEvent(
@@ -285,6 +316,7 @@ class AppState extends ChangeNotifier {
         ),
       ],
     );
+    lastPersonsOnBoard = persons;
     current = v;
     voyages.insert(0, v);
     notifyListeners();
@@ -338,6 +370,7 @@ class AppState extends ChangeNotifier {
     final v = current;
     if (v == null) return;
     v.end = DateTime.now();
+    if (v.track.isNotEmpty) v.weatherEnd = demoWeather(v.track.last);
     v.log.add(
       LogEvent(
         EventKind.end,
@@ -380,6 +413,9 @@ class AppState extends ChangeNotifier {
         end: base.add(const Duration(hours: 3, minutes: 40)),
         destination: 'Le Palais, Belle-Île',
         navigator: 'Moi',
+        personsOnBoard: 3,
+        weatherStart: 'Ouest 12 nœuds · mer peu agitée · 1016 hPa',
+        weatherEnd: 'Ouest 15 nœuds · mer agitée · 1014 hPa',
         track: t1,
         log: [
           LogEvent(
@@ -402,7 +438,7 @@ class AppState extends ChangeNotifier {
           LogEvent(
             EventKind.voice,
             t1[16].time,
-            text: 'Arrivée en vue du Palais, on affale dans vingt minutes.',
+            text: 'Enregistrement · 0:14',
           ),
           LogEvent(EventKind.end, t1.last.time, position: t1.last),
         ],
@@ -427,6 +463,8 @@ class AppState extends ChangeNotifier {
         destination: 'Houat',
         navigator: 'Paul (ami)',
         asFollower: true,
+        personsOnBoard: 4,
+        weatherStart: 'Sud-Ouest 14 nœuds · mer agitée · 1011 hPa',
         track: t2,
         log: [
           LogEvent(EventKind.start, t2.first.time, position: t2.first),
@@ -450,6 +488,9 @@ class AppState extends ChangeNotifier {
         start: base3,
         end: base3.add(const Duration(hours: 2, minutes: 15)),
         navigator: 'Moi',
+        personsOnBoard: 2,
+        weatherStart: 'Nord-Ouest 8 nœuds · mer belle · 1019 hPa',
+        weatherEnd: 'Nord-Ouest 10 nœuds · mer belle · 1018 hPa',
         track: t3,
         log: [
           LogEvent(EventKind.start, t3.first.time, position: t3.first),
@@ -460,3 +501,41 @@ class AppState extends ChangeNotifier {
     );
   }
 }
+
+/// Lieux connus pour le géocodage inverse de démonstration (RG-NAV-16, RG-JRN-10).
+const _places = <(String, double, double)>[
+  ('Port-Haliguen', 47.488, -3.100),
+  ('Quiberon', 47.483, -3.120),
+  ('Pointe de la Teignouse', 47.457, -3.046),
+  ('Le Palais, Belle-Île', 47.348, -3.155),
+  ('Sauzon, Belle-Île', 47.373, -3.218),
+  ('Houat', 47.393, -2.958),
+  ('Hoëdic', 47.338, -2.875),
+  ('La Trinité-sur-Mer', 47.585, -3.029),
+  ('Plateau des Birvideaux', 47.490, -3.290),
+  ('Baie de Quiberon', 47.530, -3.050),
+];
+
+/// Nom du lieu le plus proche à moins de 8 milles, sinon les coordonnées.
+String placeName(Position p) {
+  var best = '';
+  var bestNm = double.infinity;
+  for (final (name, lat, lon) in _places) {
+    final d = Voyage.distanceMeters(p, Position(lat, lon, p.time)) / 1852;
+    if (d < bestNm) {
+      bestNm = d;
+      best = name;
+    }
+  }
+  if (bestNm > 8) return p.text;
+  return bestNm < 0.5 ? best : 'à ${bestNm.toStringAsFixed(1)} milles de $best';
+}
+
+/// Météo de démonstration : en vrai, relevée par le serveur (RG-NAV-28, Q-39).
+String demoWeather(Position p) {
+  final r = Random(p.lat.hashCode ^ p.lon.hashCode);
+  const dirs = ['Nord', 'Nord-Ouest', 'Ouest', 'Sud-Ouest', 'Sud'];
+  const seas = ['mer belle', 'mer peu agitée', 'mer agitée'];
+  return '${dirs[r.nextInt(dirs.length)]} ${8 + r.nextInt(12)} nœuds · ${seas[r.nextInt(seas.length)]} · ${1008 + r.nextInt(14)} hPa';
+}
+

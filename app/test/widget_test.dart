@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nautilink/data.dart';
 import 'package:nautilink/main.dart';
+import 'package:nautilink/screens/dashboard.dart';
 
-Future<void> reveal(WidgetTester tester, String text) async {
+Future<void> reveal(WidgetTester tester, Finder finder) async {
   // La liste de l'écran du dessus : les écrans précédents restent dans l'arbre.
   final list = find.byType(Scrollable).hitTestable().first;
-  await tester.scrollUntilVisible(find.text(text), 200, scrollable: list);
-  await tester.ensureVisible(find.text(text));
+  await tester.scrollUntilVisible(finder, 200, scrollable: list);
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+}
+
+Future<void> tapText(WidgetTester tester, String text) async {
+  await reveal(tester, find.text(text));
+  await tester.tap(find.text(text));
   await tester.pumpAndSettle();
 }
 
@@ -21,27 +28,29 @@ void setPhone(WidgetTester tester) {
 Future<void> openHome(WidgetTester tester) async {
   await tester.pumpWidget(const NautiLinkApp());
   expect(find.text('Version bêta et responsabilité'), findsOneWidget);
-  await reveal(tester, 'J\'ai lu et j\'accepte cet avertissement');
+  await reveal(tester, find.text('J\'ai lu et j\'accepte cet avertissement'));
   await tester.tap(find.text('J\'ai lu et j\'accepte cet avertissement'));
   await tester.pump();
-  await reveal(tester, 'Continuer');
-  await tester.tap(find.text('Continuer'));
-  await tester.pumpAndSettle();
+  await tapText(tester, 'Continuer');
 }
 
-/// Démarre une navigation depuis l'accueil (RG-NAV-23 compris).
-Future<void> startVoyage(WidgetTester tester) async {
+/// Ouvre l'écran de démarrage (RG-NAV-23 compris).
+Future<void> openStart(WidgetTester tester) async {
   await tester.tap(find.text('Démarrer navigation'));
   await tester.pumpAndSettle();
   await tester.tap(find.text('J\'ai compris'));
   await tester.pumpAndSettle();
-  await reveal(tester, 'Envoi message – Début de navigation');
-  await tester.tap(find.text('Envoi message – Début de navigation'));
-  await tester.pumpAndSettle();
+}
+
+Future<void> startVoyage(WidgetTester tester) async {
+  await openStart(tester);
+  await tapText(tester, 'Envoi message – Début de navigation');
   expect(find.text('Depuis le début'), findsOneWidget);
 }
 
 void main() {
+  setUpAll(() => SeaMap.tilesEnabled = false); // pas de réseau pendant les tests
+
   test('fréquences de 15 minutes à 10 jours (RG-NAV-05)', () {
     expect(frequencies.values.toList(), [
       '15 minutes', '30 minutes', '1 heure', '2 heures', '3 heures',
@@ -60,6 +69,27 @@ void main() {
     expect(s.isStationary(), isFalse);
   });
 
+  test('nom du lieu le plus proche (RG-JRN-10) et météo au début et à la fin (RG-NAV-28)', () {
+    expect(placeName(Position(47.488, -3.100, DateTime.now())), 'Port-Haliguen');
+    expect(placeName(Position(47.47, -3.08, DateTime.now())), startsWith('à '));
+    expect(placeName(Position(45.0, -6.0, DateTime.now())), contains('N'));
+    final s = AppState();
+    s.startVoyage(boat: s.boats.first, frequency: 30, persons: 3);
+    final v = s.current!;
+    expect(v.weatherStart, contains('nœuds'));
+    expect(v.weatherEnd, isNull);
+    s.endVoyage();
+    expect(v.weatherEnd, contains('hPa'));
+    expect(s.lastPersonsOnBoard, 3);
+  });
+
+  test('contact décoché : pas d\'alerte SOS pendant la navigation (RG-NAV-25)', () {
+    final s = AppState();
+    final all = s.alertable.map((c) => c.name).toSet();
+    s.startVoyage(boat: s.boats.first, frequency: 30, alerted: all..remove('Marc (voisin de ponton)'));
+    expect(s.sosContactsNow.map((c) => c.name), ['Claire (sœur)']);
+  });
+
   testWidgets('accueil : lien « Version gratuite - abonnement » (RG-ECO-10)', (tester) async {
     setPhone(tester);
     await openHome(tester);
@@ -67,11 +97,44 @@ void main() {
     await tester.tap(find.text('Version gratuite - abonnement'));
     await tester.pumpAndSettle();
     expect(find.text('Quota et abonnement'), findsOneWidget);
-    await reveal(tester, 'En savoir plus sur l\'abonnement');
+    await reveal(tester, find.text('En savoir plus sur l\'abonnement'));
     expect(find.text('En savoir plus sur l\'abonnement'), findsOneWidget);
   });
 
-  testWidgets('envoi : fenêtre « OK », fermée seule après 1 minute, chronomètre remis à zéro', (tester) async {
+  testWidgets('démarrage : personnes à bord, personnes alertées, ajout d\'un contact (RG-NAV-25 à 27)', (tester) async {
+    setPhone(tester);
+    await openHome(tester);
+    await openStart(tester);
+    expect(tester.widget<Text>(find.byKey(const Key('persons'))).data, '1');
+    await tester.tap(find.byTooltip('Une personne de plus'));
+    await tester.tap(find.byTooltip('Une personne de plus'));
+    await tester.pump();
+    expect(tester.widget<Text>(find.byKey(const Key('persons'))).data, '3');
+
+    await reveal(tester, find.text('Personnes alertées'));
+    expect(find.text('Claire (sœur)'), findsOneWidget);
+    await tapText(tester, 'Ajouter une personne');
+    await tester.enterText(find.byKey(const Key('add-name')), 'Yann');
+    await tester.enterText(find.byKey(const Key('add-phone')), '06 11 22 33 44');
+    await tester.pump();
+    await tapText(tester, 'Ajouter');
+    await reveal(tester, find.text('Yann'));
+    expect(find.text('Yann'), findsOneWidget);
+    expect(find.text('suiveur · contact SOS'), findsWidgets);
+
+    await tapText(tester, 'Envoi message – Début de navigation');
+    // SOS avec problème rencontré (RG-SOS-02, RG-SOS-07).
+    await tapText(tester, 'Envoyer un SOS');
+    await tester.enterText(find.byKey(const Key('sos-problem')), 'Avarie de safran');
+    await tester.tap(find.text('Confirmer le SOS'));
+    await tester.pumpAndSettle();
+    final sms = tester.widget<Text>(find.byKey(const Key('sos-sms'))).data!;
+    expect(sms, contains('3 personnes à bord'));
+    expect(sms, contains('Problème : Avarie de safran'));
+    expect(find.text('Yann'), findsOneWidget);
+  });
+
+  testWidgets('envoi : fenêtre « OK » fermée après 1 minute, chronomètre, note vocale enregistrée', (tester) async {
     setPhone(tester);
     await openHome(tester);
     await startVoyage(tester);
@@ -88,12 +151,23 @@ void main() {
     await tester.tap(find.text('Valider l\'envoi'));
     await tester.pumpAndSettle();
     expect(find.text('Note envoyée'), findsOneWidget);
-    expect(find.text('OK'), findsOneWidget);
-    expect(find.text('00:00:02'), findsOneWidget); // depuis le début seulement
-    expect(find.text('00:00:00'), findsOneWidget); // dernier envoi remis à zéro
+    expect(find.text('00:00:02'), findsOneWidget);
+    expect(find.text('00:00:00'), findsOneWidget);
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
-    expect(find.text('Note envoyée'), findsNothing);
+
+    // RG-JRN-04 : enregistrement de la voix, sans transcription.
+    await tester.tap(find.text('Vocal'));
+    await tester.pump(const Duration(seconds: 3));
+    expect(find.text('Enregistrement en cours'), findsOneWidget);
+    await tester.tap(find.text('Arrêter et envoyer'));
+    await tester.pumpAndSettle();
+    expect(find.text('Note vocale envoyée'), findsOneWidget);
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    await reveal(tester, find.textContaining('Enregistrement · 0:0'));
+    expect(find.textContaining('Enregistrement · 0:0'), findsOneWidget);
+    await reveal(tester, find.text('Envoyer information position'));
 
     await tester.tap(find.text('Envoyer information position'));
     await tester.pumpAndSettle();
@@ -104,7 +178,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Position envoyée'), findsNothing);
 
-    // RG-NAV-24 : immobile depuis 2 heures, proposition de fin.
+    // RG-NAV-24 puis RG-NAV-13 : fin proposée, puis page détaillée.
     await tester.tap(find.byTooltip('Démonstration'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Démo : simuler 2 h sans bouger'));
@@ -112,30 +186,33 @@ void main() {
     expect(find.text('Navigation terminée ?'), findsOneWidget);
     await tester.tap(find.text('Terminer la navigation').last);
     await tester.pumpAndSettle();
-    expect(find.text('Démarrer navigation'), findsOneWidget);
+    expect(find.text('Journal de bord'), findsOneWidget);
+    expect(find.text('Météo à l\'arrivée'), findsOneWidget);
   });
 
-  testWidgets('SOS avec confirmation puis fin de navigation', (tester) async {
+  testWidgets('fin de navigation : page détaillée avec météo, lieux et journal (RG-NAV-13, RG-NAV-28, RG-JRN-09)', (tester) async {
     setPhone(tester);
     await openHome(tester);
     await startVoyage(tester);
-
-    // RG-SOS-02 : confirmation avant l'envoi.
-    await reveal(tester, 'Envoyer un SOS');
-    await tester.tap(find.text('Envoyer un SOS'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Confirmer le SOS'));
-    await tester.pumpAndSettle();
-    expect(find.text('Alerte SOS'), findsOneWidget);
-    await reveal(tester, 'Retour');
-    await tester.tap(find.text('Retour'));
-    await tester.pumpAndSettle();
-
-    await reveal(tester, 'Terminer la navigation');
-    await tester.tap(find.text('Terminer la navigation'));
-    await tester.pumpAndSettle();
+    await tapText(tester, 'Terminer la navigation');
     await tester.tap(find.text('Terminer'));
     await tester.pumpAndSettle();
+    expect(find.text('Personnes à bord'), findsOneWidget);
+    expect(find.text('Météo au départ'), findsOneWidget);
+    expect(find.text('Lieu de départ'), findsOneWidget);
+    expect(find.text('Port-Haliguen'), findsWidgets);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
     expect(find.text('Démarrer navigation'), findsOneWidget);
+
+    // Photo en grand et écoute dans le journal d'une navigation passée.
+    await tapText(tester, 'Navigations enregistrées');
+    await tapText(tester, 'Alizé — Belle-Île');
+    await tapText(tester, 'Phare de Kerdonis par le travers');
+    expect(find.text('Fermer'), findsOneWidget);
+    await tester.tap(find.text('Fermer'));
+    await tester.pumpAndSettle();
+    await tapText(tester, 'Enregistrement · 0:14');
+    expect(find.text('Écoute de la note vocale'), findsOneWidget);
   });
 }
