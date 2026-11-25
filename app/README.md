@@ -19,6 +19,10 @@ Application Flutter, un seul code pour Android, iPhone et la démonstration Web 
 
 Sur le Web, un premier écran propose de jouer le navigateur (dans un cadre de téléphone) ou le suiveur.
 
+## Langues
+
+Textes des écrans dans `lib/l10n/` (TODO-9.2, [Q-27](../docs/06-questions-ouvertes.md#q-27)) : `app_fr.arb`, langue de référence, dont les libellés sont ceux que cite la spécification (à modifier ensemble) ; `app_en.arb`, traduction d'essai non relue. `flutter pub get` régénère `app_localizations*.dart` (configuration : `l10n.yaml`). Le français est la langue par défaut ; essai en anglais : `flutter run --dart-define=NAUTILINK_LANG=en`. Restent en français dans le code : le contenu des SMS et du journal, et les textes de `lib/data.dart` (types d'événements, fréquences, dates).
+
 ## Commandes
 
 Flutter 3.47.9 (version fixée aussi dans `.github/workflows/pages.yml`).

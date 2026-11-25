@@ -90,6 +90,18 @@ void main() {
     expect(s.sosContactsNow.map((c) => c.name), ['Claire (sœur)']);
   });
 
+  testWidgets('deuxième langue : essai en anglais (TODO-9.2)', (tester) async {
+    setPhone(tester);
+    await tester.pumpWidget(const NautiLinkApp(locale: Locale('en')));
+    expect(find.text('Beta version and liability'), findsOneWidget);
+    await reveal(tester, find.text('I have read and accept this warning'));
+    await tester.tap(find.text('I have read and accept this warning'));
+    await tester.pump();
+    await tapText(tester, 'Continue');
+    expect(find.text('Start voyage'), findsOneWidget);
+    expect(find.text('Send an SOS'), findsOneWidget);
+  });
+
   testWidgets('accueil : lien « Version gratuite - abonnement » (RG-ECO-10)', (tester) async {
     setPhone(tester);
     await openHome(tester);
@@ -201,7 +213,7 @@ void main() {
     expect(find.text('Météo au départ'), findsOneWidget);
     expect(find.text('Lieu de départ'), findsOneWidget);
     expect(find.text('Port-Haliguen'), findsWidgets);
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton)); // pageBack() cherche l'infobulle anglaise « Back »
     await tester.pumpAndSettle();
     expect(find.text('Démarrer navigation'), findsOneWidget);
 

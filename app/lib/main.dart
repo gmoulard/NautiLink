@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'data.dart';
+import 'l10n/app_localizations.dart';
 import 'screens/dashboard.dart';
 import 'screens/home.dart';
 import 'screens/warning.dart';
@@ -18,8 +19,13 @@ class AppScope extends InheritedNotifier<AppState> {
       context.dependOnInheritedWidgetOfExactType<AppScope>()!.notifier!;
 }
 
+/// Langue de l'interface : français par défaut (langue de référence, TODO-9.2).
+/// Essai d'une autre langue : `--dart-define=NAUTILINK_LANG=en`.
+const kDefaultLanguage = String.fromEnvironment('NAUTILINK_LANG', defaultValue: 'fr');
+
 class NautiLinkApp extends StatefulWidget {
-  const NautiLinkApp({super.key});
+  const NautiLinkApp({super.key, this.locale = const Locale(kDefaultLanguage)});
+  final Locale locale;
 
   @override
   State<NautiLinkApp> createState() => _NautiLinkAppState();
@@ -33,7 +39,10 @@ class _NautiLinkAppState extends State<NautiLinkApp> {
     return AppScope(
       state: state,
       child: MaterialApp(
-        title: 'NautiLink',
+        onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+        locale: widget.locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         debugShowCheckedModeBanner: false,
         theme: nlTheme(Brightness.light),
         darkTheme: nlTheme(Brightness.dark),
@@ -60,8 +69,9 @@ class ChooseSideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('NautiLink · démonstration')),
+      appBar: AppBar(title: Text(l.chooseTitle)),
       body: Column(
         children: [
           const DemoBanner(),
@@ -74,14 +84,14 @@ class ChooseSideScreen extends StatelessWidget {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      'Que voulez-vous essayer ?',
+                      l.chooseQuestion,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 20),
                     _SideCard(
                       icon: Icons.sailing,
-                      title: 'Le navigateur à bord',
-                      text: 'L\'application mobile : démarrer une navigation, envoyer sa position, noter, déclencher un SOS.',
+                      title: l.chooseNavigatorTitle,
+                      text: l.chooseNavigatorText,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => const PhoneFrame(child: HomeScreen()),
@@ -91,8 +101,8 @@ class ChooseSideScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     _SideCard(
                       icon: Icons.dashboard_outlined,
-                      title: 'Le suiveur, sur la plateforme Web',
-                      text: 'Le tableau de bord : navigations en cours et passées, carte du tracé, journal de bord.',
+                      title: l.chooseFollowerTitle,
+                      text: l.chooseFollowerText,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => const DashboardScreen(),

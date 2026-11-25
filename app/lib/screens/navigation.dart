@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../theme.dart';
 import 'dashboard.dart';
@@ -32,12 +33,13 @@ class _StartScreenState extends State<StartScreen> {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final l = AppLocalizations.of(context);
     frequency ??= state.defaultFrequency;
     persons ??= state.lastPersonsOnBoard;
     alerted ??= state.alertable.map((c) => c.name).toSet();
     final sosChecked = state.contacts.any((c) => c.sos && alerted!.contains(c.name));
     return Scaffold(
-      appBar: AppBar(title: const Text('Démarrer navigation')),
+      appBar: AppBar(title: Text(l.startVoyage)),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -45,7 +47,7 @@ class _StartScreenState extends State<StartScreen> {
             DropdownButtonFormField<int>(
               isExpanded: true,
               initialValue: boat,
-              decoration: const InputDecoration(labelText: 'Bateau', border: OutlineInputBorder()),
+              decoration: InputDecoration(labelText: l.boat, border: const OutlineInputBorder()),
               items: [
                 for (var i = 0; i < state.boats.length; i++)
                   DropdownMenuItem(value: i, child: Text('${state.boats[i].name} · ${state.boats[i].type}')),
@@ -56,20 +58,20 @@ class _StartScreenState extends State<StartScreen> {
           ],
           TextField(
             controller: destination,
-            decoration: const InputDecoration(
-              labelText: 'Destination (facultative)',
-              hintText: 'Adresse ou lieu',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.destinationOptional,
+              hintText: l.destinationHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 16),
           // RG-NAV-27 : nombre de personnes à bord, repris dans le SOS.
           InputDecorator(
-            decoration: const InputDecoration(labelText: 'Personnes à bord', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: l.personsOnBoard, border: const OutlineInputBorder()),
             child: Row(
               children: [
                 IconButton(
-                  tooltip: 'Une personne de moins',
+                  tooltip: l.onePersonLess,
                   icon: const Icon(Icons.remove_circle_outline),
                   onPressed: persons! > 1 ? () => setState(() => persons = persons! - 1) : null,
                 ),
@@ -82,7 +84,7 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 ),
                 IconButton(
-                  tooltip: 'Une personne de plus',
+                  tooltip: l.onePersonMore,
                   icon: const Icon(Icons.add_circle_outline),
                   onPressed: () => setState(() => persons = persons! + 1),
                 ),
@@ -93,13 +95,13 @@ class _StartScreenState extends State<StartScreen> {
           DropdownButtonFormField<int>(
             isExpanded: true,
             initialValue: frequency,
-            decoration: const InputDecoration(labelText: 'Fréquence d\'envoi automatique', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: l.autoFrequency, border: const OutlineInputBorder()),
             items: [for (final e in frequencies.entries) DropdownMenuItem(value: e.key, child: Text(e.value))],
             onChanged: (v) => setState(() => frequency = v),
           ),
           const SizedBox(height: 20),
           // RG-NAV-25 et RG-NAV-26 : personnes alertées, ajout d'un contact.
-          Text('Personnes alertées', style: Theme.of(context).textTheme.titleMedium),
+          Text(l.alertedPersons, style: Theme.of(context).textTheme.titleMedium),
           for (final c in state.alertable)
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
@@ -107,13 +109,13 @@ class _StartScreenState extends State<StartScreen> {
               value: alerted!.contains(c.name),
               onChanged: (v) => setState(() => v == true ? alerted!.add(c.name) : alerted!.remove(c.name)),
               title: Text(c.name),
-              subtitle: Text([if (c.follower) 'suiveur', if (c.sos) 'contact SOS'].join(' · ')),
+              subtitle: Text([if (c.follower) l.alertedRoleFollower, if (c.sos) l.alertedRoleSos].join(' · ')),
             ),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               icon: const Icon(Icons.person_add_alt),
-              label: const Text('Ajouter une personne'),
+              label: Text(l.addPerson),
               onPressed: () async {
                 final c = await Navigator.of(context).push<Contact>(
                   MaterialPageRoute(builder: (_) => const AddPersonScreen()),
@@ -128,7 +130,7 @@ class _StartScreenState extends State<StartScreen> {
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               icon: const Icon(Icons.tune),
-              label: const Text('Paramètres de cette navigation'),
+              label: Text(l.voyageSettings),
               onPressed: () => showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -137,11 +139,11 @@ class _StartScreenState extends State<StartScreen> {
             ),
           ),
           if (!sosChecked)
-            const Card(
-              color: Color(0xFFFBE9E9),
+            Card(
+              color: const Color(0xFFFBE9E9),
               child: ListTile(
-                leading: Icon(Icons.warning_amber, color: NlColors.alert),
-                title: Text('Aucun contact SOS coché : personne ne recevra vos SMS SOS.'),
+                leading: const Icon(Icons.warning_amber, color: NlColors.alert),
+                title: Text(l.noSosChecked),
               ),
             ),
           const SizedBox(height: 16),
@@ -156,7 +158,7 @@ class _StartScreenState extends State<StartScreen> {
               );
               Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const NavigationScreen()));
             },
-            child: const Text('Envoi message – Début de navigation'),
+            child: Text(l.sendStart),
           ),
         ],
       ),
@@ -187,19 +189,20 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final ok = name.text.trim().isNotEmpty && (phone.text.trim().isNotEmpty || email.text.trim().isNotEmpty);
     return Scaffold(
-      appBar: AppBar(title: const Text('Ajouter une personne')),
+      appBar: AppBar(title: Text(l.addPerson)),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text('La personne rejoint vos contacts, suiveur et contact SOS par défaut, et sera alertée pendant cette navigation.'),
+          Text(l.addPersonText),
           const SizedBox(height: 16),
           TextField(
             key: const Key('add-name'),
             controller: name,
             onChanged: (_) => setState(() {}),
-            decoration: const InputDecoration(labelText: 'Nom', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: l.name, border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -207,17 +210,17 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
             controller: phone,
             onChanged: (_) => setState(() {}),
             keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(labelText: 'Téléphone', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: l.phone, border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: email,
             onChanged: (_) => setState(() {}),
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(labelText: 'E-mail', border: OutlineInputBorder()),
+            decoration: InputDecoration(labelText: l.email, border: const OutlineInputBorder()),
           ),
           const SizedBox(height: 8),
-          const Text('Un numéro de téléphone est nécessaire pour être contact SOS.'),
+          Text(l.phoneNeededForSos),
           const SizedBox(height: 16),
           FilledButton(
             onPressed: ok
@@ -229,7 +232,7 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
                       ),
                     )
                 : null,
-            child: const Text('Ajouter'),
+            child: Text(l.add),
           ),
         ],
       ),
@@ -275,8 +278,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Future<void> sent(String what) async {
     setState(() => lastSend = DateTime.now());
     final state = AppScope.of(context);
-    final sms = state.smsEnabled ? 'SMS prérempli pour vos suiveurs' : 'SMS désactivés';
-    await showSendResult(context, what, ['Serveur : envoyé', sms, '(démonstration : rien n\'est réellement envoyé)']);
+    final l = AppLocalizations.of(context);
+    final sms = state.smsEnabled ? l.smsPrefilled : l.smsDisabled;
+    await showSendResult(context, what, [l.serverSent, sms, l.nothingReallySent]);
     if (mounted) await proposeEndIfStationary();
   }
 
@@ -284,14 +288,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Future<void> proposeEndIfStationary() async {
     final state = AppScope.of(context);
     if (!state.isStationary()) return;
+    final l = AppLocalizations.of(context);
     final end = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Navigation terminée ?'),
-        content: const Text('Vous ne vous êtes pas éloigné de plus de 20 mètres depuis 2 heures.'),
+        title: Text(l.voyageEnded),
+        content: Text(l.stationaryText),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Continuer')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Terminer la navigation')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.continueLabel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.endVoyage)),
         ],
       ),
     );
@@ -301,14 +306,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   Future<String?> askText(String title, String hint) {
     final c = TextEditingController();
+    final l = AppLocalizations.of(context);
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(title),
         content: TextField(controller: c, autofocus: true, maxLines: 3, decoration: InputDecoration(hintText: hint)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
-          TextButton(onPressed: () => Navigator.pop(ctx, c.text.trim()), child: const Text('Valider l\'envoi')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, c.text.trim()), child: Text(l.validateSend)),
         ],
       ),
     );
@@ -317,21 +323,22 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final l = AppLocalizations.of(context);
     final v = state.current;
     if (v == null) {
-      return Scaffold(appBar: AppBar(), body: const Center(child: Text('Aucune navigation en cours.')));
+      return Scaffold(appBar: AppBar(), body: Center(child: Text(l.noVoyageInProgress)));
     }
     return Scaffold(
       appBar: AppBar(
         title: Text(v.boat.name),
         actions: [
           PopupMenuButton<String>(
-            tooltip: 'Démonstration',
+            tooltip: l.demoMenu,
             onSelected: (_) async {
               state.simulateStationary();
               await proposeEndIfStationary();
             },
-            itemBuilder: (_) => const [PopupMenuItem(value: 'immobile', child: Text('Démo : simuler 2 h sans bouger'))],
+            itemBuilder: (_) => [PopupMenuItem(value: 'immobile', child: Text(l.demoStationary))],
           ),
         ],
       ),
@@ -345,20 +352,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 children: [
                   Row(
                     children: [
-                      Expanded(child: _Chrono(label: 'Depuis le début', value: fmtClock(v.duration))),
+                      Expanded(child: _Chrono(label: l.sinceStart, value: fmtClock(v.duration))),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _Chrono(label: 'Depuis le dernier envoi', value: fmtClock(DateTime.now().difference(lastSend))),
+                        child: _Chrono(label: l.sinceLastSend, value: fmtClock(DateTime.now().difference(lastSend))),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   FilledButton.icon(
                     icon: const Icon(Icons.my_location),
-                    label: const Text('Envoyer information position'),
+                    label: Text(l.sendPosition),
                     onPressed: () {
                       state.addEvent(EventKind.manualPosition);
-                      sent('Position envoyée');
+                      sent(l.positionSent);
                     },
                   ),
                   const SizedBox(height: 12),
@@ -367,12 +374,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.edit_note),
-                          label: const Text('NOTE'),
+                          label: Text(l.noteButton),
                           onPressed: () async {
-                            final t = await askText('Note', 'Votre note');
+                            final t = await askText(l.noteTitle, l.noteHint);
                             if (t == null || t.isEmpty) return;
                             state.addEvent(EventKind.note, text: t);
-                            sent('Note envoyée');
+                            sent(l.noteSent);
                           },
                         ),
                       ),
@@ -380,10 +387,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.photo_camera_outlined),
-                          label: const Text('Photo'),
+                          label: Text(l.photoButton),
                           onPressed: () {
                             state.addEvent(EventKind.photo, text: 'Photo d\'exemple');
-                            sent('Photo envoyée');
+                            sent(l.photoSent);
                           },
                         ),
                       ),
@@ -391,12 +398,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.mic_none),
-                          label: const Text('Vocal'),
+                          label: Text(l.voiceButton),
                           onPressed: () async {
                             final seconds = await recordVoice(context);
                             if (seconds == null) return;
                             state.addEvent(EventKind.voice, text: 'Enregistrement · ${fmtSeconds(seconds)}');
-                            sent('Note vocale envoyée');
+                            sent(l.voiceSent);
                           },
                         ),
                       ),
@@ -410,20 +417,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       final ok = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: const Text('Terminer la navigation ?'),
+                          title: Text(l.endVoyageQuestion),
                           actions: [
-                            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
-                            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Terminer')),
+                            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.cancel)),
+                            TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.end)),
                           ],
                         ),
                       );
                       if (ok != true || !context.mounted) return;
                       endAndOpenDetail(context);
                     },
-                    child: const Text('Terminer la navigation'),
+                    child: Text(l.endVoyage),
                   ),
                   const SizedBox(height: 20),
-                  Text('Journal de bord', style: Theme.of(context).textTheme.titleMedium),
+                  Text(l.logbook, style: Theme.of(context).textTheme.titleMedium),
                   for (final e in v.log.reversed) LogTile(event: e),
                 ],
               ),
@@ -478,15 +485,16 @@ class _RecordDialogState extends State<_RecordDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return AlertDialog(
       icon: const Icon(Icons.mic, color: NlColors.alert, size: 40),
-      title: const Text('Enregistrement en cours'),
+      title: Text(l.recording),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(fmtSeconds(seconds), style: const TextStyle(fontFamily: kMonoFont, fontSize: 32, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
-          const Text('1 minute au plus. Votre voix est envoyée telle quelle, sans transcription.'),
+          Text(l.recordingHint),
         ],
       ),
       actions: [
@@ -495,9 +503,9 @@ class _RecordDialogState extends State<_RecordDialog> {
             timer?.cancel();
             Navigator.of(context).pop();
           },
-          child: const Text('Annuler'),
+          child: Text(l.cancel),
         ),
-        TextButton(onPressed: _stop, child: const Text('Arrêter et envoyer')),
+        TextButton(onPressed: _stop, child: Text(l.stopAndSend)),
       ],
     );
   }
@@ -550,6 +558,7 @@ class LogTile extends StatelessWidget {
       };
 
   void _open(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (event.kind == EventKind.photo) {
       showDialog<void>(
         context: context,
@@ -565,9 +574,9 @@ class LogTile extends StatelessWidget {
                 child: const Icon(Icons.sailing, size: 120, color: NlColors.accent),
               ),
               ListTile(
-                title: Text(event.text ?? 'Photo'),
-                subtitle: Text('${fmtTime(event.time)} · photo d\'exemple'),
-                trailing: TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fermer')),
+                title: Text(event.text ?? l.photo),
+                subtitle: Text(l.samplePhoto(fmtTime(event.time))),
+                trailing: TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.close)),
               ),
             ],
           ),
@@ -578,9 +587,9 @@ class LogTile extends StatelessWidget {
         context: context,
         builder: (ctx) => AlertDialog(
           icon: const Icon(Icons.play_circle_outline, color: NlColors.accent, size: 44),
-          title: const Text('Écoute de la note vocale'),
-          content: Text('${event.text ?? 'Enregistrement'}\nDémonstration : aucun son n\'est enregistré.'),
-          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fermer'))],
+          title: Text(l.listenVoice),
+          content: Text(l.noSoundRecorded(event.text ?? l.recordingDefault)),
+          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.close))],
         ),
       );
     }
@@ -652,7 +661,7 @@ class _SendResultDialogState extends State<_SendResultDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [for (final l in widget.lines) Text(l)],
       ),
-      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppLocalizations.of(context).ok))],
     );
   }
 }
@@ -687,35 +696,34 @@ class _SosDialogState extends State<_SosDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return AlertDialog(
       icon: const Icon(Icons.sos, color: NlColors.alert, size: 40),
-      title: const Text('Envoyer un SOS ?'),
+      title: Text(l.sosQuestion),
       scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Vos contacts SOS recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.',
-          ),
+          Text(l.sosConfirmText),
           const SizedBox(height: 12),
           TextField(
             key: const Key('sos-problem'),
             controller: problem,
             maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'Problème rencontré (facultatif)',
-              hintText: 'Voie d\'eau, avarie moteur, blessé…',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.sosProblem,
+              hintText: l.sosProblemHint,
+              border: const OutlineInputBorder(),
             ),
           ),
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annuler')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: NlColors.alert, minimumSize: const Size(140, 44)),
           onPressed: () => Navigator.pop(context, problem.text.trim()),
-          child: const Text('Confirmer le SOS'),
+          child: Text(l.sosConfirm),
         ),
       ],
     );
@@ -729,11 +737,13 @@ class SosResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final l = AppLocalizations.of(context);
     final sosContacts = state.sosContactsNow;
     final v = state.current;
     final boat = v?.boat ?? state.boats.first;
     final persons = v?.personsOnBoard ?? state.lastPersonsOnBoard;
     final pos = v?.track.last ?? state.nextPosition();
+    // Contenu du SMS envoyé, pas texte d'interface : reste en français (langue des messages : Q-27).
     final sms = [
       'SOS ${boat.name}, ${boat.type}, ${boat.length}, ${boat.registration}.',
       '$persons personne${persons > 1 ? 's' : ''} à bord.',
@@ -743,7 +753,7 @@ class SosResultScreen extends StatelessWidget {
     ].join('\n');
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Alerte SOS'),
+        title: Text(l.sosAlert),
         backgroundColor: NlColors.alert,
         foregroundColor: NlColors.white,
       ),
@@ -752,7 +762,7 @@ class SosResultScreen extends StatelessWidget {
         children: [
           const DemoBanner(),
           const SizedBox(height: 12),
-          Text('Démonstration : aucun SMS n\'est réellement parti.', style: Theme.of(context).textTheme.titleMedium),
+          Text(l.sosNoSmsSent, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
           Card(
             child: Padding(
@@ -765,20 +775,20 @@ class SosResultScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.check_circle, color: NlColors.teal),
               title: Text(c.name),
-              subtitle: Text('SMS SOS accepté pour envoi · ${c.phone}'),
+              subtitle: Text(l.sosSmsAccepted(c.phone ?? '')),
             ),
-          const ListTile(
-            leading: Icon(Icons.check_circle, color: NlColors.teal),
-            title: Text('Copie au navigateur'),
-            subtitle: Text('SMS et e-mail en copie (RG-SMS-08, RG-NOT-03)'),
+          ListTile(
+            leading: const Icon(Icons.check_circle, color: NlColors.teal),
+            title: Text(l.sosCopyNavigator),
+            subtitle: Text(l.sosCopyNavigatorDetail),
           ),
-          const ListTile(
-            leading: Icon(Icons.cloud_done_outlined, color: NlColors.teal),
-            title: Text('Serveur'),
-            subtitle: Text('Alerte reçue · e-mail aux suiveurs'),
+          ListTile(
+            leading: const Icon(Icons.cloud_done_outlined, color: NlColors.teal),
+            title: Text(l.sosServer),
+            subtitle: Text(l.sosServerDetail),
           ),
           const SizedBox(height: 12),
-          FilledButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Retour')),
+          FilledButton(onPressed: () => Navigator.of(context).pop(), child: Text(l.back)),
         ],
       ),
     );

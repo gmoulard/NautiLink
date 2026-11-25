@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'l10n/app_localizations.dart';
+
 /// Couleurs du design « Radar de pluie » (docs/05-identite-marque.md §14, D-69, D-70).
 class NlColors {
   static const sky = Color(0xFFEAF4FB); // fond
@@ -168,7 +170,7 @@ class SosButton extends StatelessWidget {
       ),
       onPressed: onPressed,
       icon: const Icon(Icons.sos, size: 28),
-      label: const Text('Envoyer un SOS'),
+      label: Text(AppLocalizations.of(context).sosButton),
     );
   }
 }
@@ -179,6 +181,7 @@ class SponsorFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -192,13 +195,13 @@ class SponsorFooter extends StatelessWidget {
           Image.asset(
             'assets/sponsor-srt.png',
             height: 30,
-            semanticLabel: 'Guidon de la SRT',
+            semanticLabel: l.sponsorLogoLabel,
           ),
           const SizedBox(width: 10),
-          const Flexible(
+          Flexible(
             child: Text(
-              'Sponsorisée par la SRT',
-              style: TextStyle(
+              l.sponsorText,
+              style: const TextStyle(
                 color: Color(0xFF1E3296),
                 fontWeight: FontWeight.w700,
               ),
@@ -220,9 +223,9 @@ class DemoBanner extends StatelessWidget {
       width: double.infinity,
       color: NlColors.beta,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: const Text(
-        'Version bêta · Démonstration : rien n\'est réellement envoyé',
-        style: TextStyle(
+      child: Text(
+        AppLocalizations.of(context).demoBanner,
+        style: const TextStyle(
           color: Color(0xFF3A2A00),
           fontWeight: FontWeight.w600,
           fontSize: 13,

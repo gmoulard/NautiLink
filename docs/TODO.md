@@ -179,8 +179,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 - [ ] **TODO-9.1**: Données gratuites du SHOM sur la carte du Web (priorité lancement depuis D-79) ([Q-23](06-questions-ouvertes.md#q-23)). Dépend de : TODO-6.2.
   - Critères d'acceptation : licence vérifiée, faisabilité et coût chiffrés.
-- [ ] **TODO-9.2**: Autres langues ([Q-27](06-questions-ouvertes.md#q-27)). Dépend de : aucune.
+- [~] **TODO-9.2**: Autres langues ([Q-27](06-questions-ouvertes.md#q-27)). Dépend de : aucune.
   - Critères d'acceptation : textes des interfaces séparés du code dès le départ ; une deuxième langue essayée.
+  - Fait dans le prototype : textes des écrans en fichiers ARB (`app/lib/l10n/`), essai en anglais, test associé. Reste : relecture de la traduction, choix des langues et des points ouverts de Q-27 par l'utilisateur ; textes de `app/lib/data.dart` (types d'événements, fréquences, dates, durées) encore dans le code.
 - [ ] **TODO-9.3**: Plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28), RG-ADM-05). Dépend de : TODO-7.1.
   - Critères d'acceptation : stratégie de déploiement et de compatibilité écrite.
 

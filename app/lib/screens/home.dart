@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
+import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../theme.dart';
 import 'dashboard.dart';
@@ -14,10 +15,11 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final l = AppLocalizations.of(context);
     final left = AppState.quotaMinutes - state.usedMinutes;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NautiLink'),
+        title: Text(l.appTitle),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) {
@@ -30,11 +32,11 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => page));
             },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'contacts', child: Text('Contacts')),
-              PopupMenuItem(value: 'params', child: Text('Paramètres')),
-              PopupMenuItem(value: 'quota', child: Text('Quota et abonnement')),
-              PopupMenuItem(value: 'web', child: Text('Tableau de bord (Web)')),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
+              PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
+              PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
+              PopupMenuItem(value: 'web', child: Text(l.menuDashboard)),
             ],
           ),
         ],
@@ -54,15 +56,15 @@ class HomeScreen extends StatelessWidget {
                         color: NlColors.teal,
                       ),
                       // RG-ECO-10 : lien vers « Quota et abonnement ».
-                      title: const Text(
-                        'Version gratuite - abonnement',
-                        style: TextStyle(
+                      title: Text(
+                        l.homeFreeVersion,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           decoration: TextDecoration.underline,
                         ),
                       ),
                       subtitle: Text(
-                        '${fmtDuration(Duration(minutes: left))} de navigation gratuite disponibles sur les 7 derniers jours',
+                        l.homeFreeLeft(fmtDuration(Duration(minutes: left))),
                       ),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => Navigator.of(context).push(
@@ -76,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                         ? null
                         : () => openStart(context),
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text('Démarrer navigation'),
+                    label: Text(l.startVoyage),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
@@ -88,7 +90,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                     icon: const Icon(Icons.restore),
-                    label: const Text('Reprendre la dernière navigation'),
+                    label: Text(l.resumeVoyage),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
@@ -98,13 +100,13 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     icon: const Icon(Icons.history),
-                    label: const Text('Navigations enregistrées'),
+                    label: Text(l.savedVoyages),
                   ),
                   const SizedBox(height: 32),
                   SosButton(onPressed: () => confirmSos(context)),
                   const SizedBox(height: 8),
                   Text(
-                    'En cas de détresse, alertez d\'abord par le canal 16 de la VHF ou le 196.',
+                    l.homeDistressHint,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
@@ -121,26 +123,24 @@ class HomeScreen extends StatelessWidget {
 
 Future<void> openStart(BuildContext context) async {
   final state = AppScope.of(context);
+  final l = AppLocalizations.of(context);
   if (!state.firstVoyageReminderSeen) {
     // Rappel avant la première navigation sur ce téléphone (RG-NAV-23).
     final ok = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Avant votre première navigation'),
-        content: const Text(
-          'NautiLink est en version bêta et n\'est pas un équipement de sécurité. '
-          'En cas de détresse, alertez d\'abord les secours par le canal 16 de la VHF ou le 196.',
-        ),
+        title: Text(l.firstVoyageTitle),
+        content: Text(l.firstVoyageText),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler'),
+            child: Text(l.cancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(minimumSize: const Size(120, 44)),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('J\'ai compris'),
+            child: Text(l.understood),
           ),
         ],
       ),
@@ -160,14 +160,13 @@ class ContactsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Contacts')),
+      appBar: AppBar(title: Text(l.menuContacts)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text(
-            'Par défaut, chaque contact est à la fois suiveur et contact SOS.',
-          ),
+          Text(l.contactsDefault),
           const SizedBox(height: 12),
           for (final c in state.contacts)
             Card(
@@ -187,7 +186,7 @@ class ContactsScreen extends StatelessWidget {
                           child: CheckboxListTile(
                             contentPadding: EdgeInsets.zero,
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: const Text('Suiveur'),
+                            title: Text(l.roleFollower),
                             value: c.follower,
                             onChanged: (v) {
                               c.follower = v ?? false;
@@ -199,9 +198,9 @@ class ContactsScreen extends StatelessWidget {
                           child: CheckboxListTile(
                             contentPadding: EdgeInsets.zero,
                             controlAffinity: ListTileControlAffinity.leading,
-                            title: const Text('Contact SOS'),
+                            title: Text(l.roleSos),
                             subtitle: c.phone == null
-                                ? const Text('Numéro requis')
+                                ? Text(l.phoneRequired)
                                 : null,
                             value: c.sos,
                             onChanged: c.phone == null
@@ -231,17 +230,18 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Paramètres')),
+      appBar: AppBar(title: Text(l.menuSettings)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           DropdownButtonFormField<int>(
             isExpanded: true,
             initialValue: state.defaultFrequency,
-            decoration: const InputDecoration(
-              labelText: 'Fréquence par défaut',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l.defaultFrequency,
+              border: const OutlineInputBorder(),
             ),
             items: [
               for (final e in frequencies.entries)
@@ -255,9 +255,7 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 16),
           SmsSettings(state: state),
           const SizedBox(height: 8),
-          const Text(
-            'Les SMS SOS partent toujours, quels que soient ces réglages.',
-          ),
+          Text(l.sosAlwaysSent),
         ],
       ),
     );
@@ -273,9 +271,9 @@ class SmsSettings extends StatelessWidget {
     return Column(
       children: [
         SwitchListTile(
-          title: const Text(
-            'SMS activés',
-            style: TextStyle(fontWeight: FontWeight.w700),
+          title: Text(
+            AppLocalizations.of(context).smsEnabled,
+            style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           value: state.smsEnabled,
           onChanged: (v) {
@@ -308,14 +306,15 @@ class QuotaScreen extends StatelessWidget {
     final state = AppScope.of(context);
     final used = state.usedMinutes.clamp(0, AppState.quotaMinutes);
     final ratio = used / AppState.quotaMinutes;
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Quota et abonnement')),
+      appBar: AppBar(title: Text(l.menuQuota)),
       body: RadarBackground(
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
             Text(
-              'Navigation gratuite : 24 h sur les 7 derniers jours glissants',
+              l.quotaHeading,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
@@ -325,28 +324,26 @@ class QuotaScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(7),
             ),
             const SizedBox(height: 12),
-            Text('Consommé : ${fmtDuration(Duration(minutes: used))}'),
+            Text(l.quotaUsed(fmtDuration(Duration(minutes: used)))),
             Text(
-              'Disponible : ${fmtDuration(Duration(minutes: AppState.quotaMinutes - used))}',
+              l.quotaLeft(
+                fmtDuration(Duration(minutes: AppState.quotaMinutes - used)),
+              ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Prochaines minutes récupérables : 3 h 40 min dans 4 jours (navigation du début de semaine).',
-            ),
+            Text(l.quotaNextRecovery),
             const SizedBox(height: 24),
-            const Card(
+            Card(
               child: ListTile(
-                title: Text('Abonnement'),
-                subtitle: Text(
-                  'Navigation sans limite, au mois ou à l\'année. Prix à venir. Suivre et consulter l\'historique restent gratuits.',
-                ),
+                title: Text(l.subscriptionTitle),
+                subtitle: Text(l.subscriptionText),
               ),
             ),
             const SizedBox(height: 12),
             // RG-ECO-10 : page d'information sur l'abonnement du site.
             OutlinedButton.icon(
               icon: const Icon(Icons.open_in_new),
-              label: const Text('En savoir plus sur l\'abonnement'),
+              label: Text(l.subscriptionMore),
               onPressed: () => launchUrl(
                 Uri.parse(subscriptionInfoUrl),
                 mode: LaunchMode.externalApplication,

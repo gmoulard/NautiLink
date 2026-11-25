@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' show LatLng;
 
 import '../data.dart';
+import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../theme.dart';
 import 'navigation.dart';
@@ -30,6 +31,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final l = AppLocalizations.of(context);
     final all = state.voyages.where(
       (v) => switch (filter) {
         'navigateur' => !v.asFollower,
@@ -43,7 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.onlyMine ? 'Navigations enregistrées' : 'Tableau de bord',
+          widget.onlyMine ? l.savedVoyages : l.dashboard,
         ),
       ),
       body: Column(
@@ -57,15 +59,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     SegmentedButton<String>(
-                      segments: const [
-                        ButtonSegment(value: 'tout', label: Text('Toutes')),
+                      segments: [
+                        ButtonSegment(value: 'tout', label: Text(l.filterAll)),
                         ButtonSegment(
                           value: 'navigateur',
-                          label: Text('Comme navigateur'),
+                          label: Text(l.filterNavigator),
                         ),
                         ButtonSegment(
                           value: 'suiveur',
-                          label: Text('Comme suiveur'),
+                          label: Text(l.filterFollower),
                         ),
                       ],
                       selected: {filter},
@@ -74,18 +76,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'En cours',
+                      l.inProgress,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     if (live.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text('Aucune navigation en cours.'),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(l.noVoyageInProgress),
                       ),
                     for (final v in live) _VoyageCard(voyage: v),
                     const SizedBox(height: 20),
                     Text(
-                      'Historique',
+                      l.history,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     for (final v in past) _VoyageCard(voyage: v),
@@ -107,6 +109,7 @@ class _VoyageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final v = voyage;
+    final l = AppLocalizations.of(context);
     return Card(
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -120,12 +123,12 @@ class _VoyageCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
         subtitle: Text(
-          '${fmtDate(v.start)} · ${fmtDuration(v.duration)} · ${v.distanceNm.toStringAsFixed(1)} milles'
-          '${v.asFollower ? ' · suivie (${v.navigator})' : ''}',
+          '${fmtDate(v.start)} · ${fmtDuration(v.duration)} · ${l.distanceNm(v.distanceNm.toStringAsFixed(1))}'
+          '${v.asFollower ? l.voyageCardFollowed(v.navigator) : ''}',
         ),
         trailing: v.inProgress
-            ? const Chip(
-                label: Text('En direct'),
+            ? Chip(
+                label: Text(l.live),
                 backgroundColor: NlColors.aqua,
               )
             : const Icon(Icons.chevron_right),
@@ -145,19 +148,20 @@ class VoyageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AppScope.of(context); // se redessine quand l'état change
     final v = voyage;
+    final l = AppLocalizations.of(context);
     final info = [
-      ('Bateau', '${v.boat.name} · ${v.boat.type} · ${v.boat.length}'),
-      ('Personnes à bord', '${v.personsOnBoard}'),
-      ('Départ', fmtDate(v.start)),
-      if (v.track.isNotEmpty) ('Lieu de départ', placeName(v.track.first)),
-      if (v.weatherStart != null) ('Météo au départ', v.weatherStart!),
-      if (v.end != null) ('Arrivée', fmtDate(v.end!)),
-      if (v.end != null && v.track.isNotEmpty) ('Lieu d\'arrivée', placeName(v.track.last)),
-      if (v.weatherEnd != null) ('Météo à l\'arrivée', v.weatherEnd!),
-      if (v.destination?.isNotEmpty == true) ('Destination', v.destination!),
-      ('Durée', fmtDuration(v.duration)),
-      ('Distance', '${v.distanceNm.toStringAsFixed(1)} milles'),
-      ('Navigateur', v.navigator),
+      (l.boat, '${v.boat.name} · ${v.boat.type} · ${v.boat.length}'),
+      (l.personsOnBoard, '${v.personsOnBoard}'),
+      (l.infoDeparture, fmtDate(v.start)),
+      if (v.track.isNotEmpty) (l.infoDeparturePlace, placeName(v.track.first)),
+      if (v.weatherStart != null) (l.infoWeatherStart, v.weatherStart!),
+      if (v.end != null) (l.infoArrival, fmtDate(v.end!)),
+      if (v.end != null && v.track.isNotEmpty) (l.infoArrivalPlace, placeName(v.track.last)),
+      if (v.weatherEnd != null) (l.infoWeatherEnd, v.weatherEnd!),
+      if (v.destination?.isNotEmpty == true) (l.infoDestination, v.destination!),
+      (l.infoDuration, fmtDuration(v.duration)),
+      (l.infoDistance, l.distanceNm(v.distanceNm.toStringAsFixed(1))),
+      (l.infoNavigator, v.navigator),
     ];
     return Scaffold(
       appBar: AppBar(
@@ -165,23 +169,23 @@ class VoyageScreen extends StatelessWidget {
         actions: [
           if (!v.asFollower)
             IconButton(
-              tooltip: 'Renommer',
+              tooltip: l.rename,
               icon: const Icon(Icons.edit),
               onPressed: () async {
                 final c = TextEditingController(text: v.name);
                 final name = await showDialog<String>(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text('Renommer la navigation'),
+                    title: Text(l.renameVoyage),
                     content: TextField(controller: c, autofocus: true),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx),
-                        child: const Text('Annuler'),
+                        child: Text(l.cancel),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, c.text.trim()),
-                        child: const Text('Enregistrer'),
+                        child: Text(l.save),
                       ),
                     ],
                   ),
@@ -192,14 +196,10 @@ class VoyageScreen extends StatelessWidget {
               },
             ),
           IconButton(
-            tooltip: 'Exporter en PDF',
+            tooltip: l.exportPdf,
             icon: const Icon(Icons.picture_as_pdf_outlined),
             onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Export PDF : disponible dans la version réelle.',
-                ),
-              ),
+              SnackBar(content: Text(l.exportPdfSoon)),
             ),
           ),
         ],
@@ -233,7 +233,7 @@ class VoyageScreen extends StatelessWidget {
                 ),
               const SizedBox(height: 16),
               Text(
-                'Journal de bord',
+                l.logbook,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               for (final e in v.log) LogTile(event: e),
