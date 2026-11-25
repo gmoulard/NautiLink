@@ -208,15 +208,11 @@ func (a *app) navigation(ctx context.Context, q lecteur, id string) (navLigne, e
 // conditionSuiveur : la navigation n (alias) est visible du suiveur $1 :
 // accès de périmètre navigateur, ou de périmètre navigation sur elle
 // (RG-PAR-02), sans retrait de cette navigation (RG-PAR-06), hors corbeille
-// (RG-NAV-20). Périmètre navigateur : les navigations commencées depuis qu'il
-// a pris effet, plus celle partagée auparavant (RG-PAR-09, D-111).
-// accesCouvre : l'accès ac couvre la navigation n (RG-PAR-02, RG-PAR-09).
-const accesCouvre = `((ac.perimetre = 'navigateur' AND (n.debut_enregistre >= ac.navigateur_depuis
-		OR ac.navigation_conservee = n.id)) OR (ac.perimetre = 'navigation' AND ac.navigation_id = n.id))`
-
+// (RG-NAV-20). Périmètre navigateur : toutes ses navigations, y compris
+// celles terminées avant l'accès (RG-PAR-09, D-111).
 const conditionSuiveur = `n.supprimee_le IS NULL AND n.navigateur_id <> $1
 	AND EXISTS (SELECT 1 FROM acces ac WHERE ac.suiveur_id = $1 AND ac.navigateur_id = n.navigateur_id
-		AND ` + accesCouvre + `)
+		AND (ac.perimetre = 'navigateur' OR ac.navigation_id = n.id))
 	AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = n.id AND r.suiveur_id = $1)`
 
 // navigationVue : la navigation et le rôle de l'utilisateur ; introuvable
@@ -430,8 +426,7 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 func (a *app) suiveursDe(ctx context.Context, n navLigne) ([]personneJSON, error) {
 	lignes, err := a.b.pool.Query(ctx, `SELECT DISTINCT u.id, u.nom, u.telephone, u.email FROM acces ac
 		JOIN utilisateurs u ON u.id = ac.suiveur_id
-		JOIN navigations n ON n.id = $2
-		WHERE ac.navigateur_id = $1 AND `+accesCouvre+`
+		WHERE ac.navigateur_id = $1 AND (ac.perimetre = 'navigateur' OR ac.navigation_id = $2)
 		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2 AND r.suiveur_id = u.id)
 		ORDER BY u.nom, u.id`, n.navigateur, n.id)
 	if err != nil {

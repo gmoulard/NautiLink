@@ -82,7 +82,7 @@ func (a *app) contact(ctx context.Context, q interface {
 }
 
 // validerPerimetre : périmètre navigation (une navigation) ou navigateur
-// (ses navigations commencées depuis l'accès) (RG-PAR-02, RG-PAR-09).
+// (toutes ses navigations présentes et futures) (RG-PAR-02).
 func validerPerimetre(perimetre *string, navigation *string) error {
 	if perimetre == nil || (*perimetre != "navigation" && *perimetre != "navigateur") {
 		return errInvalide("Choisissez ce que le suiveur verra : une navigation ou toutes vos navigations.")
@@ -424,7 +424,7 @@ func (a *app) inviter(ctx context.Context, tx pgx.Tx, r *http.Request, navigateu
 		return i, nil, err
 	}
 	envoi := func() {
-		portee := "toutes ses navigations à venir"
+		portee := "toutes ses navigations, présentes et futures"
 		if *k.Perimetre == "navigation" {
 			portee = "une de ses navigations"
 		}
@@ -580,9 +580,8 @@ func (a *app) accepterInvitation(ctx context.Context, suiveur, jeton string) (ac
 		}
 		return accesJSON{}, &erreurAPI{http.StatusConflict, "invitation_deja_acceptee", "Cette invitation a déjà été acceptée.", 0}
 	}
-	if _, err := tx.Exec(ctx, `INSERT INTO acces (navigateur_id, suiveur_id, perimetre, navigation_id, contact_id, navigateur_depuis)
-		VALUES ($1, $2, $3::text, $4, $5, CASE WHEN $3::text = 'navigateur' THEN now() END) ON CONFLICT DO NOTHING`,
-		navigateur, suiveur, perimetre, navigation, contact); err != nil {
+	if _, err := tx.Exec(ctx, `INSERT INTO acces (navigateur_id, suiveur_id, perimetre, navigation_id, contact_id)
+		VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`, navigateur, suiveur, perimetre, navigation, contact); err != nil {
 		return accesJSON{}, err
 	}
 	if _, err := tx.Exec(ctx, `UPDATE invitations SET etat = 'acceptee', acceptee_le = now(), acceptee_par = $2 WHERE id = $1`,
@@ -600,7 +599,7 @@ func (a *app) accepterInvitation(ctx context.Context, suiveur, jeton string) (ac
 	if err != nil {
 		return ac, err
 	}
-	portee := "toutes ses navigations à venir"
+	portee := "toutes ses navigations, présentes et futures"
 	if perimetre == "navigation" {
 		portee = "une de ses navigations"
 	}
@@ -662,12 +661,7 @@ func (a *app) changerPerimetre(ctx context.Context, navigateur, id string, perim
 	if err := a.perimetreValide(ctx, navigateur, perimetre, navigation); err != nil {
 		return accesJSON{}, err
 	}
-	// Passage au périmètre navigateur : il prend effet maintenant, la
-	// navigation partagée jusque-là reste visible (RG-PAR-09, D-111).
-	_, err := a.b.pool.Exec(ctx, `UPDATE acces SET
-		navigateur_depuis = CASE WHEN $2::text = 'navigateur' THEN coalesce(navigateur_depuis, now()) END,
-		navigation_conservee = CASE WHEN $2::text = 'navigateur' THEN coalesce(navigation_conservee, navigation_id) END,
-		perimetre = $2::text, navigation_id = $3 WHERE id = $1`, id, *perimetre, texteOuNul(navigation))
+	_, err := a.b.pool.Exec(ctx, "UPDATE acces SET perimetre = $2, navigation_id = $3 WHERE id = $1", id, *perimetre, texteOuNul(navigation))
 	if estDoublon(err) {
 		return accesJSON{}, &erreurAPI{http.StatusConflict, "invalide", "Ce suiveur a déjà cet accès.", 0}
 	}

@@ -28,6 +28,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Autorisations Android, versions visées, Google Play | `docs/etudes/autorisations-android.md` |
 | Localisation en arrière-plan sur iPhone, App Store | `docs/etudes/localisation-arriere-plan-iphone.md` |
 | Notes vocales : format audio, transcription | `docs/etudes/notes-vocales.md` |
+| Compte et codes d'accès de l'API Météo-France (météo des navigations) | `docs/etudes/meteofrance-connexion.md` |
 | Disponibilité du nom NautiLink : marques, domaines, réseaux sociaux | `docs/etudes/nom-nautilink.md` |
 
 ## Ordre de priorité en cas d'écart

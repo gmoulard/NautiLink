@@ -306,13 +306,6 @@ var migrations = []string{
 		mis_a_jour_le timestamptz NOT NULL DEFAULT now(),
 		PRIMARY KEY (alerte_id, telephone, rang)
 	);`,
-
-	// 7 — RG-PAR-09 (D-111) : périmètre navigateur limité aux navigations
-	// commencées depuis qu'il a pris effet ; la navigation partagée avant un
-	// passage du périmètre navigation au périmètre navigateur reste visible.
-	`ALTER TABLE acces ADD COLUMN navigateur_depuis timestamptz;
-	ALTER TABLE acces ADD COLUMN navigation_conservee uuid;
-	UPDATE acces SET navigateur_depuis = accorde_le WHERE perimetre = 'navigateur';`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

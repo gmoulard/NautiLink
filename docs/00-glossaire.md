@@ -26,7 +26,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Destinataire SMS** | Suiveur d'une navigation ayant renseigné un numéro de téléphone ; reçoit les SMS ordinaires de cette navigation ([RG-SMS-01](02-regles-metier.md#rg-sms-01)). |
 | **SMS ordinaire** | Tout SMS ou MMS autre qu'un SMS SOS : début, positions, notes, photos, notes vocales, fin. Sur Android, il s'ouvre prérempli dans l'application SMS et part d'un appui, sauf le SMS de position automatique, qui part automatiquement ([RG-SMS-03](02-regles-metier.md#rg-sms-03)). |
 | **Invitation** | Message (e-mail ou SMS) contenant un lien qui mène à la connexion ou à la création d'un compte, puis donne un accès. |
-| **Accès** | Droit d'un suiveur sur les navigations d'un navigateur. Périmètre *navigation* (une seule) ou *navigateur* (toutes celles commencées depuis l'accès, tous bateaux confondus, RG-PAR-09). |
+| **Accès** | Droit d'un suiveur sur les navigations d'un navigateur. Périmètre *navigation* (une seule) ou *navigateur* (toutes, présentes et futures, tous bateaux confondus). |
 | **Paramètres généraux** | Réglages par défaut du navigateur (SMS, fréquence), synchronisés entre les applications mobiles et le Web. |
 | **Paramètres de navigation** | Copie des paramètres généraux modifiable au démarrage, valable pour cette seule navigation. |
 | **Avertissement bêta** | Texte sur la version bêta et la responsabilité, accepté à la création du compte ([RG-CPT-06](02-regles-metier.md#rg-cpt-06), [texte](textes/avertissement-beta.md)). |
