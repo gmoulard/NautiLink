@@ -31,6 +31,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Paramètres de navigation** | Copie des paramètres généraux modifiable au démarrage, valable pour cette seule navigation. |
 | **Avertissement bêta** | Texte sur la version bêta et la responsabilité, accepté à la création du compte ([RG-CPT-06](02-regles-metier.md#rg-cpt-06), [texte](textes/avertissement-beta.md)). |
 | **Circuit Internet** | Échanges entre les applications et le serveur par API HTTPS. |
+| **File d'attente** | Envois vers le serveur enregistrés sur le téléphone et pas encore reçus (démarrage, positions, notes, photos, notes vocales, fin, alertes SOS), envoyés dès que la connexion le permet ([RG-GPS-04](02-regles-metier.md#rg-gps-04)). |
 | **Circuit SMS** | Envoi de SMS et MMS par la carte SIM du téléphone Android, sans prestataire externe. N'existe pas sur iPhone. |
 | **Quota gratuit** | 24 heures de navigation cumulées sur les 7 derniers jours glissants, par compte. |
 | **Abonnement** | Offre payante qui lève la limite du quota gratuit, par compte : 15 € payés une fois, pour 10 ans (RG-ECO-06). |

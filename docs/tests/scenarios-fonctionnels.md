@@ -130,10 +130,11 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 
 - **TS-GPS-01** ([RG-GPS-01](../02-regles-metier.md#rg-gps-01)) — Étant donné un téléphone sans Internet ni réseau mobile, GPS actif, quand une position est demandée, alors elle est acquise.
 - **TS-GPS-02** ([RG-GPS-02](../02-regles-metier.md#rg-gps-02)) — Étant donné une position acquise, quand on la consulte, alors elle porte la date et l'heure de son acquisition.
-- **TS-GPS-03** ([RG-GPS-03](../02-regles-metier.md#rg-gps-03)) — Étant donné une fréquence de 5 minutes et un serveur injoignable pendant 30 minutes, quand ces 30 minutes passent, alors six positions sont enregistrées sur le téléphone.
+- **TS-GPS-03** ([RG-GPS-03](../02-regles-metier.md#rg-gps-03)) — Étant donné une fréquence de 15 minutes et un serveur injoignable pendant 90 minutes, quand ces 90 minutes passent, alors six positions sont enregistrées sur le téléphone.
 - **TS-GPS-04** ([RG-GPS-04](../02-regles-metier.md#rg-gps-04)) — Étant donné ces six positions non transmises, quand Internet revient, alors elles sont envoyées au serveur dans l'ordre d'acquisition.
 - **TS-GPS-05** ([RG-GPS-05](../02-regles-metier.md#rg-gps-05)) — Étant donné un téléphone Android sur lequel aucune navigation n'a encore été démarrée, quand le navigateur démarre la première, alors l'application demande l'exclusion de l'optimisation de la batterie et affiche les réglages propres à la marque du téléphone.
 - **TS-GPS-06** ([RG-GPS-06](../02-regles-metier.md#rg-gps-06)) — Étant donné une navigation en cours avec une fréquence de 15 minutes, quand une position automatique, une position manuelle ou un SOS est acquis, alors le GPS est allumé le temps de l'acquisition et éteint entre deux acquisitions.
+- **TS-GPS-07** ([RG-GPS-04](../02-regles-metier.md#rg-gps-04)) — Étant donné une navigation en cours à la fréquence de 15 minutes et une coupure d'Internet de 2 heures pendant laquelle le navigateur ajoute une note et une photo, quand Internet revient, alors les 8 positions, la note et la photo arrivent au serveur chacune une seule fois, dans l'ordre d'acquisition du journal ; et quand la réponse du serveur est perdue puis l'envoi rejoué, alors aucun doublon n'est créé ([08-architecture.md §5](../08-architecture.md#5-file-dattente-et-doublons)).
 
 ## 9. Circuits de communication (RG-COM)
 

@@ -6,7 +6,7 @@ Ce document décrit comment les pièces techniques de NautiLink s'assemblent : a
 - **Proposition validée** : choix proposé puis validé par l'utilisateur le 2026-11-25 ([D-96](07-decisions.md#d-96)).
 - **Proposition, non validée** : choix technique proposé, à valider par l'utilisateur ([Q-22](06-questions-ouvertes.md#q-22)).
 
-Mise à jour : 2026-11-25 (TODO-3.1, TODO-3.2).
+Mise à jour : 2026-11-25 (TODO-3.1, TODO-3.2, TODO-2.7).
 
 ## 1. Schéma
 
@@ -111,5 +111,22 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
   - serveur → Web : la page d'une navigation en cours relit le journal avec `depuis` à intervalles réguliers (de l'ordre de 30 secondes) ;
   - modifications concurrentes (même contact, mêmes paramètres ou même navigation changés sur deux supports) : chaque objet porte un numéro de version et une modification fondée sur une version dépassée est refusée (409) ; laquelle doit l'emporter : [Q-42](06-questions-ouvertes.md#q-42).
 - **Points qui attendent une décision** : liens des SMS de photo et de note vocale ([Q-44](06-questions-ouvertes.md#q-44)) ; événements reçus après une clôture automatique ([Q-45](06-questions-ouvertes.md#q-45)) ; affichage des annonces ([Q-46](06-questions-ouvertes.md#q-46)) ; portée des désinscriptions du suiveur ([Q-47](06-questions-ouvertes.md#q-47)) ; fonctionnement hors connexion ([Q-29](06-questions-ouvertes.md#q-29)).
+
+## 5. File d'attente et doublons
+
+**Proposition, non validée** ([Q-10](06-questions-ouvertes.md#q-10), TODO-2.7). Les règles : enregistrement sur le téléphone que le serveur soit joignable ou non (RG-GPS-03), envoi dès que possible dans l'ordre d'acquisition (RG-GPS-04), fin transmise avec son heure réelle (RG-NAV-14), SOS de l'iPhone envoyé au retour de la connexion (RG-IOS-03).
+
+- **Enregistrer d'abord** : chaque envoi vers le serveur (démarrage, événement, fichier de photo ou de note vocale, fin, alerte SOS, statuts des SMS SOS) est écrit dans la base locale du téléphone (SQLite) avant toute tentative ; une fermeture forcée ou un redémarrage ne le perd pas (RG-NAV-12).
+- **Identifiant unique par événement** : l'application tire un UUID (version 4) à la création de la navigation, de chaque événement et de chaque alerte SOS, et l'envoie avec lui. Le serveur garde cet identifiant comme clé unique (contrainte d'unicité de PostgreSQL) :
+  - identifiant inconnu : enregistré (201) ;
+  - identifiant déjà reçu, même contenu : rien n'est créé, réponse 200 ;
+  - identifiant déjà reçu, contenu différent : refus 409 `evenement_different` (défaut de l'application, inscrit dans les journaux techniques).
+  Un envoi dont la réponse s'est perdue pendant une coupure est donc renvoyé sans risque de doublon.
+- **Ordre** : chaque élément porte un numéro d'ordre croissant attribué par le téléphone pour la navigation (`numeroOrdre`) et son heure d'acquisition. La file part dans l'ordre des numéros ; le démarrage d'une navigation part avant ses événements et la fin après eux. Le journal est affiché selon l'heure d'acquisition (RG-JRN-03), si bien qu'un élément arrivé en retard prend tout de même sa place.
+- **Priorités** : une alerte SOS part avant tout le reste, sans attendre la file ; puis les éléments légers (démarrage, positions, notes, fin) ; enfin les fichiers (photos, notes vocales), déposés à part pour qu'un gros fichier ne retarde jamais une position. Une photo ou une note vocale est visible sur le serveur dès son événement, son fichier suit.
+- **Renvoi** : la file est relancée quand la connexion revient (changement de réseau signalé par le téléphone), à chaque nouvelle acquisition, à l'ouverture de l'application, et sinon après un délai croissant (30 secondes, 1, 2 et 5 minutes, puis toutes les 15 minutes). Après une coupure, elle part par lots (`POST /v1/synchronisation`, 200 éléments au plus) ; chaque élément a son propre résultat et un refus n'arrête pas les suivants.
+- **Sortie de la file** : un élément quitte la file à la réponse 200 ou 201 seulement. Un refus définitif (autre code 4xx) le met de côté, sans nouvel essai, et le signale dans les journaux techniques du serveur au prochain échange ; une erreur du serveur (5xx) ou l'absence de réponse le laisse dans la file. La file n'a pas de limite de durée.
+- **Chronomètre du dernier envoi** (RG-NAV-10) : un envoi réussi par le circuit Internet est une réponse 200 ou 201 du serveur.
+- **Essai** : scénario TS-GPS-07 ([scénarios](tests/scenarios-fonctionnels.md)), à jouer sur un vrai téléphone avec 2 heures de coupure une fois l'application et le serveur écrits (TODO-5.3).
 
 Environnements de développement, de test et de production : TODO-3.4.

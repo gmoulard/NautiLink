@@ -61,6 +61,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant.
 - Étude : stockage local des positions et événements non transmis, renvoi après coupure, détection des doublons côté serveur.
+- Proposition (non validée, TODO-2.7) : [08-architecture.md §5](08-architecture.md#5-file-dattente-et-doublons) — identifiant unique tiré par le téléphone pour chaque événement, numéro d'ordre, renvoi rejouable sans doublon, SOS en priorité, fichiers après les éléments légers.
+- Reste : validation, puis essai avec 2 heures de coupure sur un vrai téléphone (TS-GPS-07, TODO-5.3).
 
 ### <a id="q-12"></a>Q-12 — Restrictions Android sur l'envoi de SMS
 

@@ -62,8 +62,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
   - Tranché le 2026-11-24 (D-53) : AAC `.m4a`, 1 minute, moteur du téléphone. Reste : essais de transcription et taux d'erreur.
 - [ ] **TODO-2.6**: Fonctionnement hors connexion de chaque écran Android ([Q-29](06-questions-ouvertes.md#q-29)). Dépend de : TODO-3.1.
   - Critères d'acceptation : tableau écran par écran (sans Internet, sans réseau mobile, sans les deux), validé par l'utilisateur.
-- [ ] **TODO-2.7**: File d'attente des envois et doublons ([Q-10](06-questions-ouvertes.md#q-10), RG-GPS-04). Dépend de : TODO-3.2.
+- [~] **TODO-2.7**: File d'attente des envois et doublons ([Q-10](06-questions-ouvertes.md#q-10), RG-GPS-04). Dépend de : TODO-3.2.
   - Critères d'acceptation : mécanisme écrit (identifiant unique par événement, ordre, renvoi) et essayé avec une coupure de 2 heures.
+  - Fait (2026-11-25) : mécanisme écrit, en proposition, dans [08-architecture.md §5](08-architecture.md#5-file-dattente-et-doublons) (UUID par événement, numéro d'ordre, renvoi idempotent, priorités, sortie de la file) et porté par l'API (`PUT` rejouables, `POST /v1/synchronisation`) ; scénario TS-GPS-07 ajouté (TS-GPS-03 corrigé : fréquence de 5 minutes, impossible selon RG-NAV-05). Reste : validation (Q-10), puis essai avec une coupure de 2 heures sur un vrai téléphone, possible seulement avec l'application et le serveur (TODO-5.3).
 
 ## 3. Préparation du développement
 
@@ -95,7 +96,7 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
   - Fait (2026-11-24) : serveur Go dans `server/` (accueil, espace administrateur vide, `api/sante`, PostgreSQL par pgx, commande `mail-essai`, tests), image `ghcr.io/gmoulard/nautilink-serveur` construite par le workflow « Serveur », `server/compose.yaml` ; essayé sous Docker (arm64 et amd64 construits, base jointe puis arrêtée, renvoi vers `/nautilink/`). Reste : premier passage du workflow sur GitHub, puis installation sur le Pi une fois TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance faits.
 - [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
-  - Fait : 156 scénarios `TS-…`, les 139 règles citées (dont la section Android RG-AND, ajoutée le 2026-11-25), domaines SOS, ECO et PAR en tête. Reste : validation par l'utilisateur.
+  - Fait : 157 scénarios `TS-…`, les 139 règles citées (dont la section Android RG-AND, ajoutée le 2026-11-25), domaines SOS, ECO et PAR en tête. Reste : validation par l'utilisateur.
 
 ## 4. Étape 1 — Serveur
 
