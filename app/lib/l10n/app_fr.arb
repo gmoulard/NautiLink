@@ -286,5 +286,6 @@
   "@sosReelSmsLastKnown": {"placeholders": {"position": {"type": "String"}, "date": {"type": "String"}}},
   "sosReelSmsNoPosition": "GPS indisponible : aucune position connue.",
   "sosReelSailboat": "voilier",
-  "sosReelMotorboat": "bateau à moteur"
+  "sosReelMotorboat": "bateau à moteur",
+  "voyageFinished": "Navigation terminée"
 }

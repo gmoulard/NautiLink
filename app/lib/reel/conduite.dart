@@ -530,6 +530,53 @@ class ConduiteNavigation extends ChangeNotifier {
     return _etat(cle);
   }
 
+  // ------------------------------------------------ fin et reprise
+
+  /// « Terminer la navigation » confirmé (RG-NAV-13, RG-NAV-14) : fin
+  /// enregistrée sur le téléphone avec son heure réelle, positions
+  /// automatiques arrêtées, fin envoyée par la file d'attente (transmise plus
+  /// tard sans Internet). Rend l'identifiant de la navigation et l'état de
+  /// l'envoi de la fin.
+  Future<(String, EtatEnvoi)?> terminer() async {
+    final n = _nav;
+    if (n == null) return null;
+    final heure = maintenant;
+    _arreterAutomatiques();
+    final p = await positions.positionActuelle(demander: true);
+    await file.fin(n.id, {
+      'heureAcquisition': heureRfc3339(heure),
+      'position': ?p?.versJson(),
+      'gpsDisponible': p != null,
+      'origine': origine,
+    });
+    _nav = null;
+    await _garder();
+    _notifier();
+    return (n.id, await file.etatApresPasse('fin:${n.id}', attenteEnvoi));
+  }
+
+  /// Reprend sur ce téléphone une navigation en cours qu'il ne connaît pas
+  /// (copie locale perdue : réinstallation, autre compte entre-temps), d'après
+  /// le serveur (Q-90).
+  Future<void> adopter(NavigationLocale n) async {
+    if (_nav != null) return;
+    _nav = n;
+    await _garder();
+    _notifier();
+    _lancerAutomatiques();
+  }
+
+  /// Navigation terminée ailleurs (Web, clôture automatique) : elle n'est
+  /// plus en cours sur le téléphone, les positions automatiques s'arrêtent
+  /// (Q-90).
+  Future<void> oublierTerminee() async {
+    if (_nav == null) return;
+    _arreterAutomatiques();
+    _nav = null;
+    await _garder();
+    _notifier();
+  }
+
   // ------------------------------------------------ alerte SOS
 
   /// Attente maximale du GPS pour une alerte SOS, avant de prendre la

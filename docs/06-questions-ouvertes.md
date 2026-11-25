@@ -50,12 +50,14 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : le GPS est attendu 45 secondes au plus ; sans réponse, la position automatique est quand même enregistrée et envoyée, sans coordonnées, marquée « GPS non disponible » (`gpsDisponible` faux), et la suivante est attendue à la fréquence normale. Une position remise par le service de localisation du téléphone depuis moins de 2 minutes sert de position automatique sans nouvelle acquisition ; une position automatique peut partir jusqu'à 1 minute avant son heure.
 - Appliqué en attendant dans l'application (`app/lib/reel/conduite.dart`, `app/lib/reel/gps.dart`).
 
-### <a id="q-90"></a>Q-90 — Démarrage refusé par le serveur, attente de sa réponse
+### <a id="q-90"></a>Q-90 — Démarrage refusé par le serveur, navigation en cours inconnue ou terminée ailleurs
 
-- Priorité : avant la version Android réelle (TODO-5.2).
+- Priorité : avant la version Android réelle (TODO-5.2, TODO-5.6).
 - Cas : le démarrage part par la file d'attente (RG-COM-05, RG-COM-06), mais le serveur peut le refuser (quota épuisé, adresse non confirmée RG-CPT-09, pas propriétaire, téléphone non associé, navigation déjà en cours). Rien ne dit combien de temps l'application attend la réponse avant d'ouvrir l'écran de navigation, ni ce qui se passe quand un démarrage fait hors connexion est refusé à sa réception.
 - Proposition (non validée) : avec Internet, l'application attend la réponse du serveur 20 secondes au plus ; un refus affiche le message du serveur (« Démarrage refusé ») et rien ne démarre ; sans réponse, la navigation démarre sur le téléphone. Un démarrage refusé plus tard, à sa réception, laisse la navigation sur le téléphone avec, sur l'écran de navigation, « Refusé par le serveur : <message> » ; le navigateur la termine lui-même ; les positions et notes déjà enregistrées restent mises de côté sur le téléphone.
-- Appliqué en attendant dans l'application (`app/lib/reel/conduite.dart`).
+- Cas voisin (TODO-5.6) : « Reprendre la dernière navigation » rouvre la navigation en cours du téléphone (RG-NAV-12), mais rien ne dit quoi faire quand le serveur dit une navigation en cours que le téléphone ne connaît plus (application réinstallée, copies effacées par un autre compte, Q-82), ni quand une navigation en cours sur le téléphone a été terminée ailleurs (fin saisie sur un autre support, RG-SOS-19 ; clôture automatique, RG-ECO-05).
+- Proposition (non validée) : la navigation inconnue est reprise d'après le serveur (fréquence, personnes à bord ; personnes alertées : tous les suiveurs et contacts SOS), et les positions automatiques repartent ; une navigation que le serveur dit terminée n'est plus en cours sur le téléphone, ses positions automatiques s'arrêtent, sans message.
+- Appliqué en attendant dans l'application (`app/lib/reel/conduite.dart`, `app/lib/reel/depot_reel.dart`).
 
 ### <a id="q-91"></a>Q-91 — Bateau proposé au démarrage quand le téléphone n'en a pas
 

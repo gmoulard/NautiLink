@@ -867,4 +867,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sosReelMotorboat => 'bateau à moteur';
+
+  @override
+  String get voyageFinished => 'Navigation terminée';
 }

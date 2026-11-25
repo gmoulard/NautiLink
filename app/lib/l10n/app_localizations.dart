@@ -1548,6 +1548,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'bateau à moteur'**
   String get sosReelMotorboat;
+
+  /// No description provided for @voyageFinished.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation terminée'**
+  String get voyageFinished;
 }
 
 class _AppLocalizationsDelegate

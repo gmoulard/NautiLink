@@ -494,6 +494,51 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     );
   }
 
+  /// « Terminer la navigation » : confirmation, fin envoyée (ou gardée sans
+  /// Internet, RG-NAV-14), résultat, puis page détaillée de la navigation
+  /// sur la plateforme Web (RG-NAV-13) ; hors connexion, message (RG-COM-06).
+  Future<void> _terminer(DepotReel depot) async {
+    final l = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.endVoyageQuestion),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l.end),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    setState(() => envoi = true);
+    final r = await depot.terminer();
+    if (!mounted) return;
+    if (r == null) {
+      setState(() => envoi = false);
+      return;
+    }
+    final (id, etat) = r;
+    final nav = Navigator.of(context);
+    await showSendResult(context, l.voyageFinished, [
+      ...lignesResultat(l, etat),
+      if (!etat.recu && !etat.refuse) l.pageOffline,
+    ]);
+    if (etat.recu) {
+      try {
+        await ouvrirLien(Uri.parse(voyagePageUrl(id)));
+      } catch (e) {
+        debugPrint('Page de la navigation : $e');
+      }
+    }
+    if (nav.mounted) nav.pop();
+  }
+
   Future<String?> _texte(String titre, String aide) {
     final c = TextEditingController();
     final l = AppLocalizations.of(context);
@@ -711,6 +756,11 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                       ..._boutons(depot, l),
                       const SizedBox(height: 24),
                       SosButton(onPressed: () => confirmSosReel(context)),
+                      const SizedBox(height: 12),
+                      OutlinedButton(
+                        onPressed: envoi ? null : () => _terminer(depot),
+                        child: Text(l.endVoyage),
+                      ),
                       const SizedBox(height: 20),
                       Text(
                         l.logbook,
@@ -728,6 +778,16 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
       },
     );
   }
+}
+
+// ---------------------------------------------------------------- reprise
+
+/// « Reprendre la dernière navigation » de la vraie application (RG-NAV-12).
+Future<void> openNavigationReel(BuildContext context) async {
+  await _depot(context).reprendre();
+  if (!context.mounted) return;
+  await Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => const NavigationReelScreen()));
 }
 
 // ---------------------------------------------------------------- SOS

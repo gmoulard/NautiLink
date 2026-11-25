@@ -860,4 +860,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sosReelMotorboat => 'motorboat';
+
+  @override
+  String get voyageFinished => 'Voyage ended';
 }

@@ -93,7 +93,7 @@ class HomeScreen extends StatelessWidget {
                           builder: (_) => const NavigationScreen(),
                         ),
                       )
-                    : showNotYet(context),
+                    : openNavigationReel(context),
           icon: const Icon(Icons.restore),
           label: Text(l.resumeVoyage),
         ),

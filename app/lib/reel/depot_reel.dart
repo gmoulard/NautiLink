@@ -275,8 +275,62 @@ class DepotReel extends Depot {
     await conduite.verifierRefus();
     if (_horsConnexion) return;
     for (final r in _navigations) {
-      if (r.id == n.id && r.enCours) await conduite.nommer(r.nom);
+      if (r.id != n.id) continue;
+      if (r.enCours) {
+        await conduite.nommer(r.nom);
+      } else {
+        // Terminée sur un autre support ou clôturée par le serveur (Q-90).
+        await conduite.oublierTerminee();
+      }
     }
+  }
+
+  /// « Reprendre la dernière navigation » (RG-NAV-12) : la navigation gardée
+  /// sur le téléphone ; sinon celle que le serveur dit en cours, relue sur le
+  /// serveur (fréquence, personnes à bord) ou, hors connexion, d'après la
+  /// dernière liste reçue (Q-90). Vide s'il n'y en a pas.
+  Future<NavigationLocale?> reprendre() async {
+    final locale = conduite.enCours;
+    if (locale != null) return locale;
+    final r = super.navigationEnCours;
+    if (r == null) return null;
+    Map<String, Object?> detail = const {};
+    try {
+      detail = await api.appelObjet('GET', '/v1/navigations/${r.id}');
+    } catch (e) {
+      debugPrint('Reprise : $e');
+    }
+    final dest = detail['destination'];
+    await conduite.adopter(
+      NavigationLocale(
+        id: r.id,
+        nom: r.nom,
+        bateauId: r.bateauId ?? '',
+        bateauNom: r.bateauNom ?? '',
+        debut: r.debut,
+        frequenceMinutes:
+            (detail['frequenceMinutes'] as num?)?.toInt() ??
+            _parametres?.frequenceParDefaut ??
+            60,
+        personnesABord:
+            (detail['personnesABord'] as num?)?.toInt() ??
+            session.dernierNombrePersonnes,
+        destination: dest is Map ? dest['texte'] as String? : null,
+        personnesAlertees: [
+          for (final c in _contacts)
+            if (c.suiveur || c.contactSos) c.id,
+        ],
+        derniereAutomatique: conduite.maintenant,
+      ),
+    );
+    return conduite.enCours;
+  }
+
+  /// « Terminer la navigation » (RG-NAV-13, RG-NAV-14), puis relecture.
+  Future<(String, EtatEnvoi)?> terminer() async {
+    final r = await conduite.terminer();
+    unawaited(actualiser());
+    return r;
   }
 
   // ------------------------------------------------------------ navigation

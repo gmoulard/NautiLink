@@ -483,4 +483,67 @@ void main() {
       expect(a.etat.recu, isTrue);
     });
   });
+
+  group('fin et reprise (TODO-5.6)', () {
+    test('fin : heure réelle envoyée, navigation close sur le téléphone, positions arrêtées (RG-NAV-13)', () async {
+      final d = await connecte();
+      final n = await demarrer(d);
+      heure = heure.add(const Duration(hours: 3));
+      final r = await d.terminer();
+      expect(r?.$1, n.id);
+      expect(r?.$2.recu, isTrue);
+      final (op, id, c) = serveur.elements.last;
+      expect((op, id), ('fin', n.id));
+      expect((c as Map)['type'], 'fin');
+      expect(c['heureAcquisition'], heureRfc3339(heure));
+      expect(c['numeroOrdre'], 2);
+      expect(d.conduite.enCours, isNull);
+      expect(d.conduite.suiviActif, isFalse);
+      await d.actualiser();
+      expect(d.navigationEnCours, isNull);
+    });
+
+    test('fin hors connexion : gardée avec son heure réelle, transmise plus tard (RG-NAV-14)', () async {
+      final d = await connecte();
+      final n = await demarrer(d);
+      serveur.coupe = true;
+      heure = heure.add(const Duration(hours: 2));
+      final fin = heureRfc3339(heure);
+      final r = await d.terminer();
+      expect(r?.$2.recu, isFalse);
+      expect(d.navigationEnCours, isNull);
+      heure = heure.add(const Duration(hours: 5));
+      serveur.coupe = false;
+      await d.file.relancer();
+      final (op, id, c) = serveur.elements.last;
+      expect((op, id), ('fin', n.id));
+      expect((c as Map)['heureAcquisition'], fin);
+    });
+
+    test('reprise d\'une navigation en cours inconnue du téléphone, relue sur le serveur (RG-NAV-12, Q-90)', () async {
+      serveur.navigationEnCours = true;
+      final d = await connecte();
+      expect(d.conduite.enCours, isNull);
+      expect(d.navigationEnCours?.id, 'n1');
+      final n = await d.reprendre();
+      expect(n?.id, 'n1');
+      expect(n?.frequenceMinutes, 60);
+      expect(n?.personnesABord, 3);
+      expect(serveur.appels, contains('GET /v1/navigations/n1'));
+      expect(gps.frequenceSuivie, const Duration(minutes: 60));
+      // La fin part pour cette navigation.
+      await d.terminer();
+      expect(serveur.elements.last.$1, 'fin');
+      expect(serveur.navigationEnCours, isFalse);
+    });
+
+    test('navigation terminée sur un autre support : elle n\'est plus en cours sur le téléphone (Q-90)', () async {
+      final d = await connecte();
+      final n = await demarrer(d);
+      serveur.demarrees[n.id]!['etat'] = 'terminee';
+      await d.actualiser();
+      expect(d.conduite.enCours, isNull);
+      expect(d.conduite.suiviActif, isFalse);
+    });
+  });
 }

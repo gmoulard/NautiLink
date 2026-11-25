@@ -255,5 +255,6 @@
   "sosReelSmsLastKnown": "Last known position, not necessarily the current one: {position} on {date}.",
   "sosReelSmsNoPosition": "GPS unavailable: no known position.",
   "sosReelSailboat": "sailboat",
-  "sosReelMotorboat": "motorboat"
+  "sosReelMotorboat": "motorboat",
+  "voyageFinished": "Voyage ended"
 }

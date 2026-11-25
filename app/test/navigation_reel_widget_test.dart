@@ -270,4 +270,44 @@ void main() {
     expect(alerte['navigationId'], isNotNull);
     expect(alerte['personnesABord'], 1);
   });
+
+  testWidgets(
+    '« Terminer la navigation » : confirmation, résultat, page Web de la navigation (TODO-5.6, RG-NAV-13)',
+    (tester) async {
+      final liens = <Uri>[];
+      ouvrirLien = (u) async {
+        liens.add(u);
+        return true;
+      };
+      addTearDown(() => ouvrirLien = (_) async => false);
+      await naviguer(tester);
+      await toucher(tester, 'Terminer la navigation');
+      expect(find.text('Terminer la navigation ?'), findsOneWidget);
+      await toucher(tester, 'Terminer');
+      expect(find.text('Navigation terminée'), findsOneWidget);
+      expect(find.text('Serveur : envoyé'), findsOneWidget);
+      await toucher(tester, 'OK');
+      expect(
+        liens.single.path,
+        endsWith('/navigations/${serveur.elements.last.$2}'),
+      );
+      expect(serveur.elements.last.$1, 'fin');
+      expect(
+        find.text('Démarrer navigation'),
+        findsOneWidget,
+      ); // retour à l'accueil
+    },
+  );
+
+  testWidgets(
+    '« Reprendre la dernière navigation » depuis l\'accueil (RG-NAV-12)',
+    (tester) async {
+      serveur.navigationEnCours = true;
+      await connecter(tester);
+      await toucher(tester, 'Reprendre la dernière navigation');
+      expect(find.byKey(const Key('voyage-name')), findsOneWidget);
+      expect(find.text('Alizé — Houat'), findsOneWidget);
+      expect(find.text('Envoyer information position'), findsOneWidget);
+    },
+  );
 }
