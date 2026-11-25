@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254">
+<title>NautiLink, fond</title>
+<defs>
+<linearGradient id="g-fond" x1="0" y1="1254" x2="1254" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#02386E"/><stop offset="0.45" stop-color="#011E4C"/>
+  <stop offset="0.75" stop-color="#03498A"/><stop offset="1" stop-color="#00A8E0"/>
+</linearGradient>
+<linearGradient id="g-anneau" x1="0" y1="100" x2="0" y2="620" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#E4F5FF"/>
+  <stop offset="1" stop-color="#8FD8FD"/>
+</linearGradient>
+<linearGradient id="g-repere" x1="0" y1="285" x2="0" y2="452" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#FDC444"/><stop offset="0.5" stop-color="#F89D29"/>
+  <stop offset="1" stop-color="#E2832A"/>
+</linearGradient>
+<linearGradient id="g-foc" x1="639" y1="0" x2="737" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#BFE2F7"/><stop offset="0.45" stop-color="#FFFFFF"/>
+</linearGradient>
+<linearGradient id="g-coque" x1="0" y1="610" x2="0" y2="666" gradientUnits="userSpaceOnUse">
+  <stop offset="0.35" stop-color="#FFFFFF"/><stop offset="1" stop-color="#8FD0F5"/>
+</linearGradient>
+<linearGradient id="g-vague1" x1="135" y1="0" x2="1118" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#2FB8EE"/><stop offset="0.3" stop-color="#5DD3FA"/>
+  <stop offset="0.6" stop-color="#47C6F5"/><stop offset="1" stop-color="#1E9BE6"/>
+</linearGradient>
+<linearGradient id="g-vague2" x1="300" y1="0" x2="1000" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#1C86DD"/><stop offset="0.45" stop-color="#5FE0FF"/>
+  <stop offset="0.7" stop-color="#2A9BEA"/><stop offset="1" stop-color="#1252B0"/>
+</linearGradient>
+<linearGradient id="g-link" x1="700" y1="0" x2="1150" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#14B4E6"/><stop offset="1" stop-color="#3CE5FD"/>
+</linearGradient>
+<linearGradient id="g-souligne" x1="72" y1="0" x2="912" y2="0" gradientUnits="userSpaceOnUse">
+  <stop offset="0" stop-color="#2FC4F2"/><stop offset="0.5" stop-color="#22B6E8"/>
+  <stop offset="1" stop-color="#0E9FD6"/>
+</linearGradient>
+</defs>
+<rect width="1254" height="1254" fill="url(#g-fond)"/>
+</svg>
