@@ -27,6 +27,10 @@ type config struct {
 	// séparées par des virgules (Q-53, non validée) ; vide : espace
 	// administrateur fermé.
 	Admins []string
+	// Nominatim : NAUTILINK_NOMINATIM, adresse du service de géocodage
+	// inverse (D-96), ex. https://nominatim.openstreetmap.org ; vide : pas de
+	// nom de lieu, les coordonnées en tiennent lieu (RG-NAV-16, RG-JRN-10).
+	Nominatim string
 }
 
 func configDepuisEnv() config {
@@ -42,6 +46,7 @@ func configDepuisEnv() config {
 		GoogleClients:   liste(os.Getenv("NAUTILINK_GOOGLE_CLIENTS")),
 		AppleClients:    liste(os.Getenv("NAUTILINK_APPLE_CLIENTS")),
 		Admins:          liste(strings.ToLower(os.Getenv("NAUTILINK_ADMINS"))),
+		Nominatim:       strings.TrimRight(strings.TrimSpace(os.Getenv("NAUTILINK_NOMINATIM")), "/"),
 	}
 }
 

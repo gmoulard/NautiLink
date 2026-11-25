@@ -20,6 +20,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : RG-ADM-03 prévoit un seul profil d'administrateur, mais rien ne dit qui l'obtient ni comment, sans secret dans le dépôt.
 - Proposition (non validée) : variable d'environnement `NAUTILINK_ADMINS`, posée sur le serveur, qui liste les adresses e-mail des administrateurs ; l'administrateur se connecte à `<chemin>/admin/` avec son compte NautiLink, dont l'adresse doit être confirmée ; retirer une adresse retire l'accès aussitôt ; session de l'espace administrateur fermée après 12 heures sans usage. Ce qui est fait (TODO-7.1) : cette proposition, appliquée en attendant.
 
+### <a id="q-54"></a>Q-54 — Navigations antérieures à un accès de périmètre *navigateur*
+
+- Priorité : avant la version Android réelle (TODO-4.5).
+- Cas : RG-PAR-02 donne au périmètre *navigateur* « toutes ses navigations présentes et futures » ; rien ne dit si le suiveur voit aussi les navigations terminées avant que l'accès lui soit accordé.
+- Proposition (non validée) : oui, il voit tout l'historique du navigateur (hors corbeille), comme la fiche du bateau (RG-PAR-08). Ce qui est fait (TODO-4.5) : cette proposition, appliquée en attendant.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

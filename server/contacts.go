@@ -223,7 +223,7 @@ func (a *app) creerContact(ctx context.Context, r *http.Request, navigateur stri
 		return k, false, err
 	}
 	if k.Suiveur {
-		if err := validerPerimetre(k.Perimetre, k.NavigationID); err != nil {
+		if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
 			return k, false, err
 		}
 	}
@@ -283,7 +283,7 @@ func (a *app) modifierContact(ctx context.Context, r *http.Request, navigateur, 
 		return k, err
 	}
 	if k.Suiveur && !etaitSuiveur {
-		if err := validerPerimetre(k.Perimetre, k.NavigationID); err != nil {
+		if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
 			return k, err
 		}
 	}
@@ -379,7 +379,7 @@ func (a *app) inviterContact(ctx context.Context, tx pgx.Tx, r *http.Request, na
 }
 
 func (a *app) inviter(ctx context.Context, tx pgx.Tx, r *http.Request, navigateur string, k contactJSON, canal string) (invitationJSON, func(), error) {
-	if err := validerPerimetre(k.Perimetre, k.NavigationID); err != nil {
+	if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
 		return invitationJSON{}, nil, err
 	}
 	if (canal == "email" && k.Email == nil) || (canal == "telephone" && k.Telephone == nil) {
@@ -471,7 +471,7 @@ func (a *app) nouvelleInvitation(ctx context.Context, r *http.Request, navigateu
 	} else if err := appliquerContact(&k, modif, true); err != nil {
 		return invitationJSON{}, err
 	}
-	if err := validerPerimetre(k.Perimetre, k.NavigationID); err != nil {
+	if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
 		return invitationJSON{}, err
 	}
 	if err := tx.QueryRow(ctx, `INSERT INTO contacts (id, navigateur_id, nom, telephone, email, suiveur, contact_sos, perimetre, navigation_id)
@@ -646,7 +646,7 @@ func (a *app) changerPerimetre(ctx context.Context, navigateur, id string, perim
 	if _, err := a.accesDonne(ctx, navigateur, id); err != nil {
 		return accesJSON{}, err
 	}
-	if err := validerPerimetre(perimetre, navigation); err != nil {
+	if err := a.perimetreValide(ctx, navigateur, perimetre, navigation); err != nil {
 		return accesJSON{}, err
 	}
 	_, err := a.b.pool.Exec(ctx, "UPDATE acces SET perimetre = $2, navigation_id = $3 WHERE id = $1", id, *perimetre, texteOuNul(navigation))

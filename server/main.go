@@ -63,9 +63,11 @@ func servir(cfg config) error {
 	base := ouvrirBase(ctx, cfg.BaseDeDonnees)
 	defer base.fermer()
 
+	a := nouvelleApp(cfg, base)
+	go a.tachesDeFond(ctx)
 	srv := &http.Server{
 		Addr:              cfg.Adresse,
-		Handler:           nouveauRouteur(cfg, base),
+		Handler:           a.routeur(),
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 	go func() {

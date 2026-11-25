@@ -29,6 +29,8 @@ services:
       NAUTILINK_EXPEDITEUR: "nautilink@moulard.org"
       NAUTILINK_GOOGLE_CLIENTS: "${NAUTILINK_GOOGLE_CLIENTS:-}"
       NAUTILINK_APPLE_CLIENTS: "${NAUTILINK_APPLE_CLIENTS:-}"
+      # Noms des lieux (géocodage inverse, D-96) ; vide : coordonnées seules.
+      NAUTILINK_NOMINATIM: "https://nominatim.openstreetmap.org"
       NAUTILINK_ADMINS: "${NAUTILINK_ADMINS:-}"
     extra_hosts:
       - "pi-appliance-mail:host-gateway"

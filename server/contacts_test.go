@@ -157,11 +157,10 @@ func TestInvitationsEtAcces(t *testing.T) {
 	accesID := donnes[0]["id"].(string)
 	// Le périmètre se change à tout moment (RG-PAR-02) ; un suiveur ne touche pas aux accès.
 	nav1 := "55555555-5555-4555-8555-555555555555"
-	if code, ac := e.appel("PATCH", "/acces/"+accesID, nav, map[string]any{"perimetre": "navigation", "navigationId": nav1}); code != 200 || ac["navigationId"] != nav1 {
-		t.Fatalf("changement de périmètre : %d %v", code, ac)
-	}
-	if code, _ := e.appel("GET", "/bateaux/"+bateau, lea, nil); code != 404 {
-		t.Fatalf("fiche vue avec un accès à une seule navigation (sans navigation) : %d", code)
+	// Une navigation qui n'est pas au navigateur est refusée ; le périmètre
+	// navigation sur une vraie navigation est essayé dans navigations_test.go.
+	if code, ac := e.appel("PATCH", "/acces/"+accesID, nav, map[string]any{"perimetre": "navigation", "navigationId": nav1}); code != 422 {
+		t.Fatalf("périmètre sur une navigation inconnue : %d %v", code, ac)
 	}
 	e.appel("PATCH", "/acces/"+accesID, nav, map[string]any{"perimetre": "navigateur"})
 	if code, _ := e.appel("DELETE", "/acces/"+accesID, lea, nil); code != 404 {
