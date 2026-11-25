@@ -15,7 +15,7 @@ func TestConstruction(t *testing.T) {
 	}
 }
 
-// Pied de page de toutes les pages Web : licence, dépôt, version, build, commit (D-110).
+// Pied de page de toutes les pages Web : licence, dépôt, version, build, commit (D-128).
 func TestPiedDePage(t *testing.T) {
 	ancienV, ancienB, ancienC := version, build, commit
 	version, build, commit = "0.0.1", "12", "93b0f974518eacd5a3357763ed9eae4e437f1d33"

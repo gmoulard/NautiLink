@@ -127,7 +127,7 @@ void main() {
     setPhone(tester);
     await openHome(tester);
     expect(find.text('Sponsorisée par la SRT'), findsOneWidget);
-    // Pied de page de tous les écrans (D-110) : licence, dépôt, version.
+    // Pied de page de tous les écrans (D-128) : licence, dépôt, version.
     expect(find.text('Tous droits réservés · '), findsOneWidget);
     expect(find.text('https://github.com/gmoulard/NautiLink'), findsOneWidget);
     expect(find.text(' · version locale'), findsOneWidget);

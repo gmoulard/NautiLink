@@ -15,7 +15,7 @@
 # secrets) à poser dans .env ; vides, ces connexions sont désactivées.
 services:
   nautilink:
-    # Version du serveur (server/VERSION, docs/09-versions.md, D-110) : la
+    # Version du serveur (server/VERSION, docs/09-versions.md, D-128) : la
     # changer ici avec server/VERSION pour mettre à jour ; « :latest » resterait
     # en cache sur le Pi. Construction précise : :<version>-<build> (0.0.1-12).
     image: ghcr.io/gmoulard/nautilink-serveur:0.0.1

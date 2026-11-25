@@ -1,6 +1,6 @@
 # NautiLink — Versions et compatibilité
 
-Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-110](07-decisions.md#d-110)). Mise à jour : 2026-11-25.
+Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-128](07-decisions.md#d-128)). Mise à jour : 2026-11-25.
 
 ## 1. Composants et numéro de version
 

@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// Version, numéro de build et commit du serveur (D-110, docs/09-versions.md),
+// Version, numéro de build et commit du serveur (D-128, docs/09-versions.md),
 // posés à la construction par l'image Docker :
 //
 //	-ldflags "-X main.version=0.0.1 -X main.build=12 -X main.commit=<sha>"

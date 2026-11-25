@@ -2,7 +2,7 @@
 # .github/workflows/serveur.yml et publiée sur ghcr.io/gmoulard/nautilink-serveur.
 FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS construction
 # VERSION (server/VERSION), BUILD (numéro d'exécution du workflow) et COMMIT
-# (SHA complet) : affichés dans les pieds de page et la supervision (D-110).
+# (SHA complet) : affichés dans les pieds de page et la supervision (D-128).
 ARG TARGETOS TARGETARCH VERSION=dev BUILD=local COMMIT=
 WORKDIR /src
 COPY go.mod go.sum ./

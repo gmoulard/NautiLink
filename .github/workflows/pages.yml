@@ -7,7 +7,7 @@ name: Site GitHub Pages
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
 #   site/downloads/COMMITS.txt                 « fichier commit version build » de chaque application
 # Aucune publication dans les stores (D-61).
-# Versions (D-110, docs/09-versions.md) : site/VERSION pour le site, version de
+# Versions (D-128, docs/09-versions.md) : site/VERSION pour le site, version de
 # app/pubspec.yaml pour l'application ; build = numéro d'exécution de ce workflow.
 #
 # Paramètres :
@@ -214,7 +214,7 @@ jobs:
             cp -r precedent/. source/
           fi
           site_commit=$(cat source/SITE_COMMIT)
-          # SITE_VERSION et SITE_BUILD manquent dans les artefacts d'avant D-110.
+          # SITE_VERSION et SITE_BUILD manquent dans les artefacts d'avant D-128.
           site_version=$(cat source/SITE_VERSION 2>/dev/null || echo inconnue)
           site_build=$(cat source/SITE_BUILD 2>/dev/null || echo inconnu)
           mkdir -p _site/downloads
@@ -222,7 +222,7 @@ jobs:
           cp -r source/web _site/app
           # COMMITS.txt : « fichier commit version build » de chaque application,
           # repris avec le fichier quand l'application n'est pas reconstruite
-          # (version et build absents des lignes d'avant D-110).
+          # (version et build absents des lignes d'avant D-128).
           curl -fsSL "$SITE/downloads/COMMITS.txt" -o anciens-commits.txt || : > anciens-commits.txt
           reprendre() {
             if curl -fsSL "$SITE/downloads/$1" -o "_site/downloads/$1"; then

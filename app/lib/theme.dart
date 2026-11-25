@@ -186,7 +186,7 @@ class SosButton extends StatelessWidget {
   }
 }
 
-/// Version, build et commit de l'application (D-110, docs/09-versions.md),
+/// Version, build et commit de l'application (D-128, docs/09-versions.md),
 /// fournis par le workflow « Site GitHub Pages » (`--dart-define=NAUTILINK_VERSION=…`,
 /// `NAUTILINK_BUILD`, `NAUTILINK_COMMIT`) ; vides en construction locale.
 const String buildVersion = String.fromEnvironment('NAUTILINK_VERSION');
@@ -263,7 +263,7 @@ class DemoBanner extends StatelessWidget {
 }
 
 /// Cadre de tous les écrans (`MaterialApp.builder`) : l'écran, puis le pied de
-/// page [BuildFooterLine] (D-110).
+/// page [BuildFooterLine] (D-128).
 class AppFrame extends StatelessWidget {
   const AppFrame({super.key, required this.child});
 
