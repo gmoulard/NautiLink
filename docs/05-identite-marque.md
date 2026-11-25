@@ -1,6 +1,6 @@
 # NautiLink — Identité de marque et charte graphique
 
-Statut : identité définie, logo final à valider ([Q-25](06-questions-ouvertes.md#q-25)).
+Statut : identité définie, logo validé avec son repère GPS orange ([D-98](07-decisions.md#d-98)) ; fichiers vectoriels, icônes et déclinaisons à produire (TODO-8.1).
 
 ![Proposition de logo NautiLink](assets/logo-nautilink.png)
 
@@ -65,12 +65,13 @@ Moderne, simple, reconnaissable, lisible en petit, adapté à une icône Android
 | Blanc | `#FFFFFF` | Fonds, textes sur fond sombre |
 | Gris clair | `#F2F5F7` | Fonds secondaires, séparateurs |
 | Rouge alerte | `#D94343` | SOS et alertes importantes uniquement |
+| Orange repère | `#F89D29` | Repère GPS du logo uniquement ([D-98](07-decisions.md#d-98)) |
 
 - Le bleu marine (mer, confiance, sécurité) domine.
 - Le turquoise (connexion, partage) est réservé aux actions.
 - Le rouge est réservé au SOS et aux alertes ; jamais décoratif.
 
-Couleurs du thème sombre : §14 ([D-97](07-decisions.md#d-97)). Place de l'orange du repère GPS de la proposition de logo : [Q-25](06-questions-ouvertes.md#q-25).
+Couleurs du thème sombre : §14 ([D-97](07-decisions.md#d-97)). L'orange est réservé au repère GPS du logo ([D-98](07-decisions.md#d-98)).
 
 ## 7. Typographie
 
@@ -108,7 +109,7 @@ Simple, rassurant, direct, moderne, positif, axé sur la liberté et la sécurit
 
 ## 12. À finaliser
 
-Voir [Q-25](06-questions-ouvertes.md#q-25) (logo, fichiers vectoriels, icône Android, déclinaisons) et [Q-26](06-questions-ouvertes.md#q-26) (disponibilité juridique du nom, domaines, réseaux sociaux).
+Fichiers vectoriels, icônes Android et iPhone, déclinaisons du logo : TODO-8.1. Voir aussi [Q-26](06-questions-ouvertes.md#q-26) (disponibilité juridique du nom, domaines, réseaux sociaux).
 
 ## 13. Sponsor
 

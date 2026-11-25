@@ -61,12 +61,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 ## 4. Marque et interface
 
-### <a id="q-25"></a>Q-25 — Logo et charte
-
-- Priorité : lancement.
-- À faire : valider le logo ; fichiers vectoriels ; icônes Android et iPhone ; déclinaisons claire, sombre et monochrome. La proposition actuelle utilise un repère GPS orange absent de la palette : l'ajouter à la palette ou le remplacer.
-- Décidé (D-97) : couleurs du thème sombre ([identité de marque](05-identite-marque.md) §14).
-
 ### <a id="q-26"></a>Q-26 — Nom et présence en ligne
 
 - Priorité : lancement.

@@ -158,9 +158,8 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 ## 8. Lancement
 
-- [!] **TODO-8.1**: Logo, icône Android, déclinaisons, couleurs du thème sombre ([Q-25](06-questions-ouvertes.md#q-25)). Dépend de : aucune.
-  - Critères d'acceptation : fichiers vectoriels et icônes Android et iPhone dans `docs/assets/`, palette complétée dans l'identité de marque. Bloqué par : validation du logo par l'utilisateur.
-  - Tranché le 2026-11-25 (D-97) : couleurs du thème sombre. Reste : logo, icônes, déclinaisons, repère GPS orange.
+- [ ] **TODO-8.1**: Fichiers du logo : vectoriels, icônes Android et iPhone, déclinaisons claire, sombre et monochrome. Logo validé avec son repère orange (D-98) ; couleurs du thème sombre validées (D-97). Dépend de : aucune.
+  - Critères d'acceptation : fichiers vectoriels et icônes Android et iPhone dans `docs/assets/`, déclinaisons claire, sombre et monochrome, icône utilisée par le prototype.
 - [~] **TODO-8.2**: Disponibilité du nom, domaines, réseaux sociaux ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : aucune.
   - Critères d'acceptation : recherche d'antériorité faite, domaines et comptes réservés.
   - Fait : [étude documentaire](etudes/nom-nautilink.md) (moteur de recherche ; quasi-homonyme Nauti-Link) (2026-11-25). Reste : consulter INPI, EUIPO, OMPI ; vérifier domaines et comptes ; vérification juridique ; réservations par l'utilisateur.
