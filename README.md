@@ -38,6 +38,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/05-identite-marque.md`](docs/05-identite-marque.md) | Nom, signature, logo, couleurs, typographie, ton. |
 | [`docs/06-questions-ouvertes.md`](docs/06-questions-ouvertes.md) | Tout ce qui n'est pas décidé, numéroté `Q-…`. |
 | [`docs/07-decisions.md`](docs/07-decisions.md) | Journal des arbitrages, numérotés `D-…`. |
+| [`docs/08-architecture.md`](docs/08-architecture.md) | Architecture technique : applications Flutter, serveur Go, PostgreSQL, fichiers, e-mails, notifications push ; décisions et propositions. |
 | [`docs/TODO.md`](docs/TODO.md) | Feuille de route : actions `TODO-x.y`, états, dépendances, critères d'acceptation. |
 | [`docs/Todo-done.md`](docs/Todo-done.md) | Actions réalisées et validées. |
 | [`docs/Todo-ithem-for-todo.md`](docs/Todo-ithem-for-todo.md) | Demandes notées en vrac, à reporter dans le TODO. |
@@ -47,6 +48,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/etudes/autorisations-android.md`](docs/etudes/autorisations-android.md) | Étude : autorisations Android, versions concernées, règles Google Play, parcours de demande. |
 | [`docs/etudes/localisation-arriere-plan-iphone.md`](docs/etudes/localisation-arriere-plan-iphone.md) | Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store. |
 | [`docs/etudes/notes-vocales.md`](docs/etudes/notes-vocales.md) | Étude : notes vocales, formats audio, durée, transcription en français hors connexion. |
+| [`docs/etudes/nom-nautilink.md`](docs/etudes/nom-nautilink.md) | Étude : disponibilité du nom NautiLink, antériorité, domaines, réseaux sociaux. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images. |
 | [`app/`](app/) | Prototype de démonstration Flutter (Android, iPhone, Web), voir son [README](app/README.md). |

@@ -60,6 +60,7 @@ flowchart LR
 - Le circuit Internet et le circuit SMS sont indépendants ; le GPS ne dépend d'aucun des deux (RG-COM-01, RG-COM-02, RG-GPS-01).
 - L'application mobile stocke localement positions, événements, paramètres et contacts, et les synchronise dès que possible (RG-GPS-03, RG-GPS-04, RG-PRM-02, RG-CTC-03).
 - Le serveur est la référence pour les paramètres, les accès et le quota (RG-PRM-01, RG-ECO-09).
+- Architecture technique (serveur, base, fichiers, e-mails, notifications push) : [08-architecture.md](08-architecture.md).
 
 ## 5. Applications mobiles
 
