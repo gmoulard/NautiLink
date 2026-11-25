@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -13,7 +15,7 @@ val dartDefines: Map<String, String> =
         ?.split(",")
         ?.filter { it.isNotEmpty() }
         ?.associate {
-            val d = String(java.util.Base64.getDecoder().decode(it))
+            val d = String(Base64.getDecoder().decode(it))
             d.substringBefore("=") to d.substringAfter("=")
         } ?: emptyMap()
 val modeReel = dartDefines["NAUTILINK_MODE"] == "reel"
