@@ -34,6 +34,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get buildLocal => 'version locale';
 
   @override
+  String buildCommit(String commit) {
+    return 'Commit $commit';
+  }
+
+  @override
+  String get footerSiteLink => 'Site de NautiLink';
+
+  @override
   String get sosButton => 'Envoyer un SOS';
 
   @override
@@ -155,6 +163,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get homeDistressHint =>
       'En cas de détresse, alertez d\'abord par le canal 16 de la VHF ou le 196.';
+
+  @override
+  String get homeSecurityMemo => 'Mémo sécurité en mer';
 
   @override
   String get firstVoyageTitle => 'Avant votre première navigation';
@@ -623,4 +634,124 @@ class AppLocalizationsFr extends AppLocalizations {
   String sosSmsPosition(String position, String time) {
     return 'Position $position à $time.';
   }
+
+  @override
+  String get betaBanner => 'Version bêta';
+
+  @override
+  String offlineSince(String date) {
+    return 'Hors connexion · données du $date';
+  }
+
+  @override
+  String get loginTitle => 'Connexion';
+
+  @override
+  String get loginButton => 'Se connecter';
+
+  @override
+  String get password => 'Mot de passe';
+
+  @override
+  String get passwordMin => '8 caractères au moins';
+
+  @override
+  String get forgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get createAccount => 'Créer un compte';
+
+  @override
+  String get createAccountTitle => 'Création du compte';
+
+  @override
+  String get createAccountButton => 'Créer mon compte';
+
+  @override
+  String get continueGoogle => 'Continuer avec Google';
+
+  @override
+  String get continueApple => 'Continuer avec Apple';
+
+  @override
+  String get providerUnavailable =>
+      'Connexion par Google ou Apple : pas encore disponible.';
+
+  @override
+  String get loginOffline => 'Connexion impossible sans Internet.';
+
+  @override
+  String get sessionExpired => 'Votre session a expiré : reconnectez-vous.';
+
+  @override
+  String get errorGeneric => 'Le serveur n\'a pas pu traiter la demande.';
+
+  @override
+  String get fieldRequired => 'Champ obligatoire';
+
+  @override
+  String get forgotTitle => 'Mot de passe oublié';
+
+  @override
+  String get forgotText =>
+      'Indiquez l\'adresse e-mail de votre compte : vous recevrez un lien, valable 1 heure, pour choisir un nouveau mot de passe.';
+
+  @override
+  String get forgotSend => 'Recevoir le lien';
+
+  @override
+  String get forgotSent =>
+      'Si un compte existe pour cette adresse, un e-mail vient de partir. Le lien est valable 1 heure.';
+
+  @override
+  String get warningNewVersion =>
+      'L\'avertissement a changé : lisez-le et acceptez-le pour continuer.';
+
+  @override
+  String emailNotVerified(String email) {
+    return 'Confirmez votre adresse e-mail ($email) avec le lien reçu : sans confirmation, vous ne pouvez ni démarrer une navigation ni inviter.';
+  }
+
+  @override
+  String get resendLink => 'Recevoir un nouveau lien';
+
+  @override
+  String get linkSent => 'Lien envoyé.';
+
+  @override
+  String get logout => 'Se déconnecter';
+
+  @override
+  String get quotaUnknown => 'Quota pas encore reçu du serveur';
+
+  @override
+  String quotaAsOf(String date) {
+    return 'État du $date';
+  }
+
+  @override
+  String quotaNextAt(String duration, String date) {
+    return 'Prochaines minutes récupérables : $duration le $date.';
+  }
+
+  @override
+  String voyageInProgress(String name) {
+    return 'Navigation en cours : $name';
+  }
+
+  @override
+  String get notYetAvailable =>
+      'Pas encore disponible dans cette version de l\'application.';
+
+  @override
+  String savedOffline(String date) {
+    return 'Hors connexion : dernière liste reçue le $date';
+  }
+
+  @override
+  String get noSavedVoyages => 'Aucune navigation enregistrée.';
+
+  @override
+  String get pageOffline =>
+      'La page de la navigation sera disponible au retour de la connexion.';
 }

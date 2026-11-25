@@ -24,7 +24,7 @@ type config struct {
 	GoogleClients []string
 	AppleClients  []string
 	// Admins : NAUTILINK_ADMINS, adresses e-mail des administrateurs,
-	// séparées par des virgules (Q-53, non validée) ; vide : espace
+	// séparées par des virgules (RG-ADM-07) ; vide : espace
 	// administrateur fermé.
 	Admins []string
 	// Nominatim : NAUTILINK_NOMINATIM, adresse du service de géocodage

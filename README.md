@@ -50,9 +50,10 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/etudes/autorisations-android.md`](docs/etudes/autorisations-android.md) | Étude : autorisations Android, versions concernées, règles Google Play, parcours de demande. |
 | [`docs/etudes/localisation-arriere-plan-iphone.md`](docs/etudes/localisation-arriere-plan-iphone.md) | Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store. |
 | [`docs/etudes/notes-vocales.md`](docs/etudes/notes-vocales.md) | Étude : notes vocales, formats audio, durée, transcription en français hors connexion. |
+| [`docs/etudes/meteofrance-connexion.md`](docs/etudes/meteofrance-connexion.md) | Mode d'emploi : compte et codes d'accès de l'API Météo-France, utilisation par le serveur. |
 | [`docs/etudes/nom-nautilink.md`](docs/etudes/nom-nautilink.md) | Étude : disponibilité du nom NautiLink, antériorité, domaines, réseaux sociaux. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
-| [`docs/assets/`](docs/assets/) | Logo et images. |
+| [`docs/assets/`](docs/assets/) | Logo et images ; fichiers du logo (vectoriels, déclinaisons, icônes) dans [`docs/assets/logo/`](docs/assets/logo/). |
 | [`app/`](app/) | Prototype de démonstration Flutter (Android, iPhone, Web), voir son [README](app/README.md). |
 | [`server/`](server/) | Serveur central en Go (squelette, TODO-3.7), image Docker et `compose.yaml` pour pi-appliance, voir son [README](server/README.md). |
 | [`site/`](site/) | Site de présentation publié sur GitHub Pages (accueil, mémo sécurité en mer, avertissement), par le workflow `.github/workflows/pages.yml`. |

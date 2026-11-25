@@ -1,10 +1,10 @@
 # NautiLink — Identité de marque et charte graphique
 
-Statut : identité définie, logo validé avec son repère GPS orange ([D-98](07-decisions.md#d-98)) ; fichiers vectoriels, icônes et déclinaisons à produire (TODO-8.1).
+Statut : identité définie, logo validé avec son repère GPS orange ([D-98](07-decisions.md#d-98)) ; fichiers vectoriels, icônes et déclinaisons validés ([D-117](07-decisions.md#d-117), §5.5).
 
 ![Proposition de logo NautiLink](assets/logo-nautilink.png)
 
-*Proposition de logo, non validée : [assets/logo-nautilink.png](assets/logo-nautilink.png).*
+*Logo validé ([D-98](07-decisions.md#d-98)) : [assets/logo-nautilink.png](assets/logo-nautilink.png) (image d'origine) ; fichiers vectoriels et déclinaisons : §5.5.*
 
 ## 1. La marque
 
@@ -54,6 +54,31 @@ Moderne, simple, reconnaissable, lisible en petit, adapté à une icône Android
 4. Version monochrome.
 5. Version pour fond sombre.
 6. Version pour fond clair.
+
+### 5.5 Fichiers
+
+Dans [`assets/logo/`](assets/logo/), produits par [`generer.py`](assets/logo/generer.py) (redessin vectoriel de l'image validée ; textes convertis en tracés, polices Montserrat ExtraBold Italic et Open Sans Medium Italic sous licence OFL dans `assets/logo/polices/`) :
+
+| Fichier | Contenu |
+|---------|---------|
+| `nautilink-icone.svg` | Logo validé complet, sur son carré arrondi dégradé |
+| `nautilink-symbole-<variante>.svg` | Symbole seul (§5.4, point 3) |
+| `nautilink-logo-<variante>.svg` | Symbole et nom (point 1) |
+| `nautilink-logo-signature-<variante>.svg` | Symbole, nom et signature (point 2) |
+| `png/` | Rendus PNG des fichiers ci-dessus (1024 px de large) |
+| `icones/` | Sources et rendus des icônes : Android (avant-plan, arrière-plan, monochrome 432 px), Google Play 512 px, iPhone 1024 px (normale, sombre, teintée) |
+
+Variantes : `sombre` (couleurs d'origine, pour fond sombre), `clair` (pour fond clair), `monochrome` (bleu marine `#082B46`), `monochrome-blanc` (blanc, pour fond sombre ou photo).
+
+Icônes du prototype : `app/android/app/src/main/res/mipmap-*` (icône classique, icône adaptative et icône monochrome Android 13), `app/ios/Runner/Assets.xcassets/AppIcon.appiconset/`, `app/web/` (favicon, icônes du manifeste).
+
+Choix graphiques, validés avec le redessin ([D-117](07-decisions.md#d-117)) :
+
+- Icônes : symbole seul, sans nom ni signature (illisibles en petit), sur le dégradé bleu du logo d'origine, aussi pour l'arrière-plan de l'icône adaptative Android.
+- Version claire : le blanc devient bleu marine `#082B46`, le cyan de « Link », du souligné et des vagues devient turquoise `#13A6AD` (le cyan est illisible sur blanc), les ondes autour du repère sont en bleu `#0E6BA8` ; le repère reste orange.
+- Versions monochromes : le point blanc du repère devient un trou ; un filet vide sépare la coque et les vagues.
+- Icônes iPhone sombre et teintée (iOS 18) : produites dans `assets/logo/icones/`, pas encore déclarées dans `Contents.json` (format Flutter gardé tel quel) ; à brancher avec l'application iPhone (LOT-16).
+- Le symbole reste détaillé : en très petit (favicon, 20 à 29 px), les suiveurs et les ondes se lisent mal.
 
 ## 6. Couleurs
 
@@ -109,7 +134,7 @@ Simple, rassurant, direct, moderne, positif, axé sur la liberté et la sécurit
 
 ## 12. À finaliser
 
-Fichiers vectoriels, icônes Android et iPhone, déclinaisons du logo : TODO-8.1. Voir aussi [Q-26](06-questions-ouvertes.md#q-26) (disponibilité juridique du nom, domaines, réseaux sociaux).
+Validation des fichiers du logo et des choix graphiques du §5.5 : TODO-8.1. Voir aussi [Q-26](06-questions-ouvertes.md#q-26) (disponibilité juridique du nom, domaines, réseaux sociaux).
 
 ## 13. Sponsor
 
@@ -149,5 +174,5 @@ Thème sombre, validé le 2026-11-25 ([D-97](07-decisions.md#d-97)) :
 | SOS | `#E35D5D` |
 | Bandeau bêta | `#F2C14E`, inchangé |
 
-Bandeau du sponsor SRT : sur le fond de l'application, en thème clair comme en sombre (filet jaune `#F8D818` au-dessus ; texte bleu SRT `#1E3296` en clair, texte `#E3EEF7` en sombre).
+Bandeau du sponsor SRT : sur le fond de l'application, en thème clair comme en sombre (filet jaune `#F8D818` au-dessus ; texte bleu SRT `#1E3296` en clair, texte `#E3EEF7` en sombre). Sous la mention du sponsor, un petit lien souligné « Site de NautiLink » vers le site de présentation (TODO-3.13).
 

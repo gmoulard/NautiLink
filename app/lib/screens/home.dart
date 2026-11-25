@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../config.dart';
 import '../data.dart';
+import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../main.dart';
+import '../reel/depot_reel.dart';
 import '../theme.dart';
+import 'connexion.dart';
 import 'dashboard.dart';
+import 'memo.dart';
 import 'navigation.dart';
 
 /// Écran d'accueil de l'application mobile (cahier des charges §5.2).
@@ -15,14 +20,124 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
+    final depot = DepotScope.of(context);
     final l = AppLocalizations.of(context);
-    final left = AppState.quotaMinutes - state.usedMinutes;
+    final demo = depot.demonstration;
+    final quota = depot.quota;
+    final enCours = depot.navigationEnCours;
+    final profil = depot.profil;
+    final quotaRecu = quota?.recuLe;
+    final list = ListView(
+      padding: const EdgeInsets.all(20),
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        if (!demo && profil != null && !profil.emailVerifie) ...[
+          _EmailNonVerifie(email: profil.email),
+          const SizedBox(height: 12),
+        ],
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.timer_outlined, color: NlColors.teal),
+            // RG-ECO-10 : lien vers « Quota et abonnement ».
+            title: Text(
+              l.homeFreeVersion,
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            subtitle: Text(
+              quota == null
+                  ? l.quotaUnknown
+                  : [
+                      l.homeFreeLeft(
+                        fmtDuration(
+                          l,
+                          Duration(minutes: quota.disponibleMinutes),
+                        ),
+                      ),
+                      // Hors connexion : dernier état reçu, avec son heure (RG-COM-06).
+                      if (depot.horsConnexion && quotaRecu != null)
+                        l.quotaAsOf(fmtDate(l, quotaRecu)),
+                    ].join('\n'),
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
+          ),
+        ),
+        if (!demo && enCours != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            l.voyageInProgress(enCours.nom),
+            key: const Key('voyage-in-progress'),
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ],
+        const SizedBox(height: 20),
+        FilledButton.icon(
+          onPressed: (demo ? state.current != null : enCours != null)
+              ? null
+              : () => demo ? openStart(context) : showNotYet(context),
+          icon: const Icon(Icons.play_arrow),
+          label: Text(l.startVoyage),
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: (demo ? state.current == null : enCours == null)
+              ? null
+              : () => demo
+                    ? Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const NavigationScreen(),
+                        ),
+                      )
+                    : showNotYet(context),
+          icon: const Icon(Icons.restore),
+          label: Text(l.resumeVoyage),
+        ),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => demo
+                  ? const DashboardScreen(onlyMine: true)
+                  : const SavedVoyagesScreen(),
+            ),
+          ),
+          icon: const Icon(Icons.history),
+          label: Text(l.savedVoyages),
+        ),
+        const SizedBox(height: 32),
+        SosButton(
+          onPressed: () => demo ? confirmSos(context) : showNotYet(context),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l.homeDistressHint,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8),
+        // Mémo sécurité en mer intégré, lisible hors connexion (RG-SOS-22).
+        TextButton.icon(
+          icon: const Icon(Icons.health_and_safety_outlined),
+          label: Text(l.homeSecurityMemo),
+          onPressed: () => openSecurityMemo(context),
+        ),
+      ],
+    );
+    final actualise = depot.actualiseLe;
     return Scaffold(
       appBar: AppBar(
         title: Text(l.appTitle),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) {
+              if (v == 'logout') {
+                depot.deconnecter();
+                return;
+              }
               final page = switch (v) {
                 'contacts' => const ContactsScreen(),
                 'params' => const SettingsScreen(),
@@ -33,85 +148,37 @@ class HomeScreen extends StatelessWidget {
                   .push(MaterialPageRoute(builder: (_) => page));
             },
             itemBuilder: (_) => [
-              PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
-              PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
+              if (demo) ...[
+                PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
+                PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
+              ],
               PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
-              PopupMenuItem(value: 'web', child: Text(l.menuDashboard)),
+              if (demo)
+                PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
+              else
+                PopupMenuItem(value: 'logout', child: Text(l.logout)),
             ],
           ),
         ],
       ),
       body: Column(
         children: [
-          const DemoBanner(),
+          if (demo)
+            const DemoBanner()
+          else
+            BetaBanner(
+              detail: depot.horsConnexion
+                  ? l.offlineSince(
+                      actualise == null ? '—' : fmtDate(l, actualise),
+                    )
+                  : null,
+            ),
           Expanded(
             child: RadarBackground(
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(
-                        Icons.timer_outlined,
-                        color: NlColors.teal,
-                      ),
-                      // RG-ECO-10 : lien vers « Quota et abonnement ».
-                      title: Text(
-                        l.homeFreeVersion,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                      subtitle: Text(
-                        l.homeFreeLeft(fmtDuration(l, Duration(minutes: left))),
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const QuotaScreen()),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  FilledButton.icon(
-                    onPressed: state.current != null
-                        ? null
-                        : () => openStart(context),
-                    icon: const Icon(Icons.play_arrow),
-                    label: Text(l.startVoyage),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton.icon(
-                    onPressed: state.current == null
-                        ? null
-                        : () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const NavigationScreen(),
-                            ),
-                          ),
-                    icon: const Icon(Icons.restore),
-                    label: Text(l.resumeVoyage),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton.icon(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const DashboardScreen(onlyMine: true),
-                      ),
-                    ),
-                    icon: const Icon(Icons.history),
-                    label: Text(l.savedVoyages),
-                  ),
-                  const SizedBox(height: 32),
-                  SosButton(onPressed: () => confirmSos(context)),
-                  const SizedBox(height: 8),
-                  Text(
-                    l.homeDistressHint,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
+              child: demo
+                  ? list
+                  // Actualisation de l'accueil en tirant la liste (Q-84).
+                  : RefreshIndicator(onRefresh: depot.actualiser, child: list),
             ),
           ),
           const SponsorFooter(),
@@ -119,6 +186,134 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Fonction de la vraie application pas encore réalisée (démarrage TODO-5.2,
+/// SOS TODO-5.5, écran de navigation TODO-5.3).
+Future<void> showNotYet(BuildContext context) {
+  final l = AppLocalizations.of(context);
+  return showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      content: Text('${l.notYetAvailable}\n\n${l.homeDistressHint}'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.ok)),
+      ],
+    ),
+  );
+}
+
+/// Adresse non confirmée : démarrage et invitations bloqués (RG-CPT-09).
+class _EmailNonVerifie extends StatefulWidget {
+  const _EmailNonVerifie({required this.email});
+  final String email;
+
+  @override
+  State<_EmailNonVerifie> createState() => _EmailNonVerifieState();
+}
+
+class _EmailNonVerifieState extends State<_EmailNonVerifie> {
+  String? _message;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.emailNotVerified(widget.email)),
+            TextButton(
+              onPressed: () async {
+                final depot = DepotScope.of(context) as DepotReel;
+                String m;
+                try {
+                  await depot.renvoyerLienVerification();
+                  m = l.linkSent;
+                } catch (e) {
+                  m = messageErreur(l, e);
+                }
+                if (mounted) setState(() => _message = m);
+              },
+              child: Text(l.resendLink),
+            ),
+            if (_message != null) Text(_message!),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// « Navigations enregistrées » de la vraie application : liste reçue du
+/// serveur ; hors connexion, la dernière liste reçue, marquée « hors
+/// connexion », et la page Web ne s'ouvre pas (cahier des charges §5.2, RG-COM-06).
+class SavedVoyagesScreen extends StatelessWidget {
+  const SavedVoyagesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final depot = DepotScope.of(context);
+    final recue = depot is DepotReel ? depot.navigationsRecuesLe : null;
+    final mine = depot.navigations.where((n) => !n.commeSuiveur).toList();
+    return Scaffold(
+      appBar: AppBar(title: Text(l.savedVoyages)),
+      body: RefreshIndicator(
+        onRefresh: depot.actualiser,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          children: [
+            if (depot.horsConnexion)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  l.savedOffline(recue == null ? '—' : fmtDate(l, recue)),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            if (mine.isEmpty) Text(l.noSavedVoyages),
+            for (final n in mine)
+              Card(
+                child: ListTile(
+                  title: Text(n.nom),
+                  subtitle: Text(
+                    [
+                      n.bateauNom,
+                      fmtDate(l, n.debut),
+                    ].whereType<String>().join(' · '),
+                  ),
+                  trailing: const Icon(Icons.open_in_new),
+                  onTap: () {
+                    if (depot.horsConnexion) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(l.pageOffline)));
+                      return;
+                    }
+                    launchUrl(
+                      Uri.parse(voyagePageUrl(n.id)),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Page d'une navigation sur la plateforme Web, servie par le serveur à côté
+/// de l'API (`<chemin>/navigations/<id>`, TODO-6.2).
+String voyagePageUrl(String id) {
+  final b = kApiUrl.endsWith('/api')
+      ? kApiUrl.substring(0, kApiUrl.length - 4)
+      : kApiUrl;
+  return '$b/navigations/$id';
 }
 
 Future<void> openStart(BuildContext context) async {
@@ -303,10 +498,17 @@ class QuotaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppScope.of(context);
-    final used = state.usedMinutes.clamp(0, AppState.quotaMinutes);
-    final ratio = used / AppState.quotaMinutes;
+    final depot = DepotScope.of(context);
+    final q = depot.quota;
+    final used = q?.consommeMinutes ?? 0;
+    final left = q?.disponibleMinutes ?? 0;
+    final ratio = q == null || used + left == 0
+        ? 0.0
+        : (used / (used + left)).clamp(0.0, 1.0);
     final l = AppLocalizations.of(context);
+    final next = q?.prochainesMinutes;
+    final nextAt = q?.prochainesMinutesLe;
+    final recu = q?.recuLe;
     return Scaffold(
       appBar: AppBar(title: Text(l.menuQuota)),
       body: RadarBackground(
@@ -324,14 +526,25 @@ class QuotaScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(7),
             ),
             const SizedBox(height: 12),
-            Text(l.quotaUsed(fmtDuration(l, Duration(minutes: used)))),
-            Text(
-              l.quotaLeft(
-                fmtDuration(l, Duration(minutes: AppState.quotaMinutes - used)),
-              ),
-            ),
+            if (q == null)
+              Text(l.quotaUnknown)
+            else ...[
+              Text(l.quotaUsed(fmtDuration(l, Duration(minutes: used)))),
+              Text(l.quotaLeft(fmtDuration(l, Duration(minutes: left)))),
+            ],
             const SizedBox(height: 8),
-            Text(l.quotaNextRecovery),
+            if (depot.demonstration)
+              Text(l.quotaNextRecovery)
+            else if (next != null && nextAt != null)
+              Text(
+                l.quotaNextAt(
+                  fmtDuration(l, Duration(minutes: next)),
+                  fmtDate(l, nextAt),
+                ),
+              ),
+            // Dernier état reçu, avec son heure (RG-COM-06).
+            if (!depot.demonstration && recu != null)
+              Text(l.quotaAsOf(fmtDate(l, recu))),
             const SizedBox(height: 24),
             Card(
               child: ListTile(

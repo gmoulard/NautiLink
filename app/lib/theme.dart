@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'data.dart';
 import 'l10n/app_localizations.dart';
 
 /// Couleurs du design « Radar de pluie » (docs/05-identite-marque.md §14, D-69, D-70).
@@ -230,6 +231,22 @@ class SponsorFooter extends StatelessWidget {
               style: TextStyle(
                 color: dark ? NlColors.inkDark : const Color(0xFF1E3296),
                 fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          // TODO-3.13 : petit lien vers le site de présentation.
+          InkWell(
+            onTap: () => launchUrl(
+              Uri.parse(siteUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                l.footerSiteLink,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
           ),

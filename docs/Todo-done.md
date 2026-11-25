@@ -38,9 +38,18 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-1.27**: Notifications push du suiveur sur Android, les mêmes que sur iPhone (2026-11-25, D-92).
 - [x] **TODO-1.14**: Prix et paiement de l'abonnement : 15 € payés une seule fois pour 10 ans (2026-11-25, D-94).
 
+## 2. Études techniques
+
+- [x] **TODO-2.6**: Fonctionnement hors connexion de chaque écran Android (2026-11-25, D-114, RG-COM-06).
+
 ## 3. Préparation du développement
 
+- [x] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web (2026-11-25, D-115 ; [`api/openapi.yaml`](api/openapi.yaml)).
 - [x] **TODO-3.1**: Architecture technique : [08-architecture.md](08-architecture.md) validé avec ses propositions (2026-11-25, D-86, D-96).
+
+## 8. Lancement
+
+- [x] **TODO-8.1**: Fichiers du logo : redessin vectoriel validé, déclinaisons claire, sombre et monochrome, icônes Android, iPhone et Web ([`assets/logo/`](assets/logo/), 2026-11-25, D-117).
 
 ## 9. Évolutions futures
 

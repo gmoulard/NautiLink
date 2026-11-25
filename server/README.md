@@ -9,7 +9,7 @@ Réalisé :
 - contacts, invitations et accès des suiveurs (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
 - plateforme Web minimale (pages servies par le serveur, en français, sans JavaScript) : inscription, connexion, déconnexion, « Mon compte », « Bateaux », « Contacts », « Paramètres », page d'invitation ;
-- espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte, utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (Q-53, non validée).
+- espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte, utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
 
 ## Lancer en local
 
@@ -56,7 +56,7 @@ GARDER=1 ./essai-test.sh # garde l'environnement lancé
 | `NAUTILINK_SMTP_HOTE`, `NAUTILINK_SMTP_PORT` | Relais d'e-mails, sans mot de passe. Sur le Pi : `${PI_SMTP_HOST}`, `${PI_SMTP_PORT}` (2525) | vide, `25` |
 | `NAUTILINK_EXPEDITEUR` | Adresse de l'expéditeur | `nautilink@moulard.org` |
 | `NAUTILINK_GOOGLE_CLIENTS` | Identifiants clients OAuth Google acceptés (Web, Android, iPhone), séparés par des virgules ; vide : connexion Google désactivée | vide |
-| `NAUTILINK_ADMINS` | Adresses e-mail des administrateurs, séparées par des virgules (Q-53, non validée) ; le compte doit exister et son adresse être confirmée ; vide : espace administrateur fermé | vide |
+| `NAUTILINK_ADMINS` | Adresses e-mail des administrateurs, séparées par des virgules (RG-ADM-07) ; le compte doit exister et son adresse être confirmée ; vide : espace administrateur fermé | vide |
 | `NAUTILINK_APPLE_CLIENTS` | Identifiants clients Apple acceptés (identifiant de l'application, Services ID), séparés par des virgules ; vide : connexion Apple désactivée | vide |
 | `NAUTILINK_NOMINATIM` | Service de géocodage inverse pour les noms de lieux (D-96), une requête par seconde au plus, avec cache. Sur le Pi : `https://nominatim.openstreetmap.org` ; vide : coordonnées à la place des noms | vide |
 

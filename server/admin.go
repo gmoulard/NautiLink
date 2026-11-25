@@ -15,15 +15,15 @@ import (
 
 // Espace administrateur (TODO-7.1) : RG-ADM-01 à RG-ADM-04, RG-ADM-06.
 // Profil unique d'administrateur (RG-ADM-03, D-47). Désignation des
-// administrateurs : liste d'adresses e-mail dans NAUTILINK_ADMINS (Q-53, non
-// validée) ; l'administrateur se connecte avec son compte NautiLink, dont
+// administrateurs : liste d'adresses e-mail dans NAUTILINK_ADMINS (RG-ADM-07,
+// D-113) ; l'administrateur se connecte avec son compte NautiLink, dont
 // l'adresse doit être confirmée, et reçoit une session distincte (cookie
 // nautilink_admin, RG-ADM-01). Chaque action est tracée dans journal_admin,
 // gardé 3 ans (RG-DON-02).
 
 const (
 	nomCookieAdmin      = "nautilink_admin"
-	dureeSansUsageAdmin = 12 * time.Hour // Q-53, non validée
+	dureeSansUsageAdmin = 12 * time.Hour // RG-ADM-07
 	dureeJournalAdmin   = "3 years"      // RG-DON-02
 )
 

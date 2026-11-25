@@ -140,6 +140,18 @@ abstract class AppLocalizations {
   /// **'version locale'**
   String get buildLocal;
 
+  /// No description provided for @buildCommit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commit {commit}'**
+  String buildCommit(String commit);
+
+  /// No description provided for @footerSiteLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Site de NautiLink'**
+  String get footerSiteLink;
+
   /// No description provided for @sosButton.
   ///
   /// In fr, this message translates to:
@@ -361,6 +373,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En cas de détresse, alertez d\'abord par le canal 16 de la VHF ou le 196.'**
   String get homeDistressHint;
+
+  /// No description provided for @homeSecurityMemo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mémo sécurité en mer'**
+  String get homeSecurityMemo;
 
   /// No description provided for @firstVoyageTitle.
   ///
@@ -1146,6 +1164,210 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Position {position} à {time}.'**
   String sosSmsPosition(String position, String time);
+
+  /// No description provided for @betaBanner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version bêta'**
+  String get betaBanner;
+
+  /// No description provided for @offlineSince.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors connexion · données du {date}'**
+  String offlineSince(String date);
+
+  /// No description provided for @loginTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion'**
+  String get loginTitle;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get loginButton;
+
+  /// No description provided for @password.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get password;
+
+  /// No description provided for @passwordMin.
+  ///
+  /// In fr, this message translates to:
+  /// **'8 caractères au moins'**
+  String get passwordMin;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe oublié ?'**
+  String get forgotPassword;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get createAccount;
+
+  /// No description provided for @createAccountTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Création du compte'**
+  String get createAccountTitle;
+
+  /// No description provided for @createAccountButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer mon compte'**
+  String get createAccountButton;
+
+  /// No description provided for @continueGoogle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec Google'**
+  String get continueGoogle;
+
+  /// No description provided for @continueApple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec Apple'**
+  String get continueApple;
+
+  /// No description provided for @providerUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion par Google ou Apple : pas encore disponible.'**
+  String get providerUnavailable;
+
+  /// No description provided for @loginOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion impossible sans Internet.'**
+  String get loginOffline;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre session a expiré : reconnectez-vous.'**
+  String get sessionExpired;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le serveur n\'a pas pu traiter la demande.'**
+  String get errorGeneric;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Champ obligatoire'**
+  String get fieldRequired;
+
+  /// No description provided for @forgotTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe oublié'**
+  String get forgotTitle;
+
+  /// No description provided for @forgotText.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez l\'adresse e-mail de votre compte : vous recevrez un lien, valable 1 heure, pour choisir un nouveau mot de passe.'**
+  String get forgotText;
+
+  /// No description provided for @forgotSend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir le lien'**
+  String get forgotSend;
+
+  /// No description provided for @forgotSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Si un compte existe pour cette adresse, un e-mail vient de partir. Le lien est valable 1 heure.'**
+  String get forgotSent;
+
+  /// No description provided for @warningNewVersion.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'avertissement a changé : lisez-le et acceptez-le pour continuer.'**
+  String get warningNewVersion;
+
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmez votre adresse e-mail ({email}) avec le lien reçu : sans confirmation, vous ne pouvez ni démarrer une navigation ni inviter.'**
+  String emailNotVerified(String email);
+
+  /// No description provided for @resendLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recevoir un nouveau lien'**
+  String get resendLink;
+
+  /// No description provided for @linkSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien envoyé.'**
+  String get linkSent;
+
+  /// No description provided for @logout.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter'**
+  String get logout;
+
+  /// No description provided for @quotaUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quota pas encore reçu du serveur'**
+  String get quotaUnknown;
+
+  /// No description provided for @quotaAsOf.
+  ///
+  /// In fr, this message translates to:
+  /// **'État du {date}'**
+  String quotaAsOf(String date);
+
+  /// No description provided for @quotaNextAt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaines minutes récupérables : {duration} le {date}.'**
+  String quotaNextAt(String duration, String date);
+
+  /// No description provided for @voyageInProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation en cours : {name}'**
+  String voyageInProgress(String name);
+
+  /// No description provided for @notYetAvailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore disponible dans cette version de l\'application.'**
+  String get notYetAvailable;
+
+  /// No description provided for @savedOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors connexion : dernière liste reçue le {date}'**
+  String savedOffline(String date);
+
+  /// No description provided for @noSavedVoyages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune navigation enregistrée.'**
+  String get noSavedVoyages;
+
+  /// No description provided for @pageOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'La page de la navigation sera disponible au retour de la connexion.'**
+  String get pageOffline;
 }
 
 class _AppLocalizationsDelegate

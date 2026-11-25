@@ -21,12 +21,7 @@ class _WarningScreenState extends State<WarningScreen> {
   Widget build(BuildContext context) {
     final state = AppScope.of(context);
     final l = AppLocalizations.of(context);
-    final sections = [
-      (l.warningSection1Title, l.warningSection1Body),
-      (l.warningSection2Title, l.warningSection2Body),
-      (l.warningSection3Title, l.warningSection3Body),
-      (l.warningSection4Title, l.warningSection4Body),
-    ];
+    final sections = warningSections(l);
     return Scaffold(
       appBar: AppBar(title: Text(l.warningTitle)),
       body: Column(
@@ -75,6 +70,38 @@ class _WarningScreenState extends State<WarningScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Sections de l'avertissement bêta (RG-CPT-06), aussi lues à la création du
+/// compte et quand le texte change (RG-CPT-07).
+List<(String, String)> warningSections(AppLocalizations l) => [
+  (l.warningSection1Title, l.warningSection1Body),
+  (l.warningSection2Title, l.warningSection2Body),
+  (l.warningSection3Title, l.warningSection3Body),
+  (l.warningSection4Title, l.warningSection4Body),
+];
+
+/// Texte de l'avertissement bêta, titre compris.
+class WarningText extends StatelessWidget {
+  const WarningText({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l.warningHeading, style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        for (final (title, body) in warningSections(l)) ...[
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+          const SizedBox(height: 6),
+          Text(body),
+          const SizedBox(height: 16),
+        ],
+      ],
     );
   }
 }

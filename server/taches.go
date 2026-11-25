@@ -14,7 +14,8 @@ import (
 
 // tachesDeFond : traitements faits par le serveur seul (x-traitements de
 // docs/api/openapi.yaml), chaque minute : clôture automatique (TODO-4.6),
-// purge de la corbeille (TODO-4.8) ; et noms des lieux par Nominatim.
+// relance des e-mails SOS en échec (TODO-4.7, RG-SOS-18), purge de la
+// corbeille (TODO-4.8) ; et noms des lieux par Nominatim.
 func (a *app) tachesDeFond(ctx context.Context) {
 	if a.cfg.Nominatim != "" {
 		go a.nommerLesLieux(ctx)
@@ -40,7 +41,7 @@ func (a *app) tachesDeFond(ctx context.Context) {
 
 // tachesMinute : tâches jouées chaque minute, dans cet ordre.
 func (a *app) tachesMinute() []func(context.Context) error {
-	return []func(context.Context) error{a.cloturesAutomatiques}
+	return []func(context.Context) error{a.cloturesAutomatiques, a.purgerLaCorbeille, a.relancerEmailsSos}
 }
 
 // ------------------------------------------------------------------ lieux

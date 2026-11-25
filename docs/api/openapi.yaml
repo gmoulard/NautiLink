@@ -4,8 +4,8 @@ info:
   version: 0.1.0
   summary: 'API HTTPS entre les applications mobiles, la plateforme Web, l''espace administrateur et le serveur NautiLink.'
   description: |
-    Description de l'API du serveur NautiLink (TODO-3.2). **Proposition, non validée** : voir
-    [Q-22](../06-questions-ouvertes.md#q-22). Les règles métier font foi
+    Description de l'API du serveur NautiLink (TODO-3.2). **Validée** : voir
+    [D-115](../07-decisions.md#d-115). Les règles métier font foi
     ([02-regles-metier.md](../02-regles-metier.md)) ; chaque opération cite les règles qu'elle
     sert dans `x-regles`. Synchronisation, file d'attente et doublons :
     [08-architecture.md §4 et §5](../08-architecture.md#4-api-et-synchronisation).
@@ -18,7 +18,7 @@ info:
     - Positions en degrés décimaux WGS 84.
     - Durées en minutes, distances en mètres.
     - Identifiants : UUID. Les navigations, événements et alertes SOS reçoivent leur identifiant
-      du téléphone qui les crée, ce qui rend chaque envoi rejouable sans doublon (RG-GPS-04, Q-10).
+      du téléphone qui les crée, ce qui rend chaque envoi rejouable sans doublon (RG-GPS-04, RG-COM-05).
     - Erreurs : objet `Erreur` avec un `code` stable (liste dans le schéma).
     - Les comportements qui attendent une décision renvoient à leur question (`Q-nn`) ; ils ne
       sont pas à développer avant qu'elle soit tranchée.
@@ -58,19 +58,19 @@ x-traitements:
     x-regles: [RG-ECO-01, RG-ECO-02, RG-ECO-03, RG-NAV-21]
   - nom: 'Lieux et distance'
     description: 'Géocodage inverse par Nominatim avec cache (D-96) pour le lieu de départ, d''arrivée et de chaque position ; distance = somme des distances entre positions successives.'
-    x-regles: [RG-NAV-16, RG-JRN-10]
+    x-regles: [RG-NAV-16, RG-NAV-31, RG-JRN-10]
   - nom: 'Météo de début et de fin'
     description: 'Relevée auprès de l''API de Météo-France au point de départ et d''arrivée (Q-39).'
     x-regles: [RG-NAV-28]
   - nom: 'E-mails'
-    description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur.'
-    x-regles: [RG-NOT-01, RG-NOT-02, RG-NOT-03, RG-SOS-06, RG-SOS-15, RG-PRM-04, RG-PAR-04]
+    description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur ; contenu des e-mails SOS et de début : RG-SOS-17, RG-NOT-05 ; e-mail SOS non accepté par le relais : relancé chaque minute pendant 24 heures (RG-SOS-18).'
+    x-regles: [RG-NOT-01, RG-NOT-02, RG-NOT-03, RG-NOT-05, RG-SOS-06, RG-SOS-15, RG-SOS-17, RG-SOS-18, RG-SOS-21, RG-PRM-04, RG-PAR-04]
   - nom: 'Notifications push des suiveurs'
     description: 'APNs (iPhone) et FCM (Android) — SOS, début, fin, nouvelle photo, position en retard (aucune position reçue pendant deux fois la fréquence, une seule notification jusqu''à la position suivante).'
     x-regles: [RG-IOS-06, RG-AND-08, RG-NOT-02]
   - nom: 'Purge de la corbeille'
-    description: 'Suppression définitive 30 jours après le passage dans la corbeille.'
-    x-regles: [RG-NAV-20, RG-DON-01]
+    description: 'Suppression définitive 30 jours après le passage dans la corbeille, avec le journal de bord, les positions et les fichiers ; les alertes SOS restent dans l''historique du bateau ; les accès de périmètre navigation sur elle sont retirés (RG-PAR-10).'
+    x-regles: [RG-NAV-20, RG-PAR-10, RG-DON-01]
   - nom: 'Conservation'
     description: 'Navigations, journaux et positions sans limite ; journaux techniques 1 an ; journaux d''administration 3 ans ; sauvegarde quotidienne gardée 30 jours (pi-appliance pendant la bêta).'
     x-regles: [RG-NAV-18, RG-JRN-01, RG-DON-01, RG-DON-02]
@@ -83,7 +83,7 @@ x-regles-sans-serveur: [RG-CPT-03, RG-NAV-09, RG-NAV-12, RG-NAV-23, RG-NAV-24, R
   RG-GPS-03, RG-GPS-05, RG-GPS-06, RG-COM-02, RG-COM-03, RG-SMS-03, RG-SMS-04,
   RG-SOS-01, RG-SOS-07, RG-SOS-08, RG-SOS-16, RG-ECO-10, RG-PRM-05, RG-ADM-04, RG-ADM-05,
   RG-IOS-02, RG-IOS-04, RG-IOS-08, RG-IOS-09, RG-AND-01, RG-AND-02, RG-AND-03, RG-AND-04,
-  RG-AND-05, RG-AND-06, RG-AND-07]
+  RG-AND-05, RG-AND-06, RG-AND-07, RG-COM-06, RG-SOS-22]
 
 paths:
   /sante:
@@ -153,7 +153,7 @@ paths:
         Une session expire après 90 jours sans usage, jamais sur le téléphone associé pendant une
         navigation en cours (RG-CPT-08).
       security: []
-      x-regles: [RG-CPT-02, RG-CPT-06, RG-CPT-08, RG-CPT-11, RG-DON-03]
+      x-regles: [RG-CPT-02, RG-CPT-06, RG-CPT-08, RG-CPT-11, RG-CPT-12, RG-DON-03]
       requestBody:
         required: true
         content:
@@ -183,7 +183,7 @@ paths:
       tags: [Comptes]
       summary: 'Renouveler une session avec le jeton de renouvellement (90 jours sans usage, RG-CPT-08).'
       security: []
-      x-regles: [RG-CPT-08, RG-DON-03]
+      x-regles: [RG-CPT-08, RG-CPT-12, RG-DON-03]
       requestBody:
         required: true
         content:
@@ -637,7 +637,7 @@ paths:
     patch:
       tags: [Contacts et partage]
       summary: 'Changer le périmètre d''un accès.'
-      x-regles: [RG-PAR-02]
+      x-regles: [RG-PAR-02, RG-PAR-09]
       requestBody:
         required: true
         content:
@@ -726,7 +726,7 @@ paths:
       tags: [Navigations]
       summary: 'Navigations du compte comme navigateur et comme suiveur (tableau de bord, « Navigations enregistrées »).'
       description: 'Les navigations en cours d''abord, puis l''historique de la plus récente à la plus ancienne. Le suivi est gratuit.'
-      x-regles: [RG-PAR-07, RG-ECO-08, RG-NAV-16, RG-NAV-18, RG-BAT-03, RG-IOS-05]
+      x-regles: [RG-PAR-07, RG-PAR-09, RG-ECO-08, RG-NAV-16, RG-NAV-18, RG-BAT-03, RG-IOS-05]
       parameters:
         - name: role
           in: query
@@ -766,7 +766,7 @@ paths:
         (`quota_epuise`, avec l'heure à laquelle des minutes redeviennent disponibles), adresse
         e-mail confirmée (`email_non_verifie`, RG-CPT-09). Il génère le
         nom, relève la météo, envoie l'e-mail et les notifications push de début.
-        Démarrage hors connexion et quota non vérifiable : Q-29.
+        Démarrage hors connexion et quota non vérifiable : RG-COM-06.
       x-regles: [RG-CPT-09, RG-NAV-01, RG-NAV-02, RG-NAV-03, RG-NAV-04, RG-NAV-05, RG-NAV-06, RG-NAV-07, RG-NAV-08,
         RG-NAV-11, RG-NAV-17, RG-NAV-25, RG-NAV-27, RG-NAV-28, RG-CPT-05, RG-ECO-04, RG-NOT-02,
         RG-IOS-06, RG-AND-08, RG-BAT-03]
@@ -821,10 +821,11 @@ paths:
     delete:
       tags: [Navigations]
       summary: 'Mettre une navigation terminée dans la corbeille (Web, navigateur seulement).'
-      description: 'Refusé pour une navigation en cours (`navigation_en_cours`). Le temps reste décompté du quota.'
+      description: 'Refusé pour une navigation en cours (`navigation_en_cours`) et depuis une session des applications mobiles (`web_seulement`). Rejouable : une navigation déjà dans la corbeille y reste, sans repousser sa suppression définitive. Le temps reste décompté du quota. Dans la corbeille, la navigation ne se modifie plus avant sa restauration (`navigation_corbeille`, RG-NAV-30).'
       x-regles: [RG-NAV-20, RG-NAV-21]
       responses:
         '204': {description: 'Navigation dans la corbeille, restaurable 30 jours.'}
+        '403': {$ref: '#/components/responses/Interdit'}
         '409': {$ref: '#/components/responses/Conflit'}
   /v1/navigations/{navigationId}/fin:
     parameters:
@@ -874,7 +875,7 @@ paths:
     get:
       tags: [Navigations]
       summary: 'Navigations dans la corbeille, avec leur date de suppression définitive.'
-      x-regles: [RG-NAV-20]
+      x-regles: [RG-NAV-20, RG-NAV-30]
       responses:
         '200':
           description: 'Corbeille.'
@@ -1041,7 +1042,7 @@ paths:
         d'acquisition. Chaque élément est traité comme l'appel unitaire correspondant et reçoit son
         propre résultat ; un élément refusé ne bloque pas les suivants. Mécanisme :
         08-architecture.md §5.
-      x-regles: [RG-GPS-04, RG-NAV-14, RG-IOS-03, RG-COM-01]
+      x-regles: [RG-GPS-04, RG-NAV-14, RG-IOS-03, RG-COM-01, RG-COM-05]
       requestBody:
         required: true
         content:
@@ -1072,7 +1073,7 @@ paths:
     get:
       tags: [Alertes SOS]
       summary: 'Historique des alertes SOS (par bateau ou par navigation).'
-      x-regles: [RG-SOS-12, RG-SOS-13, RG-SOS-15, RG-PAR-07, RG-ECO-08]
+      x-regles: [RG-SOS-12, RG-SOS-13, RG-SOS-15, RG-SOS-20, RG-PAR-07, RG-ECO-08]
       parameters:
         - name: bateauId
           in: query
@@ -1106,7 +1107,7 @@ paths:
         décochées au démarrage, avec copie au navigateur, et les notifications push SOS. Un SOS
         acquis après une clôture automatique est enregistré comme un SOS depuis l'accueil
         (RG-ECO-12).
-      x-regles: [RG-ECO-12, RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
+      x-regles: [RG-ECO-12, RG-SOS-19, RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
         RG-SOS-15, RG-NAV-25, RG-NAV-27, RG-IOS-01, RG-IOS-03, RG-IOS-06, RG-AND-08, RG-NOT-02, RG-NOT-03,
         RG-JRN-02, RG-JRN-07, RG-PRM-04]
       requestBody:
@@ -1286,8 +1287,8 @@ paths:
     get:
       tags: [Administration]
       summary: 'Consulter (espace administrateur, profil unique d''administrateur).'
-      description: 'Appelée par l''espace administrateur (`/admin/`), distinct de l''espace utilisateur. Chaque appel est tracé et gardé 3 ans. Les annonces s''affichent aux utilisateurs par `GET /v1/annonces` (RG-ADM-06). Administrateurs : adresses e-mail confirmées listées dans `NAUTILINK_ADMINS` (Q-53, non validée). `contacts` et `bateaux` acceptent `utilisateur` (identifiant du compte) ; une fonction pas encore réalisée rend 404 `non_disponible`.'
-      x-regles: [RG-ADM-01, RG-ADM-02, RG-ADM-03, RG-DON-02]
+      description: 'Appelée par l''espace administrateur (`/admin/`), distinct de l''espace utilisateur. Chaque appel est tracé et gardé 3 ans. Les annonces s''affichent aux utilisateurs par `GET /v1/annonces` (RG-ADM-06). Administrateurs : adresses e-mail confirmées listées dans `NAUTILINK_ADMINS` (RG-ADM-07). `contacts` et `bateaux` acceptent `utilisateur` (identifiant du compte) ; une fonction pas encore réalisée rend 404 `non_disponible`.'
+      x-regles: [RG-ADM-01, RG-ADM-02, RG-ADM-03, RG-ADM-07, RG-DON-02]
       security:
         - cookieAdmin: []
       parameters:

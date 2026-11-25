@@ -6,6 +6,8 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"log"
+	"maps"
 	"math"
 	"net/http"
 	"slices"
@@ -18,8 +20,8 @@ import (
 
 // Navigations, positions et journal de bord (TODO-4.5) : RG-NAV-01 à
 // RG-NAV-22, RG-JRN-01 à RG-JRN-08, RG-GPS-04, RG-CPT-05, RG-BAT-03,
-// RG-PAR-06 à RG-PAR-08. File d'attente et doublons : 08-architecture.md §5
-// (proposition, Q-10) : identifiants tirés par le téléphone, envois
+// RG-PAR-06 à RG-PAR-09. File d'attente et doublons : 08-architecture.md §5
+// (RG-COM-05, D-110) : identifiants tirés par le téléphone, envois
 // rejouables sans doublon.
 
 type positionJSON struct {
@@ -209,7 +211,7 @@ func (a *app) navigation(ctx context.Context, q lecteur, id string) (navLigne, e
 // accès de périmètre navigateur, ou de périmètre navigation sur elle
 // (RG-PAR-02), sans retrait de cette navigation (RG-PAR-06), hors corbeille
 // (RG-NAV-20). Périmètre navigateur : toutes ses navigations, y compris
-// celles terminées avant l'accès (Q-54, proposition appliquée).
+// celles terminées avant l'accès (RG-PAR-09, D-111).
 const conditionSuiveur = `n.supprimee_le IS NULL AND n.navigateur_id <> $1
 	AND EXISTS (SELECT 1 FROM acces ac WHERE ac.suiveur_id = $1 AND ac.navigateur_id = n.navigateur_id
 		AND (ac.perimetre = 'navigateur' OR ac.navigation_id = n.id))
@@ -698,7 +700,9 @@ func lireEvenement(l pgx.Row, n navLigne) (evenementJSON, error) {
 	if ft != nil {
 		e.Fichier = &fichierJSON{TypeMedia: *ft, TailleOctets: taille, DureeSecondes: duree, Recu: recu}
 	}
-	e.Masque = n.masque(e.HeureAcquisition)
+	// Un SOS n'est jamais masqué du journal, même hors de la plage affichée
+	// ou déclenché après la fin (RG-SOS-19, D-120).
+	e.Masque = e.Type != "sos" && n.masque(e.HeureAcquisition)
 	return e, err
 }
 
@@ -791,7 +795,7 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 // evenementModifiable : notes, photos, notes vocales et ajouts, quelle que
 // soit leur origine (RG-JRN-06) ; jamais début, fin, positions ni SOS (RG-JRN-07).
 func (a *app) evenementModifiable(ctx context.Context, utilisateur, navID, id string) (navLigne, error) {
-	n, err := a.navigationDuNavigateur(ctx, utilisateur, navID)
+	n, err := a.navigationModifiable(ctx, utilisateur, navID)
 	if err != nil {
 		return n, err
 	}
@@ -871,7 +875,7 @@ func (a *app) navigations(ctx context.Context, utilisateur, role, etat, bateau s
 // destination, bateau (parmi les siens) et heures une fois la navigation
 // terminée. Le quota reste calculé sur les heures enregistrées (RG-ECO-02).
 func (a *app) modifierNavigation(ctx context.Context, utilisateur, id string, c champs) (navigationJSON, error) {
-	n, err := a.navigationDuNavigateur(ctx, utilisateur, id)
+	n, err := a.navigationModifiable(ctx, utilisateur, id)
 	if err != nil {
 		return navigationJSON{}, err
 	}
@@ -976,7 +980,7 @@ func (a *app) deposerFichier(ctx context.Context, utilisateur, id, typeMedia str
 type operation func(ctx context.Context, r *http.Request, s *session, id, navigation string, contenu json.RawMessage) (int, any, error)
 
 func (a *app) operations() map[string]operation {
-	return map[string]operation{
+	ops := map[string]operation{
 		"demarrage": func(ctx context.Context, r *http.Request, s *session, id, _ string, contenu json.RawMessage) (int, any, error) {
 			var d demarrageJSON
 			if err := json.Unmarshal(contenu, &d); err != nil {
@@ -1005,6 +1009,8 @@ func (a *app) operations() map[string]operation {
 			return http.StatusOK, n, err
 		},
 	}
+	maps.Copy(ops, a.operationsSos())
+	return ops
 }
 
 type resultatElement struct {
@@ -1211,7 +1217,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		return nil
 	}))
 	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/suiveurs/{utilisateurId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
-		n, err := a.navigationDuNavigateur(r.Context(), s.utilisateur, r.PathValue("navigationId"))
+		n, err := a.navigationModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"))
 		if err != nil {
 			return err
 		}
@@ -1284,7 +1290,11 @@ func lireTout(r *http.Request, taille int) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-// apresDemarrage : traitements qui suivent le démarrage (lieux, e-mail de
-// début, TODO-4.7) ; ni la météo (Q-39) ni les notifications push (pas
+// apresDemarrage : traitements qui suivent le démarrage : e-mail de début
+// (RG-NOT-02, sos.go) ; ni la météo (Q-39) ni les notifications push (pas
 // d'identifiants APNs ni FCM) ne sont branchées.
-func (a *app) apresDemarrage(ctx context.Context, n navLigne) {}
+func (a *app) apresDemarrage(ctx context.Context, n navLigne) {
+	if err := a.emailsDebut(ctx, n); err != nil {
+		log.Printf("navigation %s : e-mails de début : %v", n.id, err)
+	}
+}

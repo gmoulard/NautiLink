@@ -1,14 +1,27 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'config.dart';
 import 'data.dart';
+import 'depot/depot.dart';
+import 'depot/depot_demo.dart';
 import 'l10n/app_localizations.dart';
+import 'reel/depot_reel.dart';
+import 'screens/connexion.dart';
 import 'screens/dashboard.dart';
 import 'screens/home.dart';
 import 'screens/warning.dart';
 import 'theme.dart';
 
-void main() => runApp(const NautiLinkApp());
+/// Démonstration par défaut ; vraie application avec `--dart-define=NAUTILINK_MODE=reel` (D-127).
+Future<void> main() async {
+  if (kMode == ModeApplication.reel) {
+    WidgetsFlutterBinding.ensureInitialized();
+    runApp(NautiLinkApp(depot: await DepotReel.creer()));
+  } else {
+    runApp(const NautiLinkApp());
+  }
+}
 
 /// Donne l'état du prototype à tous les écrans.
 class AppScope extends InheritedNotifier<AppState> {
@@ -27,31 +40,66 @@ const kDefaultLanguage = String.fromEnvironment(
 );
 
 class NautiLinkApp extends StatefulWidget {
-  const NautiLinkApp({super.key, this.locale = const Locale(kDefaultLanguage)});
+  const NautiLinkApp({
+    super.key,
+    this.locale = const Locale(kDefaultLanguage),
+    this.depot,
+  });
   final Locale locale;
+
+  /// Dépôt de données ; par défaut celui du mode choisi à la construction (D-127).
+  final Depot? depot;
 
   @override
   State<NautiLinkApp> createState() => _NautiLinkAppState();
 }
 
-class _NautiLinkAppState extends State<NautiLinkApp> {
+class _NautiLinkAppState extends State<NautiLinkApp>
+    with WidgetsBindingObserver {
   final state = AppState();
+  late final Depot depot = widget.depot ?? DepotDemo(state);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    depot.ouvrir();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Retour au premier plan : relecture du serveur et relance de la file
+  /// (08-architecture.md §5, Q-84).
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState s) {
+    if (s == AppLifecycleState.resumed) {
+      depot.actualiser();
+      depot.envois.relancer();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppScope(
       state: state,
-      child: MaterialApp(
-        onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-        locale: widget.locale,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        debugShowCheckedModeBanner: false,
-        theme: nlTheme(Brightness.light),
-        darkTheme: nlTheme(Brightness.dark),
-        // Pied de page de tous les écrans : licence, dépôt, version (D-128).
-        builder: (context, child) => AppFrame(child: child!),
-        home: const _Root(),
+      child: DepotScope(
+        depot: depot,
+        child: MaterialApp(
+          onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+          locale: widget.locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          debugShowCheckedModeBanner: false,
+          theme: nlTheme(Brightness.light),
+          darkTheme: nlTheme(Brightness.dark),
+          // Pied de page de tous les écrans : licence, dépôt, version (D-128).
+          builder: (context, child) => AppFrame(child: child!),
+          home: const _Root(),
+        ),
       ),
     );
   }
@@ -62,6 +110,18 @@ class _Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final depot = DepotScope.of(context);
+    if (!depot.demonstration) {
+      // Vraie application : connexion d'abord ; une session ouverte reste
+      // ouverte hors connexion, sur les données locales (RG-COM-06).
+      return switch (depot.etatSession) {
+        EtatSession.chargement => const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+        EtatSession.deconnecte => const ConnexionScreen(),
+        EtatSession.connecte => const HomeScreen(),
+      };
+    }
     final state = AppScope.of(context);
     if (!state.warningAccepted) return const WarningScreen();
     return kIsWeb ? const ChooseSideScreen() : const HomeScreen();

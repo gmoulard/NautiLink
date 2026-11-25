@@ -210,6 +210,34 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-108"></a>D-108 | Google ou Apple avec l'adresse d'un compte existant | Connexion par un fournisseur avec l'adresse d'un compte inscrit par e-mail (ancienne question 51). | Rattachée au compte si le fournisseur garantit que l'adresse est vérifiée ; sinon refus. | RG-CPT-11 |
 | <a id="d-109"></a>D-109 | Paramètres d'un nouveau compte | Valeurs de départ de l'interrupteur SMS, des types, du MMS de photo et de la fréquence (ancienne question 52). | SMS activés, tous les types cochés, pas de MMS de photo, fréquence de 30 minutes. | RG-PRM-06 |
 
+## 2026-11-25 — Questions bloquant la version de production
+
+| Id | Sujet | Contradiction ou manque | Décision | Règles |
+|----|-------|-------------------------|----------|--------|
+| <a id="d-110"></a>D-110 | File d'attente et doublons | Mécanisme de renvoi après une coupure, sans doublon (ancienne question 10, TODO-2.7). | Proposition de [08-architecture.md §5](08-architecture.md#5-file-dattente-et-doublons) validée telle quelle : identifiant unique tiré par le téléphone et numéro d'ordre pour chaque élément, renvoi sans doublon, SOS en priorité, fichiers après les éléments légers. Reste l'essai d'une coupure de 2 heures (TODO-2.7). | RG-GPS-04, RG-COM-05 |
+| <a id="d-111"></a>D-111 | Navigations antérieures à un accès de périmètre *navigateur* | Le suiveur voit-il les navigations commencées avant que l'accès lui soit accordé (ancienne question 54) ? | Oui : il voit tout l'historique du navigateur, navigations terminées avant l'accès comprises, hors corbeille, comme la fiche du bateau (proposition validée). | RG-PAR-02, RG-PAR-09 |
+| <a id="d-112"></a>D-112 | Quota redevenu disponible avant la clôture automatique | Des minutes redeviennent disponibles pendant les 24 heures qui précèdent la clôture (ancienne question 55). | La clôture est maintenue ; seul un abonnement l'annule. | RG-ECO-05 |
+| <a id="d-113"></a>D-113 | Désignation des administrateurs | Qui obtient le profil d'administrateur, et comment (ancienne question 53). | Proposition validée : variable `NAUTILINK_ADMINS` du serveur, liste d'adresses e-mail ; compte NautiLink à l'adresse confirmée ; retrait immédiat quand l'adresse est retirée ; session de l'espace administrateur fermée après 12 heures sans usage. | RG-ADM-07 |
+| <a id="d-114"></a>D-114 | Fonctionnement hors connexion | Comportement de chaque écran mobile sans Internet, sans réseau mobile ou sans les deux (ancienne question 29, TODO-2.6). | Tableau proposé validé en entier, propositions comprises. | RG-COM-06 |
+| <a id="d-115"></a>D-115 | Environnements et API | Validation des trois environnements et de l'API (Q-22, TODO-3.2, TODO-3.4). | Environnements de développement, de test et de production de [08-architecture.md §6](08-architecture.md#6-environnements) validés ; API [`api/openapi.yaml`](api/openapi.yaml) validée telle que rédigée. Restent ouverts dans Q-22 : hébergeur après la bêta, sauvegardes. | — |
+| <a id="d-116"></a>D-116 | Jetons de session sur le téléphone | Où l'application mobile garde ses jetons, verrouillage à l'ouverture. | Jetons gardés dans les préférences de l'application, sans chiffrement matériel (ni Keystore Android ni Trousseau iPhone) ; aucun code ni empreinte demandé à l'ouverture. | RG-CPT-12 |
+
+## 2026-11-25 — Logo, alertes SOS, corbeille, mémo sécurité
+
+| Id | Sujet | Contradiction ou manque | Décision | Règles |
+|----|-------|-------------------------|----------|--------|
+| <a id="d-117"></a>D-117 | Logo vectoriel | Le logo validé (D-98) n'existait qu'en image PNG ; TODO-8.1 l'a redessiné en vectoriel. | Redessin de `docs/assets/logo/` validé comme source officielle du logo et des icônes, avec ses déclinaisons claire, sombre et monochrome (05-identite-marque.md §5.5). | — |
+| <a id="d-118"></a>D-118 | Contenu des e-mails SOS et de début | Destinataires décrits, pas le contenu (ancienne question 56). | Proposition validée : sujet « SOS — <bateau> : alerte de <navigateur> », contenu des deux SMS SOS, heures en UTC, lien vers la navigation ; copie avec la liste des adresses prévenues ; e-mail de début avec navigateur, navigation, bateau, heure, destination, lien, désinscription ; langue du navigateur. | RG-SOS-17, RG-NOT-05 |
+| <a id="d-119"></a>D-119 | E-mail SOS refusé par le relais | Rien sur les nouveaux essais (ancienne question 57). | Nouvel essai chaque minute pendant 24 heures, destinataires recalculés. | RG-SOS-18 |
+| <a id="d-120"></a>D-120 | SOS après la fin normale d'une navigation | Ancienne question 58 ; la proposition (SOS depuis l'accueil) n'est pas retenue. | Le SOS reste rattaché à la navigation terminée : journal de bord et destinataires de la navigation. Après une clôture automatique, RG-ECO-12 inchangée. | RG-SOS-19 |
+| <a id="d-121"></a>D-121 | SOS depuis l'accueil vu des suiveurs | Ancienne question 59. | Visible des suiveurs de périmètre *navigateur* seulement. | RG-SOS-20 |
+| <a id="d-122"></a>D-122 | Personne ajoutée pendant une navigation | Ancienne question 60. | Prévenue des SOS de la navigation (suiveurs et contacts SOS). | RG-SOS-21 |
+| <a id="d-123"></a>D-123 | Navigation dans la corbeille | Ancienne question 70. | Visible du navigateur, non modifiable avant restauration ; envois en attente du téléphone acceptés. | RG-NAV-30 |
+| <a id="d-124"></a>D-124 | Accès après la suppression définitive | Ancienne question 71. | Accès de périmètre *navigation* retirés ; contact gardé ; périmètre *navigateur* inchangé. | RG-PAR-10 |
+| <a id="d-125"></a>D-125 | Mémo sécurité en mer dans les applications | Ancienne question 80. | Intégré à l'application, lisible hors connexion, ouvert depuis l'accueil ; texte rédigé sur le site, copié à chaque construction. | RG-SOS-22 |
+| <a id="d-126"></a>D-126 | SOS hors des heures affichées | Après D-120, un SOS peut tomber hors des heures affichées d'une navigation : rien ne disait s'il compte dans le résumé ni s'il figure sur la carte. | Point d'alerte sur la carte, gardé dans le journal ; ni dans la distance ni dans les lieux de départ et d'arrivée. | RG-NAV-31 |
+| <a id="d-127"></a>D-127 | Projet de la vraie application mobile | La vraie application (serveur, GPS en arrière-plan, SMS) n'existait pas ; seul le prototype de démonstration `app/` existait (D-57). | Le prototype `app/` évolue en vraie application, même projet Flutter : les écrans sont gardés, les données d'exemple remplacées par le serveur ; un mode « démonstration », choisi à la construction, reste disponible pour le site. | — |
+
 ## 2026-11-25 — Versions et licence (TODO-3.14)
 
 | Id | Sujet | Demande | Décision | Règles |
