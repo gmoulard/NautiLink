@@ -282,6 +282,49 @@ paths:
       responses:
         '204': {description: 'E-mail envoyé, ou adresse déjà confirmée.'}
         '429': {$ref: '#/components/responses/TropDEssais'}
+  /v1/compte/mot-de-passe/oubli:
+    post:
+      tags: [Comptes]
+      summary: '« Mot de passe oublié ? » : recevoir un lien pour choisir un nouveau mot de passe.'
+      description: |
+        Lien vers la page Web `/mot-de-passe?jeton=…`, valable 1 heure et à usage unique, envoyé à un
+        compte inscrit par e-mail. Même réponse que l'adresse ait un compte ou non ; 5 e-mails par
+        compte et 10 demandes par adresse IP par heure au plus.
+      security: []
+      x-regles: [RG-CPT-10]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: {type: string, format: email}
+      responses:
+        '204': {description: 'Demande prise en compte.'}
+        '429': {$ref: '#/components/responses/TropDEssais'}
+  /v1/compte/mot-de-passe:
+    post:
+      tags: [Comptes]
+      summary: 'Choisir un nouveau mot de passe avec le jeton du lien reçu.'
+      description: 'Change le mot de passe (8 caractères au moins) et ferme toutes les sessions du compte, sur le Web et sur les téléphones.'
+      security: []
+      x-regles: [RG-CPT-10]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jeton, motDePasse]
+              properties:
+                jeton: {type: string}
+                motDePasse: {type: string, minLength: 8}
+      responses:
+        '204': {description: 'Mot de passe changé ; reconnectez-vous.'}
+        '404': {$ref: '#/components/responses/Introuvable'}
+        '422': {$ref: '#/components/responses/Invalide'}
 
   # ---------------------------------------------------- Appareils et bateaux
   /v1/appareils/{appareilId}:

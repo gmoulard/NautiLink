@@ -1,0 +1,12 @@
+{{template "haut" .}}
+<h1>Mot de passe oublié</h1>
+<div class="carte">
+<form method="post" action="{{.Base}}/mot-de-passe-oublie">
+  <p>Indiquez l'adresse e-mail de votre compte : nous vous envoyons un lien pour choisir un nouveau mot de passe.</p>
+  <label for="email">Adresse e-mail</label>
+  <input id="email" name="email" type="email" autocomplete="email" required value="{{.F.email}}">
+  <button type="submit">Recevoir le lien</button>
+</form>
+</div>
+<p><a class="lien" href="{{.Base}}/connexion">Retour à la connexion</a></p>
+{{template "bas" .}}

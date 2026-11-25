@@ -55,6 +55,7 @@ var messages = map[string]string{
 	"lien":       "Un nouveau lien vous a été envoyé par e-mail.",
 	"enregistre": "Modifications enregistrées.",
 	"deconnecte": "Vous êtes déconnecté.",
+	"motdepasse": "Mot de passe changé. Connectez-vous avec le nouveau mot de passe.",
 }
 
 type pageWeb func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error
@@ -147,6 +148,8 @@ func ajouterOK(adresse, ok string) string {
 }
 
 func (a *app) routesWebComptes(mux *http.ServeMux, c string) {
+	a.routesWebMotDePasse(mux, c)
+
 	mux.HandleFunc("GET "+c+"/{$}", a.web(false, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
 		if s != nil {
 			var err error

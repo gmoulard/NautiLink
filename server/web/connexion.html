@@ -13,6 +13,7 @@
   {{end}}
   <button type="submit">Se connecter</button>
 </form>
+<p><a class="lien" href="{{.Base}}/mot-de-passe-oublie">Mot de passe oublié ?</a></p>
 </div>
 <p>Pas encore de compte ? <a class="lien" href="{{.Base}}/inscription{{if .Retour}}?retour={{.Retour}}{{end}}">Créer un compte</a></p>
 {{template "bas" .}}

@@ -14,7 +14,7 @@ import (
 )
 
 // Comptes et connexion (TODO-4.1) : RG-CPT-01, RG-CPT-02, RG-CPT-06,
-// RG-CPT-07, RG-CPT-08, RG-SMS-01, RG-PRM-03, RG-NOT-04.
+// RG-CPT-07 à RG-CPT-11, RG-SMS-01, RG-PRM-03, RG-NOT-04.
 
 // Avertissement bêta en vigueur (docs/textes/avertissement-beta.md, recopié
 // sur le site de présentation). Le changer fait de nouveau accepter le texte
@@ -22,9 +22,10 @@ import (
 const (
 	versionAvertissement = "2026-11-24"
 	adresseAvertissement = "https://gmoulard.github.io/NautiLink/avertissement.html"
-	// Validité du lien de vérification de l'adresse e-mail : proposition non
-	// validée (Q-48).
+	// Validité du lien de vérification de l'adresse e-mail (RG-CPT-09) et
+	// de celui du mot de passe oublié (RG-CPT-10).
 	dureeLienVerification = 7 * 24 * time.Hour
+	dureeLienMotDePasse   = time.Hour
 )
 
 var (
@@ -214,9 +215,9 @@ func (a *app) accepterAvertissementSiBesoin(ctx context.Context, id, accepte, av
 }
 
 // connexionExterne : connexion par Google ou par Apple ; la première crée le
-// compte, avec la même acceptation de l'avertissement. Une adresse déjà prise
-// par un compte NautiLink est refusée tant que le rattachement n'est pas
-// décidé (Q-51).
+// compte, avec la même acceptation de l'avertissement. L'adresse d'un compte
+// NautiLink existant y est rattachée si le fournisseur la garantit vérifiée,
+// sinon refusée (RG-CPT-11).
 func (a *app) connexionExterne(ctx context.Context, r *http.Request, fournisseur, jeton, avertissement, nom string) (string, error) {
 	v, ok := a.verificateurs[fournisseur]
 	if !ok {
@@ -237,12 +238,20 @@ func (a *app) connexionExterne(ctx context.Context, r *http.Request, fournisseur
 	if !errors.Is(err, pgx.ErrNoRows) {
 		return "", err
 	}
-	if avertissement != versionAvertissement {
-		return "", errAvertissement
-	}
 	email, err := normaliserEmail(idt.Email)
 	if err != nil {
 		return "", errInvalide("Le fournisseur n'a pas donné d'adresse e-mail.")
+	}
+	err = a.b.pool.QueryRow(ctx, "SELECT id, avertissement_version FROM utilisateurs WHERE email = $1",
+		email).Scan(&id, &version)
+	if err == nil {
+		return id, a.rattacherIdentite(ctx, fournisseur, idt, id, version, avertissement)
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return "", err
+	}
+	if avertissement != versionAvertissement {
+		return "", errAvertissement
 	}
 	if strings.TrimSpace(nom) == "" {
 		nom = idt.Nom
@@ -276,6 +285,32 @@ func (a *app) connexionExterne(ctx context.Context, r *http.Request, fournisseur
 		return "", err
 	}
 	return id, tx.Commit(ctx)
+}
+
+// rattacherIdentite : identité Google ou Apple rattachée au compte existant
+// de même adresse, seulement si le fournisseur garantit l'adresse vérifiée
+// (RG-CPT-11) ; l'adresse du compte est alors tenue pour confirmée.
+func (a *app) rattacherIdentite(ctx context.Context, fournisseur string, idt identiteExterne, id, version, avertissement string) error {
+	if !idt.EmailVerifie {
+		return &erreurAPI{http.StatusConflict, "email_deja_utilise",
+			"Un compte existe déjà avec cette adresse e-mail : connectez-vous avec votre adresse e-mail et votre mot de passe.", 0}
+	}
+	if err := a.accepterAvertissementSiBesoin(ctx, id, version, avertissement); err != nil {
+		return err
+	}
+	tx, err := a.b.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+	if _, err := tx.Exec(ctx, `INSERT INTO identites_externes (fournisseur, sujet, utilisateur_id) VALUES ($1, $2, $3)
+		ON CONFLICT DO NOTHING`, fournisseur, idt.Sujet, id); err != nil {
+		return err
+	}
+	if _, err := tx.Exec(ctx, "UPDATE utilisateurs SET email_verifie_le = coalesce(email_verifie_le, now()) WHERE id = $1", id); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
 }
 
 // ------------------------------------------------------------------ profil
@@ -390,6 +425,8 @@ func (a *app) modifierProfil(ctx context.Context, id string, c champs) (profilJS
 // ------------------------------------------------------------------ routes de l'API
 
 func (a *app) routesComptes(mux *http.ServeMux, v string) {
+	a.routesMotDePasse(mux, v)
+
 	mux.HandleFunc("GET "+v+"/avertissement", a.api(false, func(w http.ResponseWriter, r *http.Request, _ *session) error {
 		ecrireJSON(w, http.StatusOK, map[string]string{"version": versionAvertissement, "adresseTexte": adresseAvertissement})
 		return nil

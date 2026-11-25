@@ -4,7 +4,7 @@ Serveur central de NautiLink : API, plateforme Web et espace administrateur, en 
 
 Réalisé :
 
-- comptes (TODO-4.1) : création par e-mail avec acceptation de l'avertissement bêta, vérification de l'adresse par e-mail, connexion, sessions (90 jours sans usage, RG-CPT-08), profil ; Google et Apple prêts, désactivés sans identifiants clients ;
+- comptes (TODO-4.1) : création par e-mail avec acceptation de l'avertissement bêta, vérification de l'adresse par e-mail, connexion, mot de passe oublié (lien d'une heure, toutes les sessions fermées, RG-CPT-10), sessions (90 jours sans usage, RG-CPT-08), profil ; Google et Apple prêts (rattachement à un compte existant si l'adresse est garantie vérifiée, RG-CPT-11), désactivés sans identifiants clients ;
 - bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
 - contacts, invitations et accès des suiveurs (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
@@ -70,6 +70,7 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 | `<chemin>/` | Accueil de la plateforme Web (tableau de bord une fois connecté) |
 | `<chemin>/inscription`, `<chemin>/connexion`, `<chemin>/deconnexion` | Création de compte, connexion, déconnexion |
 | `<chemin>/verification?jeton=…` | Lien de vérification de l'adresse e-mail |
+| `<chemin>/mot-de-passe-oublie`, `<chemin>/mot-de-passe?jeton=…` | « Mot de passe oublié ? » et lien reçu par e-mail pour choisir un nouveau mot de passe |
 | `<chemin>/compte` | « Mon compte » : nom, téléphone, langue, e-mails et notifications |
 | `<chemin>/bateaux`, `<chemin>/bateaux/<id>` | Bateaux : liste, ajout, fiche, photo, téléphone associé |
 | `<chemin>/contacts`, `<chemin>/contacts/<id>` | Contacts, lien d'invitation, mes suiveurs, navigateurs suivis |

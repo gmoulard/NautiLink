@@ -1,0 +1,12 @@
+{{template "haut" .}}
+<h1>Nouveau mot de passe</h1>
+<div class="carte">
+<form method="post" action="{{.Base}}/mot-de-passe">
+  <input type="hidden" name="jeton" value="{{.D}}">
+  <label for="motdepasse">Nouveau mot de passe</label>
+  <input id="motdepasse" name="motdepasse" type="password" autocomplete="new-password" required minlength="8">
+  <p class="aide">8 caractères au moins. Vous serez déconnecté de tous vos appareils : reconnectez-vous ensuite avec ce mot de passe.</p>
+  <button type="submit">Enregistrer le mot de passe</button>
+</form>
+</div>
+{{template "bas" .}}

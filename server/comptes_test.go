@@ -367,11 +367,26 @@ func TestConnexionGoogle(t *testing.T) {
 	if code, _ := e.appel("POST", "/sessions", "", corps); code != 401 {
 		t.Fatalf("signature fausse : %d", code)
 	}
-	// Adresse d'un compte NautiLink existant : refus tant que Q-51 n'est pas tranchée.
-	e.compte("pris@exemple.org", "Pris")
-	rev["sub"], rev["email"] = "g-456", "pris@exemple.org"
-	corps["jetonIdentite"], corps["avertissementVersion"] = f.jeton(rev), versionAvertissement
+	// Adresse d'un compte NautiLink existant (RG-CPT-11) : refusée si le
+	// fournisseur ne la garantit pas vérifiée, rattachée sinon.
+	jetonPris := e.compte("pris@exemple.org", "Pris")
+	rev["sub"], rev["email"], rev["email_verified"] = "g-456", "pris@exemple.org", false
+	corps["jetonIdentite"] = f.jeton(rev)
+	delete(corps, "avertissementVersion")
 	if code, r := e.appel("POST", "/sessions", "", corps); code != 409 || r["code"] != "email_deja_utilise" {
-		t.Fatalf("adresse déjà prise : %d %v", code, r)
+		t.Fatalf("adresse non garantie : %d %v", code, r)
+	}
+	rev["email_verified"] = "true" // forme d'Apple
+	corps["jetonIdentite"] = f.jeton(rev)
+	code, s = e.appel("POST", "/sessions", "", corps)
+	if code != 200 || e.id(s["jetonAcces"].(string)) != e.id(jetonPris) {
+		t.Fatalf("rattachement au compte existant : %d %v", code, s)
+	}
+	if _, p := e.appel("GET", "/compte", jetonPris, nil); p["emailVerifie"] != true {
+		t.Fatalf("adresse garantie par le fournisseur non tenue pour confirmée : %v", p)
+	}
+	// Seconde connexion : par l'identité rattachée.
+	if code, s2 := e.appel("POST", "/sessions", "", corps); code != 200 || e.id(s2["jetonAcces"].(string)) != e.id(jetonPris) {
+		t.Fatalf("seconde connexion après rattachement : %d", code)
 	}
 }
