@@ -64,11 +64,11 @@ Les réseaux sociaux n'étaient pas accessibles. Aucun compte « nautilink » n'
 
 - Pas d'homonyme exact repéré parmi les applications mobiles ni dans le suivi de navigation.
 - Un quasi-homonyme dans le même secteur et le même pays : **Nauti-Link**, conseil en cession d'entreprises du nautisme. Risque de confusion à évaluer juridiquement (similitude des signes forte ; similitude des produits et services faible a priori).
-- Proposition, reportée dans [Q-26](../06-questions-ouvertes.md#q-26) : garder NautiLink sous réserve de la consultation des bases INPI, EUIPO et OMPI et d'un avis juridique ; réserver ensuite les domaines et les comptes libres.
+- Décidé ([D-87](../07-decisions.md#d-87)) : NautiLink est gardé sous réserve de la consultation des bases INPI, EUIPO et OMPI et d'un avis juridique ; les domaines et les comptes libres sont réservés ensuite ([Q-26](../06-questions-ouvertes.md#q-26)).
 
 ## 6. Reste à faire
 
 1. Consulter les bases de marques (§ 2) et noter les résultats ici, avec la date.
 2. Vérifier les domaines (§ 3) et les comptes (§ 4).
 3. Faire relire par un juriste en propriété intellectuelle, en particulier le cas Nauti-Link.
-4. Décision de l'utilisateur sur le nom (Q-26), puis réservation des domaines et des comptes par l'utilisateur, et éventuel dépôt de marque.
+4. Nom gardé sous ces réserves (D-87) : réservation des domaines et des comptes par l'utilisateur, et éventuel dépôt de marque.
