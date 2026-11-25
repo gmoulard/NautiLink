@@ -88,7 +88,14 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Décidé (D-58, D-59) : applications mobiles Android et iPhone en Flutter, un seul code ; serveur maison.
 - Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL.
-- Reste : cadre du serveur, hébergeur après la bêta, base de données, stockage des fichiers, API et formats de données, synchronisation, environnements de développement, test et production.
+- Reste : cadre du serveur, hébergeur après la bêta, stockage des fichiers, notifications push, sauvegardes, API et formats de données, synchronisation, environnements de développement, test et production.
+- Propositions (non validées), détaillées dans [08-architecture.md](08-architecture.md) §3 :
+  - photos et notes vocales : fichiers dans un volume Docker du serveur, description dans PostgreSQL, servis par le serveur après contrôle de l'accès ;
+  - hébergeur après la bêta : serveur virtuel dans l'Union européenne, même image Docker, PostgreSQL dédié ;
+  - notifications push (RG-IOS-06) : appel direct du service push d'Apple (APNs) par le serveur ; Firebase Cloud Messaging seulement si Android doit aussi en recevoir ;
+  - sauvegardes (RG-DON-02) : copie nocturne de la base et des fichiers hors du Pi, 30 jours, essai de restauration avant la bêta ;
+  - e-mails après la bêta : relais de l'hébergeur, SPF, DKIM et DMARC ;
+  - géocodage inverse (RG-NAV-16, RG-JRN-10) : Nominatim (OpenStreetMap) appelé par le serveur, avec cache.
 
 ## 3. Données, sécurité, conformité
 
