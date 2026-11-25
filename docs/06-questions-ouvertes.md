@@ -59,6 +59,13 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : l'iPhone les montre et permet de les modifier, avec la mention « Sur iPhone, aucun SMS n'est envoyé : ces réglages servent aux navigations menées depuis un téléphone Android. »
 - Appliqué en attendant dans l'application (`app/lib/screens/compte.dart`).
 
+### <a id="q-88"></a>Q-88 — « Écrire à l'équipe NautiLink » dans l'assistance
+
+- Priorité : lancement (TODO-5.7).
+- Cas : l'assistance donne le « contact de l'équipe NautiLink » (cahier des charges §5.5) ; la [maquette](../site/designs/app.html) montre « Écrire à l'équipe NautiLink — Réponse par e-mail », mais aucune adresse ni aucun formulaire n'est choisi.
+- Proposition (non validée) : en attendant une adresse e-mail de l'équipe, « Écrire à l'équipe NautiLink » ouvre la page de suivi du projet sur GitHub (`https://github.com/gmoulard/NautiLink/issues`) ; hors connexion, le message « Contact de l'équipe impossible sans Internet. » s'affiche (RG-COM-06). À trancher : adresse e-mail de l'équipe (ou formulaire servi par le serveur) et délai de réponse annoncé.
+- Appliqué en attendant dans l'application (`app/lib/screens/compte.dart`).
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

@@ -6,10 +6,13 @@ import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../reel/depot_reel.dart';
+import '../theme.dart';
 import 'connexion.dart';
+import 'memo.dart';
+import 'warning.dart';
 
 /// Écrans « Autres écrans » de l'application mobile (cahier des charges §5.5) :
-/// contacts, paramètres généraux.
+/// contacts, paramètres généraux, historique des alertes SOS, assistance.
 /// Les mêmes écrans servent à la démonstration (données d'exemple, rien
 /// n'est envoyé) et à la vraie application (serveur, copie locale), par le
 /// [Depot] ; ce qui n'existe que dans la vraie application (ajout, fiche du
@@ -857,6 +860,214 @@ class SettingsScreen extends StatelessWidget {
             ),
           const SizedBox(height: 8),
           Text(l.sosAlwaysSent),
+        ],
+      ),
+    );
+  }
+}
+
+// ======================================================================
+// Historique des alertes SOS
+// ======================================================================
+
+/// Historique des alertes SOS des bateaux du compte (RG-SOS-13) : date,
+/// position transmise, statut des SMS par contact, e-mails (RG-SOS-12) ;
+/// hors connexion, alertes du téléphone et dernier historique reçu (RG-COM-06).
+class SosHistoryScreen extends StatefulWidget {
+  const SosHistoryScreen({super.key});
+
+  @override
+  State<SosHistoryScreen> createState() => _SosHistoryScreenState();
+}
+
+class _SosHistoryScreenState extends State<SosHistoryScreen> {
+  List<AlerteSosResume> _enAttente = const [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _lireEnAttente();
+  }
+
+  Future<void> _lireEnAttente() async {
+    final depot = DepotScope.of(context);
+    if (depot is! DepotReel) return;
+    final l = await depot.compte.alertesEnAttente();
+    if (mounted) setState(() => _enAttente = l);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final depot = DepotScope.of(context);
+    final l = AppLocalizations.of(context);
+    final recues = {for (final a in depot.alertes) a.id};
+    final alertes = [
+      ..._enAttente.where((a) => !recues.contains(a.id)),
+      ...depot.alertes,
+    ]..sort((a, b) => b.heureDeclenchement.compareTo(a.heureDeclenchement));
+    final bateaux = {for (final b in depot.bateaux) b.id: b.nom};
+    final contacts = {for (final c in depot.contacts) c.id: c.nom};
+    final actualise = depot.actualiseLe;
+    return Scaffold(
+      appBar: AppBar(title: Text(l.menuSosHistory)),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await depot.actualiser();
+          await _lireEnAttente();
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          children: [
+            if (depot.horsConnexion)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  l.sosHistoryOffline(
+                    actualise == null ? '—' : fmtDate(l, actualise),
+                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            if (alertes.isEmpty) Text(l.sosHistoryEmpty),
+            for (final a in alertes)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l.sosAlertTitle(fmtDate(l, a.heureDeclenchement)),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                      Text(
+                        [
+                          bateaux[a.bateauId],
+                          _position(l, a),
+                        ].whereType<String>().join(' · '),
+                      ),
+                      if (a.problemeRencontre != null)
+                        Text(l.sosHistoryProblem(a.problemeRencontre!)),
+                      for (final s in a.sms)
+                        Text(
+                          '${s.statut == 'echec' ? '✗' : '✓'} '
+                          '${contacts[s.contactId] ?? s.telephone} · '
+                          '${_statutSms(l, s.statut)}',
+                        ),
+                      if (a.emailsEnvoyesA.isNotEmpty)
+                        Text(
+                          '✓ ${l.sosEmailsSent('${a.emailsEnvoyesA.length}')}',
+                        ),
+                      if (a.enAttente)
+                        Text(
+                          l.sosAlertPending,
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _position(AppLocalizations l, AlerteSosResume a) {
+    final p = a.position;
+    return switch (a.naturePosition) {
+      'aucune' => l.sosPositionNone,
+      _ when p == null => l.sosPositionNone,
+      'derniere_connue' =>
+        '${l.sosPositionLast} : ${Position(p.latitude, p.longitude, p.heureAcquisition).text}',
+      _ => Position(p.latitude, p.longitude, p.heureAcquisition).text,
+    };
+  }
+
+  String _statutSms(AppLocalizations l, String s) => switch (s) {
+    'accepte_pour_envoi' => l.sosHistorySmsAccepted,
+    'livraison_confirmee' => l.sosSmsDelivered,
+    'echec' => l.sosSmsFailed,
+    _ => l.sosSmsPending,
+  };
+}
+
+// ======================================================================
+// Assistance
+// ======================================================================
+
+/// Page de suivi du projet, en attendant l'adresse e-mail de l'équipe (Q-88).
+const assistanceUrl = '$repositoryUrl/issues';
+
+/// Assistance : contact de l'équipe NautiLink (Q-88), avertissement bêta
+/// consultable à tout moment, texte inclus dans l'application (RG-CPT-07),
+/// mémo sécurité en mer (RG-SOS-22) ; hors connexion, contact impossible
+/// (RG-COM-06).
+class AssistanceScreen extends StatelessWidget {
+  const AssistanceScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final depot = DepotScope.of(context);
+    final l = AppLocalizations.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(l.menuAssistance)),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text(l.betaBanner, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 12),
+          Card(
+            child: ListTile(
+              key: const Key('assistance-write'),
+              leading: const Icon(Icons.mail_outline),
+              title: Text(l.assistanceWrite),
+              subtitle: Text(l.assistanceWriteHint),
+              trailing: const Icon(Icons.open_in_new),
+              onTap: () {
+                if (depot.horsConnexion) {
+                  _message(context, l.assistanceOffline);
+                  return;
+                }
+                launchUrl(
+                  Uri.parse(assistanceUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+            ),
+          ),
+          Card(
+            child: ListTile(
+              key: const Key('assistance-warning'),
+              leading: const Icon(Icons.info_outline),
+              title: Text(l.assistanceWarning),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                    appBar: AppBar(title: Text(l.assistanceWarning)),
+                    body: const SingleChildScrollView(
+                      padding: EdgeInsets.all(20),
+                      child: WarningText(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.health_and_safety_outlined),
+              title: Text(l.homeSecurityMemo),
+              subtitle: Text(l.assistanceMemoHint),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => openSecurityMemo(context),
+            ),
+          ),
         ],
       ),
     );

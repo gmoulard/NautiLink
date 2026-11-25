@@ -45,6 +45,7 @@ class FauxServeurCompte extends FauxServeurNautiLink {
     'photoEnMms': false,
     'frequenceParDefaut': 60,
   };
+  List<Object?> alertes = [];
 
   /// Code d'erreur 5xx rendu aux modifications (serveur en panne).
   int? panne;
@@ -171,6 +172,12 @@ class FauxServeurCompte extends FauxServeurNautiLink {
         if (t is Map) types.addAll(t.cast<String, Object?>());
       }
       return reponse(200, parametres);
+    }
+    if (chemin == '/v1/alertes-sos' && r.method == 'GET') {
+      return reponse(
+        200,
+        r.url.queryParameters['bateauId'] == 'b1' ? alertes : [],
+      );
     }
     return null;
   }
@@ -417,6 +424,47 @@ void main() {
       await expectLater(d.compte.invitations(), throwsA(isA<HorsConnexion>()));
       d.dispose();
     });
+
+    test('historique des alertes : statuts des SMS et e-mails ; alerte encore en file montrée (RG-SOS-13, RG-COM-06)', () async {
+      serveur.alertes = [
+        {
+          'id': 's1',
+          'bateauId': 'b1',
+          'heureDeclenchement': '2026-11-21T15:02:00+01:00',
+          'naturePosition': 'actuelle',
+          'position': {
+            'latitude': 47.4183,
+            'longitude': -3.107,
+            'heureAcquisition': '2026-11-21T15:02:00+01:00',
+          },
+          'sms': [
+            {
+              'contactId': 'c1',
+              'telephone': '+33612345678',
+              'rang': 1,
+              'statut': 'livraison_confirmee',
+            },
+          ],
+          'emailsEnvoyesA': ['claire@example.org'],
+        },
+      ];
+      final d = serveur.depotSur(session, base);
+      await d.ouvrir();
+      await d.connexion('marin@example.org', 'secret123');
+      expect(d.alertes.single.sms.single.statut, 'livraison_confirmee');
+      expect(d.alertes.single.position?.latitude, 47.4183);
+
+      serveur.coupe = true;
+      await d.file.alerteSos('s2', {
+        'bateauId': 'b1',
+        'heureDeclenchement': '2026-11-25T10:00:00+01:00',
+        'naturePosition': 'aucune',
+      });
+      final l = await d.compte.alertesEnAttente();
+      expect(l.single.id, 's2');
+      expect(l.single.enAttente, isTrue);
+      d.dispose();
+    });
   });
 
   group('écrans', () {
@@ -540,6 +588,55 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(serveur.corps['PATCH /v1/parametres'], {'photoEnMms': true});
+      },
+    );
+
+    testWidgets(
+      'alertes SOS, assistance, quota : historique, avertissement, souscription pas encore ouverte',
+      (tester) async {
+        serveur.alertes = [
+          {
+            'id': 's1',
+            'bateauId': 'b1',
+            'heureDeclenchement': '2026-11-21T15:02:00+01:00',
+            'naturePosition': 'derniere_connue',
+            'position': {
+              'latitude': 47.4183,
+              'longitude': -3.107,
+              'heureAcquisition': '2026-11-21T14:40:00+01:00',
+            },
+            'sms': [
+              {
+                'contactId': 'c1',
+                'telephone': '+33612345678',
+                'rang': 1,
+                'statut': 'livraison_confirmee',
+              },
+            ],
+            'emailsEnvoyesA': ['claire@example.org'],
+          },
+        ];
+        await ouvrir(tester);
+        await menu(tester, 'Alertes SOS');
+        expect(find.textContaining('SOS · '), findsOneWidget);
+        expect(find.textContaining('Dernière position connue'), findsOneWidget);
+        expect(find.text('✓ Claire · livraison confirmée'), findsOneWidget);
+        expect(find.text('✓ E-mail envoyé à 1 adresse(s)'), findsOneWidget);
+        await tester.tap(find.byType(BackButton).hitTestable().first);
+        await tester.pumpAndSettle();
+
+        await menu(tester, 'Assistance');
+        expect(find.text('Écrire à l\'équipe NautiLink'), findsOneWidget);
+        await tapKey(tester, 'assistance-warning');
+        expect(find.textContaining('équipement de sécurité'), findsWidgets);
+        await tester.tap(find.byType(BackButton).hitTestable().first);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byType(BackButton).hitTestable().first);
+        await tester.pumpAndSettle();
+
+        await menu(tester, 'Quota et abonnement');
+        await tapKey(tester, 'subscribe');
+        expect(find.textContaining('pas encore ouvert'), findsOneWidget);
       },
     );
   });

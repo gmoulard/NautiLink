@@ -238,6 +238,8 @@ void main() {
       'Contacts',
       'Paramètres',
       'Quota et abonnement',
+      'Alertes SOS',
+      'Assistance',
     ]) {
       expect(find.text(m), findsOneWidget);
     }

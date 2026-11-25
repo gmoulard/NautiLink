@@ -365,6 +365,39 @@ class EtatQuota {
   }
 }
 
+/// Statut d'un SMS SOS (schéma `StatutSms`, RG-SOS-12).
+class StatutSmsNl {
+  const StatutSmsNl({
+    required this.telephone,
+    required this.statut,
+    this.contactId,
+    this.rang,
+  });
+  final String telephone;
+
+  /// en_attente, accepte_pour_envoi, livraison_confirmee ou echec.
+  final String statut;
+  final String? contactId;
+  final int? rang;
+
+  static StatutSmsNl? depuisJson(Object? j) {
+    if (j is! Map) return null;
+    return StatutSmsNl(
+      telephone: (j['telephone'] as String?) ?? '',
+      statut: (j['statut'] as String?) ?? 'en_attente',
+      contactId: j['contactId'] as String?,
+      rang: (j['rang'] as num?)?.toInt(),
+    );
+  }
+
+  Map<String, Object?> versJson() => {
+    'telephone': telephone,
+    'statut': statut,
+    'contactId': contactId,
+    'rang': rang,
+  };
+}
+
 /// Alerte SOS de l'historique (schéma `AlerteSos`, RG-SOS-13).
 class AlerteSosResume {
   const AlerteSosResume({
@@ -373,23 +406,48 @@ class AlerteSosResume {
     required this.heureDeclenchement,
     this.navigationId,
     this.problemeRencontre,
+    this.position,
+    this.naturePosition,
+    this.sms = const [],
+    this.emailsEnvoyesA = const [],
+    this.enAttente = false,
   });
   final String id;
   final String bateauId;
   final DateTime heureDeclenchement;
   final String? navigationId;
   final String? problemeRencontre;
+  final PositionGps? position;
 
-  static AlerteSosResume? depuisJson(Object? j) {
+  /// actuelle, derniere_connue ou aucune (RG-SOS-09 à RG-SOS-11).
+  final String? naturePosition;
+  final List<StatutSmsNl> sms;
+  final List<String> emailsEnvoyesA;
+
+  /// Alerte de ce téléphone encore dans la file d'attente (RG-COM-06).
+  final bool enAttente;
+
+  static AlerteSosResume? depuisJson(Object? j, {bool enAttente = false}) {
     if (j is! Map) return null;
     final h = _heure(j['heureDeclenchement']);
     if (j['id'] is! String || h == null) return null;
+    final sms = j['sms'];
+    final emails = j['emailsEnvoyesA'];
     return AlerteSosResume(
       id: j['id'] as String,
       bateauId: (j['bateauId'] as String?) ?? '',
       heureDeclenchement: h,
       navigationId: j['navigationId'] as String?,
       problemeRencontre: j['problemeRencontre'] as String?,
+      position: PositionGps.depuisJson(j['position']),
+      naturePosition: j['naturePosition'] as String?,
+      sms: sms is List
+          ? [for (final s in sms) ?StatutSmsNl.depuisJson(s)]
+          : const [],
+      emailsEnvoyesA: emails is List
+          ? emails.whereType<String>().toList()
+          : const [],
+      enAttente: enAttente,
     );
   }
 
@@ -399,6 +457,10 @@ class AlerteSosResume {
     'heureDeclenchement': heureRfc3339(heureDeclenchement),
     'navigationId': navigationId,
     'problemeRencontre': problemeRencontre,
+    if (position != null) 'position': position!.versJson(),
+    'naturePosition': naturePosition,
+    'sms': [for (final s in sms) s.versJson()],
+    'emailsEnvoyesA': emailsEnvoyesA,
   };
 }
 

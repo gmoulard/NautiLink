@@ -151,6 +151,8 @@ class HomeScreen extends StatelessWidget {
                 'contacts' => const ContactsScreen(),
                 'params' => const SettingsScreen(),
                 'quota' => const QuotaScreen(),
+                'sos' => const SosHistoryScreen(),
+                'assistance' => const AssistanceScreen(),
                 _ => const DashboardScreen(),
               };
               Navigator.of(context)
@@ -163,8 +165,14 @@ class HomeScreen extends StatelessWidget {
               PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
               if (demo)
                 PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
-              else
+              else ...[
+                PopupMenuItem(value: 'sos', child: Text(l.menuSosHistory)),
+                PopupMenuItem(
+                  value: 'assistance',
+                  child: Text(l.menuAssistance),
+                ),
                 PopupMenuItem(value: 'logout', child: Text(l.logout)),
+              ],
             ],
           ),
         ],
@@ -451,6 +459,24 @@ class QuotaScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+            // Achat Google Play ou App Store pas encore branché (TODO-5.8,
+            // TODO-10.6) ; hors connexion, souscription impossible (RG-COM-06).
+            if (!depot.demonstration && q?.abonnementActif != true) ...[
+              FilledButton(
+                key: const Key('subscribe'),
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      depot.horsConnexion
+                          ? l.subscribeOffline
+                          : l.subscribeNotYet,
+                    ),
+                  ),
+                ),
+                child: Text(l.subscribe),
+              ),
+              const SizedBox(height: 12),
+            ],
             // RG-ECO-10 : page d'information sur l'abonnement du site.
             OutlinedButton.icon(
               icon: const Icon(Icons.open_in_new),

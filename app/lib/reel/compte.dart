@@ -405,4 +405,12 @@ class GestionCompte {
     }
     await changement();
   }
+
+  /// Alertes SOS de ce téléphone encore dans la file d'attente, montrées dans
+  /// l'historique hors connexion (RG-COM-06).
+  Future<List<AlerteSosResume>> alertesEnAttente() async => [
+    for (final e in await base.elementsAEnvoyer())
+      if (e.operation == 'alerte_sos')
+        ?AlerteSosResume.depuisJson(e.contenu, enAttente: true),
+  ];
 }
