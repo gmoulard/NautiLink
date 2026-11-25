@@ -2,8 +2,10 @@ name: Site GitHub Pages
 
 # Publie site/ avec les applications de démonstration construites depuis app/ :
 #   site/app/                                  démonstration Web (installable sur l'écran d'accueil)
-#   site/downloads/nautilink-demo.apk          Android, signature de débogage
-#   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, non signé (AltStore, Sideloadly)
+#   site/downloads/nautilink.apk               Android, vraie application (serveur vdl.moulard.org, D-129), signature de débogage
+#   site/downloads/nautilink-ios-non-signe.ipa iPhone, vraie application, non signé (AltStore, Sideloadly)
+#   site/downloads/nautilink-demo.apk          Android, démonstration, signature de débogage
+#   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, démonstration, non signé
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
 #   site/downloads/COMMITS.txt                 « fichier commit version build » de chaque application
 # Aucune publication dans les stores (D-61).
@@ -54,6 +56,9 @@ env:
   FLUTTER_VERSION: "3.47.9"
   APK: nautilink-demo.apk
   IPA: nautilink-demo-ios-non-signe.ipa
+  # Vraie application (NAUTILINK_MODE=reel, D-129).
+  APK_PROD: nautilink.apk
+  IPA_PROD: nautilink-ios-non-signe.ipa
 
 jobs:
   choix:
@@ -119,14 +124,20 @@ jobs:
         run: |
           ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
           flutter pub get
-          flutter build ios --release --no-codesign $DEFINES
-          mkdir -p ipa/Payload
-          cp -R build/ios/iphoneos/Runner.app ipa/Payload/
-          cd ipa && zip -qr "../$IPA" Payload
+          ipa() {  # ipa <fichier> <mode>
+            flutter build ios --release --no-codesign $DEFINES --dart-define=NAUTILINK_MODE=$2
+            rm -rf ipa && mkdir -p ipa/Payload
+            cp -R build/ios/iphoneos/Runner.app ipa/Payload/
+            (cd ipa && zip -qr "../$1" Payload)
+          }
+          ipa "$IPA_PROD" reel
+          ipa "$IPA" demo
       - uses: actions/upload-artifact@v4
         with:
           name: ipa
-          path: app/${{ env.IPA }}
+          path: |
+            app/${{ env.IPA }}
+            app/${{ env.IPA_PROD }}
           retention-days: 7
 
   build:
@@ -167,10 +178,14 @@ jobs:
         if: needs.choix.outputs.website == 'true'
         working-directory: app
         run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES
-      - name: APK Android de démonstration
+      - name: APK Android (vraie application et démonstration)
         if: needs.choix.outputs.android == 'true'
         working-directory: app
-        run: flutter build apk --release $DEFINES
+        run: |
+          flutter build apk --release $DEFINES --dart-define=NAUTILINK_MODE=reel
+          cp build/app/outputs/flutter-apk/app-release.apk "$APK_PROD"
+          flutter build apk --release $DEFINES --dart-define=NAUTILINK_MODE=demo
+          cp build/app/outputs/flutter-apk/app-release.apk "$APK"
       - uses: actions/download-artifact@v4
         if: needs.choix.outputs.iphone == 'true'
         with:
@@ -237,28 +252,35 @@ jobs:
               echo "::warning::$1 absent du site publié : lien de téléchargement cassé, relancer avec la case cochée"
             fi
           }
-          if [ "$ANDROID" = true ]; then
-            cp app/build/app/outputs/flutter-apk/app-release.apk "_site/downloads/$APK"
-            echo "$APK $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
-          else
-            reprendre "$APK"
-          fi
-          if [ "$IPHONE" = true ]; then
-            cp "ipa/$IPA" _site/downloads/
-            echo "$IPA $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
-          else
-            reprendre "$IPA"
-          fi
+          for f in "$APK_PROD" "$APK"; do
+            if [ "$ANDROID" = true ]; then
+              cp "app/$f" _site/downloads/
+              echo "$f $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
+            else
+              reprendre "$f"
+            fi
+          done
+          for f in "$IPA_PROD" "$IPA"; do
+            if [ "$IPHONE" = true ]; then
+              cp "ipa/$f" _site/downloads/
+              echo "$f $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
+            else
+              reprendre "$f"
+            fi
+          done
           # Pieds de page : version, build et commit du site ; telecharger.html :
           # ceux de chaque application.
           champ() { v=$(awk -v f="$1" -v n="$2" '$1 == f { print $n }' _site/downloads/COMMITS.txt); echo "${v:-$3}"; }
-          apk=$(champ "$APK" 2 inconnu); ipa=$(champ "$IPA" 2 inconnu)
           sed -i -e "s/@COMMIT_COURT@/${site_commit::7}/g" -e "s/@COMMIT@/$site_commit/g" \
-                 -e "s/@VERSION@/$site_version/g" -e "s/@BUILD@/$site_build/g" \
-                 -e "s/@COMMIT_APK_COURT@/${apk::7}/g" -e "s/@COMMIT_APK@/$apk/g" \
-                 -e "s/@VERSION_APK@/$(champ "$APK" 3 inconnue)/g" -e "s/@BUILD_APK@/$(champ "$APK" 4 inconnu)/g" \
-                 -e "s/@COMMIT_IPA_COURT@/${ipa::7}/g" -e "s/@COMMIT_IPA@/$ipa/g" \
-                 -e "s/@VERSION_IPA@/$(champ "$IPA" 3 inconnue)/g" -e "s/@BUILD_IPA@/$(champ "$IPA" 4 inconnu)/g" _site/*.html
+                 -e "s/@VERSION@/$site_version/g" -e "s/@BUILD@/$site_build/g" _site/*.html
+          # @COMMIT_<clé>@, @COMMIT_<clé>_COURT@, @VERSION_<clé>@, @BUILD_<clé>@
+          remplir() {  # remplir <clé> <fichier>
+            c=$(champ "$2" 2 inconnu)
+            sed -i -e "s/@COMMIT_$1_COURT@/${c::7}/g" -e "s/@COMMIT_$1@/$c/g" \
+                   -e "s/@VERSION_$1@/$(champ "$2" 3 inconnue)/g" -e "s/@BUILD_$1@/$(champ "$2" 4 inconnu)/g" _site/*.html
+          }
+          remplir APK "$APK"; remplir IPA "$IPA"
+          remplir APK_PROD "$APK_PROD"; remplir IPA_PROD "$IPA_PROD"
           cat _site/downloads/COMMITS.txt
           cd _site/downloads
           shopt -s nullglob

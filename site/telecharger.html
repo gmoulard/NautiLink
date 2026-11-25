@@ -38,16 +38,35 @@
   <section>
     <div class="wrap narrow legal">
       <span class="kicker">Télécharger</span>
-      <h1>Installer les applications de démonstration</h1>
-      <p>Les applications de démonstration ne sont pas publiées sur Google Play ni sur l'App Store. Vous les installez directement depuis ce site. Elles sont reconstruites à chaque mise à jour du projet.</p>
-      <p class="note">Ces applications ne servent qu'à découvrir les écrans. N'en dépendez pas en mer : en cas de détresse, canal 16 de la VHF ou 196.</p>
+      <h1>Installer NautiLink</h1>
+      <p>NautiLink n'est pas encore publiée sur Google Play ni sur l'App Store. Vous l'installez directement depuis ce site. Les applications sont reconstruites à chaque mise à jour du projet.</p>
+      <p>Deux applications sont proposées :</p>
+      <ul>
+        <li><b>NautiLink</b>, la vraie application : votre compte sur le serveur de NautiLink, vos bateaux, vos navigations ;</li>
+        <li><b>NautiLink démo</b>, l'application de démonstration : des données d'exemple pour découvrir tous les écrans, sans compte ; rien n'est réellement envoyé.</li>
+      </ul>
+      <p class="note">NautiLink est en version bêta et n'est pas un équipement de sécurité. N'en dépendez pas en mer : en cas de détresse, canal 16 de la VHF ou 196.</p>
+    </div>
+  </section>
+
+  <section id="application">
+    <div class="wrap narrow legal">
+      <span class="kicker">Vraie application</span>
+      <h2>NautiLink</h2>
+      <p>Créez votre compte dans l'application ou sur <a href="https://vdl.moulard.org/nautilink/">la plateforme Web</a>, puis connectez-vous sur le téléphone : il est associé à vos bateaux.</p>
+      <p class="note">Version 0.0.1 : création du compte, connexion, accueil et mémo sécurité en mer. Le démarrage d'une navigation, l'envoi des positions et le SOS arrivent dans les prochaines versions ; d'ici là, l'application de démonstration les montre.</p>
+      <a class="button" href="downloads/nautilink.apk">Télécharger NautiLink pour Android</a>
+      <p class="muted commit">Version V@VERSION_APK_PROD@, build @BUILD_APK_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK_PROD@">@COMMIT_APK_PROD_COURT@</a>.</p>
+      <a class="button" href="downloads/nautilink-ios-non-signe.ipa">Télécharger NautiLink pour iPhone (IPA non signé)</a>
+      <p class="muted commit">Version V@VERSION_IPA_PROD@, build @BUILD_IPA_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA_PROD@">@COMMIT_IPA_PROD_COURT@</a>.</p>
+      <p class="muted">L'installation se fait comme pour l'application de démonstration : voir <a href="#android">Android</a> et <a href="#iphone">iPhone (2. Application iPhone non signée)</a>. Sur Android, NautiLink et NautiLink démo s'installent l'une à côté de l'autre.</p>
     </div>
   </section>
 
   <section id="android">
     <div class="wrap narrow legal">
       <span class="kicker">Android</span>
-      <h2>Installer l'APK</h2>
+      <h2>Installer l'APK de démonstration</h2>
       <a class="button" href="downloads/nautilink-demo.apk">Télécharger l'APK de démonstration</a>
       <p class="muted commit">Version V@VERSION_APK@, build @BUILD_APK@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK@">@COMMIT_APK_COURT@</a>.</p>
       <ol class="steps">
@@ -56,14 +75,14 @@
         <li>Touchez « Installer ». Google Play Protect peut prévenir que l'application n'est pas connue, car elle n'est pas publiée sur Google Play : choisissez d'installer quand même si vous faites confiance à ce site.</li>
         <li>Ouvrez NautiLink et acceptez l'avertissement.</li>
       </ol>
-      <p class="muted">Pour installer une nouvelle version, désinstallez d'abord la précédente : chaque version de démonstration est signée avec une clé de test différente, et Android refuse de la mettre à jour par-dessus.</p>
+      <p class="muted">Pour installer une nouvelle version, désinstallez d'abord la précédente : chaque version est signée avec une clé de test différente, et Android refuse de la mettre à jour par-dessus.</p>
     </div>
   </section>
 
   <section id="iphone">
     <div class="wrap narrow legal">
       <span class="kicker">iPhone</span>
-      <h2>Deux façons, sans l'App Store</h2>
+      <h2>Démonstration : deux façons, sans l'App Store</h2>
 
       <h3>1. Sur l'écran d'accueil (le plus simple)</h3>
       <p>La démonstration Web s'ouvre comme une application, sans compte ni installation.</p>
@@ -75,7 +94,7 @@
 
       <h3>2. Application iPhone non signée (pour les curieux)</h3>
       <p>Apple n'autorise l'installation hors App Store qu'avec une signature. Le fichier proposé ici n'est pas signé : vous le signez vous-même avec votre identifiant Apple, grâce à un outil d'installation sur ordinateur comme AltStore ou Sideloadly.</p>
-      <a class="button" href="downloads/nautilink-demo-ios-non-signe.ipa">Télécharger l'IPA non signé</a>
+      <a class="button" href="downloads/nautilink-demo-ios-non-signe.ipa">Télécharger l'IPA de démonstration non signé</a>
       <p class="muted commit">Version V@VERSION_IPA@, build @BUILD_IPA@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA@">@COMMIT_IPA_COURT@</a>.</p>
       <ol class="steps">
         <li>Sur votre ordinateur, installez <a href="https://altstore.io/" target="_blank" rel="noopener">AltStore</a> ou <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a> en suivant leurs instructions.</li>
@@ -91,7 +110,7 @@
     <div class="wrap narrow legal">
       <span class="kicker">Vérifier</span>
       <h2>Empreintes des fichiers</h2>
-      <p>Le fichier <a href="downloads/SHA256SUMS.txt">SHA256SUMS.txt</a> donne l'empreinte SHA-256 de chaque fichier. Elle permet de vérifier que le fichier téléchargé est bien celui construit par le projet, par exemple avec <code>sha256sum nautilink-demo.apk</code>.</p>
+      <p>Le fichier <a href="downloads/SHA256SUMS.txt">SHA256SUMS.txt</a> donne l'empreinte SHA-256 de chaque fichier. Elle permet de vérifier que le fichier téléchargé est bien celui construit par le projet, par exemple avec <code>sha256sum nautilink.apk</code>.</p>
       <p class="muted">Les applications sont construites automatiquement à partir du code du dépôt <a href="https://github.com/gmoulard/NautiLink" target="_blank" rel="noopener">gmoulard/NautiLink</a>, dossier <code>app/</code>.</p>
     </div>
   </section>
