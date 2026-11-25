@@ -15,6 +15,34 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 - Prévu (2026-11-25) : le porteur du projet ouvre le compte sur le portail API de Météo-France ; la météo est intégrée avant la sortie de la version réelle. Mode d'emploi et points à vérifier : [meteofrance-connexion.md](etudes/meteofrance-connexion.md).
 
+### <a id="q-81"></a>Q-81 — Association du téléphone aux bateaux à la connexion
+
+- Priorité : avant la version Android réelle (TODO-5.1).
+- Cas : à la connexion sur l'application mobile, le téléphone « devient le téléphone associé au bateau » (parcours §2, RG-BAT-02). Rien ne dit quoi faire quand le compte a plusieurs bateaux, quand un bateau est déjà associé à un autre téléphone (l'associer remplace l'association précédente), ni quand le compte n'a pas encore de bateau.
+- Proposition (non validée) : à chaque connexion, le téléphone est enregistré (`PUT /v1/appareils/{id}`), puis associé à tous les bateaux du compte qui n'ont pas de téléphone ; un bateau déjà associé à un autre téléphone le reste, l'association se change sur le Web (« Bateaux ») ou au démarrage d'une navigation avec ce bateau (TODO-5.2) ; sans bateau, l'écran de démarrage invite à créer la fiche (TODO-5.2).
+- Appliqué en attendant dans l'application (`app/lib/reel/depot_reel.dart`, `associerTelephone`) pour l'enregistrement et les bateaux sans téléphone.
+
+### <a id="q-82"></a>Q-82 — Autre compte sur le même téléphone
+
+- Priorité : avant la version Android réelle (TODO-5.1).
+- Cas : après une déconnexion ou une session expirée, quelqu'un se connecte sur le téléphone avec un autre compte. La déconnexion ne vide pas la file d'attente (RG-CPT-08), mais rien ne dit ce que deviennent les copies locales du premier compte (navigations, contacts, paramètres, quota) ni ses envois encore en attente.
+- Proposition (non validée) : les copies locales du premier compte sont effacées à la connexion d'un autre compte ; la file d'attente reste et part avec la nouvelle session ; ce que le serveur refuse (pas propriétaire, navigation inconnue) est mis de côté comme tout refus définitif (08-architecture.md §5). Une session expirée ou fermée par le serveur ramène à l'écran de connexion avec « Votre session a expiré : reconnectez-vous. », données locales et file gardées.
+- Appliqué en attendant dans l'application (`app/lib/reel/depot_reel.dart`).
+
+### <a id="q-83"></a>Q-83 — Sortie de la file pour les statuts des SMS SOS et les fichiers
+
+- Priorité : avant la version Android réelle (TODO-5.3, TODO-5.4, TODO-5.5).
+- Cas : un élément quitte la file d'attente « à la réponse 200 ou 201 seulement » (08-architecture.md §5), mais l'API répond 204 au dépôt d'un fichier (`PUT /v1/fichiers/{evenementId}`) et aux statuts des SMS SOS (`PUT /v1/alertes-sos/{id}/sms`, élément `statuts_sms` de la synchronisation). Lu à la lettre, ces envois ne quitteraient jamais la file.
+- Proposition (non validée) : 204 vaut réception pour ces deux envois, dont c'est la seule réponse de succès ; écrire « 200, 201, ou 204 pour les fichiers et les statuts des SMS » dans 08-architecture.md §5.
+- Appliqué en attendant dans l'application (`app/lib/reel/file_attente.dart`).
+
+### <a id="q-84"></a>Q-84 — Moments où l'application relit l'accueil sur le serveur
+
+- Priorité : avant la version Android réelle (TODO-5.1).
+- Cas : les contacts et les paramètres généraux sont relus au lancement et après chaque modification (08-architecture.md §4) ; rien ne dit quand l'accueil relit la navigation en cours, la liste des navigations et le quota.
+- Proposition (non validée) : à l'ouverture de l'application, à la connexion, au retour de l'application au premier plan, et quand le navigateur tire l'accueil ou la liste « Navigations enregistrées » vers le bas ; la file d'attente est relancée aux mêmes moments.
+- Appliqué en attendant dans l'application (`app/lib/main.dart`, `app/lib/screens/home.dart`).
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

@@ -621,4 +621,124 @@ class AppLocalizationsEn extends AppLocalizations {
   String sosSmsPosition(String position, String time) {
     return 'Position $position at $time.';
   }
+
+  @override
+  String get betaBanner => 'Beta version';
+
+  @override
+  String offlineSince(String date) {
+    return 'Offline · data from $date';
+  }
+
+  @override
+  String get loginTitle => 'Sign in';
+
+  @override
+  String get loginButton => 'Sign in';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get passwordMin => 'At least 8 characters';
+
+  @override
+  String get forgotPassword => 'Forgot your password?';
+
+  @override
+  String get createAccount => 'Create an account';
+
+  @override
+  String get createAccountTitle => 'New account';
+
+  @override
+  String get createAccountButton => 'Create my account';
+
+  @override
+  String get continueGoogle => 'Continue with Google';
+
+  @override
+  String get continueApple => 'Continue with Apple';
+
+  @override
+  String get providerUnavailable =>
+      'Google or Apple sign-in: not available yet.';
+
+  @override
+  String get loginOffline => 'Cannot sign in without Internet.';
+
+  @override
+  String get sessionExpired =>
+      'Your session has expired: please sign in again.';
+
+  @override
+  String get errorGeneric => 'The server could not process the request.';
+
+  @override
+  String get fieldRequired => 'Required field';
+
+  @override
+  String get forgotTitle => 'Forgotten password';
+
+  @override
+  String get forgotText =>
+      'Enter your account\'s e-mail address: you will receive a link, valid for 1 hour, to choose a new password.';
+
+  @override
+  String get forgotSend => 'Send me the link';
+
+  @override
+  String get forgotSent =>
+      'If an account exists for this address, an e-mail has just been sent. The link is valid for 1 hour.';
+
+  @override
+  String get warningNewVersion =>
+      'The warning has changed: read and accept it to continue.';
+
+  @override
+  String emailNotVerified(String email) {
+    return 'Confirm your e-mail address ($email) with the link you received: until then, you can neither start a voyage nor invite anyone.';
+  }
+
+  @override
+  String get resendLink => 'Send a new link';
+
+  @override
+  String get linkSent => 'Link sent.';
+
+  @override
+  String get logout => 'Sign out';
+
+  @override
+  String get quotaUnknown => 'Quota not yet received from the server';
+
+  @override
+  String quotaAsOf(String date) {
+    return 'As of $date';
+  }
+
+  @override
+  String quotaNextAt(String duration, String date) {
+    return 'Next minutes recovered: $duration on $date.';
+  }
+
+  @override
+  String voyageInProgress(String name) {
+    return 'Voyage in progress: $name';
+  }
+
+  @override
+  String get notYetAvailable => 'Not yet available in this version of the app.';
+
+  @override
+  String savedOffline(String date) {
+    return 'Offline: last list received on $date';
+  }
+
+  @override
+  String get noSavedVoyages => 'No saved voyages.';
+
+  @override
+  String get pageOffline =>
+      'The voyage page will be available when the connection is back.';
 }
