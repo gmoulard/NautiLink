@@ -26,7 +26,6 @@ class HomeScreen extends StatelessWidget {
     final quota = depot.quota;
     final enCours = depot.navigationEnCours;
     final profil = depot.profil;
-    final quotaRecu = quota?.recuLe;
     final list = ListView(
       padding: const EdgeInsets.all(20),
       physics: const AlwaysScrollableScrollPhysics(),
@@ -35,37 +34,6 @@ class HomeScreen extends StatelessWidget {
           _EmailNonVerifie(email: profil.email),
           const SizedBox(height: 12),
         ],
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.timer_outlined, color: NlColors.teal),
-            // RG-ECO-10 : lien vers « Quota et abonnement ».
-            title: Text(
-              l.homeFreeVersion,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            subtitle: Text(
-              quota == null
-                  ? l.quotaUnknown
-                  : [
-                      l.homeFreeLeft(
-                        fmtDuration(
-                          l,
-                          Duration(minutes: quota.disponibleMinutes),
-                        ),
-                      ),
-                      // Hors connexion : dernier état reçu, avec son heure (RG-COM-06).
-                      if (depot.horsConnexion && quotaRecu != null)
-                        l.quotaAsOf(fmtDate(l, quotaRecu)),
-                    ].join('\n'),
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
-          ),
-        ),
         if (!demo && enCours != null) ...[
           const SizedBox(height: 12),
           Text(
@@ -118,12 +86,52 @@ class HomeScreen extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall,
         ),
+        const SizedBox(height: 24),
+        // Sponsor : le guidon de la SRT seul, sans texte (D-131).
+        Center(
+          child: Image.asset(
+            'assets/sponsor-srt.png',
+            key: const Key('home-sponsor'),
+            height: 44,
+            semanticLabel: l.sponsorLogoLabel,
+          ),
+        ),
         const SizedBox(height: 8),
+        // RG-ECO-10 : « Version gratuite » ou « Version abonné », vers
+        // « Quota et abonnement » (D-131).
+        Center(
+          child: TextButton(
+            key: const Key('home-version'),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
+            child: Text(
+              quota?.abonnementActif == true
+                  ? l.homeSubscriberVersion
+                  : l.homeFreeVersion,
+              style: const TextStyle(decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
         // Mémo sécurité en mer intégré, lisible hors connexion (RG-SOS-22).
         TextButton.icon(
           icon: const Icon(Icons.health_and_safety_outlined),
           label: Text(l.homeSecurityMemo),
           onPressed: () => openSecurityMemo(context),
+        ),
+        // Petit lien vers le site de présentation (TODO-3.13).
+        Center(
+          child: InkWell(
+            onTap: () => launchUrl(
+              Uri.parse(siteUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+            child: Text(
+              l.footerSiteLink,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -181,7 +189,6 @@ class HomeScreen extends StatelessWidget {
                   : RefreshIndicator(onRefresh: depot.actualiser, child: list),
             ),
           ),
-          const SponsorFooter(),
         ],
       ),
     );

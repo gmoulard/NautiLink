@@ -33,7 +33,7 @@ La spécification fait foi : [`docs/02-regles-metier.md`](../docs/02-regles-meti
 - après la fin : page détaillée de la navigation (météo au départ et à l'arrivée, lieux, carte OpenStreetMap et OpenSeaMap, journal avec photos et écoute) ;
 - navigation en cours : deux chronomètres (le second remis à zéro par chaque envoi), position, NOTE, Photo, Vocal, SOS avec confirmation, fin ; résultat de chaque envoi dans une fenêtre « OK » fermée au bout d'une minute ;
 - proposition de terminer une navigation immobile depuis 2 heures (menu « Démo : simuler 2 h sans bouger ») ;
-- lien « Version gratuite - abonnement » sur l'accueil, puis lien vers la page d'information sur l'abonnement du site ;
+- lien « Version gratuite » (« Version abonné » avec un abonnement) en bas de l'accueil, entre le guidon de la SRT et le mémo sécurité (D-131), puis lien vers la page d'information sur l'abonnement du site ;
 - lien « Mémo sécurité en mer » sur l'accueil : mémo intégré, lisible hors connexion, sur Android et iPhone ; page du site depuis la démonstration Web (TODO-3.12, RG-SOS-22) ;
 - sous le bandeau du sponsor, petit lien « Site de NautiLink » vers le site de présentation (TODO-3.13) ;
 - contacts (cases « Suiveur » et « Contact SOS »), paramètres SMS, quota ;

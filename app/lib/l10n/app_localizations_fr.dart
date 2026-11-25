@@ -144,7 +144,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get menuDashboard => 'Tableau de bord (Web)';
 
   @override
-  String get homeFreeVersion => 'Version gratuite - abonnement';
+  String get homeFreeVersion => 'Version gratuite';
+
+  @override
+  String get homeSubscriberVersion => 'Version abonné';
 
   @override
   String homeFreeLeft(String duration) {

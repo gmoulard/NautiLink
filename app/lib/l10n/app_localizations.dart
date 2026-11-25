@@ -341,8 +341,14 @@ abstract class AppLocalizations {
   /// No description provided for @homeFreeVersion.
   ///
   /// In fr, this message translates to:
-  /// **'Version gratuite - abonnement'**
+  /// **'Version gratuite'**
   String get homeFreeVersion;
+
+  /// No description provided for @homeSubscriberVersion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version abonné'**
+  String get homeSubscriberVersion;
 
   /// No description provided for @homeFreeLeft.
   ///

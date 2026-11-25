@@ -123,15 +123,18 @@ void main() {
     expect(find.text('Send an SOS'), findsOneWidget);
   });
 
-  testWidgets('accueil : lien « Version gratuite - abonnement » (RG-ECO-10)', (tester) async {
+  testWidgets('accueil : guidon de la SRT sans texte, lien « Version gratuite » (RG-ECO-10, D-131)', (tester) async {
     setPhone(tester);
     await openHome(tester);
-    expect(find.text('Sponsorisée par la SRT'), findsOneWidget);
+    await reveal(tester, find.byKey(const Key('home-sponsor')));
+    expect(find.byKey(const Key('home-sponsor')), findsOneWidget);
+    expect(find.text('Sponsorisée par la SRT'), findsNothing);
     // Pied de page de tous les écrans (D-128) : licence, dépôt, version.
     expect(find.text('Tous droits réservés · '), findsOneWidget);
     expect(find.text('https://github.com/gmoulard/NautiLink'), findsOneWidget);
     expect(find.text(' · version locale'), findsOneWidget);
-    await tester.tap(find.text('Version gratuite - abonnement'));
+    await reveal(tester, find.text('Version gratuite'));
+    await tester.tap(find.text('Version gratuite'));
     await tester.pumpAndSettle();
     expect(find.text('Quota et abonnement'), findsOneWidget);
     expect(find.text('Tous droits réservés · '), findsOneWidget);
@@ -150,6 +153,7 @@ void main() {
   testWidgets('pied de page : lien « Site de NautiLink » sous le sponsor (TODO-3.13)', (tester) async {
     setPhone(tester);
     await openHome(tester);
+    await reveal(tester, find.text('Site de NautiLink'));
     expect(find.text('Site de NautiLink'), findsOneWidget);
     expect(siteUrl, 'https://gmoulard.github.io/NautiLink/');
   });

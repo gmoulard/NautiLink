@@ -16,7 +16,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21, TODO-1.26 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
 | LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7, TODO-3.11 | LOT-4, LOT-5 | [~] |
-| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10, TODO-3.12, TODO-3.13 | aucun | [~] |
+| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10, TODO-3.12, TODO-3.13, TODO-3.16 | aucun | [~] |
 | LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [~] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [~] |
@@ -102,6 +102,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 - [~] **TODO-3.15**: Publier la vraie application (Android et iPhone, branchée sur le serveur) sur la page « Télécharger » du site, à côté des démonstrations ([D-129](07-decisions.md#d-129)). Dépend de : TODO-5.1 (socle), TODO-3.14.
   - Critères d'acceptation : `nautilink.apk` installé sur un téléphone Android à côté de « NautiLink démo », compte créé ou connexion réussie sur le serveur de `vdl.moulard.org` ; `nautilink-ios-non-signe.ipa` publié ; version, build et commit de chaque fichier sur la page.
   - Fait (2026-11-25) : workflow « Site GitHub Pages » (APK et IPA construits dans les deux modes), autorisation Internet de l'application Android (absente en construction de publication), identifiant et nom distincts pour la démonstration Android, page `telecharger.html` et accueil du site. Reste : essai sur un vrai téléphone.
+- [~] **TODO-3.16**: Accueil de l'application : guidon de la SRT seul au centre de la page, lien court « Version gratuite » ou « Version abonné » entre le guidon et le mémo sécurité ([D-131](07-decisions.md#d-131), RG-ECO-10). Dépend de : aucune.
+  - Critères d'acceptation : accueil conforme sur un téléphone Android (vraie application et démonstration).
+  - Fait (2026-11-25) : `app/lib/screens/home.dart`, textes ARB, tests. Reste : vérification sur le téléphone.
 - [~] **TODO-3.5**: Scénarios de tests fonctionnels tirés des règles métier ([scénarios](tests/scenarios-fonctionnels.md)). Dépend de : aucune.
   - Critères d'acceptation : au moins un scénario par règle `RG-…`, en priorité RG-SOS, RG-ECO, RG-PAR.
   - Fait : 168 scénarios `TS-…`, les 150 règles citées (dont la section Android RG-AND, ajoutée le 2026-11-25, et les règles des décisions D-99 à D-109), domaines SOS, ECO et PAR en tête. Reste : validation par l'utilisateur.

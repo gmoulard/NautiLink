@@ -142,7 +142,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuDashboard => 'Dashboard (Web)';
 
   @override
-  String get homeFreeVersion => 'Free version - subscription';
+  String get homeFreeVersion => 'Free version';
+
+  @override
+  String get homeSubscriberVersion => 'Subscriber version';
 
   @override
   String homeFreeLeft(String duration) {
