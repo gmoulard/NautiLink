@@ -26,6 +26,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : RG-PAR-02 donne au périmètre *navigateur* « toutes ses navigations présentes et futures » ; rien ne dit si le suiveur voit aussi les navigations terminées avant que l'accès lui soit accordé.
 - Proposition (non validée) : oui, il voit tout l'historique du navigateur (hors corbeille), comme la fiche du bateau (RG-PAR-08). Ce qui est fait (TODO-4.5) : cette proposition, appliquée en attendant.
 
+### <a id="q-55"></a>Q-55 — Quota redevenu disponible avant la clôture automatique
+
+- Priorité : avant la version Android réelle (TODO-4.6).
+- Cas : RG-ECO-05 clôture la navigation 24 heures après l'épuisement du quota, sauf abonnement souscrit entre-temps. Pendant ces 24 heures, des minutes consommées 7 jours plus tôt peuvent redevenir disponibles et le décompte repasser sous 24 heures ; rien ne dit si la clôture est alors annulée.
+- Proposition (non validée) : la clôture est maintenue ; seul un abonnement l'annule, comme l'écrit RG-ECO-05. Ce qui est fait (TODO-4.6) : cette proposition, appliquée en attendant.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

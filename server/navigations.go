@@ -1284,9 +1284,6 @@ func lireTout(r *http.Request, taille int) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-// verifierQuotaAuDemarrage : quota (RG-ECO-04), TODO-4.6.
-func (a *app) verifierQuotaAuDemarrage(ctx context.Context, utilisateur string) error { return nil }
-
 // apresDemarrage : traitements qui suivent le démarrage (lieux, e-mail de
 // début, TODO-4.7) ; ni la météo (Q-39) ni les notifications push (pas
 // d'identifiants APNs ni FCM) ne sont branchées.

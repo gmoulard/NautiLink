@@ -138,7 +138,12 @@ func ecrireErreurJSON(w http.ResponseWriter, err error) {
 	if e.attente > 0 {
 		w.Header().Set("Retry-After", strconv.Itoa(int(e.attente.Seconds())+1))
 	}
-	ecrireJSON(w, e.statut, map[string]string{"code": e.code, "message": e.message})
+	corps := map[string]string{"code": e.code, "message": e.message}
+	var q *erreurQuota
+	if errors.As(err, &q) {
+		corps["disponibleLe"] = q.disponibleLe.UTC().Format(time.RFC3339)
+	}
+	ecrireJSON(w, e.statut, corps)
 }
 
 func lireJSON(r *http.Request, v any) error {

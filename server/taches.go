@@ -40,7 +40,7 @@ func (a *app) tachesDeFond(ctx context.Context) {
 
 // tachesMinute : tâches jouées chaque minute, dans cet ordre.
 func (a *app) tachesMinute() []func(context.Context) error {
-	return nil
+	return []func(context.Context) error{a.cloturesAutomatiques}
 }
 
 // ------------------------------------------------------------------ lieux
