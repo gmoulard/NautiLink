@@ -16,6 +16,26 @@
   --sky: #EAF4FB; --ink: #0E2A47; --accent: #0E6BA8; --muted: #45627D; --line: #CFE0EE;
   --page: #DCE9F3; --surface: #FFFFFF; --sos: #D94343; --beta: #F2C14E; --srt-blue: #1E3296; --srt-yellow: #F8D818;
   --display: "Space Grotesk", system-ui, sans-serif; --body: Inter, system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --chrome: #E6EEF4; --chrome-dot: #C3D3E0; --track: #D5E4EF; --map: #DCEFF8; --scrim: rgba(8,24,40,.45); --ok: #1E8E4E;
+  --live-bg: #DFF3E4; --live: #1E7A3C; --navbar: #9AB0C3; --on-accent: #FFFFFF;
+  color-scheme: light;
+}
+/* Thème sombre : PROPOSITION NON VALIDÉE (Q-25). Suit le réglage du système, ou le bouton en haut de page. */
+:root[data-theme="dark"] {
+  --sky: #0F2438; --ink: #E3EEF7; --accent: #5AAEE6; --muted: #9BB4C9; --line: #24476A;
+  --page: #08172A; --surface: #15314D; --sos: #E35D5D; --beta: #F2C14E;
+  --chrome: #1B3550; --chrome-dot: #33597D; --track: #24476A; --map: #12324D; --scrim: rgba(0,0,0,.6); --ok: #4CC57E;
+  --live-bg: #173F2A; --live: #6FD69A; --navbar: #4E6E8C; --on-accent: #08172A;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky: #0F2438; --ink: #E3EEF7; --accent: #5AAEE6; --muted: #9BB4C9; --line: #24476A;
+    --page: #08172A; --surface: #15314D; --sos: #E35D5D; --beta: #F2C14E;
+    --chrome: #1B3550; --chrome-dot: #33597D; --track: #24476A; --map: #12324D; --scrim: rgba(0,0,0,.6); --ok: #4CC57E;
+    --live-bg: #173F2A; --live: #6FD69A; --navbar: #4E6E8C; --on-accent: #08172A;
+    color-scheme: dark;
+  }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 var(--body); }
@@ -48,9 +68,9 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
 .body > * { position: relative; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 9px 10px; }
 .card.link b { color: var(--accent); text-decoration: underline; }
-.btn { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 4px 10px; text-align: center; line-height: 1.2; border-radius: 12px; font: 700 12.5px var(--body); background: var(--accent); color: #fff; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 4px 10px; text-align: center; line-height: 1.2; border-radius: 12px; font: 700 12.5px var(--body); background: var(--accent); color: var(--on-accent); }
 .btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
-.btn.sos { background: var(--sos); min-height: 46px; font-size: 14px; letter-spacing: .02em; }
+.btn.sos { background: var(--sos); color: #fff; min-height: 46px; font-size: 14px; letter-spacing: .02em; }
 .btn.small { min-height: 34px; font-size: 11.5px; }
 .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
@@ -61,7 +81,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
 .field small { font-size: 9px; color: var(--muted); }
 .chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .chip { font: 500 10px var(--mono); padding: 3px 6px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
-.chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.chip.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .chrono { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 6px; text-align: center; }
 .chrono small { display: block; font-size: 9px; color: var(--muted); }
 .chrono b { font: 700 20px var(--mono); font-variant-numeric: tabular-nums; }
@@ -72,37 +92,37 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
 .sponsor { display: flex; align-items: center; justify-content: center; gap: 6px; background: #fff; border-top: 3px solid var(--srt-yellow); padding: 5px; font: 700 10.5px var(--body); color: var(--srt-blue); }
 .sponsor img { height: 18px; }
 .navbar { display: flex; justify-content: center; gap: 40px; padding: 6px 0 8px; background: var(--sky); }
-.navbar i { width: 14px; height: 4px; border-radius: 2px; background: #9AB0C3; display: block; }
-.scrim { position: absolute; inset: 0; background: rgba(8,24,40,.45); display: grid; place-items: center; padding: 16px; z-index: 5; }
+.navbar i { width: 14px; height: 4px; border-radius: 2px; background: var(--navbar); display: block; }
+.scrim { position: absolute; inset: 0; background: var(--scrim); display: grid; place-items: center; padding: 16px; z-index: 5; }
 .dialog { background: var(--surface); border-radius: 18px; padding: 14px; display: grid; gap: 8px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
 .dialog .dt { font: 700 15px var(--display); }
 .dialog .acts { display: flex; justify-content: flex-end; gap: 14px; font: 700 12px var(--body); color: var(--accent); }
 .dialog .acts .danger { color: var(--sos); }
 .dialog .timer { font: 500 9.5px var(--mono); color: var(--muted); }
-.ok { color: #1E8E4E; font-weight: 700; }
+.ok { color: var(--ok); font-weight: 700; }
 .sostop { background: var(--sos); color: #fff; }
-.meter { height: 10px; border-radius: 5px; background: #D5E4EF; overflow: hidden; }
+.meter { height: 10px; border-radius: 5px; background: var(--track); overflow: hidden; }
 .meter i { display: block; height: 100%; width: 40%; background: var(--accent); }
 
 /* Cadre de navigateur (plateforme Web) */
 .browsers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem 1.2rem; padding-bottom: 3rem; }
-.browser { width: 100%; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 16px 36px rgba(14,42,71,.18); border: 1px solid var(--line); }
-.chrome { display: flex; align-items: center; gap: 6px; padding: 7px 10px; background: #E6EEF4; }
-.chrome i { width: 9px; height: 9px; border-radius: 50%; background: #C3D3E0; display: block; }
-.chrome .url { flex: 1; margin-left: 8px; background: #fff; border-radius: 6px; padding: 2px 8px; font: 500 10px var(--mono); color: var(--muted); }
+.browser { width: 100%; border-radius: 12px; overflow: hidden; background: var(--surface); box-shadow: 0 16px 36px rgba(14,42,71,.18); border: 1px solid var(--line); }
+.chrome { display: flex; align-items: center; gap: 6px; padding: 7px 10px; background: var(--chrome); }
+.chrome i { width: 9px; height: 9px; border-radius: 50%; background: var(--chrome-dot); display: block; }
+.chrome .url { flex: 1; margin-left: 8px; background: var(--surface); border-radius: 6px; padding: 2px 8px; font: 500 10px var(--mono); color: var(--muted); }
 .web { background: var(--sky); font-size: 12px; min-height: 380px; display: flex; flex-direction: column; }
 .web .top { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--line); background: var(--sky); }
 .web .top b { font: 700 14px var(--display); }
 .web .top b em { font-style: normal; color: var(--accent); }
 .web .top nav { margin-left: auto; display: flex; gap: 12px; color: var(--muted); font-size: 11px; }
-.web .main { flex: 1; padding: 14px; display: grid; gap: 10px; position: relative; }
-.seg { justify-self: start; display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: #fff; font-size: 10.5px; }
+.web .main { flex: 1; padding: 14px; display: grid; gap: 10px; align-content: start; position: relative; }
+.seg { justify-self: start; display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); font-size: 10.5px; }
 .seg span { padding: 3px 10px; }
-.seg .on { background: var(--accent); color: #fff; }
-.vcard { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.seg .on { background: var(--accent); color: var(--on-accent); }
+.vcard { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
 .vcard b { font-size: 12px; }
 .vcard small { display: block; color: var(--muted); font-size: 10px; }
-.live { font: 600 9.5px var(--mono); background: #DFF3E4; color: #1E7A3C; border-radius: 999px; padding: 2px 7px; }
+.live { font: 600 9.5px var(--mono); background: var(--live-bg); color: var(--live); border-radius: 999px; padding: 2px 7px; }
 .ico { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: var(--sky); color: var(--accent); font-weight: 700; }
 .split { display: grid; grid-template-columns: 1.1fr .9fr; gap: 12px; }
 .map { position: relative; border-radius: 12px; overflow: hidden; min-height: 230px; background:
@@ -110,12 +130,33 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
   radial-gradient(ellipse 130px 90px at 66% 34%, rgba(242,193,78,.38), transparent 70%),
   radial-gradient(ellipse 210px 150px at 60% 42%, rgba(76,175,80,.25), transparent 72%),
   repeating-linear-gradient(0deg, transparent 0 39px, rgba(14,107,168,.08) 39px 40px),
-  repeating-linear-gradient(90deg, transparent 0 39px, rgba(14,107,168,.08) 39px 40px), #DCEFF8; }
+  repeating-linear-gradient(90deg, transparent 0 39px, rgba(14,107,168,.08) 39px 40px), var(--map); }
 .map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.map .legend { position: absolute; left: 8px; bottom: 8px; font: 500 9px var(--mono); background: rgba(255,255,255,.85); border-radius: 6px; padding: 3px 6px; }
+.map .legend { position: absolute; left: 8px; bottom: 8px; font: 500 9px var(--mono); background: var(--surface); border-radius: 6px; padding: 3px 6px; }
 .kv { display: grid; grid-template-columns: 74px 1fr; gap: 2px 8px; font-size: 11px; }
 .kv span { color: var(--muted); }
 .web .sponsor { border-top-width: 3px; font-size: 11px; }
+.toggle { justify-self: start; display: inline-flex; gap: 0; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.toggle button { font: 600 .82rem var(--body); border: 0; background: transparent; color: var(--ink); padding: .45rem .9rem; min-height: 40px; cursor: pointer; }
+.toggle button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.note { font-size: .85rem; color: var(--muted); }
+.sw { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; padding: 3px 0; }
+.sw i { width: 24px; height: 13px; border-radius: 7px; background: var(--track); position: relative; display: block; flex: none; }
+.sw i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 9px; height: 9px; border-radius: 50%; background: var(--surface); }
+.sw i.on { background: var(--accent); }
+.sw i.on::after { left: 13px; }
+.sw.off { color: var(--muted); }
+.tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+.tbl th { text-align: left; font: 600 9.5px var(--mono); color: var(--muted); padding: 4px 6px; border-bottom: 1px solid var(--line); }
+.tbl td { padding: 6px; border-bottom: 1px solid var(--line); }
+.tbl a, .act { color: var(--accent); font-weight: 600; }
+.admin-nav { display: grid; gap: 2px; font-size: 11px; align-content: start; }
+.admin-nav span { padding: 4px 8px; border-radius: 6px; }
+.admin-nav .on { background: var(--accent); color: var(--on-accent); }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+.stats b { display: block; font: 700 18px var(--mono); }
+.stats small { color: var(--muted); font-size: 10px; }
 
 @media (max-width: 860px) { .browsers { grid-template-columns: 1fr; } .split { grid-template-columns: 1fr; } }
 </style>
@@ -124,6 +165,12 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
 <header class="page wrap">
   <h1>Maquettes de l'application : Android et Web</h1>
   <p>Design « Radar de pluie » (D-69) appliqué aux écrans de l'application mobile et de la plateforme Web. Les écrans suivent la spécification : fréquences de 15 minutes à 10 jours, fenêtre « OK » fermée au bout d'une minute, proposition de fin après 2 heures sans bouger, lien « Version gratuite - abonnement », sponsor SRT. Sous chaque écran : les règles qu'il illustre.</p>
+  <div class="toggle" role="group" aria-label="Thème">
+    <button type="button" data-set="auto" aria-pressed="true">Système</button>
+    <button type="button" data-set="light" aria-pressed="false">Clair</button>
+    <button type="button" data-set="dark" aria-pressed="false">Sombre</button>
+  </div>
+  <p class="note">Thème sombre : proposition de couleurs non validée (<a href="https://github.com/gmoulard/NautiLink/blob/main/docs/06-questions-ouvertes.md#q-25">Q-25</a>).</p>
 </header>
 
 <main class="wrap">
@@ -154,19 +201,23 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
       <div class="phone"><div class="screen">
         <div class="status"><span>9:42</span><span>4G ▮▮▮</span></div>
         <div class="appbar"><span>← Démarrer navigation</span></div>
-        <div class="body">
+        <div class="body" style="gap:6px">
           <div class="field"><small>Bateau</small>Alizé · Voilier</div>
           <div class="field"><small>Destination (facultative)</small>Le Palais, Belle-Île</div>
+          <div class="field"><small>Personnes à bord</small>2</div>
+          <div><span class="kicker">Personnes alertées</span>
+            <div class="chips" style="margin-top:4px"><span class="chip on">✓ Claire</span><span class="chip on">✓ Marc</span><span class="chip on">✓ Inès</span><span class="chip">+ Ajouter une personne</span></div>
+          </div>
           <div><span class="kicker">Fréquence d'envoi automatique</span>
             <div class="chips" style="margin-top:4px"><span class="chip">15 min</span><span class="chip on">30 min</span><span class="chip">1 h</span><span class="chip">2 h</span><span class="chip">3 h</span><span class="chip">6 h</span><span class="chip">12 h</span><span class="chip">1 j</span><span class="chip">2 j</span><span class="chip">10 j</span></div>
           </div>
-          <div class="card" style="font-size:10.5px">⚙ Paramètres de cette navigation<br><small style="color:var(--muted)">SMS : début, positions manuelles, notes, fin</small></div>
+          <div class="card" style="font-size:10.5px;padding:6px 10px">⚙ Paramètres<br><small style="color:var(--muted)">SMS : début, positions manuelles, notes, fin</small></div>
           <div style="flex:1"></div>
           <div class="btn">Envoi message – Début de navigation</div>
         </div>
         <div class="navbar"><i></i><i></i><i></i></div>
       </div></div>
-      <figcaption><b>2. Démarrage</b><span>Bateau, destination facultative, fréquence de 15 minutes à 10 jours.</span><code>RG-NAV-02 · RG-NAV-04 · RG-NAV-05 · RG-NAV-06</code></figcaption>
+      <figcaption><b>2. Démarrage</b><span>Bateau, destination facultative, personnes à bord, personnes alertées toutes cochées, fréquence de 15 minutes à 10 jours.</span><code>RG-NAV-02 · RG-NAV-04 · RG-NAV-05 · RG-NAV-06 · RG-NAV-25 · RG-NAV-26 · RG-NAV-27</code></figcaption>
     </figure>
 
     <figure>
@@ -231,7 +282,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
           <div class="acts"><span>Continuer</span><span>Terminer la navigation</span></div>
         </div></div>
       </div></div>
-      <figcaption><b>5. Bateau immobile</b><span>Proposition de terminer après 2 heures dans un rayon de 20 mètres ; jamais de fin automatique.</span><code>RG-NAV-24 · Q-38</code></figcaption>
+      <figcaption><b>5. Bateau immobile</b><span>Proposition de terminer après 2 heures dans un rayon de 20 mètres ; jamais de fin automatique.</span><code>RG-NAV-24</code></figcaption>
     </figure>
 
     <figure>
@@ -298,6 +349,58 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
       <figcaption><b>9. Contacts</b><span>Une seule liste, cases « Suiveur » et « Contact SOS » cochées par défaut.</span><code>RG-CTC-01 · RG-CTC-04 · RG-CTC-05</code></figcaption>
     </figure>
 
+    <figure>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>18:30</span><span>Wi-Fi</span></div>
+        <div class="appbar"><span>← Paramètres généraux</span></div>
+        <div class="body" style="gap:4px">
+          <div class="field"><small>Fréquence par défaut</small>30 minutes</div>
+          <div class="field"><small>Langue</small>Français (langue du téléphone)</div>
+          <span class="kicker" style="margin-top:4px">SMS ordinaires</span>
+          <div class="card" style="padding:4px 10px">
+            <div class="sw"><b>Envoyer des SMS</b><i class="on"></i></div>
+            <div class="sw">Début de navigation<i class="on"></i></div>
+            <div class="sw">Positions automatiques<i></i></div>
+            <div class="sw">Positions manuelles<i class="on"></i></div>
+            <div class="sw">Notes écrites<i class="on"></i></div>
+            <div class="sw">Photos<i></i></div>
+            <div class="sw">Notes vocales<i class="on"></i></div>
+            <div class="sw">Fin de navigation<i class="on"></i></div>
+          </div>
+          <div class="hint" style="text-align:left">Les SMS SOS partent toujours, quels que soient ces réglages.</div>
+        </div>
+      </div></div>
+      <figcaption><b>10. Paramètres généraux</b><span>Interrupteur SMS, préférence par type, fréquence et langue ; synchronisés avec le Web.</span><code>RG-PRM-01 · RG-PRM-03 · RG-SMS-02 · RG-SOS-14</code></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>18:34</span><span>Wi-Fi</span></div>
+        <div class="appbar"><span>← Alertes SOS</span></div>
+        <div class="body">
+          <div class="card"><b style="color:var(--sos)">SOS · 21 nov. 2026, 15:02</b><br><small style="color:var(--muted)">Alizé · 47° 25,10' N, 003° 06,42' W</small>
+            <div class="log" style="margin-top:5px"><div><span class="ok">✓</span>Claire · livraison confirmée</div><div><span class="ok">✓</span>Marc · accepté pour envoi</div><div><span class="ok">✓</span>E-mail aux suiveurs</div></div></div>
+          <div class="card"><b style="color:var(--sos)">SOS · 3 août 2026, 10:47</b><br><small style="color:var(--muted)">Petit Pingouin · dernière position connue</small></div>
+        </div>
+      </div></div>
+      <figcaption><b>11. Historique des alertes SOS</b><span>Date, position transmise et statut par contact, aussi sur le Web.</span><code>RG-SOS-12 · RG-SOS-13</code></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>18:36</span><span>Wi-Fi</span></div>
+        <div class="appbar"><span>← Assistance</span></div>
+        <div class="betaline">Version bêta</div>
+        <div class="body">
+          <div class="card link"><b>Écrire à l'équipe NautiLink</b><br><small>Réponse par e-mail</small></div>
+          <div class="card link"><b>Avertissement bêta</b><br><small>Accepté le 24 nov. 2026 · version 1</small></div>
+          <div class="card link"><b>Mémo sécurité en mer</b><br><small>Canal 16 de la VHF, 196</small></div>
+          <div class="card link"><b>Conditions d'utilisation et confidentialité</b></div>
+        </div>
+      </div></div>
+      <figcaption><b>12. Assistance</b><span>Contact de l'équipe, avertissement bêta consultable à tout moment.</span><code>RG-CPT-06 · RG-CPT-07 · RG-DON-03</code></figcaption>
+    </figure>
+
   </div>
 
   <h2 class="part">Plateforme Web</h2>
@@ -319,7 +422,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
           <div class="sponsor"><img src="../assets/sponsor-srt.png" alt="Guidon de la SRT">Sponsorisée par la SRT</div>
         </div>
       </div>
-      <figcaption style="max-width:none"><b>10. Tableau de bord</b><span>Navigations en cours en tête, historique, filtre navigateur / suiveur.</span><code>D-23 · RG-NAV-16 · RG-PAR-07</code></figcaption>
+      <figcaption style="max-width:none"><b>13. Tableau de bord</b><span>Navigations en cours en tête, historique, filtre navigateur / suiveur.</span><code>D-23 · RG-NAV-16 · RG-PAR-07</code></figcaption>
     </figure>
 
     <figure style="justify-items:stretch">
@@ -352,10 +455,93 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
           <div class="sponsor"><img src="../assets/sponsor-srt.png" alt="Guidon de la SRT">Sponsorisée par la SRT</div>
         </div>
       </div>
-      <figcaption style="max-width:none"><b>11. Suivre une navigation</b><span>Carte du tracé avec dernière position, informations, journal ; lecture seule pour le suiveur.</span><code>RG-PAR-07 · RG-PAR-08 · RG-NAV-19</code></figcaption>
+      <figcaption style="max-width:none"><b>14. Suivre une navigation</b><span>Carte du tracé avec dernière position, informations, journal ; lecture seule pour le suiveur.</span><code>RG-PAR-07 · RG-PAR-08 · RG-NAV-19</code></figcaption>
+    </figure>
+
+    <figure style="justify-items:stretch">
+      <div class="browser">
+        <div class="chrome"><i></i><i></i><i></i><span class="url">app.nautilink · bateaux</span></div>
+        <div class="web">
+          <div class="top"><img src="../assets/logo-nautilink.png" alt="" width="22" height="22" style="border-radius:6px"><b>Nauti<em>Link</em></b><nav><span>Tableau de bord</span><span>Bateaux</span><span>Contacts</span><span>Quota</span></nav></div>
+          <div class="main">
+            <span class="kicker">Mes bateaux</span>
+            <div class="split">
+              <div class="card"><b>Alizé</b> <small style="color:var(--muted)">· Voilier</small>
+                <div class="kv" style="margin-top:6px"><span>Longueur</span>9,50 m<span>Immatric.</span>VA 123456<span>Port</span>Port-Haliguen<span>Moteur</span>Yanmar 20 ch<span>Autonomie</span>30 h<span>Carburant</span>40 l<span>Vitesse</span>6 nœuds<span>Tirant d'eau</span>1,60 m</div>
+              </div>
+              <div style="display:grid;gap:8px;align-content:start">
+                <div class="card"><b>Téléphone associé</b><br><small style="color:var(--muted)">Pixel 8 · associé le 2 nov. 2026</small><br><span class="act">Associer un autre téléphone</span></div>
+                <div class="card"><b>Petit Pingouin</b><br><small style="color:var(--muted)">Bateau à moteur · 6,20 m · même téléphone</small></div>
+                <span class="act">+ Ajouter un bateau</span>
+              </div>
+            </div>
+          </div>
+          <div class="sponsor"><img src="../assets/sponsor-srt.png" alt="Guidon de la SRT">Sponsorisée par la SRT</div>
+        </div>
+      </div>
+      <figcaption style="max-width:none"><b>15. Bateaux</b><span>Fiche complète, un téléphone par bateau ; en associer un autre remplace l'ancien.</span><code>RG-BAT-01 · RG-BAT-02 · RG-BAT-03</code></figcaption>
+    </figure>
+
+    <figure style="justify-items:stretch">
+      <div class="browser">
+        <div class="chrome"><i></i><i></i><i></i><span class="url">app.nautilink · corbeille</span></div>
+        <div class="web">
+          <div class="top"><img src="../assets/logo-nautilink.png" alt="" width="22" height="22" style="border-radius:6px"><b>Nauti<em>Link</em></b><nav><span>Tableau de bord</span><span>Bateaux</span><span>Contacts</span><span>Quota</span></nav></div>
+          <div class="main">
+            <span class="kicker">Corbeille</span>
+            <div class="note" style="font-size:11px">Les navigations supprimées sont restaurables pendant 30 jours, puis supprimées définitivement. Les suiveurs n'y ont plus accès ; leur temps reste décompté du quota.</div>
+            <table class="tbl">
+              <thead><tr><th>Navigation</th><th>Supprimée le</th><th>Suppression définitive</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>Alizé — Sauzon</td><td>20 nov. 2026</td><td>dans 25 jours</td><td><a>Restaurer</a></td></tr>
+                <tr><td>Petit Pingouin — Essai moteur</td><td>2 nov. 2026</td><td>dans 7 jours</td><td><a>Restaurer</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sponsor"><img src="../assets/sponsor-srt.png" alt="Guidon de la SRT">Sponsorisée par la SRT</div>
+        </div>
+      </div>
+      <figcaption style="max-width:none"><b>16. Corbeille</b><span>Restauration pendant 30 jours ; aucune navigation en cours n'y entre.</span><code>RG-NAV-20 · RG-NAV-21</code></figcaption>
+    </figure>
+
+    <figure style="justify-items:stretch">
+      <div class="browser">
+        <div class="chrome"><i></i><i></i><i></i><span class="url">app.nautilink · administration</span></div>
+        <div class="web">
+          <div class="top"><img src="../assets/logo-nautilink.png" alt="" width="22" height="22" style="border-radius:6px"><b>Nauti<em>Link</em> · administration</b></div>
+          <div class="main" style="grid-template-columns:130px 1fr">
+            <div class="admin-nav"><span class="on">Statistiques</span><span>Utilisateurs</span><span>Bateaux</span><span>Abonnements</span><span>Supervision</span><span>Annonces</span><span>Sécurité et traces</span></div>
+            <div style="display:grid;gap:10px;align-content:start">
+              <div class="stats"><div><b>128</b><small>comptes</small></div><div><b>7</b><small>navigations en cours</small></div><div><b>0</b><small>incident ouvert</small></div></div>
+              <span class="kicker">Dernières actions tracées</span>
+              <table class="tbl"><tbody>
+                <tr><td>25 nov., 09:12</td><td>admin · annonce de maintenance publiée</td></tr>
+                <tr><td>24 nov., 17:40</td><td>admin · bateau VA 654321 rattaché à un compte</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption style="max-width:none"><b>17. Espace administrateur</b><span>Les fonctions du lancement, chaque action tracée.</span><code>RG-ADM-01 · RG-ADM-02 · RG-ADM-03 · D-47</code></figcaption>
     </figure>
 
   </div>
 </main>
+<script>
+(() => {
+  const root = document.documentElement, btns = document.querySelectorAll('.toggle button');
+  const apply = v => {
+    if (v === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', v);
+    btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === v)));
+  };
+  let saved = 'auto';
+  try { saved = localStorage.getItem('nl-theme') || 'auto'; } catch (e) {}
+  apply(saved);
+  btns.forEach(b => b.addEventListener('click', () => {
+    apply(b.dataset.set);
+    try { localStorage.setItem('nl-theme', b.dataset.set); } catch (e) {}
+  }));
+})();
+</script>
 </body>
 </html>

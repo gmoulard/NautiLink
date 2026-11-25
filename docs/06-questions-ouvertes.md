@@ -74,6 +74,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : lancement.
 - À faire : valider le logo ; fichiers vectoriels ; icônes Android et iPhone ; déclinaisons claire, sombre et monochrome. La proposition actuelle utilise un repère GPS orange absent de la palette : l'ajouter à la palette ou le remplacer. Définir les couleurs du thème sombre.
+- Proposition non validée (2026-11-25, [maquettes](../site/designs/app.html), bouton « Sombre ») : fond `#08172A`, ciel `#0F2438`, surfaces `#15314D`, texte `#E3EEF7`, texte secondaire `#9BB4C9`, filets `#24476A`, bleu d'action éclairci `#5AAEE6` (texte `#08172A` dessus), SOS `#E35D5D`, bêta `#F2C14E` inchangé ; bandeau du sponsor gardé sur fond blanc.
 
 ### <a id="q-26"></a>Q-26 — Nom et présence en ligne
 
