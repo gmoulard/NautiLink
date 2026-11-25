@@ -20,24 +20,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Question : quel service fournit la météo marine relevée au début et à la fin d'une navigation (RG-NAV-28) : gratuit, utilisable par un serveur, avec vent, état de la mer et pression ?
 - Proposition : Open-Meteo (API météo et API marine), sans clé pour un usage non commercial ; à vérifier pour un usage commercial.
 
-### <a id="q-38"></a>Q-38 — Proposition de fin après « Continuer »
-
-- Priorité : avant la version réelle.
-- Question : quand le navigateur répond « Continuer » à la proposition de terminer une navigation immobile (RG-NAV-24), quand l'application la propose-t-elle de nouveau ?
-- Proposition : après 2 nouvelles heures sans éloignement de plus de 20 mètres.
-
-### <a id="q-35"></a>Q-35 — Position en retard
-
-- Priorité : avant l'application iPhone.
-- Question : à partir de quand une position est-elle « en retard » et déclenche-t-elle une notification push au suiveur (RG-IOS-06) ?
-- Proposition : aucune position reçue pendant deux fois la fréquence de la navigation, une seule notification jusqu'à la position suivante.
-
-### <a id="q-34"></a>Q-34 — Changer les heures d'une navigation
-
-- Priorité : bloquant pour RG-NAV-22.
-- Question : si le navigateur change les heures de début ou de fin (RG-NAV-22), le quota est-il recalculé, et que deviennent les positions et événements hors de la nouvelle plage ?
-- Proposition : le quota reste calculé sur les heures réellement enregistrées par le téléphone ; les positions et événements hors plage sont gardés mais masqués du tracé.
-
 ### <a id="q-17"></a>Q-17 — Formules d'abonnement
 
 - Priorité : lancement.
