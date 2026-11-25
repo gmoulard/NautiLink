@@ -53,7 +53,7 @@ GARDER=1 ./essai-test.sh # garde l'environnement lancé
 | `NAUTILINK_CHEMIN` | Chemin sous lequel tout est servi (`/nautilink` sur pi-appliance) | racine |
 | `NAUTILINK_ADRESSE_PUBLIQUE` | Adresse vue des utilisateurs, chemin compris, pour les liens des e-mails (`https://vdl.moulard.org/nautilink`) | déduite de la requête |
 | `NAUTILINK_BASE` | URL PostgreSQL (`postgres://…`) ; vide : pas de base. Sur le Pi : service `base` de `compose.yaml` (D-130) | vide |
-| `NAUTILINK_SMTP_HOTE`, `NAUTILINK_SMTP_PORT` | Relais d'e-mails, sans mot de passe. Sur le Pi : `${PI_SMTP_HOST}`, `${PI_SMTP_PORT}` (2525) | vide, `25` |
+| `NAUTILINK_SMTP_HOTE`, `NAUTILINK_SMTP_PORT` | Relais d'e-mails, sans mot de passe. Sur le Pi : `${PI_SMTP_HOST}`, `${PI_SMTP_PORT}`, par défaut `pi-appliance-mail` et 2525 | vide, `25` |
 | `NAUTILINK_EXPEDITEUR` | Adresse de l'expéditeur | `nautilink@moulard.org` |
 | `NAUTILINK_GOOGLE_CLIENTS` | Identifiants clients OAuth Google acceptés (Web, Android, iPhone), séparés par des virgules ; vide : connexion Google désactivée | vide |
 | `NAUTILINK_ADMINS` | Adresses e-mail des administrateurs, séparées par des virgules (RG-ADM-07) ; le compte doit exister et son adresse être confirmée ; vide : espace administrateur fermé | vide |
