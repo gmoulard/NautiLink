@@ -647,7 +647,7 @@ paths:
     get:
       tags: [Paramètres]
       summary: 'Paramètres généraux du navigateur.'
-      description: 'Récupérés par l''application mobile au lancement ; la dernière version reçue sert hors connexion.'
+      description: 'Récupérés par l''application mobile au lancement ; la dernière version reçue sert hors connexion. Un paramètre jamais réglé vaut `null` : valeurs d''un nouveau compte non décidées (Q-52).'
       x-regles: [RG-PRM-01, RG-PRM-02, RG-SMS-02, RG-NAV-05]
       responses:
         '200':
@@ -1596,19 +1596,24 @@ components:
       description: 'Paramètres généraux ; leur copie modifiée au démarrage forme les paramètres de navigation (RG-NAV-06). Ne s''appliquent jamais aux SMS SOS (RG-SOS-14).'
       properties:
         version: {type: integer, readOnly: true, description: 'Numéro incrémenté à chaque modification ; ne sert jamais à refuser une modification (RG-COM-04).'}
-        smsActifs: {type: boolean, description: Interrupteur général des SMS ordinaires.}
+        smsActifs: {type: [boolean, 'null'], description: Interrupteur général des SMS ordinaires.}
         smsParType:
           type: object
+          description: 'Champs envoyés seuls modifiés, comme pour le reste (RG-COM-04).'
           properties:
-            debut: {type: boolean}
-            positionsAutomatiques: {type: boolean}
-            positionsManuelles: {type: boolean}
-            notes: {type: boolean}
-            photos: {type: boolean}
-            notesVocales: {type: boolean}
-            fin: {type: boolean}
-        photoEnMms: {type: boolean, description: Joindre la photo en MMS (RG-SMS-05).}
-        frequenceParDefaut: {$ref: '#/components/schemas/FrequenceMinutes'}
+            debut: {type: [boolean, 'null']}
+            positionsAutomatiques: {type: [boolean, 'null']}
+            positionsManuelles: {type: [boolean, 'null']}
+            notes: {type: [boolean, 'null']}
+            photos: {type: [boolean, 'null']}
+            notesVocales: {type: [boolean, 'null']}
+            fin: {type: [boolean, 'null']}
+        photoEnMms: {type: [boolean, 'null'], description: Joindre la photo en MMS (RG-SMS-05).}
+        frequenceParDefaut:
+          oneOf:
+            - {$ref: '#/components/schemas/FrequenceMinutes'}
+            - {type: 'null'}
+        modifieLe: {type: string, format: date-time, readOnly: true}
 
     Position:
       type: object

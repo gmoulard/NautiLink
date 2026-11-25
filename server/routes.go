@@ -44,6 +44,8 @@ func (a *app) routeur() http.Handler {
 	a.routesWebBateaux(mux, c)
 	a.routesContacts(mux, c+"/api/v1")
 	a.routesWebContacts(mux, c)
+	a.routesParametres(mux, c+"/api/v1")
+	a.routesWebParametres(mux, c)
 
 	mux.HandleFunc("GET "+c+"/admin/{$}", page("admin.html"))
 

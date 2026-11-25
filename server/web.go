@@ -20,6 +20,7 @@ var fonctionsPages = template.FuncMap{
 		}
 		return strings.Replace(strconv.FormatFloat(*n, 'f', -1, 64), ".", ",", 1)
 	},
+	"oui": func(b *bool) bool { return b != nil && *b },
 	"deref": func(s *string) string {
 		if s == nil {
 			return ""

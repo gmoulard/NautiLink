@@ -138,6 +138,23 @@ var migrations = []string{
 	CREATE UNIQUE INDEX acces_unique ON acces (navigateur_id, suiveur_id,
 		coalesce(navigation_id, '00000000-0000-0000-0000-000000000000'));
 	CREATE INDEX acces_suiveur ON acces (suiveur_id);`,
+
+	// 4 — TODO-4.4 : paramètres généraux ; null : jamais réglé (Q-52).
+	`CREATE TABLE parametres (
+		utilisateur_id uuid PRIMARY KEY REFERENCES utilisateurs ON DELETE CASCADE,
+		sms_actifs boolean,
+		sms_debut boolean,
+		sms_positions_automatiques boolean,
+		sms_positions_manuelles boolean,
+		sms_notes boolean,
+		sms_photos boolean,
+		sms_notes_vocales boolean,
+		sms_fin boolean,
+		photo_en_mms boolean,
+		frequence_par_defaut integer,
+		version integer NOT NULL DEFAULT 0,
+		modifie_le timestamptz NOT NULL DEFAULT now()
+	);`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

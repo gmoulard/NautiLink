@@ -38,6 +38,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : un utilisateur inscrit par e-mail se connecte ensuite par Google ou par Apple avec la même adresse.
 - Proposition (non validée) : la connexion est rattachée au compte existant si le fournisseur garantit l'adresse (adresse vérifiée chez Google ou chez Apple) ; sinon, refus avec un message qui invite à se connecter par e-mail. Ce qui est fait (TODO-4.1) : refus (`email_deja_utilise`) dans tous les cas.
 
+### <a id="q-52"></a>Q-52 — Paramètres généraux d'un nouveau compte
+
+- Priorité : avant la version Android réelle (TODO-4.4).
+- Cas : à la création d'un compte, l'interrupteur des SMS, les préférences par type, le MMS de photo et la fréquence par défaut (RG-PRM-01, RG-SMS-02, RG-NAV-05) n'ont pas de valeur décidée.
+- Proposition (non validée), d'après le prototype : SMS activés, tous les types cochés, photo jointe en MMS non cochée, fréquence de 30 minutes. Ce qui est fait (TODO-4.4) : aucun paramètre réglé (`null`) tant que le navigateur ne les a pas choisis ; la page Web les fait choisir.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
