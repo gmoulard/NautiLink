@@ -14,6 +14,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Couleurs, polices, ton, logo | `docs/05-identite-marque.md` |
 | Ce qui n'est pas décidé | `docs/06-questions-ouvertes.md` (`Q-nn`) |
 | Pourquoi une règle est ainsi | `docs/07-decisions.md` (`D-nn`) |
+| Architecture technique : serveur, base, fichiers, e-mails, push | `docs/08-architecture.md` |
 | Scénarios de tests fonctionnels | `docs/tests/scenarios-fonctionnels.md` (`TS-<DOMAINE>-<nn>`) |
 | Ce qu'il reste à faire, dans quel ordre | `docs/TODO.md` (`TODO-x.y`), `docs/Todo-done.md` |
 | Demandes en vrac de l'utilisateur | `docs/Todo-ithem-for-todo.md` |
@@ -23,8 +24,10 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Site de présentation (GitHub Pages) | `site/` (`index.html`, `telecharger.html`, `abonnement.html`, `securite.html`, `avertissement.html`, `style.css`), publié par `.github/workflows/pages.yml` |
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
+| Autorisations Android, versions visées, Google Play | `docs/etudes/autorisations-android.md` |
 | Localisation en arrière-plan sur iPhone, App Store | `docs/etudes/localisation-arriere-plan-iphone.md` |
 | Notes vocales : format audio, transcription | `docs/etudes/notes-vocales.md` |
+| Disponibilité du nom NautiLink : marques, domaines, réseaux sociaux | `docs/etudes/nom-nautilink.md` |
 
 ## Ordre de priorité en cas d'écart
 

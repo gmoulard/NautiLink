@@ -81,14 +81,26 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant.
 - Décidé : localisation « Pendant l'utilisation » sur iPhone (D-54) ; exclusion de l'optimisation de la batterie sur Android (D-52).
-- Reste : liste des autorisations Android (localisation en arrière-plan, SMS, appareil photo, micro, notifications) ; versions minimales d'Android et d'iOS.
+- Étude : [autorisations Android](etudes/autorisations-android.md) (liste, versions concernées, règles Google Play). Version visée imposée par Google Play : Android 16 (API 36).
+- Décidé (D-80) : Android 8.0 au minimum ; autorisations demandées au moment où elles servent et redemandées à chaque besoin ; localisation précise refusée : navigation sans positions (RG-AND-01 à RG-AND-03).
+- Reste : version minimale d'iOS ; comportement si `SEND_SMS` est refusé ; appareil photo de NautiLink ou du téléphone ; réveil entre deux positions sans alarme exacte (RG-GPS-06) ; choix de la SIM sur les téléphones à deux SIM.
+- Propositions non validées :
+  - `SEND_SMS` refusé : SOS par Internet, plus le SMS SOS prérempli ; autre choix : SOS par Internet seulement ;
+  - réveil entre deux positions par une minuterie dans le service de premier plan ; autre choix : alarmes exactes (restreintes par Google Play).
 
 ### <a id="q-22"></a>Q-22 — Architecture et développement
 
 - Priorité : bloquant.
 - Décidé (D-58, D-59) : applications mobiles Android et iPhone en Flutter, un seul code ; serveur maison.
 - Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL.
-- Reste : cadre du serveur, hébergeur après la bêta, base de données, stockage des fichiers, API et formats de données, synchronisation, environnements de développement, test et production.
+- Reste : cadre du serveur, hébergeur après la bêta, stockage des fichiers, notifications push, sauvegardes, API et formats de données, synchronisation, environnements de développement, test et production.
+- Propositions (non validées), détaillées dans [08-architecture.md](08-architecture.md) §3 :
+  - photos et notes vocales : fichiers dans un volume Docker du serveur, description dans PostgreSQL, servis par le serveur après contrôle de l'accès ;
+  - hébergeur après la bêta : serveur virtuel dans l'Union européenne, même image Docker, PostgreSQL dédié ;
+  - notifications push (RG-IOS-06) : appel direct du service push d'Apple (APNs) par le serveur ; Firebase Cloud Messaging seulement si Android doit aussi en recevoir ;
+  - sauvegardes (RG-DON-02) : copie nocturne de la base et des fichiers hors du Pi, 30 jours, essai de restauration avant la bêta ;
+  - e-mails après la bêta : relais de l'hébergeur, SPF, DKIM et DMARC ;
+  - géocodage inverse (RG-NAV-16, RG-JRN-10) : Nominatim (OpenStreetMap) appelé par le serveur, avec cache.
 
 ## 3. Données, sécurité, conformité
 
@@ -103,6 +115,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : lancement.
 - À vérifier : disponibilité juridique du nom NautiLink, noms de domaine, comptes sur les réseaux sociaux.
+- Étude : [nom NautiLink](etudes/nom-nautilink.md) (2026-11-25) : pas d'homonyme exact repéré parmi les applications ; quasi-homonyme Nauti-Link (conseil en cession d'entreprises du nautisme, France) ; bases de marques, domaines et comptes non consultés.
+- Proposition (non validée) : garder le nom NautiLink sous réserve de la consultation des bases INPI, EUIPO et OMPI et d'un avis juridique, puis réserver les domaines et comptes libres.
 
 ### <a id="q-30"></a>Q-30 — Maquettes et accessibilité
 

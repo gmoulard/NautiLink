@@ -159,3 +159,9 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-77"></a>D-77 | Journal sur le Web | Consulter notes, photos et vocal ; nom des lieux pour les positions. | Lecture des notes, photos en grand, écoute des notes vocales ; nom du lieu à côté de chaque position. | RG-JRN-09, RG-JRN-10 |
 | <a id="d-78"></a>D-78 | Météo | Mémoriser la météo, affichable sur le Web. | Relevé automatique au début et à la fin de la navigation, affiché sur la page de la navigation. | RG-NAV-28 |
 | <a id="d-79"></a>D-79 | Carte marine | Intégrer OpenSeaMap et les données gratuites du SHOM. | Fond OpenStreetMap et balisage OpenSeaMap sur la carte de la page d'une navigation ; données du SHOM à étudier (Q-23, priorité lancement). | RG-NAV-29 |
+
+## 2026-11-25 — Autorisations Android (TODO-2.3)
+
+| Id | Sujet | Contradiction ou manque | Décision | Règles |
+|----|-------|-------------------------|----------|--------|
+| <a id="d-80"></a>D-80 | Autorisations Android | Version minimale d'Android, moment des demandes d'autorisations, refus de la localisation précise (Q-31, TODO-2.3). | Android 8.0 (API 26) au minimum ; chaque autorisation demandée au moment où elle sert et redemandée chaque fois que l'application en a besoin ; localisation refusée : navigation sans positions. | RG-AND-01, RG-AND-02, RG-AND-03 |

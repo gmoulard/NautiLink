@@ -15,7 +15,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-3 | Décisions sur l'administration, les données et la conformité | TODO-1.15, TODO-1.16, TODO-1.17 | aucun | [x] |
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
-| LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7 | LOT-4, LOT-5 | [ ] |
+| LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7 | LOT-4, LOT-5 | [~] |
 | LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10 | aucun | [~] |
 | LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [ ] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
@@ -55,8 +55,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
   - Critères d'acceptation : prototype qui enregistre une position toutes les 15 minutes pendant 8 heures, écran éteint, sur au moins trois marques de téléphones (dont Samsung et Xiaomi) ; positions manquantes et batterie consommée notées.
   - Fait : [étude documentaire](etudes/gps-arriere-plan-android.md) (service de premier plan `location`, autorisations, Doze, constructeurs, reprise au redémarrage, protocole d'essai). Reste : prototype sur trois marques (dont Samsung et Xiaomi) avec mesures ; relire dontkillmyapp.com et la politique Google Play (inaccessibles lors de la rédaction).
   - Tranché le 2026-11-24 (D-51, D-52) : reprise au lancement, exclusion de l'optimisation de la batterie et aide par marque.
-- [ ] **TODO-2.3**: Autorisations Android et versions visées ([Q-31](06-questions-ouvertes.md#q-31)). Dépend de : TODO-2.1, TODO-2.2.
+- [~] **TODO-2.3**: Autorisations Android et versions visées ([Q-31](06-questions-ouvertes.md#q-31)). Dépend de : TODO-2.1, TODO-2.2.
   - Critères d'acceptation : liste des autorisations (localisation en arrière-plan, SMS, appareil photo, micro, notifications), version minimale d'Android choisie, parcours de demande des autorisations dessiné.
+  - Fait (2026-11-25) : [étude documentaire](etudes/autorisations-android.md) : 12 autorisations avec versions d'Android et règles Google Play, version visée API 36, version minimale proposée (Android 8.0), parcours de demande en Mermaid (propositions dans Q-31). Tranché le 2026-11-25 (D-80) : Android 8.0 au minimum, autorisations demandées au moment où elles servent et redemandées à chaque besoin, localisation refusée : navigation sans positions (RG-AND-01 à RG-AND-03). Reste : relire les pages Google Play (inaccessibles lors de la rédaction) ; choix pour le refus de `SEND_SMS` et le réveil entre deux positions (Q-31) ; essai du parcours sur le prototype de TODO-2.2.
 - [~] **TODO-2.4**: MMS : taille, opérateurs, repli ([Q-13](06-questions-ouvertes.md#q-13), RG-SMS-05). Dépend de : TODO-2.1.
   - Critères d'acceptation : MMS avec photo envoyé et reçu chez les quatre opérateurs français ; taille maximale et comportement en cas d'échec écrits.
   - Fait : [étude documentaire](etudes/sms-mms-android.md#5-mms-todo-24) (API, taille lue sur le téléphone, repères 300/600 Ko non officiels). Reste : essai chez les quatre opérateurs ; choix de la taille et du comportement en cas d'échec par l'utilisateur.
@@ -72,8 +73,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 ## 3. Préparation du développement
 
-- [ ] **TODO-3.1**: Architecture technique : hébergement, base de données, stockage des photos et notes vocales, envoi des e-mails ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-2.1.
+- [~] **TODO-3.1**: Architecture technique : hébergement, base de données, stockage des photos et notes vocales, envoi des e-mails ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-2.1.
   - Critères d'acceptation : document d'architecture dans `docs/`, schéma Mermaid, choix validés par l'utilisateur.
+  - Fait (2026-11-25) : [08-architecture.md](08-architecture.md) avec schéma Mermaid, choix décidés (D-58 à D-62 et suivantes) et propositions non validées reportées dans Q-22 (fichiers, hébergeur après la bêta, push, sauvegardes, e-mails, géocodage). Reste : validation par l'utilisateur.
 - [ ] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-3.1.
   - Critères d'acceptation : description de l'API (OpenAPI) couvrant chaque règle `RG-…` qui passe par le serveur.
 - [~] **TODO-3.3**: Maquettes Android et Web ([Q-30](06-questions-ouvertes.md#q-30)). Dépend de : aucune.
@@ -165,8 +167,9 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 - [!] **TODO-8.1**: Logo, icône Android, déclinaisons, couleurs du thème sombre ([Q-25](06-questions-ouvertes.md#q-25)). Dépend de : aucune.
   - Critères d'acceptation : fichiers vectoriels et icônes Android et iPhone dans `docs/assets/`, palette complétée dans l'identité de marque. Bloqué par : validation du logo par l'utilisateur.
-- [ ] **TODO-8.2**: Disponibilité du nom, domaines, réseaux sociaux ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : aucune.
+- [~] **TODO-8.2**: Disponibilité du nom, domaines, réseaux sociaux ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : aucune.
   - Critères d'acceptation : recherche d'antériorité faite, domaines et comptes réservés.
+  - Fait : [étude documentaire](etudes/nom-nautilink.md) (moteur de recherche ; quasi-homonyme Nauti-Link) (2026-11-25). Reste : consulter INPI, EUIPO, OMPI ; vérifier domaines et comptes ; vérification juridique ; décision Q-26 ; réservations par l'utilisateur.
 - [ ] **TODO-8.3**: Conditions d'utilisation, politique de confidentialité et [avertissement bêta](textes/avertissement-beta.md) relus par un juriste (RG-DON-03, D-56). Dépend de : TODO-1.17.
   - Critères d'acceptation : textes publiés sur le Web et accessibles depuis Android.
 - [~] **TODO-8.5**: Site de présentation sur GitHub Pages : accueil, mémo sécurité en mer, avertissement bêta (`site/`, D-56). Dépend de : aucune.

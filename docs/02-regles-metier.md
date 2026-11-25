@@ -198,3 +198,9 @@ L'application iPhone a les mêmes fonctions que l'application Android, avec les 
 - <a id="rg-ios-06"></a>**RG-IOS-06** — Le suiveur sur iPhone reçoit une notification push pour chaque navigation qu'il suit : alerte SOS (en plus de l'e-mail), début et fin de navigation, nouvelle photo, position en retard. Il peut désactiver chaque type, sauf le SOS ([D-44](07-decisions.md#d-44)). Seuil d'une position en retard : [Q-35](06-questions-ouvertes.md#q-35).
 - <a id="rg-ios-07"></a>**RG-IOS-07** — L'abonnement se souscrit par achat intégré de l'App Store ; le serveur le reconnaît sur tous les supports (RG-ECO-07).
 - <a id="rg-ios-08"></a>**RG-IOS-08** — L'application iPhone demande l'autorisation de localisation « Pendant l'utilisation » ; une navigation démarre à l'écran et continue en arrière-plan ([D-54](07-decisions.md#d-54)).
+
+## 16. Application Android
+
+- <a id="rg-and-01"></a>**RG-AND-01** — L'application Android fonctionne à partir d'Android 8.0 (API 26) ; elle vise la version imposée par Google Play ([D-80](07-decisions.md#d-80), [étude](etudes/autorisations-android.md)).
+- <a id="rg-and-02"></a>**RG-AND-02** — Chaque autorisation est demandée au moment où elle sert, après une explication, et non au premier lancement. Une autorisation refusée est redemandée chaque fois que l'application en a besoin ([D-80](07-decisions.md#d-80)). Ordre détaillé : [étude](etudes/autorisations-android.md#4-parcours-de-demande-des-autorisations).
+- <a id="rg-and-03"></a>**RG-AND-03** — Si la localisation précise est refusée, la navigation démarre et se déroule sans positions ; l'application redemande l'autorisation à chaque acquisition (position automatique, position manuelle, SOS) ([D-80](07-decisions.md#d-80)).
