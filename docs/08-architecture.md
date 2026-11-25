@@ -43,7 +43,7 @@ flowchart LR
 
 | Pièce | Choix | Fondement |
 |-------|-------|-----------|
-| Applications mobiles | Flutter, un seul code pour Android et iPhone ; le même code donne la démonstration Web du prototype. | [D-58](07-decisions.md#d-58) |
+| Applications mobiles | Flutter, un seul code pour Android et iPhone, dans `app/` : le prototype évolue en vraie application ; un mode « démonstration » choisi à la construction donne la démonstration Web et l'APK de démonstration du site. | [D-58](07-decisions.md#d-58), [D-127](07-decisions.md#d-127) |
 | Application iPhone | Même code Flutter ; publication quand le compte développeur Apple sera ouvert. | [D-60](07-decisions.md#d-60) |
 | Serveur | Serveur maison, pas de service tout fait ; écrit en Go ; un seul exemplaire qui porte l'API, la plateforme Web et l'espace administrateur sous un chemin réservé. Squelette dans [`server/`](../server/README.md) (TODO-3.7). | [D-59](07-decisions.md#d-59), [D-62](07-decisions.md#d-62) |
 | Hébergement pendant la bêta | Raspberry Pi 4 de `vdl.moulard.org` sous pi-appliance, installé par « Docker Compose libre » ; adresse publique `https://nautilink.moulard.org`, redirigée par Traefik vers `https://vdl.moulard.org/nautilink/`. | [D-62](07-decisions.md#d-62) |
