@@ -21,9 +21,10 @@ import (
 // RG-NOT-03, RG-PRM-04. Une alerte est acceptée quel que soit le quota,
 // l'abonnement ou la confirmation de l'adresse e-mail (RG-SOS-03,
 // RG-CPT-09) ; elle est rejouable sans doublon (08-architecture.md §5).
-// Contenu des e-mails : Q-56 ; relance des e-mails en échec : Q-57 ; SOS
-// après la fin : Q-58 ; historique vu des suiveurs : Q-59 ; personnes
-// ajoutées pendant la navigation : Q-60 (propositions appliquées en attendant).
+// Contenu des e-mails : Q-56 ; relance des e-mails en échec : Q-57 ;
+// historique vu des suiveurs : Q-59 (propositions appliquées en attendant).
+// SOS après la fin : RG-SOS-19, D-120 ; personnes ajoutées pendant la
+// navigation : RG-SOS-21, D-122.
 
 type statutSmsJSON struct {
 	ContactID  *string    `json:"contactId"`
@@ -127,9 +128,11 @@ func (a *app) envoyerAlerte(ctx context.Context, r *http.Request, utilisateur, i
 		if personnes == nil {
 			personnes = &n.personnes
 		}
-		// SOS déclenché après la fin enregistrée (clôture automatique,
-		// RG-ECO-12, ou fin ordinaire, Q-58) : SOS depuis l'accueil.
-		if n.finEnr == nil || !al.HeureDeclenchement.After(*n.finEnr) {
+		// SOS déclenché après une clôture automatique (RG-ECO-12) : SOS
+		// depuis l'accueil. Après une fin ordinaire, il reste rattaché à la
+		// navigation : journal et destinataires de celle-ci (RG-SOS-19,
+		// D-120).
+		if n.cloture == nil || !al.HeureDeclenchement.After(*n.cloture) {
 			navigation = &n.id
 		}
 	} else if ok, err := a.peutDemarrer(ctx, utilisateur, bateau); err != nil {
@@ -372,8 +375,9 @@ type donneesSos struct {
 // hors navigation (RG-SOS-06, RG-SOS-15), et contacts SOS dont l'e-mail est
 // connu, sans les personnes décochées au démarrage (RG-NAV-25) ; un
 // suiveur dont l'accès a été accordé après le démarrage n'a pas pu être
-// décoché : il est prévenu (Q-60). Une adresse ne reçoit qu'un e-mail. La
-// copie au navigateur (RG-NOT-03) est à part.
+// décoché, de même qu'un contact SOS créé après le démarrage : ils sont
+// prévenus (RG-SOS-21, D-122). Une adresse ne reçoit qu'un e-mail. La copie
+// au navigateur (RG-NOT-03) est à part.
 func (a *app) destinatairesSos(ctx context.Context, navigateur string, navigation *string, alertees []string) ([]string, error) {
 	lignes, err := a.b.pool.Query(ctx, `SELECT u.email FROM acces ac JOIN utilisateurs u ON u.id = ac.suiveur_id
 		WHERE ac.navigateur_id = $1 AND u.id <> $1
@@ -383,7 +387,8 @@ func (a *app) destinatairesSos(ctx context.Context, navigateur string, navigatio
 			OR ac.accorde_le > (SELECT creee_le FROM navigations WHERE id = $2::uuid))
 		UNION ALL
 		SELECT c.email FROM contacts c WHERE c.navigateur_id = $1 AND c.contact_sos AND c.supprime_le IS NULL
-		AND coalesce(c.email, '') <> '' AND ($3::text[] IS NULL OR c.id::text = ANY($3::text[]))`, navigateur, navigation, alertees)
+		AND coalesce(c.email, '') <> '' AND ($3::text[] IS NULL OR c.id::text = ANY($3::text[])
+			OR c.creee_le > (SELECT creee_le FROM navigations WHERE id = $2::uuid))`, navigateur, navigation, alertees)
 	if err != nil {
 		return nil, err
 	}

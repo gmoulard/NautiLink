@@ -94,9 +94,12 @@ func TestAlerteSos(t *testing.T) {
 		!strings.Contains(txt, "https://exemple.org/nautilink/navigations/"+id) {
 		t.Fatalf("texte de l'e-mail de début : %q", txt)
 	}
-	// Paul suit cette navigation seulement, après le démarrage : prévenu (Q-60).
+	// Paul suit cette navigation seulement, après le démarrage, et le contact
+	// SOS « Tardif » est créé après le démarrage : prévenus (RG-SOS-21,
+	// D-122). « Décoché », créé avant, reste non prévenu.
 	paul := e.compte("paul@exemple.org", "Paul")
 	e.suivre(nav, paul, "paul@exemple.org", "navigation", id)
+	contact("Tardif", "06 44 44 44 44", "tardif@exemple.org")
 
 	// SOS en navigation, même avec une adresse non confirmée (RG-SOS-03) :
 	// e-mail aux suiveurs et aux contacts SOS avec e-mail, copie au navigateur.
@@ -108,7 +111,7 @@ func TestAlerteSos(t *testing.T) {
 	if code != 201 || r["navigationId"] != id || r["naturePosition"] != "actuelle" || r["personnesABord"] != 2.0 {
 		t.Fatalf("SOS : %d %v", code, r)
 	}
-	tous := []string{"lea@exemple.org", "zoe@exemple.org", "paul@exemple.org", "secours@exemple.org"}
+	tous := []string{"lea@exemple.org", "zoe@exemple.org", "paul@exemple.org", "secours@exemple.org", "tardif@exemple.org"}
 	memes(t, "e-mails SOS", e.courrier.recusPar(n0, "SOS — Alizé"), append(tous, "nav@exemple.org")...)
 	envoyes := []string{}
 	for _, x := range r["emailsEnvoyesA"].([]any) {
@@ -188,33 +191,101 @@ func TestAlerteSos(t *testing.T) {
 		t.Fatalf("historique vu sans accès : %v", l)
 	}
 
-	// Fin, puis SOS déclenché après la fin : SOS depuis l'accueil (Q-58).
+	// Fin, puis SOS déclenché après la fin : rattaché à la navigation,
+	// inscrit dans son journal, e-mails à ses destinataires (RG-SOS-19,
+	// D-120).
 	fin := map[string]any{"id": uuid(t), "type": "fin", "heureAcquisition": heure(t0.Add(90 * time.Minute))}
 	if code, _ := e.appel("PUT", "/navigations/"+id+"/fin", nav, fin); code != 200 {
 		t.Fatalf("fin : %d", code)
 	}
+	tard := uuid(t)
 	n0 = e.courrier.nombre()
-	code, r = e.appel("PUT", "/alertes-sos/"+uuid(t), nav, alerteSos(bateau, id, t0.Add(100*time.Minute), false))
-	if code != 201 || r["navigationId"] != nil || r["naturePosition"] != "aucune" {
+	code, r = e.appel("PUT", "/alertes-sos/"+tard, nav, alerteSos(bateau, id, t0.Add(100*time.Minute), false))
+	if code != 201 || r["navigationId"] != id || r["naturePosition"] != "aucune" {
 		t.Fatalf("SOS après la fin : %d %v", code, r)
 	}
-	// Hors navigation (RG-SOS-15) : suiveurs de périmètre navigateur, tous
-	// les contacts SOS avec e-mail ; pas Paul (périmètre navigation).
-	memes(t, "e-mails du SOS depuis l'accueil", e.courrier.recusPar(n0, "SOS — Alizé"), "lea@exemple.org", "zoe@exemple.org",
-		"marc@exemple.org", "secours@exemple.org", "decoche@exemple.org", "nav@exemple.org")
-	if txt := e.courrier.texte(n0, "lea@exemple.org", "SOS"); !strings.Contains(txt, "aucune position connue") {
-		t.Fatalf("SOS sans position : %q", txt)
+	memes(t, "e-mails du SOS après la fin", e.courrier.recusPar(n0, "SOS — Alizé"), append(tous, "nav@exemple.org")...)
+	if txt := e.courrier.texte(n0, "lea@exemple.org", "SOS"); !strings.Contains(txt, "aucune position connue") ||
+		!strings.Contains(txt, "https://exemple.org/nautilink/navigations/"+id) {
+		t.Fatalf("SOS après la fin sans position : %q", txt)
 	}
-	// Historique du bateau : Marc (périmètre navigateur) voit les deux, Paul
-	// (périmètre navigation) seulement celui de sa navigation (Q-59).
-	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, marc, nil); len(l) != 2 {
+	// Dans le journal, non modifiable et jamais masqué, même après un
+	// changement des heures affichées qui l'exclut de la plage (RG-NAV-22).
+	if code, r := e.appel("PATCH", "/navigations/"+id, nav, map[string]any{"debut": heure(t0.Add(70 * time.Minute)),
+		"fin": heure(t0.Add(80 * time.Minute))}); code != 200 {
+		t.Fatalf("modification des heures : %d %v", code, r)
+	}
+	_, j = e.appel("GET", "/navigations/"+id+"/evenements", lea, nil)
+	vus := 0
+	for _, ev := range j["evenements"].([]any) {
+		if m := ev.(map[string]any); m["type"] == "sos" {
+			vus++
+			if m["masque"] != false {
+				t.Fatalf("SOS masqué : %v", m)
+			}
+		}
+	}
+	if vus != 2 {
+		t.Fatalf("SOS du journal : %d, attendu 2 : %v", vus, j)
+	}
+	if code, _ := e.appel("PATCH", "/navigations/"+id+"/evenements/"+tard, nav, map[string]any{"texte": "x"}); code != 403 {
+		t.Fatalf("SOS après la fin modifiable : %d", code)
+	}
+
+	// SOS depuis l'accueil (RG-SOS-15) : suiveurs de périmètre navigateur,
+	// tous les contacts SOS avec e-mail ; pas Paul (périmètre navigation).
+	n0 = e.courrier.nombre()
+	code, r = e.appel("PUT", "/alertes-sos/"+uuid(t), nav, alerteSos(bateau, nil, t0.Add(110*time.Minute), false))
+	if code != 201 || r["navigationId"] != nil {
+		t.Fatalf("SOS depuis l'accueil : %d %v", code, r)
+	}
+	memes(t, "e-mails du SOS depuis l'accueil", e.courrier.recusPar(n0, "SOS — Alizé"), "lea@exemple.org", "zoe@exemple.org",
+		"marc@exemple.org", "secours@exemple.org", "decoche@exemple.org", "tardif@exemple.org", "nav@exemple.org")
+	// Historique du bateau : Marc (périmètre navigateur) voit les trois, Paul
+	// (périmètre navigation) seulement ceux de sa navigation (Q-59).
+	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, marc, nil); len(l) != 3 {
 		t.Fatalf("historique de Marc : %v", l)
 	}
-	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, paul, nil); len(l) != 1 || l[0]["id"] != sos {
+	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, paul, nil); len(l) != 2 || l[0]["id"] != tard || l[1]["id"] != sos {
 		t.Fatalf("historique de Paul : %v", l)
 	}
-	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, nav, nil); len(l) != 2 {
+	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, nav, nil); len(l) != 3 {
 		t.Fatalf("historique du navigateur : %v", l)
+	}
+
+	// Navigation clôturée automatiquement (RG-ECO-12) : un SOS déclenché
+	// après la clôture reste un SOS depuis l'accueil, absent du journal.
+	id2 := uuid(t)
+	t1 := t0.Add(105 * time.Minute)
+	d2 := demarrage(bateau, tel, t1, 47.70, -3.36)
+	d2["debut"].(map[string]any)["id"] = uuid(t)
+	e.a.b.pool.Exec(t.Context(), "UPDATE utilisateurs SET email_verifie_le = now() WHERE email = 'nav@exemple.org'")
+	if code, r := e.appel("PUT", "/navigations/"+id2, nav, d2); code != 201 {
+		t.Fatalf("démarrage 2 : %d %v", code, r)
+	}
+	cl := t1.Add(5 * time.Minute)
+	if _, err := e.a.b.pool.Exec(t.Context(), `UPDATE navigations SET fin_enregistree = $2, fin = $2,
+		cloture_automatique_le = $2 WHERE id = $1`, id2, cl); err != nil {
+		t.Fatal(err)
+	}
+	n0 = e.courrier.nombre()
+	code, r = e.appel("PUT", "/alertes-sos/"+uuid(t), nav, alerteSos(bateau, id2, cl.Add(time.Minute), true))
+	if code != 201 || r["navigationId"] != nil {
+		t.Fatalf("SOS après la clôture automatique : %d %v", code, r)
+	}
+	if l := e.courrier.recusPar(n0, "SOS — Alizé"); !slices.Contains(l, "decoche@exemple.org") || slices.Contains(l, "paul@exemple.org") {
+		t.Fatalf("e-mails du SOS après la clôture automatique : %v", l)
+	}
+	_, j = e.appel("GET", "/navigations/"+id2+"/evenements", nav, nil)
+	for _, ev := range j["evenements"].([]any) {
+		if ev.(map[string]any)["type"] == "sos" {
+			t.Fatalf("SOS après la clôture automatique dans le journal : %v", j)
+		}
+	}
+	// Déclenché avant la clôture automatique : rattaché à la navigation.
+	code, r = e.appel("PUT", "/alertes-sos/"+uuid(t), nav, alerteSos(bateau, id2, cl.Add(-time.Minute), true))
+	if code != 201 || r["navigationId"] != id2 {
+		t.Fatalf("SOS avant la clôture automatique : %d %v", code, r)
 	}
 	// Bateau d'un autre : refusé.
 	_, autreBateau, _ := e.marin("autre2@exemple.org", "Autre 2", "Brise")

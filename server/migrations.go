@@ -306,6 +306,17 @@ var migrations = []string{
 		mis_a_jour_le timestamptz NOT NULL DEFAULT now(),
 		PRIMARY KEY (alerte_id, telephone, rang)
 	);`,
+
+	// 7 — RG-SOS-21, D-122 : date de création des contacts, pour prévenir
+	// d'un SOS un contact SOS ajouté après le démarrage de la navigation.
+	// Contacts déjà enregistrés : au plus tôt la date de leur dernière
+	// modification et le démarrage de la première navigation de leur
+	// navigateur, pour qu'ils restent traités comme avant (une personne
+	// décochée au démarrage n'est pas prévenue pour autant).
+	`ALTER TABLE contacts ADD COLUMN creee_le timestamptz;
+	UPDATE contacts c SET creee_le = least(c.modifie_le,
+		(SELECT min(n.creee_le) FROM navigations n WHERE n.navigateur_id = c.navigateur_id));
+	ALTER TABLE contacts ALTER COLUMN creee_le SET DEFAULT now(), ALTER COLUMN creee_le SET NOT NULL;`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

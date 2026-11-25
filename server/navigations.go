@@ -700,7 +700,9 @@ func lireEvenement(l pgx.Row, n navLigne) (evenementJSON, error) {
 	if ft != nil {
 		e.Fichier = &fichierJSON{TypeMedia: *ft, TailleOctets: taille, DureeSecondes: duree, Recu: recu}
 	}
-	e.Masque = n.masque(e.HeureAcquisition)
+	// Un SOS n'est jamais masqué du journal, même hors de la plage affichée
+	// ou déclenché après la fin (RG-SOS-19, D-120).
+	e.Masque = e.Type != "sos" && n.masque(e.HeureAcquisition)
 	return e, err
 }
 
