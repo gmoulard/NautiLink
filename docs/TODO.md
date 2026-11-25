@@ -17,7 +17,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
 | LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7, TODO-3.11 | LOT-4, LOT-5 | [~] |
 | LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10 | aucun | [~] |
-| LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [ ] |
+| LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [~] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [ ] |
 | LOT-11 | Android : journal, fin, contacts, abonnement | TODO-5.4, TODO-5.6, TODO-5.7, TODO-5.8 | LOT-10 | [ ] |
