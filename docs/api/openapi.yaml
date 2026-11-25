@@ -63,14 +63,14 @@ x-traitements:
     description: 'Relevée auprès de l''API de Météo-France au point de départ et d''arrivée (Q-39).'
     x-regles: [RG-NAV-28]
   - nom: 'E-mails'
-    description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur ; contenu des e-mails SOS et de début : Q-56 ; e-mail SOS non accepté par le relais : relancé chaque minute pendant 24 heures (Q-57).'
-    x-regles: [RG-NOT-01, RG-NOT-02, RG-NOT-03, RG-SOS-06, RG-SOS-15, RG-PRM-04, RG-PAR-04]
+    description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur ; contenu des e-mails SOS et de début : RG-SOS-17, RG-NOT-05 ; e-mail SOS non accepté par le relais : relancé chaque minute pendant 24 heures (RG-SOS-18).'
+    x-regles: [RG-NOT-01, RG-NOT-02, RG-NOT-03, RG-NOT-05, RG-SOS-06, RG-SOS-15, RG-SOS-17, RG-SOS-18, RG-SOS-21, RG-PRM-04, RG-PAR-04]
   - nom: 'Notifications push des suiveurs'
     description: 'APNs (iPhone) et FCM (Android) — SOS, début, fin, nouvelle photo, position en retard (aucune position reçue pendant deux fois la fréquence, une seule notification jusqu''à la position suivante).'
     x-regles: [RG-IOS-06, RG-AND-08, RG-NOT-02]
   - nom: 'Purge de la corbeille'
-    description: 'Suppression définitive 30 jours après le passage dans la corbeille, avec le journal de bord, les positions et les fichiers ; les alertes SOS restent dans l''historique du bateau ; les accès de périmètre navigation sur elle sont retirés (Q-71).'
-    x-regles: [RG-NAV-20, RG-DON-01]
+    description: 'Suppression définitive 30 jours après le passage dans la corbeille, avec le journal de bord, les positions et les fichiers ; les alertes SOS restent dans l''historique du bateau ; les accès de périmètre navigation sur elle sont retirés (RG-PAR-10).'
+    x-regles: [RG-NAV-20, RG-PAR-10, RG-DON-01]
   - nom: 'Conservation'
     description: 'Navigations, journaux et positions sans limite ; journaux techniques 1 an ; journaux d''administration 3 ans ; sauvegarde quotidienne gardée 30 jours (pi-appliance pendant la bêta).'
     x-regles: [RG-NAV-18, RG-JRN-01, RG-DON-01, RG-DON-02]
@@ -83,7 +83,7 @@ x-regles-sans-serveur: [RG-CPT-03, RG-NAV-09, RG-NAV-12, RG-NAV-23, RG-NAV-24, R
   RG-GPS-03, RG-GPS-05, RG-GPS-06, RG-COM-02, RG-COM-03, RG-SMS-03, RG-SMS-04,
   RG-SOS-01, RG-SOS-07, RG-SOS-08, RG-SOS-16, RG-ECO-10, RG-PRM-05, RG-ADM-04, RG-ADM-05,
   RG-IOS-02, RG-IOS-04, RG-IOS-08, RG-IOS-09, RG-AND-01, RG-AND-02, RG-AND-03, RG-AND-04,
-  RG-AND-05, RG-AND-06, RG-AND-07, RG-COM-06]
+  RG-AND-05, RG-AND-06, RG-AND-07, RG-COM-06, RG-SOS-22]
 
 paths:
   /sante:
@@ -819,7 +819,7 @@ paths:
     delete:
       tags: [Navigations]
       summary: 'Mettre une navigation terminée dans la corbeille (Web, navigateur seulement).'
-      description: 'Refusé pour une navigation en cours (`navigation_en_cours`) et depuis une session des applications mobiles (`web_seulement`). Rejouable : une navigation déjà dans la corbeille y reste, sans repousser sa suppression définitive. Le temps reste décompté du quota. Dans la corbeille, la navigation ne se modifie plus avant sa restauration (`navigation_corbeille`, Q-70).'
+      description: 'Refusé pour une navigation en cours (`navigation_en_cours`) et depuis une session des applications mobiles (`web_seulement`). Rejouable : une navigation déjà dans la corbeille y reste, sans repousser sa suppression définitive. Le temps reste décompté du quota. Dans la corbeille, la navigation ne se modifie plus avant sa restauration (`navigation_corbeille`, RG-NAV-30).'
       x-regles: [RG-NAV-20, RG-NAV-21]
       responses:
         '204': {description: 'Navigation dans la corbeille, restaurable 30 jours.'}
@@ -873,7 +873,7 @@ paths:
     get:
       tags: [Navigations]
       summary: 'Navigations dans la corbeille, avec leur date de suppression définitive.'
-      x-regles: [RG-NAV-20]
+      x-regles: [RG-NAV-20, RG-NAV-30]
       responses:
         '200':
           description: 'Corbeille.'
@@ -1071,7 +1071,7 @@ paths:
     get:
       tags: [Alertes SOS]
       summary: 'Historique des alertes SOS (par bateau ou par navigation).'
-      x-regles: [RG-SOS-12, RG-SOS-13, RG-SOS-15, RG-PAR-07, RG-ECO-08]
+      x-regles: [RG-SOS-12, RG-SOS-13, RG-SOS-15, RG-SOS-20, RG-PAR-07, RG-ECO-08]
       parameters:
         - name: bateauId
           in: query
@@ -1105,7 +1105,7 @@ paths:
         décochées au démarrage, avec copie au navigateur, et les notifications push SOS. Un SOS
         acquis après une clôture automatique est enregistré comme un SOS depuis l'accueil
         (RG-ECO-12).
-      x-regles: [RG-ECO-12, RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
+      x-regles: [RG-ECO-12, RG-SOS-19, RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
         RG-SOS-15, RG-NAV-25, RG-NAV-27, RG-IOS-01, RG-IOS-03, RG-IOS-06, RG-AND-08, RG-NOT-02, RG-NOT-03,
         RG-JRN-02, RG-JRN-07, RG-PRM-04]
       requestBody:

@@ -25,7 +25,7 @@ func (e *essai) compter(requete string, args ...any) int {
 	return n
 }
 
-// TestCorbeille : RG-NAV-20, RG-NAV-21 (TS-NAV-21), Q-70, Q-71.
+// TestCorbeille : RG-NAV-20, RG-NAV-21 (TS-NAV-21), RG-NAV-30, RG-PAR-10.
 func TestCorbeille(t *testing.T) {
 	e := nouvelEssai(t)
 	t0 := time.Date(2026, 11, 16, 8, 0, 0, 0, time.UTC)
@@ -87,7 +87,7 @@ func TestCorbeille(t *testing.T) {
 	}
 
 	// Page visible du navigateur, sans modification ; les envois du
-	// téléphone restent acceptés (Q-70).
+	// téléphone restent acceptés (RG-NAV-30).
 	if code, n := e.appel("GET", "/navigations/"+id, nav, nil); code != 200 || n["etat"] != "corbeille" {
 		t.Fatalf("page dans la corbeille : %d %v", code, n)
 	}
@@ -157,7 +157,7 @@ func TestCorbeille(t *testing.T) {
 		e.compter("SELECT count(*) FROM evenements WHERE navigation_id = $1", id) != 0 {
 		t.Fatal("navigation gardée après 30 jours")
 	}
-	// Accès de périmètre navigation retiré (Q-71) ; périmètre navigateur gardé.
+	// Accès de périmètre navigation retiré (RG-PAR-10) ; périmètre navigateur gardé.
 	if e.compter("SELECT count(*) FROM acces WHERE navigation_id = $1", id) != 0 ||
 		e.compter("SELECT count(*) FROM acces WHERE perimetre = 'navigateur'") != 1 {
 		t.Fatal("accès après la suppression définitive")

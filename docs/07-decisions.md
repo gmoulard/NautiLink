@@ -221,3 +221,17 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | <a id="d-114"></a>D-114 | Fonctionnement hors connexion | Comportement de chaque écran mobile sans Internet, sans réseau mobile ou sans les deux (ancienne question 29, TODO-2.6). | Tableau proposé validé en entier, propositions comprises. | RG-COM-06 |
 | <a id="d-115"></a>D-115 | Environnements et API | Validation des trois environnements et de l'API (Q-22, TODO-3.2, TODO-3.4). | Environnements de développement, de test et de production de [08-architecture.md §6](08-architecture.md#6-environnements) validés ; API [`api/openapi.yaml`](api/openapi.yaml) validée telle que rédigée. Restent ouverts dans Q-22 : hébergeur après la bêta, sauvegardes. | — |
 | <a id="d-116"></a>D-116 | Jetons de session sur le téléphone | Où l'application mobile garde ses jetons, verrouillage à l'ouverture. | Jetons gardés dans les préférences de l'application, sans chiffrement matériel (ni Keystore Android ni Trousseau iPhone) ; aucun code ni empreinte demandé à l'ouverture. | RG-CPT-12 |
+
+## 2026-11-25 — Logo, alertes SOS, corbeille, mémo sécurité
+
+| Id | Sujet | Contradiction ou manque | Décision | Règles |
+|----|-------|-------------------------|----------|--------|
+| <a id="d-117"></a>D-117 | Logo vectoriel | Le logo validé (D-98) n'existait qu'en image PNG ; TODO-8.1 l'a redessiné en vectoriel. | Redessin de `docs/assets/logo/` validé comme source officielle du logo et des icônes, avec ses déclinaisons claire, sombre et monochrome (05-identite-marque.md §5.5). | — |
+| <a id="d-118"></a>D-118 | Contenu des e-mails SOS et de début | Destinataires décrits, pas le contenu (ancienne question 56). | Proposition validée : sujet « SOS — <bateau> : alerte de <navigateur> », contenu des deux SMS SOS, heures en UTC, lien vers la navigation ; copie avec la liste des adresses prévenues ; e-mail de début avec navigateur, navigation, bateau, heure, destination, lien, désinscription ; langue du navigateur. | RG-SOS-17, RG-NOT-05 |
+| <a id="d-119"></a>D-119 | E-mail SOS refusé par le relais | Rien sur les nouveaux essais (ancienne question 57). | Nouvel essai chaque minute pendant 24 heures, destinataires recalculés. | RG-SOS-18 |
+| <a id="d-120"></a>D-120 | SOS après la fin normale d'une navigation | Ancienne question 58 ; la proposition (SOS depuis l'accueil) n'est pas retenue. | Le SOS reste rattaché à la navigation terminée : journal de bord et destinataires de la navigation. Après une clôture automatique, RG-ECO-12 inchangée. | RG-SOS-19 |
+| <a id="d-121"></a>D-121 | SOS depuis l'accueil vu des suiveurs | Ancienne question 59. | Visible des suiveurs de périmètre *navigateur* seulement. | RG-SOS-20 |
+| <a id="d-122"></a>D-122 | Personne ajoutée pendant une navigation | Ancienne question 60. | Prévenue des SOS de la navigation (suiveurs et contacts SOS). | RG-SOS-21 |
+| <a id="d-123"></a>D-123 | Navigation dans la corbeille | Ancienne question 70. | Visible du navigateur, non modifiable avant restauration ; envois en attente du téléphone acceptés. | RG-NAV-30 |
+| <a id="d-124"></a>D-124 | Accès après la suppression définitive | Ancienne question 71. | Accès de périmètre *navigation* retirés ; contact gardé ; périmètre *navigateur* inchangé. | RG-PAR-10 |
+| <a id="d-125"></a>D-125 | Mémo sécurité en mer dans les applications | Ancienne question 80. | Intégré à l'application, lisible hors connexion, ouvert depuis l'accueil ; texte rédigé sur le site, copié à chaque construction. | RG-SOS-22 |

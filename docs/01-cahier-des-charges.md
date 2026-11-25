@@ -82,7 +82,7 @@ L'accueil affiche aussi le bouton rouge **Envoyer un SOS** (RG-SOS-15).
 
 L'accueil donne aussi accès aux paramètres généraux, aux contacts (suiveurs et contacts SOS), au quota et à l'abonnement, à l'historique des alertes SOS et à l'assistance.
 
-L'accueil donne enfin accès au mémo sécurité en mer du site de présentation, par « Mémo sécurité en mer » (page du site ou intégré, [Q-80](06-questions-ouvertes.md#q-80)).
+L'accueil donne enfin accès au mémo sécurité en mer du site de présentation, par « Mémo sécurité en mer » (intégré, lisible hors connexion : RG-SOS-22).
 
 ### 5.3 Écran de démarrage
 

@@ -1,6 +1,6 @@
 # NautiLink — Identité de marque et charte graphique
 
-Statut : identité définie, logo validé avec son repère GPS orange ([D-98](07-decisions.md#d-98)) ; fichiers vectoriels, icônes et déclinaisons produits, à valider (TODO-8.1, §5.5).
+Statut : identité définie, logo validé avec son repère GPS orange ([D-98](07-decisions.md#d-98)) ; fichiers vectoriels, icônes et déclinaisons validés ([D-117](07-decisions.md#d-117), §5.5).
 
 ![Proposition de logo NautiLink](assets/logo-nautilink.png)
 
@@ -72,7 +72,7 @@ Variantes : `sombre` (couleurs d'origine, pour fond sombre), `clair` (pour fond 
 
 Icônes du prototype : `app/android/app/src/main/res/mipmap-*` (icône classique, icône adaptative et icône monochrome Android 13), `app/ios/Runner/Assets.xcassets/AppIcon.appiconset/`, `app/web/` (favicon, icônes du manifeste).
 
-Choix graphiques faits sans décision, à valider (TODO-8.1) :
+Choix graphiques, validés avec le redessin ([D-117](07-decisions.md#d-117)) :
 
 - Icônes : symbole seul, sans nom ni signature (illisibles en petit), sur le dégradé bleu du logo d'origine, aussi pour l'arrière-plan de l'icône adaptative Android.
 - Version claire : le blanc devient bleu marine `#082B46`, le cyan de « Link », du souligné et des vagues devient turquoise `#13A6AD` (le cyan est illisible sur blanc), les ondes autour du repère sont en bleu `#0E6BA8` ; le repère reste orange.

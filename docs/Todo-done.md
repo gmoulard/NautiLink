@@ -47,6 +47,10 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web (2026-11-25, D-115 ; [`api/openapi.yaml`](api/openapi.yaml)).
 - [x] **TODO-3.1**: Architecture technique : [08-architecture.md](08-architecture.md) validé avec ses propositions (2026-11-25, D-86, D-96).
 
+## 8. Lancement
+
+- [x] **TODO-8.1**: Fichiers du logo : redessin vectoriel validé, déclinaisons claire, sombre et monochrome, icônes Android, iPhone et Web ([`assets/logo/`](assets/logo/), 2026-11-25, D-117).
+
 ## 9. Évolutions futures
 
 - [x] **TODO-9.4**: ~~Application iOS.~~ Retiré le 2026-11-24 : l'application iPhone entre dans le périmètre (D-31), voir la section 10 du TODO.

@@ -15,8 +15,7 @@ import (
 //
 // Dans la corbeille, le navigateur voit encore la page de la navigation, mais
 // ne la modifie plus avant de l'avoir restaurée ; les envois du téléphone
-// (événements, fichiers, fin rejouée) restent acceptés (Q-70, proposition
-// appliquée).
+// (événements, fichiers, fin rejouée) restent acceptés (RG-NAV-30).
 
 func errNavigationEnCours() error {
 	return &erreurAPI{http.StatusConflict, "navigation_en_cours",
@@ -28,7 +27,7 @@ func errDansLaCorbeille() error {
 		"Cette navigation est dans la corbeille : restaurez-la pour la modifier.", 0}
 }
 
-// navigationModifiable : navigation du navigateur, hors corbeille (Q-70).
+// navigationModifiable : navigation du navigateur, hors corbeille (RG-NAV-30).
 func (a *app) navigationModifiable(ctx context.Context, utilisateur, id string) (navLigne, error) {
 	n, err := a.navigationDuNavigateur(ctx, utilisateur, id)
 	if err == nil && n.supprimee != nil {
@@ -106,7 +105,7 @@ func (a *app) corbeille(ctx context.Context, utilisateur string) ([]navigationJS
 // RG-DON-01), avec leur journal de bord, leurs positions et leurs fichiers
 // (suppression en cascade). Les alertes SOS restent dans l'historique du
 // bateau (RG-SOS-12, RG-SOS-13), sans lien vers la navigation. Les accès de
-// périmètre navigation sur elle sont retirés (Q-71, proposition appliquée).
+// périmètre navigation sur elle sont retirés (RG-PAR-10).
 // Le quota n'en est pas changé : ses minutes, consommées avant la mise à la
 // corbeille, sont redevenues disponibles au bout de 7 jours (RG-ECO-02).
 func (a *app) purgerLaCorbeille(ctx context.Context) error {

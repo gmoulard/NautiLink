@@ -63,6 +63,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-nav-18"></a>**RG-NAV-18** — Les navigations terminées sont conservées sans limite de durée.
 - <a id="rg-nav-19"></a>**RG-NAV-19** — Une navigation peut être exportée en PDF depuis le Web par son navigateur et par ses suiveurs ([RG-PAR-08](#rg-par-08)).
 - <a id="rg-nav-20"></a>**RG-NAV-20** — Le navigateur peut supprimer depuis le Web une navigation terminée. Elle passe dans la corbeille, restaurable pendant 30 jours, puis est supprimée définitivement. Une navigation en cours ne peut pas être supprimée. Pendant son séjour dans la corbeille, les suiveurs n'y ont plus accès ([D-17](07-decisions.md#d-17)).
+- <a id="rg-nav-30"></a>**RG-NAV-30** — Pendant son séjour dans la corbeille, une navigation reste visible de son navigateur (état « corbeille ») mais n'est plus modifiable avant d'être restaurée. Les envois encore en attente sur le téléphone (positions, notes, photos, notes vocales, fin) restent acceptés, pour que rien ne manque après une restauration ([D-123](07-decisions.md#d-123)).
 - <a id="rg-nav-21"></a>**RG-NAV-21** — Le temps d'une navigation supprimée reste décompté du quota.
 - <a id="rg-nav-22"></a>**RG-NAV-22** — Après la navigation, le navigateur peut modifier, sur le Web et sur l'application mobile, son nom, sa destination, son bateau (parmi les siens) et ses heures de début et de fin ([D-38](07-decisions.md#d-38)). Un changement d'heures ne change pas le quota, qui reste calculé sur les heures réellement enregistrées par le téléphone ; les positions et événements hors de la nouvelle plage sont gardés, mais masqués du tracé ([D-83](07-decisions.md#d-83)).
 
@@ -138,11 +139,16 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-sos-14"></a>**RG-SOS-14** — Les SMS SOS ne peuvent pas être désactivés : ni l'interrupteur général des SMS ni les préférences par type ne s'y appliquent. Ils partent dès qu'au moins un contact SOS existe. Si le navigateur n'a aucun contact SOS, le démarrage d'une navigation affiche un avertissement ([D-26](07-decisions.md#d-26)).
 - <a id="rg-sos-15"></a>**RG-SOS-15** — SOS depuis l'écran d'accueil, hors navigation : il est rattaché au bateau du téléphone (choix du bateau s'il y en a plusieurs), enregistré dans l'historique des alertes de ce bateau, et le serveur envoie l'e-mail aux suiveurs de périmètre *navigateur* et aux contacts SOS dont l'e-mail est connu. Le reste est identique au SOS en navigation ([D-27](07-decisions.md#d-27)).
 - <a id="rg-sos-16"></a>**RG-SOS-16** — Sur Android, les SMS SOS partent automatiquement, sans passer par l'application SMS du téléphone, comme les SMS de positions automatiques ([RG-SMS-03](#rg-sms-03)). Cela suppose que Google Play accorde à NautiLink la permission d'envoi de SMS au titre de son exception pour les urgences, encore à vérifier ([Q-12](06-questions-ouvertes.md#q-12), [D-48](07-decisions.md#d-48)). La demande de permission couvre aussi les positions automatiques ; le risque que Google Play la refuse pour cet usage est accepté ([D-82](07-decisions.md#d-82)).
+- <a id="rg-sos-18"></a>**RG-SOS-18** — Si le relais d'envoi des e-mails refuse ou ne répond pas, le serveur réessaie chaque minute les adresses pas encore acceptées, pendant 24 heures après la réception de l'alerte ; les destinataires sont recalculés à chaque essai. L'alerte garde les adresses acceptées par le relais ([D-119](07-decisions.md#d-119)).
+- <a id="rg-sos-19"></a>**RG-SOS-19** — Un SOS rattaché par le téléphone à une navigation terminée normalement (déclenché après la fin enregistrée, par exemple après une fin saisie sur un autre support) reste rattaché à cette navigation : il est inscrit dans son journal de bord et l'e-mail part à ses destinataires, comme pendant la navigation. Après une clôture automatique, [RG-ECO-12](#rg-eco-12) s'applique ([D-120](07-decisions.md#d-120)).
+- <a id="rg-sos-21"></a>**RG-SOS-21** — Un suiveur ou un contact SOS ajouté après le démarrage d'une navigation, donc absent de l'écran de démarrage ([RG-NAV-25](#rg-nav-25)), est prévenu des SOS de cette navigation ([D-122](07-decisions.md#d-122)).
+- <a id="rg-sos-22"></a>**RG-SOS-22** — Le mémo sécurité en mer du site de présentation est intégré aux applications mobiles, lisible hors connexion, et s'ouvre depuis l'accueil par « Mémo sécurité en mer ». Son texte est rédigé une seule fois, sur le site, et copié dans l'application à chaque construction ([D-125](07-decisions.md#d-125)).
 
 ### 7.2 Contenu des SMS SOS
 
 - <a id="rg-sos-07"></a>**RG-SOS-07** — Premier SMS : mention SOS, nom du bateau, type, longueur, immatriculation, nombre de personnes à bord ([D-75](07-decisions.md#d-75)), problème rencontré s'il est saisi ([D-76](07-decisions.md#d-76)), coordonnées GPS, date et heure d'acquisition de la position, lien Google Maps vers ces coordonnées ([D-13](07-decisions.md#d-13)).
 - <a id="rg-sos-08"></a>**RG-SOS-08** — Second SMS : les autres informations de la fiche bateau (port d'attache, moteur, autonomie, capacité en carburant, vitesse, tirant d'eau).
+- <a id="rg-sos-17"></a>**RG-SOS-17** — L'e-mail SOS a pour sujet « SOS — <bateau> : alerte de <navigateur> ». Il reprend le contenu des deux SMS SOS ([RG-SOS-07](#rg-sos-07), [RG-SOS-08](#rg-sos-08)), avec la position transmise selon RG-SOS-09 à RG-SOS-11 et son lien Google Maps, les heures en UTC et, pendant une navigation, le lien vers la page de la navigation. La copie au navigateur ([RG-NOT-03](#rg-not-03)) donne en tête la liste des adresses prévenues. Langue : celle du navigateur ([RG-PRM-04](#rg-prm-04)) ([D-118](07-decisions.md#d-118)).
 
 ### 7.3 Position transmise
 
@@ -154,6 +160,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 - <a id="rg-sos-12"></a>**RG-SOS-12** — Chaque alerte est conservée avec sa date et son heure, la position transmise et le statut d'envoi de chaque SMS. Le statut distingue « accepté pour envoi » et « livraison confirmée » lorsque le téléphone fournit l'accusé de réception.
 - <a id="rg-sos-13"></a>**RG-SOS-13** — L'historique des alertes est consultable sur les applications mobiles et sur le Web.
+- <a id="rg-sos-20"></a>**RG-SOS-20** — Un SOS depuis l'accueil ([RG-SOS-15](#rg-sos-15)) figure dans l'historique des alertes du bateau vu par les suiveurs de périmètre *navigateur* ; les suiveurs de périmètre *navigation* ne le voient pas ([D-121](07-decisions.md#d-121)).
 
 ## 8. Contacts : suiveurs et contacts SOS
 
@@ -174,6 +181,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-par-07"></a>**RG-PAR-07** — Un suiveur voit en lecture seule, pour les navigations auxquelles il a accès : dernière position, positions successives, tracé, dates et heures, notes, photos, notes vocales, événements, alertes SOS.
 - <a id="rg-par-08"></a>**RG-PAR-08** — Un suiveur voit aussi la fiche du bateau, la liste des autres suiveurs du navigateur et la liste de ses contacts SOS, et peut exporter en PDF les navigations auxquelles il a accès. Il ne modifie rien ([D-29](07-decisions.md#d-29)).
 - <a id="rg-par-09"></a>**RG-PAR-09** — Un accès de périmètre *navigateur* donne aussi les navigations commencées ou terminées avant qu'il soit accordé : tout l'historique du navigateur, hors corbeille (RG-NAV-20), comme la fiche du bateau (RG-PAR-08) ([D-111](07-decisions.md#d-111)).
+- <a id="rg-par-10"></a>**RG-PAR-10** — À la suppression définitive d'une navigation ([RG-NAV-20](#rg-nav-20)), les accès de périmètre *navigation* donnés sur elle sont retirés ; le contact reste dans la liste des contacts du navigateur et les accès de périmètre *navigateur* ne changent pas ([D-124](07-decisions.md#d-124)).
 
 ## 10. Paramètres
 
@@ -205,6 +213,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-not-02"></a>**RG-NOT-02** — Événements notifiés par e-mail : invitation, nouvel accès accordé, alerte SOS ([RG-SOS-06](#rg-sos-06)), et début de navigation, envoyé aux suiveurs de la navigation. Un suiveur peut se désinscrire des e-mails de début, jamais de ceux du SOS ([D-41](07-decisions.md#d-41)). Sur iPhone et sur Android, les suiveurs reçoivent aussi des notifications push ([RG-IOS-06](#rg-ios-06), [RG-AND-08](#rg-and-08)).
 - <a id="rg-not-03"></a>**RG-NOT-03** — Tout e-mail de notification envoyé par le serveur (invitation, nouvel accès, alerte SOS, début de navigation) part aussi en copie au navigateur concerné, à l'adresse de son compte. Cette copie ne se désactive pas ([D-55](07-decisions.md#d-55)).
 - <a id="rg-not-04"></a>**RG-NOT-04** — Les désinscriptions du suiveur (e-mails de début, types de notifications push) sont un réglage unique de son compte, valable pour tous les navigateurs qu'il suit ([D-104](07-decisions.md#d-104)).
+- <a id="rg-not-05"></a>**RG-NOT-05** — L'e-mail de début de navigation donne le nom du navigateur, le nom de la navigation, le bateau, l'heure de début, la destination, le lien vers la page de la navigation et la façon de se désinscrire (« E-mail au début d'une navigation » dans « Mon compte »). Langue : celle du navigateur ([RG-PRM-04](#rg-prm-04)) ([D-118](07-decisions.md#d-118)).
 
 ## 13. Administration
 
