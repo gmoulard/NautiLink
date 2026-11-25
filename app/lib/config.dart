@@ -9,10 +9,15 @@ library;
 
 enum ModeApplication { demo, reel }
 
-const String _mode = String.fromEnvironment('NAUTILINK_MODE', defaultValue: 'demo');
+const String _mode = String.fromEnvironment(
+  'NAUTILINK_MODE',
+  defaultValue: 'demo',
+);
 
 /// Mode choisi à la construction ; toute valeur autre que `reel` donne la démonstration.
-const ModeApplication kMode = _mode == 'reel' ? ModeApplication.reel : ModeApplication.demo;
+const ModeApplication kMode = _mode == 'reel'
+    ? ModeApplication.reel
+    : ModeApplication.demo;
 
 /// Adresse de l'API du serveur central (D-62, 08-architecture.md §4).
 const String kApiUrl = String.fromEnvironment(

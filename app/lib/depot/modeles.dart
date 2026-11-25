@@ -244,7 +244,9 @@ class EtatQuota {
   static EtatQuota? depuisJson(Object? j, {DateTime? recuLe}) {
     if (j is! Map) return null;
     final p = j['prochainesMinutes'];
-    final premiere = p is List && p.isNotEmpty && p.first is Map ? p.first as Map : null;
+    final premiere = p is List && p.isNotEmpty && p.first is Map
+        ? p.first as Map
+        : null;
     final ab = j['abonnement'];
     return EtatQuota(
       consommeMinutes: (j['consommeMinutes'] as num?)?.toInt() ?? 0,
@@ -297,7 +299,11 @@ class AlerteSosResume {
 
 /// Profil de l'utilisateur connecté (schéma `Profil`, champs utiles au téléphone).
 class ProfilNl {
-  const ProfilNl({required this.email, required this.nom, required this.emailVerifie});
+  const ProfilNl({
+    required this.email,
+    required this.nom,
+    required this.emailVerifie,
+  });
   final String email;
   final String nom;
   final bool emailVerifie; // RG-CPT-09

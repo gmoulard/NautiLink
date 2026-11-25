@@ -32,16 +32,25 @@ abstract class Envois {
   /// Démarrage (`PUT /v1/navigations/{id}`, opération `demarrage`) ; contenu
   /// `DemarrageNavigation`. L'événement `debut` reçoit son identifiant et le
   /// numéro d'ordre 1 s'il n'en a pas. Rend le contenu complété.
-  Future<Map<String, Object?>> demarrage(String navigationId, Map<String, Object?> contenu);
+  Future<Map<String, Object?>> demarrage(
+    String navigationId,
+    Map<String, Object?> contenu,
+  );
 
   /// Événement du journal (`PUT /v1/navigations/{n}/evenements/{e}`, opération
   /// `evenement`) ; schéma `Evenement`. `id` et `numeroOrdre` sont ajoutés s'ils
   /// manquent. Rend l'événement complété.
-  Future<Map<String, Object?>> evenement(String navigationId, Map<String, Object?> evenement);
+  Future<Map<String, Object?>> evenement(
+    String navigationId,
+    Map<String, Object?> evenement,
+  );
 
   /// Fin de navigation (`PUT /v1/navigations/{id}/fin`, opération `fin`), avec
   /// son heure réelle (RG-NAV-14). Rend l'événement complété.
-  Future<Map<String, Object?>> fin(String navigationId, Map<String, Object?> evenement);
+  Future<Map<String, Object?>> fin(
+    String navigationId,
+    Map<String, Object?> evenement,
+  );
 
   /// Alerte SOS (`PUT /v1/alertes-sos/{id}`) : part avant tout le reste.
   Future<void> alerteSos(String alerteId, Map<String, Object?> alerte);

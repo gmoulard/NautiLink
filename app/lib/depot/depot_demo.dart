@@ -69,7 +69,11 @@ class DepotDemo extends Depot {
   @override
   List<BateauNl> get bateaux => [
     for (final b in state.boats)
-      BateauNl(id: b.name, nom: b.name, type: b.type == 'Voilier' ? 'voilier' : 'moteur'),
+      BateauNl(
+        id: b.name,
+        nom: b.name,
+        type: b.type == 'Voilier' ? 'voilier' : 'moteur',
+      ),
   ];
 
   @override
@@ -157,7 +161,8 @@ class EnvoisDemo implements Envois {
 
   @override
   String nouvelId() {
-    String h(int n) => List.generate(n, (_) => _rnd.nextInt(16).toRadixString(16)).join();
+    String h(int n) =>
+        List.generate(n, (_) => _rnd.nextInt(16).toRadixString(16)).join();
     return '${h(8)}-${h(4)}-4${h(3)}-${'89ab'[_rnd.nextInt(4)]}${h(3)}-${h(12)}';
   }
 
@@ -168,25 +173,35 @@ class EnvoisDemo implements Envois {
   };
 
   @override
-  Future<Map<String, Object?>> demarrage(String navigationId, Map<String, Object?> contenu) async {
+  Future<Map<String, Object?>> demarrage(
+    String navigationId,
+    Map<String, Object?> contenu,
+  ) async {
     final debut = contenu['debut'];
     final c = {
       ...contenu,
-      if (debut is Map<String, Object?>) 'debut': _completer(navigationId, debut),
+      if (debut is Map<String, Object?>)
+        'debut': _completer(navigationId, debut),
     };
     _ok('demarrage', navigationId, navigationId);
     return c;
   }
 
   @override
-  Future<Map<String, Object?>> evenement(String navigationId, Map<String, Object?> evenement) async {
+  Future<Map<String, Object?>> evenement(
+    String navigationId,
+    Map<String, Object?> evenement,
+  ) async {
     final e = _completer(navigationId, evenement);
     _ok('evenement', e['id'] as String, navigationId);
     return e;
   }
 
   @override
-  Future<Map<String, Object?>> fin(String navigationId, Map<String, Object?> evenement) async {
+  Future<Map<String, Object?>> fin(
+    String navigationId,
+    Map<String, Object?> evenement,
+  ) async {
     final e = _completer(navigationId, evenement);
     _ok('fin', navigationId, navigationId);
     return e;
@@ -197,12 +212,17 @@ class EnvoisDemo implements Envois {
       _ok('alerte_sos', alerteId, alerte['navigationId'] as String?);
 
   @override
-  Future<void> statutsSms(String alerteId, List<Map<String, Object?>> statuts) async =>
-      _ok('statuts_sms', alerteId, null);
+  Future<void> statutsSms(
+    String alerteId,
+    List<Map<String, Object?>> statuts,
+  ) async => _ok('statuts_sms', alerteId, null);
 
   @override
-  Future<void> fichier(String evenementId, String chemin, String typeMedia) async =>
-      _ok('fichier', evenementId, null);
+  Future<void> fichier(
+    String evenementId,
+    String chemin,
+    String typeMedia,
+  ) async => _ok('fichier', evenementId, null);
 
   @override
   Future<void> relancer() async {}
@@ -223,7 +243,11 @@ class PositionsDemo implements SourcePosition {
   @override
   Future<PositionGps?> positionActuelle() async {
     final p = state.nextPosition();
-    return _derniere = PositionGps(latitude: p.lat, longitude: p.lon, heureAcquisition: p.time);
+    return _derniere = PositionGps(
+      latitude: p.lat,
+      longitude: p.lon,
+      heureAcquisition: p.time,
+    );
   }
 
   @override

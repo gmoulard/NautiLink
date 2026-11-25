@@ -31,7 +31,11 @@ class ErreurApi implements Exception {
             : null,
       );
     }
-    return ErreurApi(r.statut, r.statut >= 500 ? 'erreur_interne' : 'invalide', '');
+    return ErreurApi(
+      r.statut,
+      r.statut >= 500 ? 'erreur_interne' : 'invalide',
+      '',
+    );
   }
 
   final int statut;
@@ -101,10 +105,26 @@ class ClientApi {
     Map<String, String>? parametres,
     bool authentifie = true,
   }) async {
-    var r = await _envoyer(methode, chemin, json, octets, typeContenu, parametres, authentifie);
+    var r = await _envoyer(
+      methode,
+      chemin,
+      json,
+      octets,
+      typeContenu,
+      parametres,
+      authentifie,
+    );
     if (r.statut == 401 && authentifie && session.jetonRenouvellement != null) {
       if (await _renouveler()) {
-        r = await _envoyer(methode, chemin, json, octets, typeContenu, parametres, authentifie);
+        r = await _envoyer(
+          methode,
+          chemin,
+          json,
+          octets,
+          typeContenu,
+          parametres,
+          authentifie,
+        );
       }
     }
     return r;
@@ -118,7 +138,13 @@ class ClientApi {
     Map<String, String>? parametres,
     bool authentifie = true,
   }) async {
-    final r = await requete(methode, chemin, json: json, parametres: parametres, authentifie: authentifie);
+    final r = await requete(
+      methode,
+      chemin,
+      json: json,
+      parametres: parametres,
+      authentifie: authentifie,
+    );
     if (!r.reussie) throw ErreurApi.depuis(r);
     return r.corps;
   }
@@ -130,7 +156,13 @@ class ClientApi {
     Map<String, String>? parametres,
     bool authentifie = true,
   }) async {
-    final c = await appel(methode, chemin, json: json, parametres: parametres, authentifie: authentifie);
+    final c = await appel(
+      methode,
+      chemin,
+      json: json,
+      parametres: parametres,
+      authentifie: authentifie,
+    );
     return c is Map<String, Object?> ? c : <String, Object?>{};
   }
 
@@ -146,7 +178,9 @@ class ClientApi {
     final req = http.Request(methode, adresse(chemin, parametres));
     req.headers['Accept'] = 'application/json';
     final jeton = session.jetonAcces;
-    if (authentifie && jeton != null) req.headers['Authorization'] = 'Bearer $jeton';
+    if (authentifie && jeton != null) {
+      req.headers['Authorization'] = 'Bearer $jeton';
+    }
     if (json != null) {
       req.headers['Content-Type'] = 'application/json; charset=utf-8';
       req.bodyBytes = utf8.encode(jsonEncode(json));
@@ -155,7 +189,9 @@ class ClientApi {
       req.bodyBytes = octets;
     }
     try {
-      final rep = await http.Response.fromStream(await _client.send(req).timeout(delai)).timeout(delai);
+      final rep = await http.Response.fromStream(
+        await _client.send(req).timeout(delai),
+      ).timeout(delai);
       Object? corps;
       if (rep.bodyBytes.isNotEmpty) {
         try {
@@ -178,8 +214,15 @@ class ClientApi {
     if (jeton == null) return Future.value(false);
     return _renouvellementEnCours ??= () async {
       try {
-        final r = await _envoyer('POST', '/v1/sessions/renouvellement',
-            {'jetonRenouvellement': jeton}, null, null, null, false);
+        final r = await _envoyer(
+          'POST',
+          '/v1/sessions/renouvellement',
+          {'jetonRenouvellement': jeton},
+          null,
+          null,
+          null,
+          false,
+        );
         if (r.statut == 200 && r.corps is Map<String, Object?>) {
           await session.enregistrer(r.corps as Map<String, Object?>);
           return true;
