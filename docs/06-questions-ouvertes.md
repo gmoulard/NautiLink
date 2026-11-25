@@ -83,6 +83,22 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : bloquant.
 - Étude : comportement de chaque écran Android sans Internet, sans réseau mobile, ou sans les deux (connexion au compte, démarrage, quota non vérifiable, etc.).
+- Proposition (non validée, TODO-2.6) : tableau ci-dessous. Les cases qui citent une règle sont déjà décidées ; les autres, marquées *(proposition)*, attendent la validation. « Sans Internet » : ni données mobiles ni Wi-Fi, SMS possibles ; « sans réseau mobile » : ni SMS ni données mobiles, Wi-Fi éventuel ; « sans les deux » : seul le GPS fonctionne (RG-GPS-01). Envois vers le serveur : [file d'attente](08-architecture.md#5-file-dattente-et-doublons).
+
+| Écran | Sans Internet | Sans réseau mobile | Sans les deux |
+|-------|---------------|--------------------|---------------|
+| Connexion, création du compte | Impossibles ; une session déjà ouverte reste ouverte et l'application s'ouvre sur ses données locales *(proposition)*. | Possibles par Wi-Fi. | Comme sans Internet. |
+| Accueil | Fonctionne sur les données locales ; résumé du quota d'après le dernier état reçu, avec son heure *(proposition)* ; SOS disponible (RG-SOS-15). | Fonctionne. | Comme sans Internet. |
+| Démarrage | Autorisé si le dernier état du quota reçu ne dit pas « épuisé sans abonnement » (sinon refus, RG-ECO-04) ; le démarrage part par la file ; s'il arrive alors que le quota est épuisé, le serveur l'accepte et applique RG-ECO-05 depuis sa réception *(proposition)*. SMS de début possible. | Démarrage normal par Wi-Fi ; le SMS de début prérempli reste dans l'application SMS du téléphone, le résultat affiche son échec *(proposition)*. | Démarrage comme sans Internet, sans SMS. |
+| Navigation en cours : positions, note, photo, note vocale | Enregistrées et mises en file (RG-GPS-03, RG-GPS-04) ; SMS selon les paramètres ; résultat de chaque circuit affiché (RG-COM-03). | Envoi au serveur ; SMS automatiques : 3 essais puis « Réessayer » (RG-SMS-07) ; SMS préremplis non envoyés *(proposition : échec affiché)*. | Enregistrées et mises en file ; SMS comme sans réseau mobile. |
+| SOS | SMS SOS envoyés (RG-SOS-05) ; alerte mise en file en priorité ; sur iPhone, message clair et envoi au retour (RG-IOS-03). | Alerte au serveur ; SMS SOS retentés chaque minute (RG-SMS-07). | Alerte en file en priorité ; SMS SOS retentés chaque minute ; résultat affiché (RG-COM-03). |
+| Fin de navigation | Fin enregistrée avec son heure réelle, transmise dès que possible (RG-NAV-14) ; la page Web ne s'ouvre pas, un message dit qu'elle sera disponible au retour de la connexion *(proposition)*. | Fin normale ; SMS de fin non envoyé, échec affiché *(proposition)*. | Comme sans Internet, sans SMS. |
+| Navigations enregistrées | Dernière liste reçue, marquée « hors connexion » ; la page Web ne s'ouvre pas *(proposition)*. | Fonctionne par Wi-Fi. | Comme sans Internet. |
+| Paramètres généraux | Dernière version reçue (RG-PRM-02) ; une modification est gardée et envoyée au retour (conflit : Q-42) *(proposition)*. | Fonctionne. | Comme sans Internet. |
+| Contacts, invitations | Copie locale (RG-CTC-03) ; ajout et modification gardés et envoyés au retour ; invitation par e-mail envoyée au retour ; invitation par SMS impossible faute de lien, message *(proposition)*. | Fonctionne ; invitation par SMS non envoyée, échec affiché *(proposition)*. | Comme sans Internet. |
+| Quota et abonnement | Dernier état reçu avec son heure ; souscription impossible, message *(proposition)*. | Fonctionne. | Comme sans Internet. |
+| Historique des alertes SOS | Alertes du téléphone et dernier historique reçu *(proposition)*. | Fonctionne. | Comme sans Internet. |
+| Assistance | Avertissement bêta consultable, texte inclus dans l'application (RG-CPT-07) ; contact de l'équipe impossible, message *(proposition)*. | Fonctionne. | Comme sans Internet. |
 
 ### <a id="q-22"></a>Q-22 — Architecture et développement
 

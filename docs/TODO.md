@@ -60,8 +60,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
   - Critères d'acceptation : format et durée maximale choisis ; transcription en français essayée hors connexion et en ligne, avec le taux d'erreur constaté.
   - Fait : [étude documentaire](etudes/notes-vocales.md) (formats AAC, Opus, AMR ; moteurs Android, iPhone, Whisper ; limite d'une minute sur iPhone ; protocole d'essai). Reste : essais de transcription en français et taux d'erreur ; choix du format, de la durée et du moteur par l'utilisateur.
   - Tranché le 2026-11-24 (D-53) : AAC `.m4a`, 1 minute, moteur du téléphone. Reste : essais de transcription et taux d'erreur.
-- [ ] **TODO-2.6**: Fonctionnement hors connexion de chaque écran Android ([Q-29](06-questions-ouvertes.md#q-29)). Dépend de : TODO-3.1.
+- [~] **TODO-2.6**: Fonctionnement hors connexion de chaque écran Android ([Q-29](06-questions-ouvertes.md#q-29)). Dépend de : TODO-3.1.
   - Critères d'acceptation : tableau écran par écran (sans Internet, sans réseau mobile, sans les deux), validé par l'utilisateur.
+  - Fait (2026-11-25) : tableau proposé dans [Q-29](06-questions-ouvertes.md#q-29), 12 écrans, cases décidées citant leur règle et cases *(proposition)* à valider. Reste : validation par l'utilisateur, puis report des cases validées dans les règles métier.
 - [~] **TODO-2.7**: File d'attente des envois et doublons ([Q-10](06-questions-ouvertes.md#q-10), RG-GPS-04). Dépend de : TODO-3.2.
   - Critères d'acceptation : mécanisme écrit (identifiant unique par événement, ordre, renvoi) et essayé avec une coupure de 2 heures.
   - Fait (2026-11-25) : mécanisme écrit, en proposition, dans [08-architecture.md §5](08-architecture.md#5-file-dattente-et-doublons) (UUID par événement, numéro d'ordre, renvoi idempotent, priorités, sortie de la file) et porté par l'API (`PUT` rejouables, `POST /v1/synchronisation`) ; scénario TS-GPS-07 ajouté (TS-GPS-03 corrigé : fréquence de 5 minutes, impossible selon RG-NAV-05). Reste : validation (Q-10), puis essai avec une coupure de 2 heures sur un vrai téléphone, possible seulement avec l'application et le serveur (TODO-5.3).
