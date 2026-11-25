@@ -44,6 +44,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/tests/scenarios-fonctionnels.md`](docs/tests/scenarios-fonctionnels.md) | Scénarios de tests fonctionnels `TS-…`, un au moins par règle `RG-…`. |
 | [`docs/etudes/sms-mms-android.md`](docs/etudes/sms-mms-android.md) | Étude : envoi de SMS et MMS sur Android, règles Google Play, voies possibles. |
 | [`docs/etudes/gps-arriere-plan-android.md`](docs/etudes/gps-arriere-plan-android.md) | Étude : GPS en arrière-plan sur Android, batterie, constructeurs, reprise après redémarrage. |
+| [`docs/etudes/autorisations-android.md`](docs/etudes/autorisations-android.md) | Étude : autorisations Android, versions concernées, règles Google Play, parcours de demande. |
 | [`docs/etudes/localisation-arriere-plan-iphone.md`](docs/etudes/localisation-arriere-plan-iphone.md) | Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store. |
 | [`docs/etudes/notes-vocales.md`](docs/etudes/notes-vocales.md) | Étude : notes vocales, formats audio, durée, transcription en français hors connexion. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
