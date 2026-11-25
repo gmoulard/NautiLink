@@ -11,7 +11,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | Lot | Titre | Actions | Dépend de | État |
 |-----|-------|---------|-----------|------|
 | LOT-1 | Décisions sur les navigations et le partage | TODO-1.4, TODO-1.5, TODO-1.6, TODO-1.7, TODO-1.8, TODO-1.11, TODO-1.19 | aucun | [x] |
-| LOT-2 | Décisions sur les notifications, le quota et l'abonnement | TODO-1.12, TODO-1.13, TODO-1.14, TODO-10.1, TODO-1.20 | aucun | [!] |
+| LOT-2 | Décisions sur les notifications, le quota et l'abonnement | TODO-1.12, TODO-1.13, TODO-1.14, TODO-10.1, TODO-1.20, TODO-1.27 | aucun | [!] |
 | LOT-3 | Décisions sur l'administration, les données et la conformité | TODO-1.15, TODO-1.16, TODO-1.17 | aucun | [x] |
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21, TODO-1.26 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
@@ -37,6 +37,8 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 Pour chaque action : critères d'acceptation communs — choix de l'utilisateur tracé en `D-nn`, règle écrite dans les règles métier, question retirée des questions ouvertes.
 
 - [!] **TODO-1.26**: Positions automatiques sans permission d'envoi de SMS ([Q-40](06-questions-ouvertes.md#q-40), RG-SMS-03). Dépend de : aucune.
+  - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
+- [!] **TODO-1.27**: Notifications push du suiveur sur Android ([Q-41](06-questions-ouvertes.md#q-41), D-86). Dépend de : aucune.
   - Critères d'acceptation : communs. Bloqué par : décision de l'utilisateur.
 - [!] **TODO-1.14**: Prix et règles de paiement de l'abonnement ([Q-17](06-questions-ouvertes.md#q-17), RG-ECO-06, RG-ECO-07). Tranché le 2026-11-24 : une seule formule, mensuelle ou annuelle, sans essai (D-43). Dépend de : aucune.
   - Critères d'acceptation : communs, dans le modèle économique. Bloqué par : décision de l'utilisateur.
@@ -73,6 +75,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 - [~] **TODO-3.1**: Architecture technique : hébergement, base de données, stockage des photos et notes vocales, envoi des e-mails ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-2.1.
   - Critères d'acceptation : document d'architecture dans `docs/`, schéma Mermaid, choix validés par l'utilisateur.
   - Fait (2026-11-25) : [08-architecture.md](08-architecture.md) avec schéma Mermaid, choix décidés (D-58 à D-62 et suivantes) et propositions non validées reportées dans Q-22 (fichiers, hébergeur après la bêta, push, sauvegardes, e-mails, géocodage). Reste : validation par l'utilisateur.
+  - Tranché le 2026-11-25 (D-86) : photos et notes vocales dans PostgreSQL ; push par APNs (iPhone) et FCM (Android) ; sauvegardes de pi-appliance, chaque nuit, 30 jours. Reste : hébergeur après la bêta (décidé plus tard) ; vérifier que les sauvegardes couvrent la base et faire un essai de restauration ; contenu des push sur Android (Q-41, TODO-1.27).
 - [ ] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web ([Q-22](06-questions-ouvertes.md#q-22)). Dépend de : TODO-3.1.
   - Critères d'acceptation : description de l'API (OpenAPI) couvrant chaque règle `RG-…` qui passe par le serveur.
 - [~] **TODO-3.3**: Maquettes Android et Web ([Q-30](06-questions-ouvertes.md#q-30)). Dépend de : aucune.

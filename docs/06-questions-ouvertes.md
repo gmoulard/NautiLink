@@ -74,14 +74,18 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Décidé (D-58, D-59) : applications mobiles Android et iPhone en Flutter, un seul code ; serveur maison.
 - Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL.
-- Reste : cadre du serveur, hébergeur après la bêta, stockage des fichiers, notifications push, sauvegardes, API et formats de données, synchronisation, environnements de développement, test et production.
+- Décidé (D-86) : photos et notes vocales stockées dans PostgreSQL ; notifications push par APNs pour l'iPhone et Firebase Cloud Messaging pour Android (contenu sur Android : Q-41) ; sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
+- Reste : cadre du serveur ; hébergeur après la bêta (décidé plus tard) ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration ; API et formats de données ; synchronisation ; environnements de développement, test et production.
 - Propositions (non validées), détaillées dans [08-architecture.md](08-architecture.md) §3 :
-  - photos et notes vocales : fichiers dans un volume Docker du serveur, description dans PostgreSQL, servis par le serveur après contrôle de l'accès ;
   - hébergeur après la bêta : serveur virtuel dans l'Union européenne, même image Docker, PostgreSQL dédié ;
-  - notifications push (RG-IOS-06) : appel direct du service push d'Apple (APNs) par le serveur ; Firebase Cloud Messaging seulement si Android doit aussi en recevoir ;
-  - sauvegardes (RG-DON-02) : copie nocturne de la base et des fichiers hors du Pi, 30 jours, essai de restauration avant la bêta ;
   - e-mails après la bêta : relais de l'hébergeur, SPF, DKIM et DMARC ;
   - géocodage inverse (RG-NAV-16, RG-JRN-10) : Nominatim (OpenStreetMap) appelé par le serveur, avec cache.
+
+### <a id="q-41"></a>Q-41 — Notifications push sur Android
+
+- Priorité : avant la version réelle.
+- Question : Firebase Cloud Messaging est retenu pour Android (D-86), mais aucune règle ne prévoit de notification push pour le suiveur sur Android : lesquelles reçoit-il ?
+- Proposition (non validée) : comme sur iPhone (RG-IOS-06) : alerte SOS (en plus de l'e-mail), début et fin de navigation, nouvelle photo, position en retard (même seuil, D-84) ; chaque type désactivable, sauf le SOS.
 
 ## 3. Données, sécurité, conformité
 
