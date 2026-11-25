@@ -39,6 +39,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/06-questions-ouvertes.md`](docs/06-questions-ouvertes.md) | Tout ce qui n'est pas décidé, numéroté `Q-…`. |
 | [`docs/07-decisions.md`](docs/07-decisions.md) | Journal des arbitrages, numérotés `D-…`. |
 | [`docs/08-architecture.md`](docs/08-architecture.md) | Architecture technique : applications Flutter, serveur Go, PostgreSQL, fichiers, e-mails, notifications push ; décisions et propositions. |
+| [`docs/api/openapi.yaml`](docs/api/openapi.yaml) | Description de l'API du serveur (OpenAPI 3.1) : chaque opération cite les règles `RG-…` qu'elle sert ; proposition non validée. |
 | [`docs/TODO.md`](docs/TODO.md) | Feuille de route : actions `TODO-x.y`, états, dépendances, critères d'acceptation. |
 | [`docs/Todo-done.md`](docs/Todo-done.md) | Actions réalisées et validées. |
 | [`docs/Todo-ithem-for-todo.md`](docs/Todo-ithem-for-todo.md) | Demandes notées en vrac, à reporter dans le TODO. |

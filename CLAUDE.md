@@ -15,6 +15,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Ce qui n'est pas décidé | `docs/06-questions-ouvertes.md` (`Q-nn`) |
 | Pourquoi une règle est ainsi | `docs/07-decisions.md` (`D-nn`) |
 | Architecture technique : serveur, base, fichiers, e-mails, push | `docs/08-architecture.md` |
+| API du serveur (OpenAPI), formats de données, synchronisation | `docs/api/openapi.yaml`, `docs/08-architecture.md` §4 |
 | Scénarios de tests fonctionnels | `docs/tests/scenarios-fonctionnels.md` (`TS-<DOMAINE>-<nn>`) |
 | Ce qu'il reste à faire, dans quel ordre | `docs/TODO.md` (`TODO-x.y`), `docs/Todo-done.md` |
 | Demandes en vrac de l'utilisateur | `docs/Todo-ithem-for-todo.md` |

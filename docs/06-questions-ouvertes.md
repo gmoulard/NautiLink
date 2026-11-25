@@ -14,6 +14,40 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-88) : la météo du début et de la fin d'une navigation (RG-NAV-28) vient de l'API de Météo-France.
 - Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 
+### <a id="q-42"></a>Q-42 — Modifications faites sur deux supports
+
+- Priorité : bloquant pour la synchronisation (TODO-3.2).
+- Cas : un même contact, les paramètres généraux ou les informations d'une même navigation sont modifiés sur le Web et sur l'application mobile hors connexion ; la modification du téléphone arrive ensuite au serveur (RG-CTC-02, RG-CTC-03, RG-PRM-01, RG-NAV-22).
+- Proposition (non validée) : la dernière modification reçue par le serveur l'emporte, champ par champ ; l'application mobile affiche ensuite la version du serveur, sans message.
+
+### <a id="q-43"></a>Q-43 — Durée des sessions
+
+- Priorité : lancement (RG-DON-03 : « sessions qui expirent »).
+- Proposition (non validée) : une session expire après 90 jours sans usage, sur l'application mobile comme sur le Web ; elle n'expire jamais sur le téléphone associé pendant une navigation en cours, pour que les envois en attente partent sans nouvelle connexion ; la déconnexion ne vide pas la file d'attente du téléphone.
+
+### <a id="q-44"></a>Q-44 — Liens des SMS de photo et de note vocale
+
+- Priorité : bloquant pour les SMS de photo et de note vocale (RG-SMS-05, RG-SMS-06).
+- Cas : le destinataire SMS ouvre le lien sur un téléphone où il n'est pas connecté à NautiLink.
+- Proposition (non validée) : comme pour tout partage (RG-PAR-01), le lien mène à la connexion, puis à la photo ou à la note vocale dans la page de la navigation ; aucun accès sans compte.
+
+### <a id="q-45"></a>Q-45 — Envois reçus après une clôture automatique
+
+- Priorité : bloquant pour la clôture automatique (RG-ECO-05).
+- Cas : le serveur clôture la navigation par épuisement du quota pendant que le téléphone est hors connexion ; le téléphone envoie ensuite des positions, notes ou une fin acquises après l'heure de clôture.
+- Proposition (non validée) : le serveur garde les événements acquis avant l'heure de clôture et refuse ceux d'après ; au premier échange, l'application apprend la clôture, arrête les positions automatiques et le dit au navigateur. Un SOS acquis après la clôture est enregistré comme un SOS depuis l'accueil (RG-SOS-15).
+
+### <a id="q-46"></a>Q-46 — Affichage des annonces de l'administrateur
+
+- Priorité : lancement (RG-ADM-02 : « publication d'annonces et d'informations de maintenance »).
+- Proposition (non validée) : bandeau en haut de l'écran d'accueil de l'application mobile et du tableau de bord Web, jusqu'à la date de fin choisie par l'administrateur ou jusqu'à sa fermeture par l'utilisateur.
+
+### <a id="q-47"></a>Q-47 — Portée des désinscriptions du suiveur
+
+- Priorité : bloquant pour les notifications (RG-NOT-02, RG-IOS-06, RG-AND-08).
+- Cas : un suiveur se désinscrit des e-mails de début ou désactive un type de notification push ; cela vaut-il pour toutes les navigations qu'il suit, ou pour un seul navigateur ?
+- Proposition (non validée) : réglage unique du compte du suiveur, valable pour tous les navigateurs qu'il suit.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
@@ -55,7 +89,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-62) : serveur en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance, base PostgreSQL.
 - Décidé (D-86) : photos et notes vocales stockées dans PostgreSQL ; notifications push par APNs pour l'iPhone et Firebase Cloud Messaging pour Android (contenu sur Android : D-92, RG-AND-08) ; sauvegardes de pi-appliance, chaque nuit, gardées 30 jours (RG-DON-02).
 - Décidé (D-96) : [08-architecture.md](08-architecture.md) validé, propositions comprises (serveur virtuel dans l'Union européenne après la bêta, relais d'e-mails avec SPF, DKIM et DMARC, géocodage par Nominatim).
-- Reste : nom de l'hébergeur et date du passage après la bêta ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration ; API et formats de données ; synchronisation ; environnements de développement, test et production.
+- Proposition (non validée, TODO-3.2) : API et formats de données, synchronisation : [08-architecture.md §4](08-architecture.md#4-api-et-synchronisation) et [`api/openapi.yaml`](api/openapi.yaml) ; points fonctionnels ouverts : Q-29, Q-42 à Q-47.
+- Reste : nom de l'hébergeur et date du passage après la bêta ; vérifier que les sauvegardes de pi-appliance couvrent la base, puis faire un essai de restauration (TODO-3.11) ; validation de l'API ; environnements de développement, test et production.
 
 ## 3. Données, sécurité, conformité
 

@@ -1,0 +1,1704 @@
+openapi: 3.1.0
+info:
+  title: API NautiLink
+  version: 0.1.0
+  summary: 'API HTTPS entre les applications mobiles, la plateforme Web, l''espace administrateur et le serveur NautiLink.'
+  description: |
+    Description de l'API du serveur NautiLink (TODO-3.2). **Proposition, non validée** : voir
+    [Q-22](../06-questions-ouvertes.md#q-22). Les règles métier font foi
+    ([02-regles-metier.md](../02-regles-metier.md)) ; chaque opération cite les règles qu'elle
+    sert dans `x-regles`. Synchronisation, file d'attente et doublons :
+    [08-architecture.md §4 et §5](../08-architecture.md#4-api-et-synchronisation).
+
+    Conventions :
+    - JSON en UTF-8 ; noms de champs en français, sans accents, en camelCase.
+    - Heures au format RFC 3339 avec décalage horaire (`2026-11-25T14:03:00+01:00`) ; l'heure qui
+      fait foi est l'heure d'acquisition sur le téléphone (RG-GPS-02, RG-JRN-03), jamais l'heure de
+      réception.
+    - Positions en degrés décimaux WGS 84.
+    - Durées en minutes, distances en mètres.
+    - Identifiants : UUID. Les navigations, événements et alertes SOS reçoivent leur identifiant
+      du téléphone qui les crée, ce qui rend chaque envoi rejouable sans doublon (RG-GPS-04, Q-10).
+    - Erreurs : objet `Erreur` avec un `code` stable (liste dans le schéma).
+    - Les comportements qui attendent une décision renvoient à leur question (`Q-nn`) ; ils ne
+      sont pas à développer avant qu'elle soit tranchée.
+
+    Le serveur est la référence pour les paramètres, les accès et le quota (cahier des charges §4).
+
+servers:
+  - url: https://vdl.moulard.org/nautilink/api
+    description: 'Bêta, Raspberry Pi sous pi-appliance (D-62). Adresse publique https://nautilink.moulard.org.'
+  - url: http://localhost:8080/nautilink/api
+    description: 'Développement et test (08-architecture.md §6).'
+
+security:
+  - jeton: []
+  - cookieSession: []
+
+tags:
+  - name: Comptes
+  - name: Appareils et bateaux
+  - name: Contacts et partage
+  - name: Paramètres
+  - name: Navigations
+  - name: Journal de bord
+  - name: Alertes SOS
+  - name: Quota et abonnement
+  - name: Données
+  - name: Administration
+  - name: Technique
+
+# Traitements faits par le serveur lui-même, sans appel d'un client.
+x-traitements:
+  - nom: 'Clôture automatique par épuisement du quota'
+    description: '24 heures après l''épuisement du quota pendant une navigation en cours, sauf abonnement souscrit entre-temps ; notification au navigateur à l''épuisement et 1 heure avant. Événements reçus ensuite → Q-45.'
+    x-regles: [RG-NAV-15, RG-ECO-05]
+  - nom: 'Calcul du quota'
+    description: 'Minutes entre début et fin enregistrés par le téléphone, sur 7 jours glissants, par compte, comme navigateur seulement.'
+    x-regles: [RG-ECO-01, RG-ECO-02, RG-ECO-03, RG-NAV-21]
+  - nom: 'Lieux et distance'
+    description: 'Géocodage inverse par Nominatim avec cache (D-96) pour le lieu de départ, d''arrivée et de chaque position ; distance = somme des distances entre positions successives.'
+    x-regles: [RG-NAV-16, RG-JRN-10]
+  - nom: 'Météo de début et de fin'
+    description: 'Relevée auprès de l''API de Météo-France au point de départ et d''arrivée (Q-39).'
+    x-regles: [RG-NAV-28]
+  - nom: 'E-mails'
+    description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur.'
+    x-regles: [RG-NOT-01, RG-NOT-02, RG-NOT-03, RG-SOS-06, RG-SOS-15, RG-PRM-04, RG-PAR-04]
+  - nom: 'Notifications push des suiveurs'
+    description: 'APNs (iPhone) et FCM (Android) — SOS, début, fin, nouvelle photo, position en retard (aucune position reçue pendant deux fois la fréquence, une seule notification jusqu''à la position suivante).'
+    x-regles: [RG-IOS-06, RG-AND-08, RG-NOT-02]
+  - nom: 'Purge de la corbeille'
+    description: 'Suppression définitive 30 jours après le passage dans la corbeille.'
+    x-regles: [RG-NAV-20, RG-DON-01]
+  - nom: 'Conservation'
+    description: 'Navigations, journaux et positions sans limite ; journaux techniques 1 an ; journaux d''administration 3 ans ; sauvegarde quotidienne gardée 30 jours (pi-appliance pendant la bêta).'
+    x-regles: [RG-NAV-18, RG-JRN-01, RG-DON-01, RG-DON-02]
+  - nom: 'Fin de l''abonnement'
+    description: 'Retour à la version gratuite au bout des 10 ans.'
+    x-regles: [RG-ECO-06]
+
+# Règles sans échange propre avec le serveur (appliquées par l'application ou l'écran seuls).
+x-regles-sans-serveur: [RG-CPT-03, RG-NAV-09, RG-NAV-12, RG-NAV-23, RG-NAV-24, RG-NAV-29, RG-GPS-01,
+  RG-GPS-03, RG-GPS-05, RG-GPS-06, RG-COM-02, RG-COM-03, RG-SMS-03, RG-SMS-04,
+  RG-SOS-01, RG-SOS-07, RG-SOS-08, RG-SOS-16, RG-ECO-10, RG-PRM-05, RG-ADM-04, RG-ADM-05,
+  RG-IOS-02, RG-IOS-04, RG-IOS-08, RG-IOS-09, RG-AND-01, RG-AND-02, RG-AND-03, RG-AND-04,
+  RG-AND-05, RG-AND-06, RG-AND-07]
+
+paths:
+  /sante:
+    get:
+      tags: [Technique]
+      summary: 'État du serveur (existe dans le squelette, TODO-3.7).'
+      security: []
+      responses:
+        '200':
+          description: 'Serveur joignable.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  etat: {type: string, const: ok}
+                  version: {type: string}
+                  base: {type: string, enum: [ok, absente, erreur]}
+
+  # ---------------------------------------------------------------- Comptes
+  /v1/avertissement:
+    get:
+      tags: [Comptes]
+      summary: 'Version en vigueur de l''avertissement bêta.'
+      security: []
+      x-regles: [RG-CPT-06, RG-CPT-07]
+      responses:
+        '200':
+          description: 'Version et adresse du texte.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Avertissement'}
+  /v1/comptes:
+    post:
+      tags: [Comptes]
+      summary: 'Créer un compte par e-mail et mot de passe.'
+      description: 'Refusé sans acceptation de la version en vigueur de l''avertissement bêta. Ouvre une session.'
+      security: []
+      x-regles: [RG-CPT-01, RG-CPT-02, RG-CPT-06, RG-PRM-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreationCompte'}
+      responses:
+        '201':
+          description: 'Compte créé, session ouverte.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+        '409': {$ref: '#/components/responses/Conflit'}
+        '422': {$ref: '#/components/responses/Invalide'}
+  /v1/sessions:
+    post:
+      tags: [Comptes]
+      summary: 'Ouvrir une session.'
+      description: |
+        E-mail et mot de passe, ou jeton d'identité Google ou Apple. Une première connexion par Google
+        ou Apple crée le compte, avec la même acceptation de l'avertissement que `POST /v1/comptes`.
+        Durée des sessions : Q-43.
+      security: []
+      x-regles: [RG-CPT-02, RG-CPT-06, RG-DON-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Connexion'}
+      responses:
+        '200':
+          description: 'Session ouverte.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+        '401': {$ref: '#/components/responses/NonAuthentifie'}
+        '428':
+          description: 'Avertissement bêta pas encore accepté (premier compte Google ou Apple) ou nouvelle version à accepter.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Erreur'}
+  /v1/sessions/renouvellement:
+    post:
+      tags: [Comptes]
+      summary: 'Renouveler une session avec le jeton de renouvellement (Q-43).'
+      security: []
+      x-regles: [RG-DON-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jetonRenouvellement]
+              properties:
+                jetonRenouvellement: {type: string}
+      responses:
+        '200':
+          description: 'Nouvelle session.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+        '401': {$ref: '#/components/responses/NonAuthentifie'}
+  /v1/sessions/courante:
+    delete:
+      tags: [Comptes]
+      summary: 'Se déconnecter.'
+      x-regles: [RG-DON-03]
+      responses:
+        '204': {description: Session fermée.}
+  /v1/compte:
+    get:
+      tags: [Comptes]
+      summary: 'Profil de l''utilisateur connecté.'
+      x-regles: [RG-CPT-01, RG-SMS-01, RG-SMS-08, RG-PRM-03, RG-NOT-02, RG-IOS-06, RG-AND-08, RG-CPT-07]
+      responses:
+        '200':
+          description: 'Profil.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Profil'}
+    patch:
+      tags: [Comptes]
+      summary: 'Modifier le profil (nom, téléphone, langue, « Recevoir les SMS », désinscriptions).'
+      description: |
+        « Recevoir les SMS » passe à vrai dès qu'un numéro est renseigné pour la première fois
+        (RG-SMS-01). Le SOS ne se désactive ni par e-mail ni par push (RG-NOT-02, RG-IOS-06,
+        RG-AND-08). Portée des désinscriptions : Q-47.
+      x-regles: [RG-SMS-01, RG-PRM-03, RG-NOT-02, RG-IOS-06, RG-AND-08]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ProfilModifiable'}
+      responses:
+        '200':
+          description: 'Profil modifié.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Profil'}
+        '422': {$ref: '#/components/responses/Invalide'}
+  /v1/compte/avertissement:
+    post:
+      tags: [Comptes]
+      summary: 'Accepter la version en vigueur de l''avertissement bêta.'
+      description: 'Enregistre la date et la version acceptée ; demandé à la connexion suivante quand le texte change.'
+      x-regles: [RG-CPT-06, RG-CPT-07]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                version: {type: string}
+      responses:
+        '204': {description: Acceptation enregistrée.}
+        '409': {$ref: '#/components/responses/Conflit'}
+
+  # ---------------------------------------------------- Appareils et bateaux
+  /v1/appareils/{appareilId}:
+    parameters:
+      - {$ref: '#/components/parameters/AppareilId'}
+    put:
+      tags: [Appareils et bateaux]
+      summary: 'Enregistrer ou mettre à jour le téléphone de l''utilisateur (plateforme, jeton push).'
+      description: 'L''identifiant est tiré au hasard par l''application à sa première ouverture et gardé sur le téléphone.'
+      x-regles: [RG-BAT-02, RG-IOS-01, RG-IOS-06, RG-AND-08]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Appareil'}
+      responses:
+        '200':
+          description: 'Appareil enregistré.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Appareil'}
+  /v1/bateaux:
+    get:
+      tags: [Appareils et bateaux]
+      summary: 'Bateaux du compte.'
+      x-regles: [RG-CPT-04, RG-NAV-02]
+      responses:
+        '200':
+          description: 'Liste.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Bateau'}
+    post:
+      tags: [Appareils et bateaux]
+      summary: 'Créer un bateau ; le compte connecté en est le propriétaire.'
+      x-regles: [RG-CPT-04, RG-BAT-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/BateauModifiable'}
+      responses:
+        '201':
+          description: 'Bateau créé.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Bateau'}
+        '422': {$ref: '#/components/responses/Invalide'}
+  /v1/bateaux/{bateauId}:
+    parameters:
+      - {$ref: '#/components/parameters/BateauId'}
+    get:
+      tags: [Appareils et bateaux]
+      summary: 'Fiche bateau (propriétaire, ou suiveur d''une de ses navigations).'
+      x-regles: [RG-BAT-01, RG-PAR-08]
+      responses:
+        '200':
+          description: 'Fiche.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Bateau'}
+        '404': {$ref: '#/components/responses/Introuvable'}
+    patch:
+      tags: [Appareils et bateaux]
+      summary: 'Modifier la fiche (propriétaire seulement).'
+      x-regles: [RG-BAT-01, RG-CPT-04]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/BateauModifiable'}
+      responses:
+        '200':
+          description: 'Fiche modifiée.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Bateau'}
+        '403': {$ref: '#/components/responses/Interdit'}
+  /v1/bateaux/{bateauId}/photo:
+    parameters:
+      - {$ref: '#/components/parameters/BateauId'}
+    put:
+      tags: [Appareils et bateaux]
+      summary: 'Photo du bateau.'
+      x-regles: [RG-BAT-01]
+      requestBody:
+        required: true
+        content:
+          image/jpeg: {schema: {type: string, contentMediaType: image/jpeg}}
+      responses:
+        '204': {description: Photo enregistrée.}
+    get:
+      tags: [Appareils et bateaux]
+      summary: 'Lire la photo du bateau.'
+      x-regles: [RG-BAT-01, RG-PAR-08]
+      responses:
+        '200':
+          description: 'Photo.'
+          content:
+            image/jpeg: {schema: {type: string, contentMediaType: image/jpeg}}
+  /v1/bateaux/{bateauId}/telephone:
+    parameters:
+      - {$ref: '#/components/parameters/BateauId'}
+    put:
+      tags: [Appareils et bateaux]
+      summary: 'Associer un téléphone au bateau ; remplace l''association précédente.'
+      x-regles: [RG-BAT-02, RG-IOS-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appareilId]
+              properties:
+                appareilId: {type: string, format: uuid}
+      responses:
+        '200':
+          description: 'Association enregistrée.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Bateau'}
+        '403': {$ref: '#/components/responses/Interdit'}
+
+  # ---------------------------------------------------- Contacts et partage
+  /v1/contacts:
+    get:
+      tags: [Contacts et partage]
+      summary: 'Liste unique des contacts du navigateur.'
+      description: 'L''application mobile la récupère au lancement et en garde une copie locale. `depuis` ne renvoie que ce qui a changé, suppressions comprises.'
+      x-regles: [RG-CTC-01, RG-CTC-03, RG-SOS-05]
+      parameters:
+        - {$ref: '#/components/parameters/Depuis'}
+      responses:
+        '200':
+          description: 'Contacts.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ListeContacts'}
+    post:
+      tags: [Contacts et partage]
+      summary: 'Ajouter un contact (depuis le Web, l''application mobile ou l''écran de démarrage).'
+      description: |
+        Les deux cases sont cochées par défaut. « Contact SOS » est refusé sans numéro de téléphone
+        (code `contact_sos_sans_telephone`). Cocher « Suiveur » crée une invitation avec le périmètre
+        donné (`POST /v1/invitations`). Identifiant tiré par le client pour un ajout hors connexion.
+      x-regles: [RG-CTC-01, RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-NAV-26]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ContactModifiable'}
+      responses:
+        '201':
+          description: 'Contact créé.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Contact'}
+        '422': {$ref: '#/components/responses/Invalide'}
+  /v1/contacts/{contactId}:
+    parameters:
+      - {$ref: '#/components/parameters/ContactId'}
+    patch:
+      tags: [Contacts et partage]
+      summary: 'Modifier un contact, cocher ou décocher ses cases.'
+      description: |
+        Décocher « Suiveur » retire le suiveur de toutes les navigations, immédiatement. Envoyer
+        `versionConnue` : si le contact a changé entre-temps sur un autre support, réponse 409 ;
+        règle de résolution non décidée (Q-42).
+      x-regles: [RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-PAR-06, RG-CTC-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ContactModifiable'}
+      responses:
+        '200':
+          description: 'Contact modifié.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Contact'}
+        '409': {$ref: '#/components/responses/Conflit'}
+        '422': {$ref: '#/components/responses/Invalide'}
+    delete:
+      tags: [Contacts et partage]
+      summary: 'Supprimer un contact (retire aussi ses accès).'
+      x-regles: [RG-CTC-02, RG-PAR-06]
+      responses:
+        '204': {description: Contact supprimé.}
+  /v1/invitations:
+    get:
+      tags: [Contacts et partage]
+      summary: 'Invitations envoyées par le navigateur et leur état.'
+      x-regles: [RG-PAR-05]
+      responses:
+        '200':
+          description: 'Invitations.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Invitation'}
+    post:
+      tags: [Contacts et partage]
+      summary: 'Inviter un suiveur par e-mail ou par téléphone, avec un périmètre.'
+      description: |
+        Par e-mail : le serveur envoie l'e-mail (copie au navigateur). Par téléphone : le serveur rend
+        le lien ; sur Android l'application ouvre le SMS prérempli (copie au navigateur), sur le Web
+        et l'iPhone le lien est affiché pour que le navigateur le transmette. L'invité est ajouté à
+        la liste de contacts, les deux cases cochées.
+      x-regles: [RG-PAR-02, RG-PAR-03, RG-PAR-04, RG-CTC-04, RG-NOT-02, RG-NOT-03, RG-SMS-08]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/NouvelleInvitation'}
+      responses:
+        '201':
+          description: 'Invitation créée.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Invitation'}
+        '422': {$ref: '#/components/responses/Invalide'}
+  /v1/invitations/{invitationId}:
+    parameters:
+      - name: invitationId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+    delete:
+      tags: [Contacts et partage]
+      summary: 'Annuler une invitation pas encore acceptée (elle n''expire pas).'
+      x-regles: [RG-PAR-05]
+      responses:
+        '204': {description: Invitation annulée.}
+        '409': {$ref: '#/components/responses/Conflit'}
+  /v1/invitations/acceptation:
+    post:
+      tags: [Contacts et partage]
+      summary: 'Accepter une invitation, une fois connecté (le lien mène à la connexion ou à la création d''un compte).'
+      x-regles: [RG-PAR-01, RG-PAR-05, RG-NOT-02, RG-NOT-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jetonInvitation]
+              properties:
+                jetonInvitation: {type: string, description: Jeton contenu dans le lien d'invitation.}
+      responses:
+        '200':
+          description: 'Accès accordé.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Acces'}
+        '404': {$ref: '#/components/responses/Introuvable'}
+  /v1/acces:
+    get:
+      tags: [Contacts et partage]
+      summary: 'Accès donnés par le navigateur (role=navigateur) ou reçus comme suiveur (role=suiveur).'
+      x-regles: [RG-PAR-02, RG-PAR-07]
+      parameters:
+        - name: role
+          in: query
+          schema: {type: string, enum: [navigateur, suiveur], default: navigateur}
+      responses:
+        '200':
+          description: 'Accès.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Acces'}
+  /v1/acces/{accesId}:
+    parameters:
+      - name: accesId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+    patch:
+      tags: [Contacts et partage]
+      summary: 'Changer le périmètre d''un accès.'
+      x-regles: [RG-PAR-02]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [perimetre]
+              properties:
+                perimetre: {$ref: '#/components/schemas/Perimetre'}
+                navigationId: {type: string, format: uuid, description: Obligatoire pour le périmètre navigation.}
+      responses:
+        '200':
+          description: 'Accès modifié.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Acces'}
+    delete:
+      tags: [Contacts et partage]
+      summary: 'Retirer le suiveur de toutes les navigations présentes et futures ; effet immédiat.'
+      x-regles: [RG-PAR-06]
+      responses:
+        '204': {description: Accès retiré.}
+  /v1/navigations/{navigationId}/suiveurs:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    get:
+      tags: [Contacts et partage]
+      summary: 'Suiveurs de la navigation (visibles du navigateur et des suiveurs).'
+      x-regles: [RG-PAR-08]
+      responses:
+        '200':
+          description: 'Suiveurs.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Personne'}
+  /v1/navigations/{navigationId}/suiveurs/{utilisateurId}:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+      - name: utilisateurId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+    delete:
+      tags: [Contacts et partage]
+      summary: 'Retirer un suiveur de cette navigation seulement ; effet immédiat.'
+      x-regles: [RG-PAR-06]
+      responses:
+        '204': {description: Suiveur retiré.}
+
+  # ------------------------------------------------------------- Paramètres
+  /v1/parametres:
+    get:
+      tags: [Paramètres]
+      summary: 'Paramètres généraux du navigateur.'
+      description: 'Récupérés par l''application mobile au lancement ; la dernière version reçue sert hors connexion.'
+      x-regles: [RG-PRM-01, RG-PRM-02, RG-SMS-02, RG-NAV-05]
+      responses:
+        '200':
+          description: 'Paramètres.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Parametres'}
+    put:
+      tags: [Paramètres]
+      summary: 'Remplacer les paramètres généraux (application mobile ou Web).'
+      description: 'Envoyer `version` ; si les paramètres ont changé entre-temps sur un autre support, réponse 409 (résolution : Q-42).'
+      x-regles: [RG-PRM-01, RG-SMS-02, RG-SMS-05, RG-NAV-05, RG-SOS-14]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Parametres'}
+      responses:
+        '200':
+          description: 'Paramètres enregistrés.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Parametres'}
+        '409': {$ref: '#/components/responses/Conflit'}
+
+  # ------------------------------------------------------------ Navigations
+  /v1/navigations:
+    get:
+      tags: [Navigations]
+      summary: 'Navigations du compte comme navigateur et comme suiveur (tableau de bord, « Navigations enregistrées »).'
+      description: 'Les navigations en cours d''abord, puis l''historique de la plus récente à la plus ancienne. Le suivi est gratuit.'
+      x-regles: [RG-PAR-07, RG-ECO-08, RG-NAV-16, RG-NAV-18, RG-BAT-03, RG-IOS-05]
+      parameters:
+        - name: role
+          in: query
+          schema: {type: string, enum: [navigateur, suiveur]}
+        - name: etat
+          in: query
+          schema: {type: string, enum: [en_cours, terminee]}
+        - name: bateauId
+          in: query
+          schema: {type: string, format: uuid}
+        - {$ref: '#/components/parameters/Curseur'}
+      responses:
+        '200':
+          description: 'Page de navigations.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  navigations:
+                    type: array
+                    items: {$ref: '#/components/schemas/ResumeNavigation'}
+                  curseurSuivant: {type: [string, 'null']}
+  /v1/navigations/{navigationId}:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    put:
+      tags: [Navigations]
+      summary: 'Démarrer une navigation (« Envoi message – Début de navigation »).'
+      description: |
+        Envoyé par l'application mobile à la confirmation du démarrage, avec l'identifiant tiré par le
+        téléphone et l'événement de début (heure et position d'acquisition). Rejouable : le même
+        identifiant avec le même contenu rend 200 sans rien créer de plus.
+
+        Le serveur vérifie : propriétaire du bateau (`pas_proprietaire`), téléphone associé, une
+        seule navigation en cours par bateau et par téléphone (`navigation_en_cours`), quota
+        (`quota_epuise`, avec l'heure à laquelle des minutes redeviennent disponibles). Il génère le
+        nom, relève la météo, envoie l'e-mail et les notifications push de début.
+        Démarrage hors connexion et quota non vérifiable : Q-29.
+      x-regles: [RG-NAV-01, RG-NAV-02, RG-NAV-03, RG-NAV-04, RG-NAV-05, RG-NAV-06, RG-NAV-07, RG-NAV-08,
+        RG-NAV-11, RG-NAV-17, RG-NAV-25, RG-NAV-27, RG-NAV-28, RG-CPT-05, RG-ECO-04, RG-NOT-02,
+        RG-IOS-06, RG-AND-08, RG-BAT-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DemarrageNavigation'}
+      responses:
+        '200':
+          description: 'Déjà reçue (renvoi) ; aucun doublon.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Navigation'}
+        '201':
+          description: 'Navigation créée.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Navigation'}
+        '403': {$ref: '#/components/responses/Interdit'}
+        '409': {$ref: '#/components/responses/Conflit'}
+    get:
+      tags: [Navigations]
+      summary: 'Page d''une navigation (navigateur ou suiveur ayant accès).'
+      description: 'Comprend la fiche du bateau, les suiveurs et les contacts SOS du navigateur (RG-PAR-08). Introuvable pour un suiveur quand elle est dans la corbeille ou quand son accès est retiré.'
+      x-regles: [RG-NAV-16, RG-NAV-27, RG-NAV-28, RG-PAR-01, RG-PAR-07, RG-PAR-08, RG-NAV-20, RG-PAR-06,
+        RG-ECO-08, RG-IOS-05]
+      responses:
+        '200':
+          description: 'Navigation.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Navigation'}
+        '404': {$ref: '#/components/responses/Introuvable'}
+    patch:
+      tags: [Navigations]
+      summary: 'Modifier nom, destination, bateau (parmi les siens) et heures (navigateur seulement).'
+      description: 'Un changement d''heures ne change pas le quota ; les événements hors de la nouvelle plage sont gardés et marqués `masque`.'
+      x-regles: [RG-NAV-17, RG-NAV-22, RG-ECO-02, RG-PAR-07]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/NavigationModifiable'}
+      responses:
+        '200':
+          description: 'Navigation modifiée.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Navigation'}
+        '403': {$ref: '#/components/responses/Interdit'}
+        '409': {$ref: '#/components/responses/Conflit'}
+    delete:
+      tags: [Navigations]
+      summary: 'Mettre une navigation terminée dans la corbeille (Web, navigateur seulement).'
+      description: 'Refusé pour une navigation en cours (`navigation_en_cours`). Le temps reste décompté du quota.'
+      x-regles: [RG-NAV-20, RG-NAV-21]
+      responses:
+        '204': {description: 'Navigation dans la corbeille, restaurable 30 jours.'}
+        '409': {$ref: '#/components/responses/Conflit'}
+  /v1/navigations/{navigationId}/fin:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    put:
+      tags: [Navigations]
+      summary: 'Terminer la navigation (« Terminer la navigation » confirmé).'
+      description: |
+        Porte l'événement de fin, avec son heure réelle même s'il arrive tard. Clôture la navigation
+        même si un SMS a échoué. Rejouable. Rend l'adresse de la page de la navigation sur la
+        plateforme Web, que l'application ouvre. Le serveur relève la météo d'arrivée et envoie les
+        notifications push de fin.
+      x-regles: [RG-NAV-13, RG-NAV-14, RG-NAV-28, RG-NAV-16, RG-IOS-06, RG-AND-08]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Evenement'}
+      responses:
+        '200':
+          description: 'Navigation terminée.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - {$ref: '#/components/schemas/Navigation'}
+                  - type: object
+                    properties:
+                      adressePage: {type: string, format: uri}
+  /v1/navigations/{navigationId}/restauration:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    post:
+      tags: [Navigations]
+      summary: 'Restaurer une navigation de la corbeille (dans les 30 jours).'
+      x-regles: [RG-NAV-20]
+      responses:
+        '200':
+          description: 'Navigation restaurée.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Navigation'}
+        '404': {$ref: '#/components/responses/Introuvable'}
+  /v1/corbeille:
+    get:
+      tags: [Navigations]
+      summary: 'Navigations dans la corbeille, avec leur date de suppression définitive.'
+      x-regles: [RG-NAV-20]
+      responses:
+        '200':
+          description: 'Corbeille.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/ResumeNavigation'}
+  /v1/navigations/{navigationId}/pdf:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    get:
+      tags: [Navigations]
+      summary: 'Export PDF (navigateur et suiveurs).'
+      x-regles: [RG-NAV-19, RG-PAR-08]
+      responses:
+        '200':
+          description: 'Document PDF.'
+          content:
+            application/pdf: {schema: {type: string, contentMediaType: application/pdf}}
+  /v1/navigations/{navigationId}/trace.gpx:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    get:
+      tags: [Données]
+      summary: 'Trace GPX de la navigation (navigateur).'
+      x-regles: [RG-DON-02]
+      responses:
+        '200':
+          description: 'Trace.'
+          content:
+            application/gpx+xml: {schema: {type: string}}
+
+  # ------------------------------------------------------- Journal de bord
+  /v1/navigations/{navigationId}/evenements:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    get:
+      tags: [Journal de bord]
+      summary: 'Journal de bord, dans l''ordre de l''heure d''acquisition.'
+      description: |
+        `depuis` rend seulement ce que le serveur a reçu ou modifié depuis ce curseur : la page Web
+        d'une navigation en cours l'interroge à intervalles réguliers pour se mettre à jour
+        (08-architecture.md §4).
+      x-regles: [RG-JRN-01, RG-JRN-02, RG-JRN-03, RG-JRN-09, RG-JRN-10, RG-PAR-07, RG-NAV-22, RG-ECO-08]
+      parameters:
+        - {$ref: '#/components/parameters/Depuis'}
+      responses:
+        '200':
+          description: 'Événements.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  evenements:
+                    type: array
+                    items: {$ref: '#/components/schemas/Evenement'}
+                  curseur: {type: string, description: À renvoyer dans `depuis` à l'appel suivant.}
+  /v1/navigations/{navigationId}/evenements/{evenementId}:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+      - {$ref: '#/components/parameters/EvenementId'}
+    put:
+      tags: [Journal de bord]
+      summary: 'Envoyer un événement (position, note, photo, note vocale) ou un ajout complémentaire depuis le Web.'
+      description: |
+        Idempotent : même identifiant et même contenu → 200, rien n'est créé deux fois ; même
+        identifiant et contenu différent → 409 `evenement_different`. Le fichier d'une photo ou d'une
+        note vocale suit par `PUT /v1/fichiers/{evenementId}`. Refusé au-delà de 20 photos
+        (`limite_photos`). Une nouvelle photo déclenche la notification push des suiveurs ; une
+        position remet à zéro le délai de « position en retard ». Ajouts depuis le Web : navigation
+        terminée, navigateur seulement. Événement reçu après une clôture automatique : Q-45.
+      x-regles: [RG-JRN-02, RG-JRN-05, RG-JRN-08, RG-GPS-02, RG-GPS-04, RG-NAV-10, RG-NAV-11,
+        RG-COM-01, RG-IOS-06, RG-AND-08, RG-SMS-05, RG-SMS-06]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Evenement'}
+      responses:
+        '200':
+          description: 'Déjà reçu ; aucun doublon.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Evenement'}
+        '201':
+          description: 'Événement enregistré.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Evenement'}
+        '403': {$ref: '#/components/responses/Interdit'}
+        '409': {$ref: '#/components/responses/Conflit'}
+    patch:
+      tags: [Journal de bord]
+      summary: 'Modifier une note, une photo, une note vocale ou un ajout (navigateur, Web ou mobile).'
+      description: 'Refusé pour début, fin, positions et alerte SOS (`evenement_non_modifiable`).'
+      x-regles: [RG-JRN-06, RG-JRN-07]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                texte: {type: string}
+      responses:
+        '200':
+          description: 'Événement modifié.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Evenement'}
+        '403': {$ref: '#/components/responses/Interdit'}
+    delete:
+      tags: [Journal de bord]
+      summary: 'Supprimer une note, une photo, une note vocale ou un ajout (navigateur).'
+      description: 'Refusé pour début, fin, positions et alerte SOS (`evenement_non_modifiable`).'
+      x-regles: [RG-JRN-06, RG-JRN-07]
+      responses:
+        '204': {description: Événement supprimé.}
+        '403': {$ref: '#/components/responses/Interdit'}
+  /v1/fichiers/{evenementId}:
+    parameters:
+      - {$ref: '#/components/parameters/EvenementId'}
+    put:
+      tags: [Journal de bord]
+      summary: 'Déposer le fichier d''une photo (JPEG, environ 1 Mo) ou d''une note vocale (AAC .m4a, 1 minute au plus).'
+      description: 'Rejouable ; un dépôt interrompu se refait en entier. Stocké dans PostgreSQL (D-86).'
+      x-regles: [RG-JRN-04, RG-JRN-08, RG-SMS-05, RG-SMS-06]
+      requestBody:
+        required: true
+        content:
+          image/jpeg: {schema: {type: string, contentMediaType: image/jpeg}}
+          audio/mp4: {schema: {type: string, contentMediaType: audio/mp4}}
+      responses:
+        '204': {description: Fichier enregistré.}
+        '413': {description: Fichier trop gros.}
+        '422': {$ref: '#/components/responses/Invalide'}
+    get:
+      tags: [Journal de bord]
+      summary: 'Lire une photo ou écouter une note vocale (navigateur et suiveurs ayant accès).'
+      description: 'Adresse donnée par les SMS de photo et de note vocale ; accès des destinataires de ces liens : Q-44.'
+      x-regles: [RG-JRN-04, RG-JRN-09, RG-PAR-01, RG-PAR-07, RG-SMS-05, RG-SMS-06]
+      responses:
+        '200':
+          description: 'Fichier.'
+          content:
+            image/jpeg: {schema: {type: string, contentMediaType: image/jpeg}}
+            audio/mp4: {schema: {type: string, contentMediaType: audio/mp4}}
+        '404': {$ref: '#/components/responses/Introuvable'}
+  /v1/synchronisation:
+    post:
+      tags: [Journal de bord]
+      summary: 'Vider la file d''attente du téléphone en un appel.'
+      description: |
+        Lot d'envois en attente (démarrage, événements, fin, alertes SOS), dans l'ordre
+        d'acquisition. Chaque élément est traité comme l'appel unitaire correspondant et reçoit son
+        propre résultat ; un élément refusé ne bloque pas les suivants. Mécanisme :
+        08-architecture.md §5.
+      x-regles: [RG-GPS-04, RG-NAV-14, RG-IOS-03, RG-COM-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [elements]
+              properties:
+                appareilId: {type: string, format: uuid}
+                elements:
+                  type: array
+                  maxItems: 200
+                  items: {$ref: '#/components/schemas/ElementFile'}
+      responses:
+        '200':
+          description: 'Un résultat par élément, dans le même ordre.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultats:
+                    type: array
+                    items: {$ref: '#/components/schemas/ResultatElement'}
+
+  # ----------------------------------------------------------- Alertes SOS
+  /v1/alertes-sos:
+    get:
+      tags: [Alertes SOS]
+      summary: 'Historique des alertes SOS (par bateau ou par navigation).'
+      x-regles: [RG-SOS-12, RG-SOS-13, RG-SOS-15, RG-PAR-07, RG-ECO-08]
+      parameters:
+        - name: bateauId
+          in: query
+          schema: {type: string, format: uuid}
+        - name: navigationId
+          in: query
+          schema: {type: string, format: uuid}
+      responses:
+        '200':
+          description: 'Alertes.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/AlerteSos'}
+  /v1/alertes-sos/{alerteId}:
+    parameters:
+      - name: alerteId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+    put:
+      tags: [Alertes SOS]
+      summary: 'Envoyer une alerte SOS (en navigation ou depuis l''accueil).'
+      description: |
+        Envoyée en priorité, hors de la file ordinaire, et renvoyée jusqu'à réception (iPhone sans
+        Internet : dès le retour de la connexion). Acceptée quel que soit le quota ou l'abonnement.
+        Rejouable sans doublon. Le serveur enregistre l'alerte dans le journal (ou dans l'historique
+        du bateau hors navigation), envoie l'e-mail aux suiveurs (de la navigation, ou de périmètre
+        navigateur hors navigation) et aux contacts SOS dont l'e-mail est connu, sauf les personnes
+        décochées au démarrage, avec copie au navigateur, et les notifications push SOS.
+      x-regles: [RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
+        RG-SOS-15, RG-NAV-25, RG-NAV-27, RG-IOS-01, RG-IOS-03, RG-IOS-06, RG-AND-08, RG-NOT-02, RG-NOT-03,
+        RG-JRN-02, RG-JRN-07, RG-PRM-04]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/AlerteSos'}
+      responses:
+        '200':
+          description: 'Déjà reçue ; aucun doublon.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AlerteSos'}
+        '201':
+          description: 'Alerte enregistrée, e-mails partis.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AlerteSos'}
+  /v1/alertes-sos/{alerteId}/sms:
+    parameters:
+      - name: alerteId
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
+    put:
+      tags: [Alertes SOS]
+      summary: 'Statut d''envoi de chaque SMS SOS (Android), mis à jour à chaque changement.'
+      x-regles: [RG-SOS-12, RG-SMS-07, RG-SMS-08]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: {$ref: '#/components/schemas/StatutSms'}
+      responses:
+        '204': {description: Statuts enregistrés.}
+
+  # --------------------------------------------------- Quota et abonnement
+  /v1/quota:
+    get:
+      tags: [Quota et abonnement]
+      summary: 'Quota et état de l''abonnement, calculés par le serveur.'
+      x-regles: [RG-ECO-01, RG-ECO-02, RG-ECO-03, RG-ECO-04, RG-ECO-05, RG-ECO-06, RG-ECO-07, RG-ECO-09]
+      responses:
+        '200':
+          description: 'Quota.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Quota'}
+  /v1/abonnement/stripe:
+    post:
+      tags: [Quota et abonnement]
+      summary: 'Ouvrir un paiement par carte bancaire avec Stripe (Web).'
+      x-regles: [RG-ECO-06, RG-ECO-07, RG-ECO-11]
+      responses:
+        '201':
+          description: 'Adresse de la page de paiement Stripe.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  adressePaiement: {type: string, format: uri}
+        '409': {$ref: '#/components/responses/Conflit'}
+  /v1/abonnement/google-play:
+    post:
+      tags: [Quota et abonnement]
+      summary: 'Faire reconnaître un achat unique Google Play (Android).'
+      description: 'Le serveur vérifie l''achat auprès de Google avant d''ouvrir l''abonnement ; un paiement échoué n''ouvre rien.'
+      x-regles: [RG-ECO-06, RG-ECO-07, RG-ECO-11, RG-ECO-05]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jetonAchat]
+              properties:
+                jetonAchat: {type: string}
+      responses:
+        '200':
+          description: 'Abonnement ouvert.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Quota'}
+        '402': {description: Paiement non confirmé.}
+  /v1/abonnement/app-store:
+    post:
+      tags: [Quota et abonnement]
+      summary: 'Faire reconnaître un achat intégré de l''App Store (iPhone).'
+      x-regles: [RG-ECO-06, RG-ECO-07, RG-ECO-11, RG-IOS-07, RG-ECO-05]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [transactionSignee]
+              properties:
+                transactionSignee: {type: string}
+      responses:
+        '200':
+          description: 'Abonnement ouvert.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Quota'}
+        '402': {description: Paiement non confirmé.}
+  /v1/rappels/stripe:
+    post:
+      tags: [Quota et abonnement]
+      summary: 'Avis de paiement envoyé par Stripe (signature vérifiée).'
+      security: []
+      x-regles: [RG-ECO-07, RG-ECO-11, RG-ECO-05]
+      responses:
+        '204': {description: Avis traité.}
+
+  # -------------------------------------------------------------- Données
+  /v1/compte/export.json:
+    get:
+      tags: [Données]
+      summary: 'Export des données du compte en JSON.'
+      x-regles: [RG-DON-02]
+      responses:
+        '200':
+          description: 'Export.'
+          content:
+            application/json: {schema: {type: object}}
+  /v1/compte/traces.gpx:
+    get:
+      tags: [Données]
+      summary: 'Traces GPX de toutes les navigations du compte.'
+      x-regles: [RG-DON-02]
+      responses:
+        '200':
+          description: 'Traces.'
+          content:
+            application/gpx+xml: {schema: {type: string}}
+
+  # ------------------------------------------------------- Administration
+  /v1/admin/{ressource}:
+    parameters:
+      - name: ressource
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [utilisateurs, bateaux, navigations, evenements, alertes-sos, abonnements, annonces,
+            supervision, journal, statistiques]
+    get:
+      tags: [Administration]
+      summary: 'Consulter (espace administrateur, profil unique d''administrateur).'
+      description: 'Appelée par l''espace administrateur (`/admin/`), distinct de l''espace utilisateur. Chaque appel est tracé et gardé 3 ans. Affichage des annonces aux utilisateurs : Q-46.'
+      x-regles: [RG-ADM-01, RG-ADM-02, RG-ADM-03, RG-DON-02]
+      security:
+        - cookieAdmin: []
+      parameters:
+        - {$ref: '#/components/parameters/Curseur'}
+        - name: recherche
+          in: query
+          schema: {type: string}
+      responses:
+        '200':
+          description: 'Page de résultats.'
+          content:
+            application/json: {schema: {type: object}}
+        '403': {$ref: '#/components/responses/Interdit'}
+    post:
+      tags: [Administration]
+      summary: 'Créer (annonce, rattachement d''un bateau, abonnement…).'
+      x-regles: [RG-ADM-02, RG-ADM-03]
+      security:
+        - cookieAdmin: []
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {type: object}}
+      responses:
+        '201': {description: Créé et tracé.}
+  /v1/admin/{ressource}/{id}:
+    parameters:
+      - name: ressource
+        in: path
+        required: true
+        schema: {type: string}
+      - name: id
+        in: path
+        required: true
+        schema: {type: string}
+    patch:
+      tags: [Administration]
+      summary: 'Modifier toute donnée, positions et alertes SOS comprises ; action tracée.'
+      x-regles: [RG-ADM-03]
+      security:
+        - cookieAdmin: []
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {type: object}}
+      responses:
+        '200': {description: Modifié et tracé.}
+    delete:
+      tags: [Administration]
+      summary: 'Supprimer toute donnée ; action tracée.'
+      x-regles: [RG-ADM-03, RG-DON-01]
+      security:
+        - cookieAdmin: []
+      responses:
+        '204': {description: Supprimé et tracé.}
+
+components:
+  securitySchemes:
+    jeton:
+      type: http
+      scheme: bearer
+      description: 'Jeton de session des applications mobiles (durée : Q-43).'
+    cookieSession:
+      type: apiKey
+      in: cookie
+      name: nautilink_session
+      description: 'Session de la plateforme Web (cookie HttpOnly, Secure, SameSite=Lax).'
+    cookieAdmin:
+      type: apiKey
+      in: cookie
+      name: nautilink_admin
+      description: 'Session de l''espace administrateur, distincte de celle des utilisateurs.'
+
+  parameters:
+    NavigationId:
+      name: navigationId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    EvenementId:
+      name: evenementId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    BateauId:
+      name: bateauId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    ContactId:
+      name: contactId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    AppareilId:
+      name: appareilId
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    Depuis:
+      name: depuis
+      in: query
+      description: 'Curseur rendu par l''appel précédent ; absent, tout est rendu.'
+      schema: {type: string}
+    Curseur:
+      name: curseur
+      in: query
+      schema: {type: string}
+
+  responses:
+    NonAuthentifie:
+      description: 'Session absente ou expirée.'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Erreur'}
+    Interdit:
+      description: 'Droit insuffisant (suiveur en lecture seule, pas propriétaire, événement non modifiable…).'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Erreur'}
+    Introuvable:
+      description: 'Inexistant, ou sans accès (le serveur ne distingue pas les deux).'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Erreur'}
+    Conflit:
+      description: 'Conflit avec l''état du serveur.'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Erreur'}
+    Invalide:
+      description: 'Données invalides.'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Erreur'}
+
+  schemas:
+    Erreur:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [non_authentifie, avertissement_a_accepter, interdit, introuvable, invalide,
+            pas_proprietaire, telephone_non_associe, navigation_en_cours, quota_epuise,
+            evenement_different, evenement_non_modifiable, limite_photos, note_vocale_trop_longue,
+            contact_sos_sans_telephone, modifie_ailleurs, invitation_deja_acceptee, deja_abonne]
+        message: {type: string, description: Texte dans la langue de l'utilisateur.}
+        disponibleLe:
+          type: string
+          format: date-time
+          description: 'Pour `quota_epuise` — heure à laquelle des minutes redeviennent disponibles (RG-ECO-04).'
+
+    Avertissement:
+      type: object
+      properties:
+        version: {type: string, examples: ['2026-11-24']}
+        adresseTexte: {type: string, format: uri}
+
+    CreationCompte:
+      type: object
+      required: [email, motDePasse, nom, avertissementVersion]
+      properties:
+        email: {type: string, format: email}
+        motDePasse: {type: string, minLength: 8}
+        nom: {type: string}
+        langue: {$ref: '#/components/schemas/Langue'}
+        avertissementVersion: {type: string, description: Version acceptée en cochant la case.}
+
+    Connexion:
+      oneOf:
+        - type: object
+          required: [email, motDePasse]
+          properties:
+            email: {type: string, format: email}
+            motDePasse: {type: string}
+        - type: object
+          required: [fournisseur, jetonIdentite]
+          properties:
+            fournisseur: {type: string, enum: [google, apple]}
+            jetonIdentite: {type: string}
+            avertissementVersion: {type: string}
+
+    Session:
+      type: object
+      properties:
+        jetonAcces: {type: string}
+        jetonRenouvellement: {type: string}
+        expireLe: {type: string, format: date-time}
+
+    Langue:
+      type: string
+      enum: [fr, en]
+      description: 'RG-PRM-03.'
+
+    Profil:
+      allOf:
+        - {$ref: '#/components/schemas/ProfilModifiable'}
+        - type: object
+          properties:
+            id: {type: string, format: uuid}
+            email: {type: string, format: email}
+            avertissementVersionAcceptee: {type: string}
+            avertissementAccepteLe: {type: string, format: date-time}
+
+    ProfilModifiable:
+      type: object
+      properties:
+        nom: {type: string}
+        telephone: {type: [string, 'null'], description: Format international E.164. Sert aussi à la copie SMS au navigateur (RG-SMS-08).}
+        recevoirSms: {type: boolean, description: « Recevoir les SMS » (RG-SMS-01).}
+        langue: {$ref: '#/components/schemas/Langue'}
+        emailsDebut: {type: boolean, description: E-mails de début de navigation (RG-NOT-02).}
+        push:
+          type: object
+          description: 'Types de notifications push du suiveur ; le SOS n''est pas désactivable (RG-IOS-06, RG-AND-08).'
+          properties:
+            debut: {type: boolean, default: true}
+            fin: {type: boolean, default: true}
+            photo: {type: boolean, default: true}
+            positionEnRetard: {type: boolean, default: true}
+
+    Appareil:
+      type: object
+      required: [plateforme]
+      properties:
+        id: {type: string, format: uuid, readOnly: true}
+        plateforme: {type: string, enum: [android, ios]}
+        nom: {type: string, description: 'Nom du modèle, pour le reconnaître dans la liste.'}
+        jetonPush: {type: [string, 'null'], description: Jeton APNs ou FCM.}
+        versionApplication: {type: string}
+
+    BateauModifiable:
+      type: object
+      required: [nom, type]
+      properties:
+        nom: {type: string}
+        type: {type: string, enum: [voilier, moteur]}
+        longueurMetres: {type: number}
+        immatriculation: {type: string}
+        portAttache: {type: string}
+        moteur: {type: string}
+        autonomie: {type: string}
+        capaciteCarburantLitres: {type: number}
+        vitesseNoeuds: {type: number}
+        tirantEauMetres: {type: number}
+
+    Bateau:
+      allOf:
+        - {$ref: '#/components/schemas/BateauModifiable'}
+        - type: object
+          properties:
+            id: {type: string, format: uuid}
+            proprietaireId: {type: string, format: uuid}
+            appareilAssocieId: {type: [string, 'null'], format: uuid, description: RG-BAT-02.}
+            aUnePhoto: {type: boolean}
+
+    Perimetre:
+      type: string
+      enum: [navigation, navigateur]
+      description: 'RG-PAR-02.'
+
+    ContactModifiable:
+      type: object
+      properties:
+        id: {type: string, format: uuid, description: Tiré par le client pour un ajout hors connexion.}
+        nom: {type: string}
+        telephone: {type: [string, 'null']}
+        email: {type: [string, 'null'], format: email}
+        suiveur: {type: boolean, default: true}
+        contactSos: {type: boolean, default: true}
+        perimetre: {$ref: '#/components/schemas/Perimetre'}
+        navigationId: {type: [string, 'null'], format: uuid}
+        versionConnue: {type: integer, description: Version sur laquelle porte la modification (Q-42).}
+
+    Contact:
+      allOf:
+        - {$ref: '#/components/schemas/ContactModifiable'}
+        - type: object
+          properties:
+            version: {type: integer}
+            utilisateurId: {type: [string, 'null'], format: uuid, description: 'Compte du suiveur, une fois l''invitation acceptée.'}
+            etatInvitation: {type: string, enum: [aucune, envoyee, acceptee, annulee]}
+            modifieLe: {type: string, format: date-time}
+
+    ListeContacts:
+      type: object
+      properties:
+        contacts:
+          type: array
+          items: {$ref: '#/components/schemas/Contact'}
+        supprimes:
+          type: array
+          items: {type: string, format: uuid}
+        curseur: {type: string}
+
+    NouvelleInvitation:
+      type: object
+      required: [canal, perimetre]
+      properties:
+        contactId: {type: string, format: uuid}
+        canal: {type: string, enum: [email, telephone]}
+        email: {type: string, format: email}
+        telephone: {type: string}
+        perimetre: {$ref: '#/components/schemas/Perimetre'}
+        navigationId: {type: string, format: uuid}
+
+    Invitation:
+      allOf:
+        - {$ref: '#/components/schemas/NouvelleInvitation'}
+        - type: object
+          properties:
+            id: {type: string, format: uuid}
+            lien: {type: string, format: uri, description: 'Lien d''invitation, jamais un accès public (RG-PAR-05).'}
+            etat: {type: string, enum: [envoyee, acceptee, annulee]}
+            creeeLe: {type: string, format: date-time}
+
+    Acces:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        navigateur: {$ref: '#/components/schemas/Personne'}
+        suiveur: {$ref: '#/components/schemas/Personne'}
+        perimetre: {$ref: '#/components/schemas/Perimetre'}
+        navigationId: {type: [string, 'null'], format: uuid}
+        accordeLe: {type: string, format: date-time}
+
+    Personne:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        nom: {type: string}
+        telephone: {type: [string, 'null']}
+        email: {type: [string, 'null']}
+
+    FrequenceMinutes:
+      type: integer
+      enum: [15, 30, 60, 120, 180, 360, 720, 1440, 2880, 14400]
+      description: 'RG-NAV-05.'
+
+    Parametres:
+      type: object
+      description: 'Paramètres généraux ; leur copie modifiée au démarrage forme les paramètres de navigation (RG-NAV-06). Ne s''appliquent jamais aux SMS SOS (RG-SOS-14).'
+      properties:
+        version: {type: integer}
+        smsActifs: {type: boolean, description: Interrupteur général des SMS ordinaires.}
+        smsParType:
+          type: object
+          properties:
+            debut: {type: boolean}
+            positionsAutomatiques: {type: boolean}
+            positionsManuelles: {type: boolean}
+            notes: {type: boolean}
+            photos: {type: boolean}
+            notesVocales: {type: boolean}
+            fin: {type: boolean}
+        photoEnMms: {type: boolean, description: Joindre la photo en MMS (RG-SMS-05).}
+        frequenceParDefaut: {$ref: '#/components/schemas/FrequenceMinutes'}
+
+    Position:
+      type: object
+      required: [latitude, longitude, heureAcquisition]
+      properties:
+        latitude: {type: number, minimum: -90, maximum: 90}
+        longitude: {type: number, minimum: -180, maximum: 180}
+        precisionMetres: {type: number}
+        heureAcquisition: {type: string, format: date-time}
+
+    Lieu:
+      type: object
+      properties:
+        nom: {type: [string, 'null'], description: 'Lieu le plus proche (géocodage inverse) ; absent, afficher les coordonnées.'}
+        position: {$ref: '#/components/schemas/Position'}
+
+    Meteo:
+      type: object
+      description: 'RG-NAV-28 ; contenu exact selon l''API de Météo-France (Q-39).'
+      properties:
+        releveeLe: {type: string, format: date-time}
+        ventVitesseNoeuds: {type: number}
+        ventDirectionDegres: {type: number}
+        etatMer: {type: string}
+        pressionHpa: {type: number}
+
+    DemarrageNavigation:
+      type: object
+      required: [bateauId, appareilId, frequenceMinutes, personnesABord, debut]
+      properties:
+        bateauId: {type: string, format: uuid}
+        appareilId: {type: string, format: uuid}
+        destination:
+          type: [object, 'null']
+          properties:
+            texte: {type: string}
+            position: {$ref: '#/components/schemas/Position'}
+        frequenceMinutes: {$ref: '#/components/schemas/FrequenceMinutes'}
+        parametres: {$ref: '#/components/schemas/Parametres'}
+        personnesABord: {type: integer, minimum: 1}
+        personnesAlertees:
+          type: array
+          description: 'Contacts cochés à l''écran de démarrage ; les décochés ne reçoivent rien de cette navigation, SOS compris (RG-NAV-25).'
+          items: {type: string, format: uuid}
+        debut: {$ref: '#/components/schemas/Evenement'}
+
+    NavigationModifiable:
+      type: object
+      properties:
+        nom: {type: string}
+        destination:
+          type: [object, 'null']
+          properties:
+            texte: {type: string}
+            position: {$ref: '#/components/schemas/Position'}
+        bateauId: {type: string, format: uuid}
+        debut: {type: string, format: date-time}
+        fin: {type: string, format: date-time}
+        versionConnue: {type: integer, description: Q-42.}
+
+    ResumeNavigation:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        nom: {type: string}
+        role: {type: string, enum: [navigateur, suiveur]}
+        etat: {type: string, enum: [en_cours, terminee, corbeille]}
+        bateau: {type: object, properties: {id: {type: string, format: uuid}, nom: {type: string}}}
+        debut: {type: string, format: date-time}
+        fin: {type: [string, 'null'], format: date-time}
+        lieuDepart: {$ref: '#/components/schemas/Lieu'}
+        lieuArrivee: {$ref: '#/components/schemas/Lieu'}
+        dureeMinutes: {type: integer}
+        distanceMetres: {type: number}
+        dernierePosition: {$ref: '#/components/schemas/Lieu'}
+        supprimeeDefinitivementLe: {type: [string, 'null'], format: date-time, description: Corbeille seulement.}
+
+    Navigation:
+      allOf:
+        - {$ref: '#/components/schemas/ResumeNavigation'}
+        - type: object
+          properties:
+            version: {type: integer}
+            navigateur: {$ref: '#/components/schemas/Personne'}
+            destination:
+              type: [object, 'null']
+              properties:
+                texte: {type: string}
+                position: {$ref: '#/components/schemas/Position'}
+            debutEnregistre: {type: string, format: date-time, description: 'Heure enregistrée par le téléphone, base du quota (RG-ECO-02).'}
+            finEnregistree: {type: [string, 'null'], format: date-time}
+            frequenceMinutes: {$ref: '#/components/schemas/FrequenceMinutes'}
+            personnesABord: {type: integer}
+            meteoDepart: {$ref: '#/components/schemas/Meteo'}
+            meteoArrivee: {$ref: '#/components/schemas/Meteo'}
+            clotureAutomatiqueLe: {type: [string, 'null'], format: date-time, description: RG-ECO-05.}
+            fiche: {$ref: '#/components/schemas/Bateau'}
+            suiveurs:
+              type: array
+              items: {$ref: '#/components/schemas/Personne'}
+            contactsSos:
+              type: array
+              items: {$ref: '#/components/schemas/Personne'}
+
+    Evenement:
+      type: object
+      required: [id, type, heureAcquisition]
+      properties:
+        id: {type: string, format: uuid, description: Tiré par le téléphone (ou le Web) à la création ; clé contre les doublons.}
+        type:
+          type: string
+          enum: [debut, position_automatique, position_manuelle, note, photo, note_vocale, sos, fin, ajout]
+          description: 'RG-JRN-02.'
+        heureAcquisition: {type: string, format: date-time}
+        numeroOrdre: {type: integer, description: Rang de création sur le téléphone pour cette navigation (08-architecture.md §5).}
+        position: {$ref: '#/components/schemas/Position'}
+        gpsDisponible: {type: boolean}
+        lieu: {type: [string, 'null'], readOnly: true, description: RG-JRN-10.}
+        texte: {type: [string, 'null']}
+        fichier:
+          type: [object, 'null']
+          properties:
+            typeMedia: {type: string, enum: [image/jpeg, audio/mp4]}
+            tailleOctets: {type: integer}
+            dureeSecondes: {type: integer, maximum: 60}
+            recu: {type: boolean, readOnly: true}
+        origine: {type: string, enum: [android, ios, web]}
+        masque: {type: boolean, readOnly: true, description: Hors de la plage modifiée (RG-NAV-22).}
+        recuLe: {type: string, format: date-time, readOnly: true}
+        alerteSosId: {type: [string, 'null'], format: uuid}
+
+    AlerteSos:
+      type: object
+      required: [id, bateauId, heureDeclenchement]
+      properties:
+        id: {type: string, format: uuid}
+        bateauId: {type: string, format: uuid}
+        navigationId: {type: [string, 'null'], format: uuid, description: Absent pour un SOS depuis l'accueil (RG-SOS-15).}
+        appareilId: {type: string, format: uuid}
+        heureDeclenchement: {type: string, format: date-time}
+        position: {$ref: '#/components/schemas/Position'}
+        naturePosition:
+          type: string
+          enum: [actuelle, derniere_connue, aucune]
+          description: 'RG-SOS-09 à RG-SOS-11.'
+        problemeRencontre: {type: [string, 'null'], description: RG-SOS-02.}
+        personnesABord: {type: integer}
+        sms:
+          type: array
+          readOnly: true
+          items: {$ref: '#/components/schemas/StatutSms'}
+        emailsEnvoyesA:
+          type: array
+          readOnly: true
+          items: {type: string, format: email}
+
+    StatutSms:
+      type: object
+      properties:
+        contactId: {type: [string, 'null'], format: uuid, description: Vide pour la copie au navigateur.}
+        telephone: {type: string}
+        rang: {type: integer, enum: [1, 2], description: 'Premier ou second SMS SOS (RG-SOS-07, RG-SOS-08).'}
+        statut: {type: string, enum: [en_attente, accepte_pour_envoi, livraison_confirmee, echec]}
+        essais: {type: integer}
+        misAJourLe: {type: string, format: date-time}
+
+    Quota:
+      type: object
+      properties:
+        consommeMinutes: {type: integer}
+        disponibleMinutes: {type: integer}
+        prochainesMinutes:
+          type: array
+          description: 'Minutes qui redeviennent disponibles, et quand.'
+          items:
+            type: object
+            properties:
+              minutes: {type: integer}
+              disponiblesLe: {type: string, format: date-time}
+        epuise: {type: boolean}
+        clotureAutomatiqueLe: {type: [string, 'null'], format: date-time}
+        abonnement:
+          type: object
+          properties:
+            actif: {type: boolean}
+            canal: {type: [string, 'null'], enum: [web, google_play, app_store, null]}
+            debut: {type: [string, 'null'], format: date-time}
+            fin: {type: [string, 'null'], format: date-time, description: Début + 10 ans (RG-ECO-06).}
+
+    ElementFile:
+      type: object
+      required: [operation, id]
+      description: 'Un envoi de la file d''attente du téléphone.'
+      properties:
+        operation: {type: string, enum: [demarrage, evenement, fin, alerte_sos, statuts_sms]}
+        id: {type: string, format: uuid, description: 'Identifiant de la navigation, de l''événement ou de l''alerte.'}
+        navigationId: {type: string, format: uuid}
+        contenu: {type: object, description: Corps de l'appel unitaire correspondant.}
+
+    ResultatElement:
+      type: object
+      properties:
+        id: {type: string, format: uuid}
+        statut: {type: integer, description: Code HTTP qu'aurait rendu l'appel unitaire.}
+        erreur: {$ref: '#/components/schemas/Erreur'}
