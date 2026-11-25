@@ -165,3 +165,4 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Contradiction ou manque | Décision | Règles |
 |----|-------|-------------------------|----------|--------|
 | <a id="d-80"></a>D-80 | Autorisations Android | Version minimale d'Android, moment des demandes d'autorisations, refus de la localisation précise (Q-31, TODO-2.3). | Android 8.0 (API 26) au minimum ; chaque autorisation demandée au moment où elle sert et redemandée chaque fois que l'application en a besoin ; localisation refusée : navigation sans positions. | RG-AND-01, RG-AND-02, RG-AND-03 |
+| <a id="d-81"></a>D-81 | Refus des SMS et réveil du téléphone | Comportement si l'envoi de SMS est refusé ; réveil entre deux positions sans alarme exacte (Q-31, TODO-2.3). | SMS refusé : SOS par Internet plus SMS SOS prérempli ; réveil par une minuterie du service de localisation en continu. | RG-AND-04, RG-AND-05 |

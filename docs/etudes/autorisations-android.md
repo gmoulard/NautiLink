@@ -71,7 +71,7 @@ flowchart TD
     F --> H["Premier appui sur « Vocal »"] --> H1["Demande RECORD_AUDIO"]
     F --> I["« Envoyer un SOS »"] --> I1{"SEND_SMS accordée ?"}
     I1 -- oui --> I2["SMS SOS envoyés automatiquement<br/>(RG-SOS-16)"]
-    I1 -- non --> I3["Comportement à décider (Q-31)"]
+    I1 -- non --> I3["SOS par Internet et<br/>SMS SOS prérempli (RG-AND-04)"]
 ```
 
 Remarques :
@@ -83,7 +83,7 @@ Remarques :
 ## 5. Reste à faire pour TODO-2.3
 
 1. Relire les pages Google Play [P1] à [P6] (hôte support.google.com non joignable lors de la rédaction).
-2. Tranché (D-80) : version minimale, demande au moment du besoin, refus de la localisation précise. Reste à choisir ([Q-31](../06-questions-ouvertes.md#q-31)) : refus de `SEND_SMS`, appareil photo de NautiLink ou du téléphone, réveil entre deux positions.
+2. Tranché (D-80) : version minimale, demande au moment du besoin, refus de la localisation précise. Tranché (D-81) : refus de `SEND_SMS`, réveil entre deux positions. Reste à choisir ([Q-31](../06-questions-ouvertes.md#q-31)) : appareil photo de NautiLink ou du téléphone, SIM sur les téléphones à deux SIM, version minimale d'iOS.
 3. Vérifier le parcours sur le prototype de TODO-2.2 (Android 8, 10, 13 et 14 au moins).
 
 ## Sources
