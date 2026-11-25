@@ -144,7 +144,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get menuDashboard => 'Tableau de bord (Web)';
 
   @override
-  String get homeFreeVersion => 'Version gratuite - abonnement';
+  String get homeFreeVersion => 'Version gratuite';
+
+  @override
+  String get homeSubscriberVersion => 'Version abonné';
 
   @override
   String homeFreeLeft(String duration) {
@@ -227,6 +230,223 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get subscriptionMore => 'En savoir plus sur l\'abonnement';
+
+  @override
+  String get menuSosHistory => 'Alertes SOS';
+
+  @override
+  String get menuAssistance => 'Assistance';
+
+  @override
+  String get contactAdd => 'Ajouter un contact';
+
+  @override
+  String get contactName => 'Nom';
+
+  @override
+  String get contactPhone => 'Téléphone';
+
+  @override
+  String get contactEmail => 'E-mail';
+
+  @override
+  String get contactPhoneOrEmail =>
+      'Indiquez un numéro de téléphone ou une adresse e-mail.';
+
+  @override
+  String get contactSave => 'Enregistrer';
+
+  @override
+  String get contactDelete => 'Supprimer le contact';
+
+  @override
+  String contactDeleteConfirm(String name) {
+    return 'Supprimer $name de vos contacts ? Ses accès à vos navigations sont retirés.';
+  }
+
+  @override
+  String get contactPending =>
+      'Modification gardée sur le téléphone, envoyée au retour de la connexion';
+
+  @override
+  String get contactsOffline =>
+      'Hors connexion : liste gardée sur le téléphone, utilisable pour le SOS ; vos modifications partiront au retour de la connexion.';
+
+  @override
+  String contactRefused(String message) {
+    return 'Modification refusée par le serveur : $message';
+  }
+
+  @override
+  String get followerNeedsVerifiedEmail =>
+      'Confirmez votre adresse e-mail pour inviter des suiveurs ; un contact SOS reste possible.';
+
+  @override
+  String get scopeTitle => 'Ce que le suiveur voit';
+
+  @override
+  String get scopeNavigator =>
+      'Toutes mes navigations (présentes et futures, historique compris)';
+
+  @override
+  String get scopeVoyage => 'Une seule navigation';
+
+  @override
+  String get scopeChooseVoyage => 'Navigation';
+
+  @override
+  String get scopeNoVoyage => 'Aucune navigation à partager pour l\'instant.';
+
+  @override
+  String get scopeChange => 'Changer le périmètre';
+
+  @override
+  String get invitationNone => 'Pas encore invité';
+
+  @override
+  String get invitationSent => 'Invitation envoyée, pas encore acceptée';
+
+  @override
+  String get invitationAccepted => 'Suiveur : invitation acceptée';
+
+  @override
+  String get invitationCancelled => 'Invitation annulée';
+
+  @override
+  String get inviteByEmail => 'Inviter par e-mail';
+
+  @override
+  String get inviteByPhone => 'Inviter par téléphone';
+
+  @override
+  String invitationEmailSent(String email) {
+    return 'Invitation envoyée par e-mail à $email, avec copie à votre adresse.';
+  }
+
+  @override
+  String get invitationLink => 'Lien d\'invitation à transmettre';
+
+  @override
+  String get invitationLinkHint =>
+      'Ce lien mène à la connexion ou à la création d\'un compte NautiLink ; ce n\'est jamais un accès public.';
+
+  @override
+  String get invitationSendSms => 'Envoyer par SMS';
+
+  @override
+  String get invitationCopyLink => 'Copier le lien';
+
+  @override
+  String get linkCopied => 'Lien copié.';
+
+  @override
+  String get invitationCancel => 'Annuler l\'invitation';
+
+  @override
+  String get followerRemove => 'Retirer le suiveur de toutes mes navigations';
+
+  @override
+  String followerRemoveConfirm(String name) {
+    return 'Retirer $name de toutes vos navigations, présentes et futures ? L\'effet est immédiat.';
+  }
+
+  @override
+  String get onlineOnly =>
+      'Demande Internet : réessayez au retour de la connexion.';
+
+  @override
+  String get smsInviteOffline =>
+      'Invitation par SMS impossible hors connexion : le lien vient du serveur.';
+
+  @override
+  String get iphoneNoSmsInvite =>
+      'Sur iPhone, aucun SMS n\'est envoyé : transmettez vous-même le lien.';
+
+  @override
+  String get photoAsMms => 'Joindre la photo en MMS';
+
+  @override
+  String get settingsSynced =>
+      'Réglages synchronisés avec le Web ; hors connexion, la modification part au retour.';
+
+  @override
+  String get settingsIphone =>
+      'Sur iPhone, aucun SMS n\'est envoyé : ces réglages servent aux navigations menées depuis un téléphone Android.';
+
+  @override
+  String get sosHistoryEmpty => 'Aucune alerte SOS.';
+
+  @override
+  String sosHistoryOffline(String date) {
+    return 'Hors connexion : alertes de ce téléphone et dernier historique reçu le $date.';
+  }
+
+  @override
+  String sosAlertTitle(String date) {
+    return 'SOS · $date';
+  }
+
+  @override
+  String get sosAlertPending =>
+      'Alerte encore sur le téléphone, envoyée au retour de la connexion';
+
+  @override
+  String get sosPositionCurrent => 'Position actuelle';
+
+  @override
+  String get sosPositionLast => 'Dernière position connue';
+
+  @override
+  String get sosPositionNone => 'Aucune position';
+
+  @override
+  String get sosSmsPending => 'en attente';
+
+  @override
+  String get sosHistorySmsAccepted => 'accepté pour envoi';
+
+  @override
+  String get sosSmsDelivered => 'livraison confirmée';
+
+  @override
+  String get sosSmsFailed => 'échec';
+
+  @override
+  String sosEmailsSent(String count) {
+    return 'E-mail envoyé à $count adresse(s)';
+  }
+
+  @override
+  String sosHistoryProblem(String text) {
+    return 'Problème : $text';
+  }
+
+  @override
+  String get assistanceWrite => 'Écrire à l\'équipe NautiLink';
+
+  @override
+  String get assistanceWriteHint =>
+      'Page de suivi du projet NautiLink sur GitHub';
+
+  @override
+  String get assistanceOffline =>
+      'Contact de l\'équipe impossible sans Internet.';
+
+  @override
+  String get assistanceWarning => 'Avertissement bêta';
+
+  @override
+  String get assistanceMemoHint => 'Canal 16 de la VHF, 196';
+
+  @override
+  String get subscribe => 'Souscrire l\'abonnement';
+
+  @override
+  String get subscribeNotYet =>
+      'L\'achat de l\'abonnement par Google Play ou par l\'App Store n\'est pas encore ouvert dans l\'application.';
+
+  @override
+  String get subscribeOffline => 'Souscription impossible sans Internet.';
 
   @override
   String get boat => 'Bateau';

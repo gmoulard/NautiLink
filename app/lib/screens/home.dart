@@ -8,6 +8,7 @@ import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../reel/depot_reel.dart';
 import '../theme.dart';
+import 'compte.dart';
 import 'connexion.dart';
 import 'dashboard.dart';
 import 'memo.dart';
@@ -27,7 +28,6 @@ class HomeScreen extends StatelessWidget {
     final quota = depot.quota;
     final enCours = depot.navigationEnCours;
     final profil = depot.profil;
-    final quotaRecu = quota?.recuLe;
     final list = ListView(
       padding: const EdgeInsets.all(20),
       physics: const AlwaysScrollableScrollPhysics(),
@@ -36,37 +36,6 @@ class HomeScreen extends StatelessWidget {
           _EmailNonVerifie(email: profil.email),
           const SizedBox(height: 12),
         ],
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.timer_outlined, color: NlColors.teal),
-            // RG-ECO-10 : lien vers « Quota et abonnement ».
-            title: Text(
-              l.homeFreeVersion,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            subtitle: Text(
-              quota == null
-                  ? l.quotaUnknown
-                  : [
-                      l.homeFreeLeft(
-                        fmtDuration(
-                          l,
-                          Duration(minutes: quota.disponibleMinutes),
-                        ),
-                      ),
-                      // Hors connexion : dernier état reçu, avec son heure (RG-COM-06).
-                      if (depot.horsConnexion && quotaRecu != null)
-                        l.quotaAsOf(fmtDate(l, quotaRecu)),
-                    ].join('\n'),
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
-          ),
-        ),
         if (!demo && enCours != null) ...[
           const SizedBox(height: 12),
           Text(
@@ -119,12 +88,52 @@ class HomeScreen extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall,
         ),
+        const SizedBox(height: 24),
+        // Sponsor : le guidon de la SRT seul, sans texte (D-131).
+        Center(
+          child: Image.asset(
+            'assets/sponsor-srt.png',
+            key: const Key('home-sponsor'),
+            height: 44,
+            semanticLabel: l.sponsorLogoLabel,
+          ),
+        ),
         const SizedBox(height: 8),
+        // RG-ECO-10 : « Version gratuite » ou « Version abonné », vers
+        // « Quota et abonnement » (D-131).
+        Center(
+          child: TextButton(
+            key: const Key('home-version'),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
+            child: Text(
+              quota?.abonnementActif == true
+                  ? l.homeSubscriberVersion
+                  : l.homeFreeVersion,
+              style: const TextStyle(decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
         // Mémo sécurité en mer intégré, lisible hors connexion (RG-SOS-22).
         TextButton.icon(
           icon: const Icon(Icons.health_and_safety_outlined),
           label: Text(l.homeSecurityMemo),
           onPressed: () => openSecurityMemo(context),
+        ),
+        // Petit lien vers le site de présentation (TODO-3.13).
+        Center(
+          child: InkWell(
+            onTap: () => launchUrl(
+              Uri.parse(siteUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+            child: Text(
+              l.footerSiteLink,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -143,21 +152,28 @@ class HomeScreen extends StatelessWidget {
                 'contacts' => const ContactsScreen(),
                 'params' => const SettingsScreen(),
                 'quota' => const QuotaScreen(),
+                'sos' => const SosHistoryScreen(),
+                'assistance' => const AssistanceScreen(),
                 _ => const DashboardScreen(),
               };
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => page));
             },
+            // Autres écrans (cahier des charges §5.5, TODO-5.7).
             itemBuilder: (_) => [
-              if (demo) ...[
-                PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
-                PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
-              ],
+              PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
+              PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
               PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
               if (demo)
                 PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
-              else
+              else ...[
+                PopupMenuItem(value: 'sos', child: Text(l.menuSosHistory)),
+                PopupMenuItem(
+                  value: 'assistance',
+                  child: Text(l.menuAssistance),
+                ),
                 PopupMenuItem(value: 'logout', child: Text(l.logout)),
+              ],
             ],
           ),
         ],
@@ -182,7 +198,6 @@ class HomeScreen extends StatelessWidget {
                   : RefreshIndicator(onRefresh: depot.actualiser, child: list),
             ),
           ),
-          const SponsorFooter(),
         ],
       ),
     );
@@ -349,115 +364,6 @@ Future<void> openStart(BuildContext context) async {
       .push(MaterialPageRoute(builder: (_) => const StartScreen()));
 }
 
-/// Contacts : une seule liste, cases « Suiveur » et « Contact SOS » (RG-CTC-01).
-class ContactsScreen extends StatelessWidget {
-  const ContactsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final state = AppScope.of(context);
-    final l = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.menuContacts)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(l.contactsDefault),
-          const SizedBox(height: 12),
-          for (final c in state.contacts)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      c.name,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    Text([c.phone, c.email].whereType<String>().join(' · ')),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: Text(l.roleFollower),
-                            value: c.follower,
-                            onChanged: (v) {
-                              c.follower = v ?? false;
-                              state.touch();
-                            },
-                          ),
-                        ),
-                        Expanded(
-                          child: CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            title: Text(l.roleSos),
-                            subtitle: c.phone == null
-                                ? Text(l.phoneRequired)
-                                : null,
-                            value: c.sos,
-                            onChanged: c.phone == null
-                                ? null
-                                : (v) {
-                                    c.sos = v ?? false;
-                                    state.touch();
-                                  },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Paramètres généraux (RG-PRM-01, RG-SMS-02).
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final state = AppScope.of(context);
-    final l = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.menuSettings)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          DropdownButtonFormField<int>(
-            isExpanded: true,
-            initialValue: state.defaultFrequency,
-            decoration: InputDecoration(
-              labelText: l.defaultFrequency,
-              border: const OutlineInputBorder(),
-            ),
-            items: [
-              for (final f in frequencies)
-                DropdownMenuItem(value: f, child: Text(frequencyLabel(l, f))),
-            ],
-            onChanged: (v) {
-              state.defaultFrequency = v ?? state.defaultFrequency;
-              state.touch();
-            },
-          ),
-          const SizedBox(height: 16),
-          SmsSettings(state: state),
-          const SizedBox(height: 8),
-          Text(l.sosAlwaysSent),
-        ],
-      ),
-    );
-  }
-}
-
 class SmsSettings extends StatelessWidget {
   const SmsSettings({super.key, required this.state});
   final AppState state;
@@ -554,6 +460,24 @@ class QuotaScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+            // Achat Google Play ou App Store pas encore branché (TODO-5.8,
+            // TODO-10.6) ; hors connexion, souscription impossible (RG-COM-06).
+            if (!depot.demonstration && q?.abonnementActif != true) ...[
+              FilledButton(
+                key: const Key('subscribe'),
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      depot.horsConnexion
+                          ? l.subscribeOffline
+                          : l.subscribeNotYet,
+                    ),
+                  ),
+                ),
+                child: Text(l.subscribe),
+              ),
+              const SizedBox(height: 12),
+            ],
             // RG-ECO-10 : page d'information sur l'abonnement du site.
             OutlinedButton.icon(
               icon: const Icon(Icons.open_in_new),

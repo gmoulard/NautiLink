@@ -77,10 +77,14 @@ void main() {
       await tapText(tester, 'Se connecter');
       expect(find.text('Démarrer navigation'), findsOneWidget);
       expect(find.text('Navigation en cours : Alizé — Houat'), findsOneWidget);
-      expect(
-        find.textContaining('19 h 00 min de navigation gratuite'),
-        findsOneWidget,
+      // Accueil : « Version gratuite » seulement ; détail sur « Quota et
+      // abonnement » (RG-ECO-10, D-131).
+      await tester.scrollUntilVisible(
+        find.text('Version gratuite'),
+        200,
+        scrollable: find.byType(Scrollable).first,
       );
+      expect(find.text('Version gratuite'), findsOneWidget);
       expect(find.text('Envoyer un SOS'), findsOneWidget);
       expect(find.text('Mémo sécurité en mer'), findsOneWidget);
       // Une navigation est en cours : « Démarrer navigation » est inactif.
@@ -124,7 +128,6 @@ void main() {
         find.textContaining('Hors connexion · données du'),
         findsOneWidget,
       );
-      expect(find.textContaining('État du'), findsOneWidget);
       expect(find.text('Navigation en cours : Alizé — Houat'), findsOneWidget);
 
       await tapText(tester, 'Navigations enregistrées');
@@ -230,7 +233,16 @@ void main() {
     await tapText(tester, 'Se connecter');
     await tester.tap(find.byType(PopupMenuButton<String>));
     await tester.pumpAndSettle();
-    expect(find.text('Contacts'), findsNothing); // TODO-5.7
+    // Autres écrans du cahier des charges §5.5 (TODO-5.7).
+    for (final m in [
+      'Contacts',
+      'Paramètres',
+      'Quota et abonnement',
+      'Alertes SOS',
+      'Assistance',
+    ]) {
+      expect(find.text(m), findsOneWidget);
+    }
     await tapText(tester, 'Se déconnecter');
     expect(find.text('Se connecter'), findsOneWidget);
   });

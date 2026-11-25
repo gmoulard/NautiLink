@@ -341,8 +341,14 @@ abstract class AppLocalizations {
   /// No description provided for @homeFreeVersion.
   ///
   /// In fr, this message translates to:
-  /// **'Version gratuite - abonnement'**
+  /// **'Version gratuite'**
   String get homeFreeVersion;
+
+  /// No description provided for @homeSubscriberVersion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version abonné'**
+  String get homeSubscriberVersion;
 
   /// No description provided for @homeFreeLeft.
   ///
@@ -481,6 +487,378 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'En savoir plus sur l\'abonnement'**
   String get subscriptionMore;
+
+  /// No description provided for @menuSosHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alertes SOS'**
+  String get menuSosHistory;
+
+  /// No description provided for @menuAssistance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Assistance'**
+  String get menuAssistance;
+
+  /// No description provided for @contactAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un contact'**
+  String get contactAdd;
+
+  /// No description provided for @contactName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get contactName;
+
+  /// No description provided for @contactPhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Téléphone'**
+  String get contactPhone;
+
+  /// No description provided for @contactEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail'**
+  String get contactEmail;
+
+  /// No description provided for @contactPhoneOrEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez un numéro de téléphone ou une adresse e-mail.'**
+  String get contactPhoneOrEmail;
+
+  /// No description provided for @contactSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get contactSave;
+
+  /// No description provided for @contactDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer le contact'**
+  String get contactDelete;
+
+  /// No description provided for @contactDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer {name} de vos contacts ? Ses accès à vos navigations sont retirés.'**
+  String contactDeleteConfirm(String name);
+
+  /// No description provided for @contactPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modification gardée sur le téléphone, envoyée au retour de la connexion'**
+  String get contactPending;
+
+  /// No description provided for @contactsOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors connexion : liste gardée sur le téléphone, utilisable pour le SOS ; vos modifications partiront au retour de la connexion.'**
+  String get contactsOffline;
+
+  /// No description provided for @contactRefused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modification refusée par le serveur : {message}'**
+  String contactRefused(String message);
+
+  /// No description provided for @followerNeedsVerifiedEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmez votre adresse e-mail pour inviter des suiveurs ; un contact SOS reste possible.'**
+  String get followerNeedsVerifiedEmail;
+
+  /// No description provided for @scopeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que le suiveur voit'**
+  String get scopeTitle;
+
+  /// No description provided for @scopeNavigator.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes mes navigations (présentes et futures, historique compris)'**
+  String get scopeNavigator;
+
+  /// No description provided for @scopeVoyage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une seule navigation'**
+  String get scopeVoyage;
+
+  /// No description provided for @scopeChooseVoyage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation'**
+  String get scopeChooseVoyage;
+
+  /// No description provided for @scopeNoVoyage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune navigation à partager pour l\'instant.'**
+  String get scopeNoVoyage;
+
+  /// No description provided for @scopeChange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer le périmètre'**
+  String get scopeChange;
+
+  /// No description provided for @invitationNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore invité'**
+  String get invitationNone;
+
+  /// No description provided for @invitationSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Invitation envoyée, pas encore acceptée'**
+  String get invitationSent;
+
+  /// No description provided for @invitationAccepted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suiveur : invitation acceptée'**
+  String get invitationAccepted;
+
+  /// No description provided for @invitationCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Invitation annulée'**
+  String get invitationCancelled;
+
+  /// No description provided for @inviteByEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inviter par e-mail'**
+  String get inviteByEmail;
+
+  /// No description provided for @inviteByPhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inviter par téléphone'**
+  String get inviteByPhone;
+
+  /// No description provided for @invitationEmailSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Invitation envoyée par e-mail à {email}, avec copie à votre adresse.'**
+  String invitationEmailSent(String email);
+
+  /// No description provided for @invitationLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien d\'invitation à transmettre'**
+  String get invitationLink;
+
+  /// No description provided for @invitationLinkHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce lien mène à la connexion ou à la création d\'un compte NautiLink ; ce n\'est jamais un accès public.'**
+  String get invitationLinkHint;
+
+  /// No description provided for @invitationSendSms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer par SMS'**
+  String get invitationSendSms;
+
+  /// No description provided for @invitationCopyLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le lien'**
+  String get invitationCopyLink;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien copié.'**
+  String get linkCopied;
+
+  /// No description provided for @invitationCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler l\'invitation'**
+  String get invitationCancel;
+
+  /// No description provided for @followerRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le suiveur de toutes mes navigations'**
+  String get followerRemove;
+
+  /// No description provided for @followerRemoveConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer {name} de toutes vos navigations, présentes et futures ? L\'effet est immédiat.'**
+  String followerRemoveConfirm(String name);
+
+  /// No description provided for @onlineOnly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande Internet : réessayez au retour de la connexion.'**
+  String get onlineOnly;
+
+  /// No description provided for @smsInviteOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Invitation par SMS impossible hors connexion : le lien vient du serveur.'**
+  String get smsInviteOffline;
+
+  /// No description provided for @iphoneNoSmsInvite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur iPhone, aucun SMS n\'est envoyé : transmettez vous-même le lien.'**
+  String get iphoneNoSmsInvite;
+
+  /// No description provided for @photoAsMms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Joindre la photo en MMS'**
+  String get photoAsMms;
+
+  /// No description provided for @settingsSynced.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglages synchronisés avec le Web ; hors connexion, la modification part au retour.'**
+  String get settingsSynced;
+
+  /// No description provided for @settingsIphone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur iPhone, aucun SMS n\'est envoyé : ces réglages servent aux navigations menées depuis un téléphone Android.'**
+  String get settingsIphone;
+
+  /// No description provided for @sosHistoryEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune alerte SOS.'**
+  String get sosHistoryEmpty;
+
+  /// No description provided for @sosHistoryOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors connexion : alertes de ce téléphone et dernier historique reçu le {date}.'**
+  String sosHistoryOffline(String date);
+
+  /// No description provided for @sosAlertTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'SOS · {date}'**
+  String sosAlertTitle(String date);
+
+  /// No description provided for @sosAlertPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alerte encore sur le téléphone, envoyée au retour de la connexion'**
+  String get sosAlertPending;
+
+  /// No description provided for @sosPositionCurrent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Position actuelle'**
+  String get sosPositionCurrent;
+
+  /// No description provided for @sosPositionLast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière position connue'**
+  String get sosPositionLast;
+
+  /// No description provided for @sosPositionNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune position'**
+  String get sosPositionNone;
+
+  /// No description provided for @sosSmsPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'en attente'**
+  String get sosSmsPending;
+
+  /// No description provided for @sosHistorySmsAccepted.
+  ///
+  /// In fr, this message translates to:
+  /// **'accepté pour envoi'**
+  String get sosHistorySmsAccepted;
+
+  /// No description provided for @sosSmsDelivered.
+  ///
+  /// In fr, this message translates to:
+  /// **'livraison confirmée'**
+  String get sosSmsDelivered;
+
+  /// No description provided for @sosSmsFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'échec'**
+  String get sosSmsFailed;
+
+  /// No description provided for @sosEmailsSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail envoyé à {count} adresse(s)'**
+  String sosEmailsSent(String count);
+
+  /// No description provided for @sosHistoryProblem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Problème : {text}'**
+  String sosHistoryProblem(String text);
+
+  /// No description provided for @assistanceWrite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écrire à l\'équipe NautiLink'**
+  String get assistanceWrite;
+
+  /// No description provided for @assistanceWriteHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Page de suivi du projet NautiLink sur GitHub'**
+  String get assistanceWriteHint;
+
+  /// No description provided for @assistanceOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact de l\'équipe impossible sans Internet.'**
+  String get assistanceOffline;
+
+  /// No description provided for @assistanceWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avertissement bêta'**
+  String get assistanceWarning;
+
+  /// No description provided for @assistanceMemoHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Canal 16 de la VHF, 196'**
+  String get assistanceMemoHint;
+
+  /// No description provided for @subscribe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Souscrire l\'abonnement'**
+  String get subscribe;
+
+  /// No description provided for @subscribeNotYet.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'achat de l\'abonnement par Google Play ou par l\'App Store n\'est pas encore ouvert dans l\'application.'**
+  String get subscribeNotYet;
+
+  /// No description provided for @subscribeOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Souscription impossible sans Internet.'**
+  String get subscribeOffline;
 
   /// No description provided for @boat.
   ///

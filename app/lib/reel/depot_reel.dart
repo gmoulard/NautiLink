@@ -6,6 +6,7 @@ import '../config.dart';
 import '../depot/depot.dart';
 import 'api.dart';
 import 'base_locale.dart';
+import 'compte.dart';
 import 'conduite.dart';
 import 'file_attente.dart';
 import 'gps.dart';
@@ -138,10 +139,13 @@ class DepotReel extends Depot {
   DateTime? get navigationsRecuesLe => _navigationsRecuesLe;
   @override
   List<BateauNl> get bateaux => _bateaux;
+
+  /// Contacts reçus, avec les modifications du téléphone pas encore reçues
+  /// par le serveur (RG-COM-06, Q-86) : utilisables hors connexion pour le SOS.
   @override
-  List<ContactNl> get contacts => _contacts;
+  List<ContactNl> get contacts => compte.appliquerContacts(_contacts);
   @override
-  ParametresGeneraux? get parametres => _parametres;
+  ParametresGeneraux? get parametres => compte.appliquerParametres(_parametres);
   @override
   EtatQuota? get quota => _quota;
   @override
@@ -150,6 +154,24 @@ class DepotReel extends Depot {
   Envois get envois => file;
 
   bool _ferme = false;
+
+  /// Contacts, invitations, accès et paramètres généraux (TODO-5.7).
+  late final GestionCompte compte = GestionCompte(
+    api: api,
+    base: base,
+    changement: () async {
+      await _chargerCopies();
+      _notifier();
+    },
+  );
+
+  @override
+  Future<void> modifierContact(String id, Map<String, Object?> champs) =>
+      compte.modifierContact(id, champs);
+
+  @override
+  Future<void> modifierParametres(Map<String, Object?> champs) =>
+      compte.modifierParametres(champs);
 
   void _notifier() {
     if (!_ferme) notifyListeners();
@@ -194,6 +216,7 @@ class DepotReel extends Depot {
 
   @override
   Future<void> ouvrir() async {
+    await compte.charger();
     await _chargerCopies();
     await conduite.charger();
     _etat = session.ouverte ? EtatSession.connecte : EtatSession.deconnecte;
@@ -212,6 +235,9 @@ class DepotReel extends Depot {
     if (_etat != EtatSession.connecte) return;
     final maintenant = DateTime.now();
     try {
+      // Modifications des contacts et des paramètres gardées sur le téléphone
+      // d'abord, puis relecture (RG-CTC-03, RG-PRM-02, Q-86).
+      await compte.envoyer();
       final profil = await api.appelObjet('GET', '/v1/compte');
       await base.ecrireCopie('profil', profil, maintenant);
 
@@ -483,8 +509,10 @@ class DepotReel extends Depot {
   Future<void> _ouvrirSession(Map<String, Object?> s, String email) async {
     final compte = email.trim().toLowerCase();
     if (session.compteEmail != null && session.compteEmail != compte) {
-      // Autre compte sur ce téléphone : ses copies locales s'effacent, la file reste (Q-82).
+      // Autre compte sur ce téléphone : ses copies locales s'effacent, la file reste (Q-82) ;
+      // ses modifications de contacts et de paramètres non envoyées aussi (Q-86).
       await base.effacerCopies();
+      await this.compte.charger();
       await _chargerCopies();
     }
     await session.enregistrer(s);

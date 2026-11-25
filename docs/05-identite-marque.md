@@ -141,7 +141,7 @@ Validation des fichiers du logo et des choix graphiques du §5.5 : TODO-8.1. Voi
 NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/), [D-68](07-decisions.md#d-68)).
 
 - Mention : « Sponsorisée par la SRT », toujours accompagnée du guidon de la SRT ([`site/assets/sponsor-srt.png`](../site/assets/sponsor-srt.png)).
-- Place : bandeau blanc à filet jaune en bas de chaque page du site, et en bas de l'écran d'accueil de l'application.
+- Place : bandeau blanc à filet jaune en bas de chaque page du site et des autres écrans de l'application qui le portent ; sur l'écran d'accueil de l'application, le guidon seul, sans texte, au centre de la page sous le SOS ([D-131](07-decisions.md#d-131)).
 - Couleurs du guidon : bleu `#1E3296`, jaune `#F8D818`, rouge des ancres. Elles servent au bandeau sponsor ; leur usage comme base de toute l'identité NautiLink est la proposition 11 de la [planche de designs](../site/designs/index.html), à choisir ([TODO-3.9](TODO.md)).
 - Le guidon reste la propriété de la SRT : ne pas le modifier ni le recolorer.
 

@@ -248,7 +248,7 @@ void main() {
       expect(texte, contains('SOS Alizé'));
       expect(texte, contains('Problème : Avarie moteur.'));
       expect(texte, contains('https://maps.google.com/?q=47.38000,-2.95000'));
-      final alerte = serveur.alertes.values.single as Map;
+      final alerte = serveur.alertesRecues.values.single as Map;
       expect(alerte['bateauId'], 'b1');
       expect(alerte['problemeRencontre'], 'Avarie moteur');
     },
@@ -262,11 +262,11 @@ void main() {
     await naviguer(tester);
     await toucher(tester, 'Envoyer un SOS');
     await toucher(tester, 'Annuler');
-    expect(serveur.alertes, isEmpty);
+    expect(serveur.alertesRecues, isEmpty);
     await toucher(tester, 'Envoyer un SOS');
     await toucher(tester, 'Confirmer le SOS');
     await attendre(tester);
-    final alerte = serveur.alertes.values.single as Map;
+    final alerte = serveur.alertesRecues.values.single as Map;
     expect(alerte['navigationId'], isNotNull);
     expect(alerte['personnesABord'], 1);
   });

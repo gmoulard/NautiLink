@@ -158,6 +158,11 @@ class ContactNl {
     this.email,
     this.suiveur = true,
     this.contactSos = true,
+    this.perimetre,
+    this.navigationId,
+    this.etatInvitation = 'aucune',
+    this.utilisateurId,
+    this.enAttente = false,
   });
   final String id;
   final String nom;
@@ -165,6 +170,20 @@ class ContactNl {
   final String? email;
   final bool suiveur;
   final bool contactSos;
+
+  /// Périmètre de l'accès : `navigation` ou `navigateur` (RG-PAR-02).
+  final String? perimetre;
+  final String? navigationId;
+
+  /// État de la dernière invitation : aucune, envoyee, acceptee, annulee.
+  final String etatInvitation;
+
+  /// Compte du suiveur, une fois l'invitation acceptée.
+  final String? utilisateurId;
+
+  /// Modification faite sur le téléphone, pas encore reçue par le serveur
+  /// (RG-COM-06, Q-86).
+  final bool enAttente;
 
   static ContactNl? depuisJson(Object? j) {
     if (j is! Map || j['id'] is! String) return null;
@@ -175,6 +194,11 @@ class ContactNl {
       email: j['email'] as String?,
       suiveur: j['suiveur'] != false,
       contactSos: j['contactSos'] != false,
+      perimetre: j['perimetre'] as String?,
+      navigationId: j['navigationId'] as String?,
+      etatInvitation: (j['etatInvitation'] as String?) ?? 'aucune',
+      utilisateurId: j['utilisateurId'] as String?,
+      enAttente: j['enAttente'] == true,
     );
   }
 
@@ -185,7 +209,88 @@ class ContactNl {
     'email': email,
     'suiveur': suiveur,
     'contactSos': contactSos,
+    'perimetre': perimetre,
+    'navigationId': navigationId,
+    'etatInvitation': etatInvitation,
+    'utilisateurId': utilisateurId,
+    if (enAttente) 'enAttente': true,
   };
+}
+
+/// Invitation envoyée par le navigateur (schéma `Invitation`, RG-PAR-03 à RG-PAR-05).
+class InvitationNl {
+  const InvitationNl({
+    required this.id,
+    required this.canal,
+    required this.perimetre,
+    required this.lien,
+    required this.etat,
+    this.contactId,
+    this.email,
+    this.telephone,
+    this.navigationId,
+    this.creeeLe,
+  });
+  final String id;
+  final String canal; // email ou telephone
+  final String perimetre;
+  final String lien;
+  final String etat; // envoyee, acceptee, annulee
+  final String? contactId;
+  final String? email;
+  final String? telephone;
+  final String? navigationId;
+  final DateTime? creeeLe;
+
+  static InvitationNl? depuisJson(Object? j) {
+    if (j is! Map || j['id'] is! String) return null;
+    return InvitationNl(
+      id: j['id'] as String,
+      canal: (j['canal'] as String?) ?? 'email',
+      perimetre: (j['perimetre'] as String?) ?? 'navigateur',
+      lien: (j['lien'] as String?) ?? '',
+      etat: (j['etat'] as String?) ?? 'envoyee',
+      contactId: j['contactId'] as String?,
+      email: j['email'] as String?,
+      telephone: j['telephone'] as String?,
+      navigationId: j['navigationId'] as String?,
+      creeeLe: _heure(j['creeeLe']),
+    );
+  }
+}
+
+/// Accès donné à un suiveur (schéma `Acces`, RG-PAR-02).
+class AccesNl {
+  const AccesNl({
+    required this.id,
+    required this.suiveurId,
+    required this.suiveurNom,
+    required this.perimetre,
+    this.suiveurEmail,
+    this.navigationId,
+    this.accordeLe,
+  });
+  final String id;
+  final String suiveurId;
+  final String suiveurNom;
+  final String? suiveurEmail;
+  final String perimetre;
+  final String? navigationId;
+  final DateTime? accordeLe;
+
+  static AccesNl? depuisJson(Object? j) {
+    if (j is! Map || j['id'] is! String) return null;
+    final s = j['suiveur'];
+    return AccesNl(
+      id: j['id'] as String,
+      suiveurId: s is Map ? (s['id'] as String?) ?? '' : '',
+      suiveurNom: s is Map ? (s['nom'] as String?) ?? '' : '',
+      suiveurEmail: s is Map ? s['email'] as String? : null,
+      perimetre: (j['perimetre'] as String?) ?? 'navigateur',
+      navigationId: j['navigationId'] as String?,
+      accordeLe: _heure(j['accordeLe']),
+    );
+  }
 }
 
 /// Paramètres généraux (schéma `Parametres`, RG-PRM-01, RG-SMS-02).
@@ -270,6 +375,39 @@ class EtatQuota {
   }
 }
 
+/// Statut d'un SMS SOS (schéma `StatutSms`, RG-SOS-12).
+class StatutSmsNl {
+  const StatutSmsNl({
+    required this.telephone,
+    required this.statut,
+    this.contactId,
+    this.rang,
+  });
+  final String telephone;
+
+  /// en_attente, accepte_pour_envoi, livraison_confirmee ou echec.
+  final String statut;
+  final String? contactId;
+  final int? rang;
+
+  static StatutSmsNl? depuisJson(Object? j) {
+    if (j is! Map) return null;
+    return StatutSmsNl(
+      telephone: (j['telephone'] as String?) ?? '',
+      statut: (j['statut'] as String?) ?? 'en_attente',
+      contactId: j['contactId'] as String?,
+      rang: (j['rang'] as num?)?.toInt(),
+    );
+  }
+
+  Map<String, Object?> versJson() => {
+    'telephone': telephone,
+    'statut': statut,
+    'contactId': contactId,
+    'rang': rang,
+  };
+}
+
 /// Alerte SOS de l'historique (schéma `AlerteSos`, RG-SOS-13).
 class AlerteSosResume {
   const AlerteSosResume({
@@ -278,23 +416,48 @@ class AlerteSosResume {
     required this.heureDeclenchement,
     this.navigationId,
     this.problemeRencontre,
+    this.position,
+    this.naturePosition,
+    this.sms = const [],
+    this.emailsEnvoyesA = const [],
+    this.enAttente = false,
   });
   final String id;
   final String bateauId;
   final DateTime heureDeclenchement;
   final String? navigationId;
   final String? problemeRencontre;
+  final PositionGps? position;
 
-  static AlerteSosResume? depuisJson(Object? j) {
+  /// actuelle, derniere_connue ou aucune (RG-SOS-09 à RG-SOS-11).
+  final String? naturePosition;
+  final List<StatutSmsNl> sms;
+  final List<String> emailsEnvoyesA;
+
+  /// Alerte de ce téléphone encore dans la file d'attente (RG-COM-06).
+  final bool enAttente;
+
+  static AlerteSosResume? depuisJson(Object? j, {bool enAttente = false}) {
     if (j is! Map) return null;
     final h = _heure(j['heureDeclenchement']);
     if (j['id'] is! String || h == null) return null;
+    final sms = j['sms'];
+    final emails = j['emailsEnvoyesA'];
     return AlerteSosResume(
       id: j['id'] as String,
       bateauId: (j['bateauId'] as String?) ?? '',
       heureDeclenchement: h,
       navigationId: j['navigationId'] as String?,
       problemeRencontre: j['problemeRencontre'] as String?,
+      position: PositionGps.depuisJson(j['position']),
+      naturePosition: j['naturePosition'] as String?,
+      sms: sms is List
+          ? [for (final s in sms) ?StatutSmsNl.depuisJson(s)]
+          : const [],
+      emailsEnvoyesA: emails is List
+          ? emails.whereType<String>().toList()
+          : const [],
+      enAttente: enAttente,
     );
   }
 
@@ -304,6 +467,10 @@ class AlerteSosResume {
     'heureDeclenchement': heureRfc3339(heureDeclenchement),
     'navigationId': navigationId,
     'problemeRencontre': problemeRencontre,
+    if (position != null) 'position': position!.versJson(),
+    'naturePosition': naturePosition,
+    'sms': [for (final s in sms) s.versJson()],
+    'emailsEnvoyesA': emailsEnvoyesA,
   };
 }
 
@@ -313,10 +480,14 @@ class ProfilNl {
     required this.email,
     required this.nom,
     required this.emailVerifie,
+    this.telephone,
   });
   final String email;
   final String nom;
   final bool emailVerifie; // RG-CPT-09
+
+  /// Numéro du navigateur, pour la copie des SMS (RG-SMS-08).
+  final String? telephone;
 
   static ProfilNl? depuisJson(Object? j) {
     if (j is! Map) return null;
@@ -324,6 +495,7 @@ class ProfilNl {
       email: (j['email'] as String?) ?? '',
       nom: (j['nom'] as String?) ?? '',
       emailVerifie: j['emailVerifie'] == true,
+      telephone: j['telephone'] as String?,
     );
   }
 }

@@ -142,7 +142,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuDashboard => 'Dashboard (Web)';
 
   @override
-  String get homeFreeVersion => 'Free version - subscription';
+  String get homeFreeVersion => 'Free version';
+
+  @override
+  String get homeSubscriberVersion => 'Subscriber version';
 
   @override
   String homeFreeLeft(String duration) {
@@ -224,6 +227,222 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionMore => 'Learn more about the subscription';
+
+  @override
+  String get menuSosHistory => 'SOS alerts';
+
+  @override
+  String get menuAssistance => 'Help';
+
+  @override
+  String get contactAdd => 'Add a contact';
+
+  @override
+  String get contactName => 'Name';
+
+  @override
+  String get contactPhone => 'Phone';
+
+  @override
+  String get contactEmail => 'E-mail';
+
+  @override
+  String get contactPhoneOrEmail =>
+      'Enter a phone number or an e-mail address.';
+
+  @override
+  String get contactSave => 'Save';
+
+  @override
+  String get contactDelete => 'Delete contact';
+
+  @override
+  String contactDeleteConfirm(String name) {
+    return 'Delete $name from your contacts? Their access to your voyages is removed.';
+  }
+
+  @override
+  String get contactPending =>
+      'Change kept on the phone, sent when back online';
+
+  @override
+  String get contactsOffline =>
+      'Offline: list kept on the phone, usable for SOS; your changes will be sent when back online.';
+
+  @override
+  String contactRefused(String message) {
+    return 'Change refused by the server: $message';
+  }
+
+  @override
+  String get followerNeedsVerifiedEmail =>
+      'Confirm your e-mail address to invite followers; an SOS contact is still possible.';
+
+  @override
+  String get scopeTitle => 'What the follower sees';
+
+  @override
+  String get scopeNavigator =>
+      'All my voyages (present and future, history included)';
+
+  @override
+  String get scopeVoyage => 'A single voyage';
+
+  @override
+  String get scopeChooseVoyage => 'Voyage';
+
+  @override
+  String get scopeNoVoyage => 'No voyage to share yet.';
+
+  @override
+  String get scopeChange => 'Change scope';
+
+  @override
+  String get invitationNone => 'Not invited yet';
+
+  @override
+  String get invitationSent => 'Invitation sent, not accepted yet';
+
+  @override
+  String get invitationAccepted => 'Follower: invitation accepted';
+
+  @override
+  String get invitationCancelled => 'Invitation cancelled';
+
+  @override
+  String get inviteByEmail => 'Invite by e-mail';
+
+  @override
+  String get inviteByPhone => 'Invite by phone';
+
+  @override
+  String invitationEmailSent(String email) {
+    return 'Invitation e-mailed to $email, with a copy to your address.';
+  }
+
+  @override
+  String get invitationLink => 'Invitation link to pass on';
+
+  @override
+  String get invitationLinkHint =>
+      'This link leads to signing in or creating a NautiLink account; it is never public access.';
+
+  @override
+  String get invitationSendSms => 'Send by SMS';
+
+  @override
+  String get invitationCopyLink => 'Copy link';
+
+  @override
+  String get linkCopied => 'Link copied.';
+
+  @override
+  String get invitationCancel => 'Cancel invitation';
+
+  @override
+  String get followerRemove => 'Remove follower from all my voyages';
+
+  @override
+  String followerRemoveConfirm(String name) {
+    return 'Remove $name from all your voyages, present and future? This takes effect immediately.';
+  }
+
+  @override
+  String get onlineOnly => 'Needs Internet: try again when back online.';
+
+  @override
+  String get smsInviteOffline =>
+      'SMS invitation not possible offline: the link comes from the server.';
+
+  @override
+  String get iphoneNoSmsInvite =>
+      'On iPhone, no SMS is sent: pass the link on yourself.';
+
+  @override
+  String get photoAsMms => 'Attach the photo as MMS';
+
+  @override
+  String get settingsSynced =>
+      'Settings synced with the Web; offline, the change is sent when back online.';
+
+  @override
+  String get settingsIphone =>
+      'On iPhone, no SMS is sent: these settings apply to voyages run from an Android phone.';
+
+  @override
+  String get sosHistoryEmpty => 'No SOS alert.';
+
+  @override
+  String sosHistoryOffline(String date) {
+    return 'Offline: alerts from this phone and last history received on $date.';
+  }
+
+  @override
+  String sosAlertTitle(String date) {
+    return 'SOS · $date';
+  }
+
+  @override
+  String get sosAlertPending =>
+      'Alert still on the phone, sent when back online';
+
+  @override
+  String get sosPositionCurrent => 'Current position';
+
+  @override
+  String get sosPositionLast => 'Last known position';
+
+  @override
+  String get sosPositionNone => 'No position';
+
+  @override
+  String get sosSmsPending => 'pending';
+
+  @override
+  String get sosHistorySmsAccepted => 'accepted for sending';
+
+  @override
+  String get sosSmsDelivered => 'delivery confirmed';
+
+  @override
+  String get sosSmsFailed => 'failed';
+
+  @override
+  String sosEmailsSent(String count) {
+    return 'E-mail sent to $count address(es)';
+  }
+
+  @override
+  String sosHistoryProblem(String text) {
+    return 'Problem: $text';
+  }
+
+  @override
+  String get assistanceWrite => 'Write to the NautiLink team';
+
+  @override
+  String get assistanceWriteHint => 'NautiLink project tracker on GitHub';
+
+  @override
+  String get assistanceOffline =>
+      'Contacting the team is not possible without Internet.';
+
+  @override
+  String get assistanceWarning => 'Beta warning';
+
+  @override
+  String get assistanceMemoHint => 'VHF channel 16, 196';
+
+  @override
+  String get subscribe => 'Subscribe';
+
+  @override
+  String get subscribeNotYet =>
+      'Buying the subscription through Google Play or the App Store is not open in the app yet.';
+
+  @override
+  String get subscribeOffline =>
+      'Subscribing is not possible without Internet.';
 
   @override
   String get boat => 'Boat';

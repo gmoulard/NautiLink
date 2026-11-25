@@ -47,7 +47,7 @@ class FauxServeurNautiLink {
   /// Éléments reçus par `POST /v1/synchronisation` (opération, id, contenu),
   /// alertes SOS et fichiers reçus.
   final elements = <(String, String, Object?)>[];
-  final alertes = <String, Object?>{};
+  final alertesRecues = <String, Object?>{};
   final fichiers = <String, (String?, int)>{};
 
   /// Navigations démarrées depuis le téléphone (identifiant → résumé).
@@ -170,8 +170,8 @@ class FauxServeurNautiLink {
     }
     if (r.method == 'PUT' && chemin.startsWith('/v1/alertes-sos/')) {
       final id = chemin.split('/')[3];
-      final deja = alertes.containsKey(id);
-      alertes[id] = c;
+      final deja = alertesRecues.containsKey(id);
+      alertesRecues[id] = c;
       return reponse(deja ? 200 : 201, {...c as Map, 'emailsEnvoyesA': []});
     }
     if (r.method == 'PUT' && chemin.startsWith('/v1/fichiers/')) {

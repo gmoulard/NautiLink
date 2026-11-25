@@ -428,7 +428,7 @@ void main() {
         probleme: ' Voie d\'eau ',
       );
       expect(a.etat.recu, isTrue);
-      final c = serveur.alertes[a.id] as Map;
+      final c = serveur.alertesRecues[a.id] as Map;
       expect(c['navigationId'], n.id);
       expect(c['bateauId'], 'b1');
       expect(c['naturePosition'], 'actuelle');
@@ -465,7 +465,7 @@ void main() {
       expect(await d.envois.enAttente(), 1);
       serveur.coupe = false;
       await d.file.relancer();
-      final c = serveur.alertes[a.id] as Map;
+      final c = serveur.alertesRecues[a.id] as Map;
       expect(c.containsKey('navigationId'), isFalse);
       expect(c['bateauId'], 'b1');
       expect(c['naturePosition'], 'aucune');

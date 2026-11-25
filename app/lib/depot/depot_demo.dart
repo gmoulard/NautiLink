@@ -137,6 +137,35 @@ class DepotDemo extends Depot {
   @override
   Future<void> deconnecter() async {}
 
+  /// Cases « Suiveur » et « Contact SOS » des contacts d'exemple ; rien n'est envoyé.
+  @override
+  Future<void> modifierContact(String id, Map<String, Object?> champs) async {
+    for (final c in state.contacts.where((c) => c.name == id)) {
+      if (champs['suiveur'] is bool) c.follower = champs['suiveur'] as bool;
+      if (champs['contactSos'] is bool && c.phone != null) {
+        c.sos = champs['contactSos'] as bool;
+      }
+    }
+    state.touch();
+  }
+
+  /// Paramètres d'exemple ; rien n'est envoyé.
+  @override
+  Future<void> modifierParametres(Map<String, Object?> champs) async {
+    if (champs['smsActifs'] is bool) {
+      state.smsEnabled = champs['smsActifs'] as bool;
+    }
+    final f = champs['frequenceParDefaut'];
+    if (f is int) state.defaultFrequency = f;
+    final t = champs['smsParType'];
+    if (t is Map) {
+      for (final e in _typesSms.entries) {
+        if (t[e.value] is bool) state.smsByType[e.key] = t[e.value] as bool;
+      }
+    }
+    state.touch();
+  }
+
   @override
   void dispose() {
     state.removeListener(notifyListeners);

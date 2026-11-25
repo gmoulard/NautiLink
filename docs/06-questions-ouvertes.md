@@ -43,6 +43,29 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : à l'ouverture de l'application, à la connexion, au retour de l'application au premier plan, et quand le navigateur tire l'accueil ou la liste « Navigations enregistrées » vers le bas ; la file d'attente est relancée aux mêmes moments.
 - Appliqué en attendant dans l'application (`app/lib/main.dart`, `app/lib/screens/home.dart`).
 
+### <a id="q-86"></a>Q-86 — Contacts et paramètres modifiés hors connexion dans l'application
+
+- Priorité : avant la version Android réelle (TODO-5.7).
+- Cas : hors connexion, l'ajout et la modification d'un contact et la modification des paramètres généraux sont « gardés et envoyés au retour » (RG-COM-06), mais rien ne dit dans quel ordre ils partent, à quel moment, ce que devient une modification que le serveur refuse au retour (contact SOS sans numéro, suiveur sans périmètre), ni le cas d'un suiveur ajouté hors connexion alors que l'adresse du navigateur n'est pas confirmée (RG-CPT-09).
+- Proposition (non validée) : les modifications sont gardées sur le téléphone dans l'ordre où elles sont faites, montrées aussitôt (la liste des contacts gardée sur le téléphone sert au SOS) avec la mention « Modification gardée sur le téléphone, envoyée au retour de la connexion », et envoyées une à une, dans cet ordre, à chaque modification et à chaque relecture du serveur (Q-84), avant la relecture ; un contact ajouté hors connexion porte un identifiant tiré par le téléphone, ce qui évite les doublons (`POST /v1/contacts`) ; une erreur 5xx ou l'absence de réponse garde la modification pour la fois suivante ; un autre refus la retire et son message s'affiche sur l'écran « Contacts » ; un suiveur refusé faute d'adresse confirmée (`email_non_verifie`) est gardé comme contact, sans « Suiveur » (un contact SOS reste permis, RG-CPT-09). Quand un autre compte se connecte sur le téléphone, ces modifications non envoyées s'effacent avec les copies locales (Q-82).
+- Appliqué en attendant dans l'application (`app/lib/reel/compte.dart`).
+
+### <a id="q-87"></a>Q-87 — Invitations par téléphone et réglages SMS dans l'application
+
+- Priorité : avant la version Android réelle (TODO-5.7).
+- Cas : une invitation par téléphone part en SMS par la carte SIM du téléphone Android (RG-PAR-04), avec copie au navigateur (RG-SMS-08), mais le texte du SMS n'est écrit nulle part, ni la façon d'envoyer la copie.
+- Proposition (non validée) : sur la fiche du contact, « Inviter par téléphone » demande le lien au serveur (`POST /v1/invitations`, canal `telephone`) puis l'affiche avec « Envoyer par SMS » et « Copier le lien » ; « Envoyer par SMS » ouvre l'application SMS préremplie (RG-SMS-03), adressée à l'invité et au numéro du profil du navigateur (la copie), avec le texte « <nom du navigateur> vous invite à suivre ses navigations sur NautiLink : <lien> ». Sur iPhone et sur le Web, le lien s'affiche avec « Copier le lien » seulement (RG-PAR-04, RG-IOS-02).
+- Cas complémentaire : les paramètres généraux sont communs au compte (RG-PRM-01) ; sur iPhone, leurs réglages SMS sont sans effet (RG-IOS-02), mais rien ne dit si l'écran « Paramètres » de l'iPhone les montre.
+- Proposition (non validée) : l'iPhone les montre et permet de les modifier, avec la mention « Sur iPhone, aucun SMS n'est envoyé : ces réglages servent aux navigations menées depuis un téléphone Android. »
+- Appliqué en attendant dans l'application (`app/lib/screens/compte.dart`).
+
+### <a id="q-88"></a>Q-88 — « Écrire à l'équipe NautiLink » dans l'assistance
+
+- Priorité : lancement (TODO-5.7).
+- Cas : l'assistance donne le « contact de l'équipe NautiLink » (cahier des charges §5.5) ; la [maquette](../site/designs/app.html) montre « Écrire à l'équipe NautiLink — Réponse par e-mail », mais aucune adresse ni aucun formulaire n'est choisi.
+- Proposition (non validée) : en attendant une adresse e-mail de l'équipe, « Écrire à l'équipe NautiLink » ouvre la page de suivi du projet sur GitHub (`https://github.com/gmoulard/NautiLink/issues`) ; hors connexion, le message « Contact de l'équipe impossible sans Internet. » s'affiche (RG-COM-06). À trancher : adresse e-mail de l'équipe (ou formulaire servi par le serveur) et délai de réponse annoncé.
+- Appliqué en attendant dans l'application (`app/lib/screens/compte.dart`).
+
 ### <a id="q-89"></a>Q-89 — Position automatique sans réponse du GPS
 
 - Priorité : avant la version Android réelle (TODO-5.3).

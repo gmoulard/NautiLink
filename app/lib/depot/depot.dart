@@ -140,6 +140,17 @@ abstract class Depot extends ChangeNotifier {
 
   /// Ferme la session ; la file d'attente reste (RG-CPT-08).
   Future<void> deconnecter();
+
+  // ------------------------------------------------- contacts et paramètres (TODO-5.7)
+
+  /// Modifie un contact champ par champ (`PATCH /v1/contacts/{id}`,
+  /// RG-CTC-02, RG-COM-04) : seuls les champs de [champs] changent. Hors
+  /// connexion, la modification est gardée et envoyée au retour (RG-COM-06).
+  Future<void> modifierContact(String id, Map<String, Object?> champs);
+
+  /// Modifie les paramètres généraux champ par champ (`PATCH /v1/parametres`,
+  /// RG-PRM-01, RG-COM-04) ; `smsParType` ne porte que les types changés.
+  Future<void> modifierParametres(Map<String, Object?> champs);
 }
 
 /// Donne le dépôt à tous les écrans.
