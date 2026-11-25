@@ -11,7 +11,7 @@ import (
 //go:embed web
 var fichiersWeb embed.FS
 
-var pages = template.Must(template.ParseFS(fichiersWeb, "web/*.html"))
+var pages = template.Must(template.New("").Funcs(fonctionsPages).ParseFS(fichiersWeb, "web/*.html"))
 
 // nouveauRouteur : tout est servi sous cfg.Chemin (ex. /nautilink), car
 // pi-appliance publie le service sous https://vdl.moulard.org/nautilink/
@@ -40,6 +40,8 @@ func (a *app) routeur() http.Handler {
 
 	a.routesComptes(mux, c+"/api/v1")
 	a.routesWebComptes(mux, c)
+	a.routesBateaux(mux, c+"/api/v1")
+	a.routesWebBateaux(mux, c)
 
 	mux.HandleFunc("GET "+c+"/admin/{$}", page("admin.html"))
 

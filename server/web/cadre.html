@@ -16,6 +16,7 @@
     <nav aria-label="Menu principal">
     {{if .Connecte}}
       <a href="{{.Base}}/">Accueil</a>
+      <a href="{{.Base}}/bateaux">Bateaux</a>
       <a href="{{.Base}}/compte">Mon compte</a>
       <form class="enligne" method="post" action="{{.Base}}/deconnexion"><button class="secondaire" type="submit">Se déconnecter</button></form>
     {{else}}

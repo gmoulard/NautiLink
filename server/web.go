@@ -3,11 +3,30 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"html/template"
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
+
+// fonctionsPages : petites aides des gabarits.
+var fonctionsPages = template.FuncMap{
+	// nombre : 12.5 → « 12,5 » ; absent → vide.
+	"nombre": func(n *float64) string {
+		if n == nil {
+			return ""
+		}
+		return strings.Replace(strconv.FormatFloat(*n, 'f', -1, 64), ".", ",", 1)
+	},
+	"deref": func(s *string) string {
+		if s == nil {
+			return ""
+		}
+		return *s
+	},
+}
 
 // Plateforme Web minimale (pages servies par le serveur, en français, sans
 // JavaScript) : inscription, connexion, compte. Elle appelle les mêmes
@@ -256,6 +275,16 @@ func formulaireEnChamps(r *http.Request, sorte map[string]string) champs {
 			c[nom] = enJSON(r.FormValue(nom) != "")
 		case "texte":
 			c[nom] = enJSON(strings.TrimSpace(r.FormValue(nom)))
+		case "nombre":
+			// Virgule ou point décimal ; vide : effacé ; illisible : refusé par l'API.
+			v := strings.ReplaceAll(strings.TrimSpace(r.FormValue(nom)), ",", ".")
+			if v == "" {
+				c[nom] = enJSON(nil)
+			} else if n, err := strconv.ParseFloat(v, 64); err == nil {
+				c[nom] = enJSON(n)
+			} else {
+				c[nom] = enJSON(v)
+			}
 		}
 	}
 	return c

@@ -1,0 +1,37 @@
+{{template "haut" .}}
+{{with .D}}
+<h1>{{.Fiche.Nom}}</h1>
+<div class="carte">
+<h2>Fiche du bateau</h2>
+<form method="post" action="{{$.Base}}/bateaux/{{.Fiche.ID}}">
+  {{template "fiche-bateau" .Fiche}}
+  <button type="submit">Enregistrer</button>
+</form>
+</div>
+<div class="carte">
+<h2>Photo</h2>
+{{if .Fiche.AUnePhoto}}<p><img class="photo-bateau" src="{{$.Base}}/api/v1/bateaux/{{.Fiche.ID}}/photo" alt="Photo du bateau {{.Fiche.Nom}}"></p>{{end}}
+<form method="post" action="{{$.Base}}/bateaux/{{.Fiche.ID}}/photo" enctype="multipart/form-data">
+  <label for="photo">{{if .Fiche.AUnePhoto}}Remplacer la photo{{else}}Ajouter une photo{{end}} (JPEG, 5 Mo au plus)</label>
+  <input id="photo" name="photo" type="file" accept="image/jpeg" required>
+  <button type="submit">Envoyer la photo</button>
+</form>
+</div>
+<div class="carte">
+<h2>Téléphone associé</h2>
+<p class="aide">Le téléphone associé démarre les navigations de ce bateau. Un seul téléphone par bateau : en associer un autre remplace le précédent.</p>
+{{if .Appareils}}
+<form method="post" action="{{$.Base}}/bateaux/{{.Fiche.ID}}/telephone">
+  <label for="appareil">Téléphone</label>
+  <select id="appareil" name="appareilId" required>
+    {{range .Appareils}}<option value="{{.ID}}" {{if and $.D.Fiche.AppareilAssocieID (eq .ID (deref $.D.Fiche.AppareilAssocieID))}}selected{{end}}>{{if .Nom}}{{.Nom}}{{else}}Téléphone{{end}} ({{if eq .Plateforme "ios"}}iPhone{{else}}Android{{end}})</option>{{end}}
+  </select>
+  <button type="submit">Associer ce téléphone</button>
+</form>
+{{else}}
+<p>Aucun téléphone : connectez-vous à l'application NautiLink sur votre téléphone pour l'associer.</p>
+{{end}}
+</div>
+<p><a class="lien" href="{{$.Base}}/bateaux">Retour aux bateaux</a></p>
+{{end}}
+{{template "bas" .}}

@@ -1,0 +1,29 @@
+{{template "haut" .}}
+<h1>Bateaux</h1>
+{{with .D}}
+<div class="carte">
+{{if .Bateaux}}
+<table>
+  <thead><tr><th scope="col">Nom</th><th scope="col">Type</th><th scope="col">Port d'attache</th><th scope="col">Téléphone associé</th></tr></thead>
+  <tbody>
+  {{range .Bateaux}}
+  <tr><td><a class="lien" href="{{$.Base}}/bateaux/{{.ID}}">{{.Nom}}</a></td>
+      <td>{{if eq .Type "voilier"}}Voilier{{else}}Bateau à moteur{{end}}</td>
+      <td>{{.PortAttache}}</td>
+      <td>{{if .AppareilAssocieID}}Oui{{else}}Aucun{{end}}</td></tr>
+  {{end}}
+  </tbody>
+</table>
+{{else}}
+<p>Vous n'avez pas encore de bateau.</p>
+{{end}}
+</div>
+<div class="carte">
+<h2>Ajouter un bateau</h2>
+<form method="post" action="{{$.Base}}/bateaux">
+  {{template "fiche-bateau" .Fiche}}
+  <button type="submit">Ajouter le bateau</button>
+</form>
+</div>
+{{end}}
+{{template "bas" .}}

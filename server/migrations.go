@@ -57,6 +57,37 @@ var migrations = []string{
 		expire_le timestamptz NOT NULL,
 		utilise_le timestamptz
 	);`,
+
+	// 2 — TODO-4.2 : téléphones des utilisateurs, bateaux et leur fiche, téléphone associé.
+	`CREATE TABLE appareils (
+		id uuid PRIMARY KEY,
+		utilisateur_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		plateforme text NOT NULL,
+		nom text NOT NULL DEFAULT '',
+		jeton_push text,
+		version_application text NOT NULL DEFAULT '',
+		mis_a_jour_le timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE INDEX appareils_utilisateur ON appareils (utilisateur_id);
+	CREATE TABLE bateaux (
+		id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+		proprietaire_id uuid NOT NULL REFERENCES utilisateurs ON DELETE CASCADE,
+		nom text NOT NULL,
+		type text NOT NULL,
+		longueur_metres double precision,
+		immatriculation text NOT NULL DEFAULT '',
+		port_attache text NOT NULL DEFAULT '',
+		moteur text NOT NULL DEFAULT '',
+		autonomie text NOT NULL DEFAULT '',
+		capacite_carburant_litres double precision,
+		vitesse_noeuds double precision,
+		tirant_eau_metres double precision,
+		photo bytea,
+		appareil_associe_id uuid REFERENCES appareils ON DELETE SET NULL,
+		cree_le timestamptz NOT NULL DEFAULT now(),
+		modifie_le timestamptz NOT NULL DEFAULT now()
+	);
+	CREATE INDEX bateaux_proprietaire ON bateaux (proprietaire_id);`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

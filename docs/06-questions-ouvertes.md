@@ -26,6 +26,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : un utilisateur inscrit par e-mail a oublié son mot de passe ; aucune règle ne prévoit de le changer.
 - Proposition (non validée) : lien « Mot de passe oublié ? » sur l'écran de connexion ; e-mail portant un lien valable 1 heure, à usage unique, qui fait choisir un nouveau mot de passe ; toutes les sessions du compte sont alors fermées, sauf sur le téléphone associé pendant une navigation en cours (RG-CPT-08) ; changement du mot de passe aussi depuis « Mon compte », avec l'ancien. Rien n'est fait tant que la question est ouverte.
 
+### <a id="q-50"></a>Q-50 — Téléphone déjà enregistré par un autre compte
+
+- Priorité : avant la version Android réelle (TODO-4.2).
+- Cas : sur un même téléphone, un utilisateur se déconnecte et un autre se connecte à son propre compte (téléphone prêté, revendu ou partagé à bord). Le téléphone est déjà associé aux bateaux du premier compte (RG-BAT-02).
+- Proposition (non validée) : le téléphone passe au nouveau compte ; il est retiré des bateaux du premier compte, dont le propriétaire est prévenu par e-mail et devra associer un autre téléphone avant sa prochaine navigation ; refusé pendant une navigation en cours sur ce téléphone. Ce qui est fait (TODO-4.2) : refus (403) tant que le téléphone appartient à un autre compte.
+
 ### <a id="q-51"></a>Q-51 — Connexion Google ou Apple avec l'adresse d'un compte existant
 
 - Priorité : avant d'activer Google et Apple (TODO-4.1).

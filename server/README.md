@@ -5,7 +5,8 @@ Serveur central de NautiLink : API, plateforme Web et espace administrateur, en 
 Réalisé :
 
 - comptes (TODO-4.1) : création par e-mail avec acceptation de l'avertissement bêta, vérification de l'adresse par e-mail, connexion, sessions (90 jours sans usage, RG-CPT-08), profil ; Google et Apple prêts, désactivés sans identifiants clients ;
-- plateforme Web minimale (pages servies par le serveur, en français, sans JavaScript) : inscription, connexion, déconnexion, « Mon compte » ;
+- bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
+- plateforme Web minimale (pages servies par le serveur, en français, sans JavaScript) : inscription, connexion, déconnexion, « Mon compte », « Bateaux » ;
 - espace administrateur : vide (TODO-7.1).
 
 ## Lancer en local
@@ -67,6 +68,7 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 | `<chemin>/inscription`, `<chemin>/connexion`, `<chemin>/deconnexion` | Création de compte, connexion, déconnexion |
 | `<chemin>/verification?jeton=…` | Lien de vérification de l'adresse e-mail |
 | `<chemin>/compte` | « Mon compte » : nom, téléphone, langue, e-mails et notifications |
+| `<chemin>/bateaux`, `<chemin>/bateaux/<id>` | Bateaux : liste, ajout, fiche, photo, téléphone associé |
 | `<chemin>/api/v1/…` | API ([`openapi.yaml`](../docs/api/openapi.yaml)) |
 | `<chemin>/admin/` | Espace administrateur (vide, TODO-7.1) |
 | `<chemin>/api/sante` | État en JSON : `etat`, `version`, `base` (`ok`, `absente`, `erreur`) |

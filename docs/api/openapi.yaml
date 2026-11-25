@@ -289,7 +289,7 @@ paths:
     put:
       tags: [Appareils et bateaux]
       summary: 'Enregistrer ou mettre à jour le téléphone de l''utilisateur (plateforme, jeton push).'
-      description: 'L''identifiant est tiré au hasard par l''application à sa première ouverture et gardé sur le téléphone.'
+      description: 'L''identifiant est tiré au hasard par l''application à sa première ouverture et gardé sur le téléphone. La session qui l''enregistre lui est rattachée (RG-CPT-08). Un téléphone déjà enregistré par un autre compte est refusé (403, Q-50).'
       x-regles: [RG-BAT-02, RG-IOS-01, RG-IOS-06, RG-AND-08]
       requestBody:
         required: true
@@ -302,6 +302,8 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Appareil'}
+        '403': {$ref: '#/components/responses/Interdit'}
+        '422': {$ref: '#/components/responses/Invalide'}
   /v1/bateaux:
     get:
       tags: [Appareils et bateaux]
@@ -348,7 +350,8 @@ paths:
     patch:
       tags: [Appareils et bateaux]
       summary: 'Modifier la fiche (propriétaire seulement).'
-      x-regles: [RG-BAT-01, RG-CPT-04]
+      description: 'Seuls les champs envoyés sont modifiés (RG-COM-04) ; `null` efface un champ facultatif.'
+      x-regles: [RG-BAT-01, RG-CPT-04, RG-COM-04]
       requestBody:
         required: true
         content:
@@ -366,7 +369,7 @@ paths:
       - {$ref: '#/components/parameters/BateauId'}
     put:
       tags: [Appareils et bateaux]
-      summary: 'Photo du bateau.'
+      summary: 'Photo du bateau (JPEG, 5 Mo au plus ; propriétaire seulement).'
       x-regles: [RG-BAT-01]
       requestBody:
         required: true
@@ -374,6 +377,10 @@ paths:
           image/jpeg: {schema: {type: string, contentMediaType: image/jpeg}}
       responses:
         '204': {description: Photo enregistrée.}
+        '403': {$ref: '#/components/responses/Interdit'}
+        '413': {description: Photo trop grosse.}
+        '415': {description: Pas une image JPEG.}
+        '422': {$ref: '#/components/responses/Invalide'}
     get:
       tags: [Appareils et bateaux]
       summary: 'Lire la photo du bateau.'
@@ -389,6 +396,7 @@ paths:
     put:
       tags: [Appareils et bateaux]
       summary: 'Associer un téléphone au bateau ; remplace l''association précédente.'
+      description: 'Le téléphone doit être enregistré par le propriétaire du bateau (`PUT /v1/appareils/{appareilId}`), sinon 403.'
       x-regles: [RG-BAT-02, RG-IOS-01]
       requestBody:
         required: true

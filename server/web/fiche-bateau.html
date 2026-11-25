@@ -1,0 +1,27 @@
+{{define "fiche-bateau"}}
+  <div class="grille">
+  <div><label for="nom">Nom</label>
+  <input id="nom" name="nom" type="text" required maxlength="200" value="{{.Nom}}"></div>
+  <div><label for="type">Type</label>
+  <select id="type" name="type" required>
+    <option value="voilier" {{if eq .Type "voilier"}}selected{{end}}>Voilier</option>
+    <option value="moteur" {{if eq .Type "moteur"}}selected{{end}}>Bateau à moteur</option>
+  </select></div>
+  <div><label for="longueurMetres">Longueur (m)</label>
+  <input id="longueurMetres" name="longueurMetres" type="text" inputmode="decimal" value="{{nombre .LongueurMetres}}"></div>
+  <div><label for="immatriculation">Immatriculation</label>
+  <input id="immatriculation" name="immatriculation" type="text" maxlength="200" value="{{.Immatriculation}}"></div>
+  <div><label for="portAttache">Port d'attache</label>
+  <input id="portAttache" name="portAttache" type="text" maxlength="200" value="{{.PortAttache}}"></div>
+  <div><label for="moteur">Moteur</label>
+  <input id="moteur" name="moteur" type="text" maxlength="200" value="{{.Moteur}}"></div>
+  <div><label for="autonomie">Autonomie</label>
+  <input id="autonomie" name="autonomie" type="text" maxlength="200" value="{{.Autonomie}}"></div>
+  <div><label for="capaciteCarburantLitres">Capacité en carburant (L)</label>
+  <input id="capaciteCarburantLitres" name="capaciteCarburantLitres" type="text" inputmode="decimal" value="{{nombre .CapaciteCarburantLitres}}"></div>
+  <div><label for="vitesseNoeuds">Vitesse (nœuds)</label>
+  <input id="vitesseNoeuds" name="vitesseNoeuds" type="text" inputmode="decimal" value="{{nombre .VitesseNoeuds}}"></div>
+  <div><label for="tirantEauMetres">Tirant d'eau (m)</label>
+  <input id="tirantEauMetres" name="tirantEauMetres" type="text" inputmode="decimal" value="{{nombre .TirantEauMetres}}"></div>
+  </div>
+{{end}}
