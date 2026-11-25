@@ -77,8 +77,9 @@ jobs:
             website="$WEBSITE"; android="$ANDROID"; iphone="$IPHONE"
           else
             website=true
+            # Applications reconstruites aussi quand le mémo sécurité change : il y est intégré (RG-SOS-22).
             if [ -z "$AVANT" ] || ! git cat-file -e "$AVANT^{commit}" 2>/dev/null \
-               || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|\.github/workflows/pages\.yml$)'; then
+               || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|site/securite\.html$|\.github/workflows/pages\.yml$)'; then
               android=true; iphone=true
             else
               android=false; iphone=false
@@ -107,6 +108,7 @@ jobs:
       - name: Application iPhone non signée
         working-directory: app
         run: |
+          ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
           flutter pub get
           flutter build ios --release --no-codesign --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
           mkdir -p ipa/Payload
@@ -145,6 +147,7 @@ jobs:
         if: needs.choix.outputs.flutter == 'true'
         working-directory: app
         run: |
+          ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
           flutter pub get
           flutter analyze
           flutter test

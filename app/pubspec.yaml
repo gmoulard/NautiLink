@@ -45,6 +45,7 @@ dependencies:
   sqflite: ^2.4.6
   uuid: ^4.6.0
   path: ^1.9.1
+  webview_flutter: ^4.14.1
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,8 @@ flutter:
   generate: true
   assets:
     - assets/sponsor-srt.png
+    # Mémo sécurité en mer, copié de site/securite.html par outils/copier-memo.sh (RG-SOS-22).
+    - assets/memo/securite.html
   # Polices du design « Radar de pluie » (D-69, D-70), sous licence OFL : assets/fonts/*-OFL.txt.
   fonts:
     - family: SpaceGrotesk
