@@ -4,7 +4,6 @@ Ce document décrit comment les pièces techniques de NautiLink s'assemblent : a
 
 - **Décidé** : chaque point porte la décision qui le fonde (`D-nn`, [07-decisions.md](07-decisions.md)).
 - **Proposition validée** : choix proposé puis validé par l'utilisateur le 2026-11-25 ([D-96](07-decisions.md#d-96)).
-- **Proposition, non validée** : choix technique proposé, à valider par l'utilisateur ([Q-22](06-questions-ouvertes.md#q-22)).
 
 Mise à jour : 2026-11-25 (TODO-3.1, TODO-3.2, TODO-2.7, TODO-3.4).
 
@@ -69,7 +68,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 **Décidé** ([D-86](07-decisions.md#d-86)) : photos et notes vocales stockées dans PostgreSQL, comme les autres données ; elles sont donc couvertes par la même sauvegarde que la base (§3.4).
 
 - Ordre de grandeur : au plus 20 Mo de photos par navigation (RG-JRN-08), et environ 0,5 Mo par minute de note vocale en AAC à 64 kbit/s ([étude](etudes/notes-vocales.md)).
-- À préciser : comment s'ouvrent les liens envoyés par SMS (RG-SMS-05, RG-SMS-06) ; ce choix d'accès relève des règles : [Q-44](06-questions-ouvertes.md#q-44).
+- Liens envoyés par SMS (RG-SMS-05, RG-SMS-06) : connexion obligatoire (RG-SMS-09).
 
 ### 3.2 Hébergeur après la bêta
 
@@ -99,22 +98,22 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 
 ## 4. API et synchronisation
 
-**Proposition, non validée** ([Q-22](06-questions-ouvertes.md#q-22), TODO-3.2). Description complète : [`api/openapi.yaml`](api/openapi.yaml) (OpenAPI 3.1) ; chaque opération cite les règles qu'elle sert (`x-regles`), les traitements faits par le serveur seul sont listés dans `x-traitements`, et les règles sans échange avec le serveur dans `x-regles-sans-serveur`. Chaque règle `RG-…` figure dans l'une de ces trois listes.
+**Proposition validée** ([D-105](07-decisions.md#d-105)). Description complète : [`api/openapi.yaml`](api/openapi.yaml) (OpenAPI 3.1) ; chaque opération cite les règles qu'elle sert (`x-regles`), les traitements faits par le serveur seul sont listés dans `x-traitements`, et les règles sans échange avec le serveur dans `x-regles-sans-serveur`. Chaque règle `RG-…` figure dans l'une de ces trois listes.
 
 - **Un seul point d'entrée** : `https://vdl.moulard.org/nautilink/api`, chemins versionnés `/v1/…` ; le point de santé `/api/sante` du squelette est gardé.
 - **Formats** : JSON en UTF-8, heures RFC 3339 avec décalage horaire, positions en degrés décimaux WGS 84, durées en minutes, distances en mètres ; photos en JPEG et notes vocales en AAC (`audio/mp4`), déposées à part (`PUT /v1/fichiers/{evenementId}`).
 - **Identifiants tirés par le téléphone** pour ce qu'il crée (navigation, événement, alerte SOS, contact ajouté hors connexion) : tout envoi peut être rejoué sans doublon (§5).
-- **Sessions** : jeton porteur pour les applications mobiles, cookie pour la plateforme Web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; durée : [Q-43](06-questions-ouvertes.md#q-43).
+- **Sessions** : jeton porteur pour les applications mobiles, cookie pour la plateforme Web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; durée : RG-CPT-08.
 - **Synchronisation** :
   - téléphone → serveur : file d'attente (§5) ;
   - serveur → téléphone : contacts et paramètres généraux relus au lancement et après chaque modification quand Internet est disponible (RG-CTC-03, RG-PRM-02), avec un curseur `depuis` qui ne rend que les changements ; la dernière copie reçue sert hors connexion ;
   - serveur → Web : la page d'une navigation en cours relit le journal avec `depuis` à intervalles réguliers (de l'ordre de 30 secondes) ;
-  - modifications concurrentes (même contact, mêmes paramètres ou même navigation changés sur deux supports) : chaque objet porte un numéro de version et une modification fondée sur une version dépassée est refusée (409) ; laquelle doit l'emporter : [Q-42](06-questions-ouvertes.md#q-42).
-- **Points qui attendent une décision** : liens des SMS de photo et de note vocale ([Q-44](06-questions-ouvertes.md#q-44)) ; événements reçus après une clôture automatique ([Q-45](06-questions-ouvertes.md#q-45)) ; affichage des annonces ([Q-46](06-questions-ouvertes.md#q-46)) ; portée des désinscriptions du suiveur ([Q-47](06-questions-ouvertes.md#q-47)) ; fonctionnement hors connexion ([Q-29](06-questions-ouvertes.md#q-29)).
+  - modifications concurrentes (même contact, mêmes paramètres ou même navigation changés sur deux supports) : chaque objet porte un numéro de version et une modification fondée sur une version dépassée est refusée (409) ; le client relit alors la version du serveur et réapplique sa modification champ par champ, la dernière reçue l'emportant (RG-COM-04).
+- **Décidé depuis** : liens des SMS de photo et de note vocale (RG-SMS-09) ; envois reçus après une clôture automatique, tous acceptés (RG-ECO-12) ; annonces (RG-ADM-06) ; désinscriptions du suiveur (RG-NOT-04). Reste ouvert : fonctionnement hors connexion ([Q-29](06-questions-ouvertes.md#q-29)).
 
 ## 5. File d'attente et doublons
 
-**Proposition, non validée** ([Q-10](06-questions-ouvertes.md#q-10), TODO-2.7). Les règles : enregistrement sur le téléphone que le serveur soit joignable ou non (RG-GPS-03), envoi dès que possible dans l'ordre d'acquisition (RG-GPS-04), fin transmise avec son heure réelle (RG-NAV-14), SOS de l'iPhone envoyé au retour de la connexion (RG-IOS-03).
+**Proposition validée** ([D-106](07-decisions.md#d-106)). Les règles : enregistrement sur le téléphone que le serveur soit joignable ou non (RG-GPS-03), envoi dès que possible dans l'ordre d'acquisition (RG-GPS-04), fin transmise avec son heure réelle (RG-NAV-14), SOS de l'iPhone envoyé au retour de la connexion (RG-IOS-03).
 
 - **Enregistrer d'abord** : chaque envoi vers le serveur (démarrage, événement, fichier de photo ou de note vocale, fin, alerte SOS, statuts des SMS SOS) est écrit dans la base locale du téléphone (SQLite) avant toute tentative ; une fermeture forcée ou un redémarrage ne le perd pas (RG-NAV-12).
 - **Identifiant unique par événement** : l'application tire un UUID (version 4) à la création de la navigation, de chaque événement et de chaque alerte SOS, et l'envoie avec lui. Le serveur garde cet identifiant comme clé unique (contrainte d'unicité de PostgreSQL) :
@@ -131,7 +130,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 
 ## 6. Environnements
 
-**Proposition, non validée** ([Q-22](06-questions-ouvertes.md#q-22), TODO-3.4), sauf la production de la bêta, décidée ([D-62](07-decisions.md#d-62)).
+**Proposition validée** ([D-105](07-decisions.md#d-105)) ; production de la bêta : [D-62](07-decisions.md#d-62).
 
 | | Développement | Test | Production |
 |---|---|---|---|

@@ -13,6 +13,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-cpt-05"></a>**RG-CPT-05** — Seul le propriétaire d'un bateau peut démarrer une navigation avec ce bateau ([D-11](07-decisions.md#d-11)).
 - <a id="rg-cpt-06"></a>**RG-CPT-06** — À la création du compte, sur le Web comme sur l'application mobile, l'utilisateur lit l'[avertissement bêta](textes/avertissement-beta.md) et l'accepte en cochant une case ; le compte n'est pas créé sans cette acceptation. La date d'acceptation et la version du texte sont enregistrées ([D-56](07-decisions.md#d-56)).
 - <a id="rg-cpt-07"></a>**RG-CPT-07** — Tant que NautiLink est en bêta, une mention « Version bêta » est visible sur l'application mobile et sur le Web, et l'avertissement reste consultable à tout moment depuis l'assistance ([D-56](07-decisions.md#d-56)). Si le texte change, il est de nouveau présenté et accepté à la connexion suivante.
+- <a id="rg-cpt-08"></a>**RG-CPT-08** — Une session expire après 90 jours sans usage, sur l'application mobile comme sur le Web. Sur le téléphone associé, elle n'expire jamais pendant une navigation en cours, et une déconnexion ne vide pas la file des envois en attente ([D-100](07-decisions.md#d-100), RG-DON-03).
 - <a id="rg-bat-01"></a>**RG-BAT-01** — La fiche bateau comprend : nom, type (voilier ou bateau à moteur), longueur, immatriculation, port d'attache, photo, caractéristiques techniques (moteur, autonomie, capacité en carburant, vitesse, tirant d'eau).
 - <a id="rg-bat-02"></a>**RG-BAT-02** — Un bateau a au plus un téléphone associé. Un même téléphone peut être associé à plusieurs bateaux du même compte. Associer un autre téléphone à un bateau remplace l'association précédente ([D-12](07-decisions.md#d-12)).
 - <a id="rg-bat-03"></a>**RG-BAT-03** — Les données de chaque bateau (navigations, journaux, positions, alertes) restent séparées de celles des autres bateaux du compte.
@@ -78,7 +79,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-gps-01"></a>**RG-GPS-01** — Le GPS fonctionne sans Internet et sans réseau mobile.
 - <a id="rg-gps-02"></a>**RG-GPS-02** — Chaque position est horodatée à son acquisition.
 - <a id="rg-gps-03"></a>**RG-GPS-03** — Les positions sont enregistrées sur le téléphone à la fréquence de la navigation, que le serveur soit joignable ou non.
-- <a id="rg-gps-04"></a>**RG-GPS-04** — Les positions non transmises sont envoyées au serveur dès que la connexion Internet le permet, dans l'ordre d'acquisition. Gestion fine de la file d'attente et des doublons : [Q-10](06-questions-ouvertes.md#q-10).
+- <a id="rg-gps-04"></a>**RG-GPS-04** — Les positions non transmises sont envoyées au serveur dès que la connexion Internet le permet, dans l'ordre d'acquisition. Gestion de la file d'attente et des doublons : [08-architecture.md](08-architecture.md) §5 ([D-106](07-decisions.md#d-106)).
 - <a id="rg-gps-05"></a>**RG-GPS-05** — Au premier démarrage d'une navigation sur Android, l'application demande l'exclusion de l'optimisation de la batterie et affiche les réglages propres à la marque du téléphone (Samsung, Xiaomi…) qui peuvent couper l'enregistrement ([D-52](07-decisions.md#d-52)).
 - <a id="rg-gps-06"></a>**RG-GPS-06** — Pour économiser au maximum la batterie, le GPS n'est allumé que le temps d'acquérir une position (position automatique, position manuelle, SOS) ; il est éteint entre deux acquisitions ([D-74](07-decisions.md#d-74)).
 
@@ -87,6 +88,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-com-01"></a>**RG-COM-01** — Deux circuits indépendants : le circuit Internet (API HTTPS vers le serveur) et le circuit SMS (SMS et MMS par la carte SIM du téléphone, sans prestataire externe). Le circuit SMS n'existe que sur Android ([RG-IOS-02](#rg-ios-02)).
 - <a id="rg-com-02"></a>**RG-COM-02** — L'échec ou l'indisponibilité d'un circuit n'empêche jamais de tenter l'autre. Le GPS ne dépend d'aucun des deux.
 - <a id="rg-com-03"></a>**RG-COM-03** — Chaque action de transmission (position, note, photo, note vocale, SOS, début, fin) affiche le résultat de chaque circuit (par exemple « Position envoyée ») dans une fenêtre avec un bouton « OK » ; la fenêtre se ferme seule au bout d'une minute ([D-65](07-decisions.md#d-65)).
+- <a id="rg-com-04"></a>**RG-COM-04** — Quand une même donnée (contact, paramètres généraux, informations d'une navigation) est modifiée sur deux supports, la dernière modification reçue par le serveur l'emporte, champ par champ ; l'application mobile affiche ensuite la version du serveur, sans message ([D-99](07-decisions.md#d-99)).
 
 ## 6. SMS ordinaires
 
@@ -98,6 +100,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-sms-06"></a>**RG-SMS-06** — Note vocale : le SMS indique « Note vocale » et donne un lien pour l'écouter sur la plateforme Web ([D-71](07-decisions.md#d-71)).
 - <a id="rg-sms-07"></a>**RG-SMS-07** — Les nouvelles tentatives ne concernent que les SMS envoyés automatiquement : SMS SOS et SMS de positions automatiques ; un SMS prérempli, envoyé par le navigateur depuis l'application SMS du téléphone, n'est pas retenté ([D-82](07-decisions.md#d-82)). SMS SOS en échec : nouvel essai chaque minute jusqu'à la réussite ou l'arrêt par le navigateur. SMS de position automatique en échec : 3 essais, puis l'échec est affiché avec « Réessayer » ([D-50](07-decisions.md#d-50)). Restrictions Android et Google Play sur l'envoi de SMS : [Q-12](06-questions-ouvertes.md#q-12).
 - <a id="rg-sms-08"></a>**RG-SMS-08** — Tout SMS ou MMS envoyé par l'application (SMS ordinaires, SMS SOS, invitations par SMS) part aussi en copie au navigateur, au numéro de téléphone de son profil. La copie suit le même mode d'envoi que le message (automatique pour le SOS et les positions automatiques, prérempli sinon, RG-SMS-03). Sans numéro dans le profil du navigateur, pas de copie SMS. Cette copie ne se désactive pas ([D-55](07-decisions.md#d-55)).
+- <a id="rg-sms-09"></a>**RG-SMS-09** — Le lien d'un SMS de photo ou de note vocale (RG-SMS-05, RG-SMS-06) mène à la connexion, puis à la photo ou à la note vocale dans la page de la navigation ; aucun accès sans compte, comme pour tout partage (RG-PAR-01, [D-101](07-decisions.md#d-101)).
 
 ## 7. Alerte SOS
 
@@ -169,12 +172,14 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-eco-09"></a>**RG-ECO-09** — Le quota est calculé par le serveur. Les applications mobiles et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement. Ces informations sont sur un écran « Quota et abonnement » et résumées sur l'écran d'accueil de l'application mobile et sur le tableau de bord Web ([D-42](07-decisions.md#d-42)).
 - <a id="rg-eco-10"></a>**RG-ECO-10** — L'écran d'accueil de l'application mobile porte un lien « Version gratuite - abonnement » vers l'écran « Quota et abonnement ». Cet écran porte un lien vers la page d'information sur l'abonnement du site de présentation ([D-67](07-decisions.md#d-67)).
 - <a id="rg-eco-11"></a>**RG-ECO-11** — Sur le Web, l'abonnement se paie par carte bancaire avec Stripe ; sur Android et sur iPhone, c'est un achat unique intégré de Google Play ou de l'App Store (RG-ECO-07). Un paiement échoué n'ouvre pas l'abonnement : le compte reste en version gratuite ([D-94](07-decisions.md#d-94)).
+- <a id="rg-eco-12"></a>**RG-ECO-12** — Les envois acquis par le téléphone après l'heure d'une clôture automatique (RG-ECO-05), alors qu'il était hors connexion, sont tous acceptés par le serveur et rattachés à la navigation ([D-102](07-decisions.md#d-102)).
 
 ## 12. Notifications
 
 - <a id="rg-not-01"></a>**RG-NOT-01** — Les notifications sont envoyées par e-mail par le serveur.
 - <a id="rg-not-02"></a>**RG-NOT-02** — Événements notifiés par e-mail : invitation, nouvel accès accordé, alerte SOS ([RG-SOS-06](#rg-sos-06)), et début de navigation, envoyé aux suiveurs de la navigation. Un suiveur peut se désinscrire des e-mails de début, jamais de ceux du SOS ([D-41](07-decisions.md#d-41)). Sur iPhone et sur Android, les suiveurs reçoivent aussi des notifications push ([RG-IOS-06](#rg-ios-06), [RG-AND-08](#rg-and-08)).
 - <a id="rg-not-03"></a>**RG-NOT-03** — Tout e-mail de notification envoyé par le serveur (invitation, nouvel accès, alerte SOS, début de navigation) part aussi en copie au navigateur concerné, à l'adresse de son compte. Cette copie ne se désactive pas ([D-55](07-decisions.md#d-55)).
+- <a id="rg-not-04"></a>**RG-NOT-04** — Une désinscription d'un e-mail de notification ou la désactivation d'un type de notification push est un réglage du compte du suiveur, valable pour tous les navigateurs qu'il suit ([D-104](07-decisions.md#d-104)).
 
 ## 13. Administration
 
@@ -183,6 +188,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-adm-03"></a>**RG-ADM-03** — Il existe un seul profil d'administrateur. Il peut consulter, modifier et supprimer toutes les données des utilisateurs : navigations, journaux, positions et alertes SOS comprises (le navigateur, lui, ne modifie jamais ses positions ni ses SOS, RG-JRN-07). Chaque action est tracée et gardée 3 ans (RG-DON-02) ([D-47](07-decisions.md#d-47)).
 - <a id="rg-adm-04"></a>**RG-ADM-04** — La gestion des langues n'est pas une fonction de l'espace administrateur.
 - <a id="rg-adm-05"></a>**RG-ADM-05** — La gestion de plusieurs versions de l'application Web est une évolution future, hors lancement ([D-22](07-decisions.md#d-22)).
+- <a id="rg-adm-06"></a>**RG-ADM-06** — Une annonce de l'administrateur (RG-ADM-02) est envoyée par e-mail à tous les comptes et affichée en bandeau en haut de l'écran d'accueil de l'application mobile et du tableau de bord Web, jusqu'à la date de fin choisie par l'administrateur ou jusqu'à sa fermeture par l'utilisateur ([D-103](07-decisions.md#d-103)).
 
 ## 14. Conservation des données
 

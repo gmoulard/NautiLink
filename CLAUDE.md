@@ -74,8 +74,8 @@ Serveur (`server/`) : `gofmt -l .` vide, `go vet ./...` et `go test ./...` sans 
 
 ```bash
 # identifiants cités mais non définis (doit être vide)
-grep -rhoE '\b(RG-[A-Z]+-[0-9]{2}|Q-[0-9]{2}|D-[0-9]{2})\b' docs README.md | sort -u > /tmp/cites
-grep -rhoE 'id="(rg-[a-z]+-[0-9]{2}|q-[0-9]{2}|d-[0-9]{2})"' docs | sed -E 's/id="(.*)"/\1/' | tr a-z A-Z | sort -u > /tmp/definis
+grep -rhoE '\b(RG-[A-Z]+-[0-9]{2}|Q-[0-9]{2}|D-[0-9]{2,3})\b' docs README.md | sort -u > /tmp/cites
+grep -rhoE 'id="(rg-[a-z]+-[0-9]{2}|q-[0-9]{2}|d-[0-9]{2,3})"' docs | sed -E 's/id="(.*)"/\1/' | tr a-z A-Z | sort -u > /tmp/definis
 comm -23 /tmp/cites /tmp/definis
 ```
 

@@ -40,6 +40,7 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 
 ## 3. Préparation du développement
 
+- [x] **TODO-3.2**: API en OpenAPI (`docs/api/openapi.yaml`) couvrant les 145 règles, synchronisation (2026-11-25, D-105 ; questions tranchées en D-99 à D-104).
 - [x] **TODO-3.1**: Architecture technique : [08-architecture.md](08-architecture.md) validé avec ses propositions (2026-11-25, D-86, D-96).
 
 ## 9. Évolutions futures
