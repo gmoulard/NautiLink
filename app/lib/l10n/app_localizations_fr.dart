@@ -154,6 +154,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'En cas de détresse, alertez d\'abord par le canal 16 de la VHF ou le 196.';
 
   @override
+  String get homeSecurityMemo => 'Mémo sécurité en mer';
+
+  @override
   String get firstVoyageTitle => 'Avant votre première navigation';
 
   @override

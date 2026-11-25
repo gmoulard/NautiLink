@@ -197,6 +197,9 @@ String smsTypeLabel(AppLocalizations l, SmsType t) => switch (t) {
 const subscriptionInfoUrl =
     'https://gmoulard.github.io/NautiLink/abonnement.html';
 
+/// Mémo sécurité en mer du site de présentation (TODO-3.12, Q-80).
+const securityMemoUrl = 'https://gmoulard.github.io/NautiLink/securite.html';
+
 class AppState extends ChangeNotifier {
   AppState() {
     _seed();

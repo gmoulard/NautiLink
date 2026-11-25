@@ -356,6 +356,12 @@ abstract class AppLocalizations {
   /// **'En cas de détresse, alertez d\'abord par le canal 16 de la VHF ou le 196.'**
   String get homeDistressHint;
 
+  /// No description provided for @homeSecurityMemo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mémo sécurité en mer'**
+  String get homeSecurityMemo;
+
   /// No description provided for @firstVoyageTitle.
   ///
   /// In fr, this message translates to:

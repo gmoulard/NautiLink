@@ -51,6 +51,7 @@
   "resumeVoyage": "Reprendre la dernière navigation",
   "savedVoyages": "Navigations enregistrées",
   "homeDistressHint": "En cas de détresse, alertez d'abord par le canal 16 de la VHF ou le 196.",
+  "homeSecurityMemo": "Mémo sécurité en mer",
   "firstVoyageTitle": "Avant votre première navigation",
   "firstVoyageText": "NautiLink est en version bêta et n'est pas un équipement de sécurité. En cas de détresse, alertez d'abord les secours par le canal 16 de la VHF ou le 196.",
   "understood": "J'ai compris",

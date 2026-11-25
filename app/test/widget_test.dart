@@ -134,6 +134,14 @@ void main() {
     expect(find.text('En savoir plus sur l\'abonnement'), findsOneWidget);
   });
 
+  testWidgets('accueil : lien « Mémo sécurité en mer » (TODO-3.12)', (tester) async {
+    setPhone(tester);
+    await openHome(tester);
+    await reveal(tester, find.text('Mémo sécurité en mer'));
+    expect(find.text('Mémo sécurité en mer'), findsOneWidget);
+    expect(securityMemoUrl, 'https://gmoulard.github.io/NautiLink/securite.html');
+  });
+
   testWidgets('démarrage : personnes à bord, personnes alertées, ajout d\'un contact (RG-NAV-25 à 27)', (tester) async {
     setPhone(tester);
     await openHome(tester);

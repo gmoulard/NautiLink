@@ -15,6 +15,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 - Prévu (2026-11-25) : le porteur du projet ouvre le compte sur le portail API de Météo-France ; la météo est intégrée avant la sortie de la version réelle. Mode d'emploi et points à vérifier : [meteofrance-connexion.md](etudes/meteofrance-connexion.md).
 
+### <a id="q-80"></a>Q-80 — Mémo sécurité en mer dans les applications mobiles
+
+- Priorité : avant la version Android réelle (TODO-5.1).
+- Cas : l'utilisateur a demandé (2026-11-25) que le mémo sécurité en mer du site (`site/securite.html`) soit accessible dans les applications mobiles. Rien ne dit s'il faut ouvrir la page du site, qui demande Internet, ou l'intégrer à l'application pour qu'il reste lisible hors connexion, en mer ; ni où le placer (accueil, assistance).
+- Proposition (non validée) : intégrer le mémo à l'application, lisible hors connexion, ouvert depuis l'accueil par « Mémo sécurité en mer » ; le contenu reste rédigé une seule fois, sur le site, et copié dans l'application à chaque construction. Ce qui est fait (TODO-3.12) : dans le prototype, le lien de l'accueil ouvre la page du site dans le navigateur du téléphone.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

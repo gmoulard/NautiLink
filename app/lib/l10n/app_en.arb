@@ -49,6 +49,7 @@
   "resumeVoyage": "Resume last voyage",
   "savedVoyages": "Saved voyages",
   "homeDistressHint": "In distress, first call on VHF channel 16 or 196.",
+  "homeSecurityMemo": "Safety at sea memo",
   "firstVoyageTitle": "Before your first voyage",
   "firstVoyageText": "NautiLink is a beta version and is not safety equipment. In distress, first alert the rescue services on VHF channel 16 or 196.",
   "understood": "I understand",

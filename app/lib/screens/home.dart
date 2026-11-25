@@ -110,6 +110,16 @@ class HomeScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
+                  const SizedBox(height: 8),
+                  // TODO-3.12 : mémo sécurité du site, ouvert dans le navigateur (Q-80).
+                  TextButton.icon(
+                    icon: const Icon(Icons.health_and_safety_outlined),
+                    label: Text(l.homeSecurityMemo),
+                    onPressed: () => launchUrl(
+                      Uri.parse(securityMemoUrl),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                  ),
                 ],
               ),
             ),

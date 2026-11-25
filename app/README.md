@@ -14,6 +14,7 @@ Application Flutter, un seul code pour Android, iPhone et la démonstration Web 
 - navigation en cours : deux chronomètres (le second remis à zéro par chaque envoi), position, NOTE, Photo, Vocal, SOS avec confirmation, fin ; résultat de chaque envoi dans une fenêtre « OK » fermée au bout d'une minute ;
 - proposition de terminer une navigation immobile depuis 2 heures (menu « Démo : simuler 2 h sans bouger ») ;
 - lien « Version gratuite - abonnement » sur l'accueil, puis lien vers la page d'information sur l'abonnement du site ;
+- lien « Mémo sécurité en mer » sur l'accueil, qui ouvre le mémo du site (TODO-3.12, Q-80) ;
 - contacts (cases « Suiveur » et « Contact SOS »), paramètres SMS, quota ;
 - tableau de bord Web : navigations en cours et historique, filtre navigateur / suiveur, carte du tracé, journal.
 

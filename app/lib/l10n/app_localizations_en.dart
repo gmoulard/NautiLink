@@ -152,6 +152,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'In distress, first call on VHF channel 16 or 196.';
 
   @override
+  String get homeSecurityMemo => 'Safety at sea memo';
+
+  @override
   String get firstVoyageTitle => 'Before your first voyage';
 
   @override
