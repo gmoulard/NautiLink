@@ -345,6 +345,34 @@ void main() {
       d.dispose();
     });
 
+    test('paramètres : seuls les champs changés partent, hors connexion gardés (RG-PRM-01, RG-COM-04)', () async {
+      final d = serveur.depotSur(session, base);
+      await d.ouvrir();
+      await d.connexion('marin@example.org', 'secret123');
+      await d.modifierParametres({'frequenceParDefaut': 120});
+      expect(serveur.corps['PATCH /v1/parametres'], {
+        'frequenceParDefaut': 120,
+      });
+      expect(d.parametres?.frequenceParDefaut, 120);
+
+      serveur.coupe = true;
+      await d.modifierParametres({
+        'smsParType': {'notes': false},
+      });
+      expect(d.parametres?.smsParType['notes'], isFalse);
+      expect(d.parametres?.smsParType['debut'], isTrue);
+      // Modifié sur le Web entre-temps : la fréquence du Web reste.
+      serveur.parametres['frequenceParDefaut'] = 30;
+      serveur.coupe = false;
+      await d.actualiser();
+      expect(serveur.corps['PATCH /v1/parametres'], {
+        'smsParType': {'notes': false},
+      });
+      expect(d.parametres?.frequenceParDefaut, 30);
+      expect(d.parametres?.smsParType['notes'], isFalse);
+      d.dispose();
+    });
+
     test('invitation par téléphone, annulation, périmètre, retrait (RG-PAR-02 à RG-PAR-06)', () async {
       final d = serveur.depotSur(session, base);
       await d.ouvrir();
@@ -488,6 +516,30 @@ void main() {
         expect(find.byKey(const Key('invite-phone')), findsNothing);
         expect(find.byKey(const Key('scope-change')), findsOneWidget);
         expect(find.byKey(const Key('follower-remove')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'paramètres : interrupteur et types envoyés au serveur ; iPhone : SMS sans effet (RG-IOS-02)',
+      (tester) async {
+        await ouvrir(tester, plateforme: 'ios');
+        await menu(tester, 'Paramètres');
+        expect(find.byKey(const Key('settings-iphone')), findsOneWidget);
+        expect(find.text('1 heure'), findsOneWidget);
+        await tester.tap(find.widgetWithText(SwitchListTile, 'Notes écrites'));
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pumpAndSettle();
+        expect(serveur.corps['PATCH /v1/parametres'], {
+          'smsParType': {'notes': false},
+        });
+        await tapKey(tester, 'photo-mms');
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pumpAndSettle();
+        expect(serveur.corps['PATCH /v1/parametres'], {'photoEnMms': true});
       },
     );
   });

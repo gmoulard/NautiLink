@@ -156,11 +156,10 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => page));
             },
-            // Autres écrans (cahier des charges §5.5, TODO-5.7) ; paramètres de la démonstration seulement pour l'instant.
+            // Autres écrans (cahier des charges §5.5, TODO-5.7).
             itemBuilder: (_) => [
               PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
-              if (demo)
-                PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
+              PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
               PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
               if (demo)
                 PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
@@ -354,45 +353,6 @@ Future<void> openStart(BuildContext context) async {
   if (!context.mounted) return;
   Navigator.of(context)
       .push(MaterialPageRoute(builder: (_) => const StartScreen()));
-}
-
-/// Paramètres généraux (RG-PRM-01, RG-SMS-02).
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final state = AppScope.of(context);
-    final l = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.menuSettings)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          DropdownButtonFormField<int>(
-            isExpanded: true,
-            initialValue: state.defaultFrequency,
-            decoration: InputDecoration(
-              labelText: l.defaultFrequency,
-              border: const OutlineInputBorder(),
-            ),
-            items: [
-              for (final f in frequencies)
-                DropdownMenuItem(value: f, child: Text(frequencyLabel(l, f))),
-            ],
-            onChanged: (v) {
-              state.defaultFrequency = v ?? state.defaultFrequency;
-              state.touch();
-            },
-          ),
-          const SizedBox(height: 16),
-          SmsSettings(state: state),
-          const SizedBox(height: 8),
-          Text(l.sosAlwaysSent),
-        ],
-      ),
-    );
-  }
 }
 
 class SmsSettings extends StatelessWidget {

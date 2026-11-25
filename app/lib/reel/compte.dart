@@ -139,6 +139,34 @@ class GestionCompte {
     );
   }
 
+  /// Paramètres reçus du serveur, avec les modifications du téléphone par-dessus.
+  ParametresGeneraux? appliquerParametres(ParametresGeneraux? recus) {
+    var p = recus;
+    for (final m in _enAttente.where((m) => m.type == 'parametres')) {
+      final base = p ?? ParametresGeneraux.depuisJson(const {})!;
+      final types = {...base.smsParType};
+      final t = m.champs['smsParType'];
+      if (t is Map) {
+        t.forEach((k, v) {
+          if (k is String && v is bool) types[k] = v;
+        });
+      }
+      p = ParametresGeneraux(
+        smsActifs: m.champs['smsActifs'] is bool
+            ? m.champs['smsActifs'] as bool
+            : base.smsActifs,
+        smsParType: types,
+        photoEnMms: m.champs['photoEnMms'] is bool
+            ? m.champs['photoEnMms'] as bool
+            : base.photoEnMms,
+        frequenceParDefaut: m.champs['frequenceParDefaut'] is int
+            ? m.champs['frequenceParDefaut'] as int
+            : base.frequenceParDefaut,
+      );
+    }
+    return p;
+  }
+
   // ------------------------------------------------------------ modifications
 
   Future<void> _ajouter(ModificationCompte m) async {
@@ -183,6 +211,9 @@ class GestionCompte {
   /// Suppression d'un contact, qui retire aussi ses accès (RG-CTC-02, RG-PAR-06).
   Future<void> supprimerContact(String id) =>
       _ajouter(ModificationCompte('contact_suppr', id, const {}));
+
+  Future<void> modifierParametres(Map<String, Object?> champs) =>
+      _ajouter(ModificationCompte('parametres', null, champs));
 
   // ------------------------------------------------------------ envoi
 
@@ -259,6 +290,11 @@ class GestionCompte {
           if (e.statut != 404) rethrow;
         }
         await _retirerContact(m.id!);
+      case 'parametres':
+        final r = await api.appel('PATCH', '/v1/parametres', json: m.champs);
+        if (r is Map) {
+          await base.ecrireCopie('parametres', r, DateTime.now());
+        }
     }
   }
 

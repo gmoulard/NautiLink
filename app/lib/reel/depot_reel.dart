@@ -121,7 +121,7 @@ class DepotReel extends Depot {
   @override
   List<ContactNl> get contacts => compte.appliquerContacts(_contacts);
   @override
-  ParametresGeneraux? get parametres => _parametres;
+  ParametresGeneraux? get parametres => compte.appliquerParametres(_parametres);
   @override
   EtatQuota? get quota => _quota;
   @override
@@ -144,6 +144,10 @@ class DepotReel extends Depot {
   @override
   Future<void> modifierContact(String id, Map<String, Object?> champs) =>
       compte.modifierContact(id, champs);
+
+  @override
+  Future<void> modifierParametres(Map<String, Object?> champs) =>
+      compte.modifierParametres(champs);
 
   void _notifier() {
     if (!_ferme) notifyListeners();

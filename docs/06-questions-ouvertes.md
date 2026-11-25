@@ -55,6 +55,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : avant la version Android réelle (TODO-5.7).
 - Cas : une invitation par téléphone part en SMS par la carte SIM du téléphone Android (RG-PAR-04), avec copie au navigateur (RG-SMS-08), mais le texte du SMS n'est écrit nulle part, ni la façon d'envoyer la copie.
 - Proposition (non validée) : sur la fiche du contact, « Inviter par téléphone » demande le lien au serveur (`POST /v1/invitations`, canal `telephone`) puis l'affiche avec « Envoyer par SMS » et « Copier le lien » ; « Envoyer par SMS » ouvre l'application SMS préremplie (RG-SMS-03), adressée à l'invité et au numéro du profil du navigateur (la copie), avec le texte « <nom du navigateur> vous invite à suivre ses navigations sur NautiLink : <lien> ». Sur iPhone et sur le Web, le lien s'affiche avec « Copier le lien » seulement (RG-PAR-04, RG-IOS-02).
+- Cas complémentaire : les paramètres généraux sont communs au compte (RG-PRM-01) ; sur iPhone, leurs réglages SMS sont sans effet (RG-IOS-02), mais rien ne dit si l'écran « Paramètres » de l'iPhone les montre.
+- Proposition (non validée) : l'iPhone les montre et permet de les modifier, avec la mention « Sur iPhone, aucun SMS n'est envoyé : ces réglages servent aux navigations menées depuis un téléphone Android. »
 - Appliqué en attendant dans l'application (`app/lib/screens/compte.dart`).
 
 ## 2. Études techniques

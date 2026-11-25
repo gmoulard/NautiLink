@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../reel/depot_reel.dart';
 import 'connexion.dart';
 
 /// Écrans « Autres écrans » de l'application mobile (cahier des charges §5.5) :
-/// contacts (les autres écrans suivent).
+/// contacts, paramètres généraux.
 /// Les mêmes écrans servent à la démonstration (données d'exemple, rien
 /// n'est envoyé) et à la vraie application (serveur, copie locale), par le
 /// [Depot] ; ce qui n'existe que dans la vraie application (ajout, fiche du
@@ -754,6 +755,109 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ======================================================================
+// Paramètres généraux
+// ======================================================================
+
+/// Types de SMS ordinaires, dans l'ordre de RG-SMS-02, avec leur clé de
+/// `smsParType` (schéma `Parametres`).
+const typesSms = [
+  (SmsType.start, 'debut'),
+  (SmsType.autoPosition, 'positionsAutomatiques'),
+  (SmsType.manualPosition, 'positionsManuelles'),
+  (SmsType.note, 'notes'),
+  (SmsType.photo, 'photos'),
+  (SmsType.voice, 'notesVocales'),
+  (SmsType.end, 'fin'),
+];
+
+/// Paramètres généraux (RG-PRM-01, RG-PRM-02, RG-SMS-02), modifiés champ par
+/// champ (RG-COM-04) ; synchronisés avec le Web dans la vraie application.
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final depot = DepotScope.of(context);
+    final l = AppLocalizations.of(context);
+    final demo = depot.demonstration;
+    // Valeurs d'un nouveau compte tant que rien n'est reçu (RG-PRM-06).
+    final p = depot.parametres ?? ParametresGeneraux.depuisJson(const {})!;
+    final frequence = frequencies.contains(p.frequenceParDefaut)
+        ? p.frequenceParDefaut
+        : 30;
+    return Scaffold(
+      appBar: AppBar(title: Text(l.menuSettings)),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (!demo) ...[
+            Text(
+              l.settingsSynced,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+          ],
+          DropdownButtonFormField<int>(
+            key: ValueKey('frequence-$frequence'),
+            isExpanded: true,
+            initialValue: frequence,
+            decoration: InputDecoration(
+              labelText: l.defaultFrequency,
+              border: const OutlineInputBorder(),
+            ),
+            items: [
+              for (final f in frequencies)
+                DropdownMenuItem(value: f, child: Text(frequencyLabel(l, f))),
+            ],
+            onChanged: (v) {
+              if (v == null) return;
+              depot.modifierParametres({'frequenceParDefaut': v});
+            },
+          ),
+          const SizedBox(height: 16),
+          // iPhone : réglages gardés pour les navigations menées depuis un
+          // téléphone Android, sans effet sur l'iPhone (RG-IOS-02, Q-87).
+          if (!demo && _plateforme(depot) == 'ios')
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(l.settingsIphone, key: const Key('settings-iphone')),
+            ),
+          SwitchListTile(
+            title: Text(
+              l.smsEnabled,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            value: p.smsActifs,
+            onChanged: (v) => depot.modifierParametres({'smsActifs': v}),
+          ),
+          for (final (type, cle) in typesSms)
+            SwitchListTile(
+              title: Text(smsTypeLabel(l, type)),
+              value: p.smsParType[cle] ?? true,
+              onChanged: p.smsActifs
+                  ? (v) => depot.modifierParametres({
+                      'smsParType': {cle: v},
+                    })
+                  : null,
+            ),
+          if (!demo)
+            SwitchListTile(
+              key: const Key('photo-mms'),
+              title: Text(l.photoAsMms),
+              value: p.photoEnMms,
+              onChanged: p.smsActifs
+                  ? (v) => depot.modifierParametres({'photoEnMms': v})
+                  : null,
+            ),
+          const SizedBox(height: 8),
+          Text(l.sosAlwaysSent),
+        ],
       ),
     );
   }

@@ -149,6 +149,23 @@ class DepotDemo extends Depot {
     state.touch();
   }
 
+  /// Paramètres d'exemple ; rien n'est envoyé.
+  @override
+  Future<void> modifierParametres(Map<String, Object?> champs) async {
+    if (champs['smsActifs'] is bool) {
+      state.smsEnabled = champs['smsActifs'] as bool;
+    }
+    final f = champs['frequenceParDefaut'];
+    if (f is int) state.defaultFrequency = f;
+    final t = champs['smsParType'];
+    if (t is Map) {
+      for (final e in _typesSms.entries) {
+        if (t[e.value] is bool) state.smsByType[e.key] = t[e.value] as bool;
+      }
+    }
+    state.touch();
+  }
+
   @override
   void dispose() {
     state.removeListener(notifyListeners);

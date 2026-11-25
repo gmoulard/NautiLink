@@ -236,6 +236,7 @@ void main() {
     // Autres écrans du cahier des charges §5.5 (TODO-5.7).
     for (final m in [
       'Contacts',
+      'Paramètres',
       'Quota et abonnement',
     ]) {
       expect(find.text(m), findsOneWidget);
