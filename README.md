@@ -52,7 +52,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/etudes/meteofrance-connexion.md`](docs/etudes/meteofrance-connexion.md) | Mode d'emploi : compte et codes d'accès de l'API Météo-France, utilisation par le serveur. |
 | [`docs/etudes/nom-nautilink.md`](docs/etudes/nom-nautilink.md) | Étude : disponibilité du nom NautiLink, antériorité, domaines, réseaux sociaux. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
-| [`docs/assets/`](docs/assets/) | Logo et images. |
+| [`docs/assets/`](docs/assets/) | Logo et images ; fichiers du logo (vectoriels, déclinaisons, icônes) dans [`docs/assets/logo/`](docs/assets/logo/). |
 | [`app/`](app/) | Prototype de démonstration Flutter (Android, iPhone, Web), voir son [README](app/README.md). |
 | [`server/`](server/) | Serveur central en Go (squelette, TODO-3.7), image Docker et `compose.yaml` pour pi-appliance, voir son [README](server/README.md). |
 | [`site/`](site/) | Site de présentation publié sur GitHub Pages (accueil, mémo sécurité en mer, avertissement), par le workflow `.github/workflows/pages.yml`. |
