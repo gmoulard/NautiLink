@@ -2,6 +2,8 @@
 
 Action : [TODO-2.5](../TODO.md) · Question : [D-53](../07-decisions.md#d-53) · Règles : RG-JRN-04, RG-SMS-06, [D-07](../07-decisions.md#d-07).
 
+**Depuis le 2026-11-25 ([D-71](../07-decisions.md#d-71)), la note vocale est un enregistrement seul, sans transcription : les parties sur la transcription ne servent plus.**
+
 **Statut : recherche documentaire faite (novembre 2026). Les essais de transcription (taux d'erreur constaté) et le choix du format et de la durée restent à faire.** Rien de ce document n'est une décision.
 
 ## 1. Contraintes déjà décidées

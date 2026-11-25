@@ -14,6 +14,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Question : avec des SMS ordinaires préremplis (RG-SMS-03), un SMS de position automatique demanderait un appui toutes les N minutes, et l'application ne voit pas si un SMS prérempli est parti (nouvelles tentatives de RG-SMS-07). Que faire ?
 - Proposition : les positions automatiques ne partent plus par SMS, seulement au serveur ; les nouvelles tentatives ne concernent que les SMS SOS.
 
+### <a id="q-39"></a>Q-39 — Service météo
+
+- Priorité : avant la version réelle.
+- Question : quel service fournit la météo marine relevée au début et à la fin d'une navigation (RG-NAV-28) : gratuit, utilisable par un serveur, avec vent, état de la mer et pression ?
+- Proposition : Open-Meteo (API météo et API marine), sans clé pour un usage non commercial ; à vérifier pour un usage commercial.
+
 ### <a id="q-38"></a>Q-38 — Proposition de fin après « Continuer »
 
 - Priorité : avant la version réelle.
@@ -107,8 +113,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 ### <a id="q-23"></a>Q-23 — Cartes marines du SHOM
 
-- Priorité : plus tard.
-- Étude : intégration de la partie gratuite des cartes du SHOM sur le Web ; licences, restrictions, faisabilité, coûts.
+- Priorité : lancement (demande de l'utilisateur du 2026-11-24, D-79).
+- Étude : quelles données du SHOM sont gratuites et réutilisables sur la carte de la page d'une navigation (licence, clé d'accès, conditions d'affichage), et comment les superposer au fond OpenStreetMap et à OpenSeaMap (RG-NAV-29).
 
 ### <a id="q-27"></a>Q-27 — Autres langues
 

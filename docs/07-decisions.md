@@ -145,3 +145,17 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Question | Décision | Règles |
 |----|-------|----------|----------|--------|
 | <a id="d-70"></a>D-70 | Design de l'application | Demande de l'utilisateur après les maquettes. | Le design « Radar de pluie » (D-69) s'applique aussi à l'application : thème clair et sombre, échos radar, Space Grotesk et IBM Plex Mono intégrées (licence OFL, disponibles hors connexion). | [05-identite-marque.md §14](05-identite-marque.md) |
+
+## 2026-11-25 — Remarques de l'utilisateur après essai (boîte de réception)
+
+| Id | Sujet | Question | Décision | Règles |
+|----|-------|----------|----------|--------|
+| <a id="d-71"></a>D-71 | Note vocale | Le vocal doit être un enregistrement de la voix, pas une transcription. | Enregistrement seul, sans transcription ; le SMS donne un lien d'écoute sur la plateforme Web. Remplace D-07 et la partie transcription de D-53. | RG-JRN-04, RG-SMS-06 |
+| <a id="d-72"></a>D-72 | Personnes alertées au démarrage | Liste des personnes alertées, cochées, et ajout possible. | Liste cochée au démarrage ; une personne décochée n'est pas alertée pendant cette navigation ; ajout d'un contact permanent par une page supplémentaire. | RG-NAV-25, RG-NAV-26 |
+| <a id="d-73"></a>D-73 | Après « Terminer la navigation » | Arriver sur la page détaillée de la navigation. | La page détaillée de la navigation s'ouvre sur la plateforme Web. | RG-NAV-13 |
+| <a id="d-74"></a>D-74 | Batterie | Économiser la batterie au maximum, ne pas interroger le GPS entre deux positions. | GPS allumé seulement pendant l'acquisition d'une position. | RG-GPS-06 |
+| <a id="d-75"></a>D-75 | Personnes à bord | Demander le nombre de personnes à bord, à inclure dans le SOS. | Demandé au démarrage, inclus dans le SMS SOS. | RG-NAV-27, RG-SOS-07 |
+| <a id="d-76"></a>D-76 | Problème rencontré | Pouvoir ajouter un texte au message SOS. | Champ facultatif « Problème rencontré » dans la confirmation du SOS, repris dans le SMS. | RG-SOS-02, RG-SOS-07 |
+| <a id="d-77"></a>D-77 | Journal sur le Web | Consulter notes, photos et vocal ; nom des lieux pour les positions. | Lecture des notes, photos en grand, écoute des notes vocales ; nom du lieu à côté de chaque position. | RG-JRN-09, RG-JRN-10 |
+| <a id="d-78"></a>D-78 | Météo | Mémoriser la météo, affichable sur le Web. | Relevé automatique au début et à la fin de la navigation, affiché sur la page de la navigation. | RG-NAV-28 |
+| <a id="d-79"></a>D-79 | Carte marine | Intégrer OpenSeaMap et les données gratuites du SHOM. | Fond OpenStreetMap et balisage OpenSeaMap sur la carte de la page d'une navigation ; données du SHOM à étudier (Q-23, priorité lancement). | RG-NAV-29 |

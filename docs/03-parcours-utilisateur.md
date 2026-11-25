@@ -44,7 +44,7 @@ L'écran affiche le temps depuis le début et le temps depuis le dernier envoi (
 
 **Photo** : « Photo » → prise ou sélection → validation → serveur et journal ; MMS si prévu (RG-SMS-05).
 
-**Note vocale** : « Vocal » → enregistrement → transcription affichée → le navigateur corrige et valide → audio et texte au serveur et au journal ; le SMS éventuel contient le texte (RG-JRN-04, RG-SMS-06).
+**Note vocale** : « Vocal » → enregistrement de la voix → réécoute possible → validation → l'enregistrement part au serveur et au journal ; le SMS éventuel donne un lien pour l'écouter (RG-JRN-04, RG-SMS-06).
 
 ### 3.3 Déclencher un SOS
 

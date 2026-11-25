@@ -31,6 +31,11 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-nav-08"></a>**RG-NAV-08** — À la confirmation du démarrage (« Envoi message – Début de navigation ») : enregistrement de la date et de l'heure de début, acquisition d'une position, envoi au serveur par API, SMS de début si les paramètres le prévoient, activation des positions automatiques.
 - <a id="rg-nav-23"></a>**RG-NAV-23** — Avant le premier démarrage d'une navigation sur un téléphone, l'application affiche les points 1 et 2 de l'[avertissement bêta](textes/avertissement-beta.md) (version bêta, pas un équipement de sécurité : alerter d'abord par le canal 16 ou le 196) ; le navigateur confirme avec « J'ai compris » avant de continuer ([D-56](07-decisions.md#d-56)).
 - <a id="rg-nav-24"></a>**RG-NAV-24** — Si les positions montrent que le navigateur ne s'est pas éloigné de plus de 20 mètres pendant 2 heures, l'application lui propose de terminer la navigation (« Terminer la navigation » ou « Continuer ») ; elle ne la termine jamais d'elle-même ([D-66](07-decisions.md#d-66)). Nouvelle proposition après « Continuer » : [Q-38](06-questions-ouvertes.md#q-38).
+- <a id="rg-nav-25"></a>**RG-NAV-25** — L'écran de démarrage liste les personnes alertées pendant la navigation (contacts « Suiveur » et « Contact SOS »), toutes cochées. Une personne décochée ne reçoit ni SMS ni alerte de cette navigation, SOS compris ; si plus aucun contact SOS n'est coché, l'avertissement de RG-SOS-14 s'affiche ([D-72](07-decisions.md#d-72)).
+- <a id="rg-nav-26"></a>**RG-NAV-26** — Depuis l'écran de démarrage, une page « Ajouter une personne » crée un nouveau contact permanent (RG-CTC-01), coché pour cette navigation ([D-72](07-decisions.md#d-72)).
+- <a id="rg-nav-27"></a>**RG-NAV-27** — L'écran de démarrage demande le nombre de personnes à bord (prérempli avec la valeur de la navigation précédente, 1 la première fois). Il figure dans le SMS SOS et sur la page de la navigation ([D-75](07-decisions.md#d-75)).
+- <a id="rg-nav-28"></a>**RG-NAV-28** — Au début et à la fin de chaque navigation, le serveur relève automatiquement la météo au point de départ et au point d'arrivée (vent, état de la mer, pression) et la conserve avec la navigation ; elle est affichée sur la page de la navigation de la plateforme Web ([D-78](07-decisions.md#d-78)). Service météo : [Q-39](06-questions-ouvertes.md#q-39).
+- <a id="rg-nav-29"></a>**RG-NAV-29** — La carte de la page d'une navigation sur la plateforme Web affiche le fond OpenStreetMap et les marques de balisage d'OpenSeaMap, avec leurs mentions de source ([D-79](07-decisions.md#d-79)). Données gratuites du SHOM : [Q-23](06-questions-ouvertes.md#q-23).
 
 ### 2.2 Pendant la navigation
 
@@ -41,7 +46,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 ### 2.3 Fin
 
-- <a id="rg-nav-13"></a>**RG-NAV-13** — « Terminer la navigation » demande une confirmation. Après confirmation : SMS de fin si les paramètres le prévoient, envoi des informations de fin au serveur, clôture de la navigation côté serveur.
+- <a id="rg-nav-13"></a>**RG-NAV-13** — « Terminer la navigation » demande une confirmation. Après confirmation : SMS de fin si les paramètres le prévoient, envoi des informations de fin au serveur, clôture de la navigation côté serveur, puis ouverture de la page détaillée de cette navigation sur la plateforme Web ([D-73](07-decisions.md#d-73)).
 - <a id="rg-nav-14"></a>**RG-NAV-14** — La clôture côté serveur a lieu même si l'envoi d'un SMS échoue. Sans Internet, la fin est enregistrée sur le téléphone avec son heure réelle et transmise dès que possible.
 - <a id="rg-nav-15"></a>**RG-NAV-15** — Une navigation peut aussi être clôturée automatiquement par épuisement du quota ([RG-ECO-05](#rg-eco-05)).
 
@@ -60,11 +65,13 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-jrn-01"></a>**RG-JRN-01** — Chaque navigation a un journal de bord, conservé sans limite de durée.
 - <a id="rg-jrn-02"></a>**RG-JRN-02** — Types d'événements : début de navigation, position automatique, position manuelle, note écrite, photo, note vocale, alerte SOS, fin de navigation, ajout complémentaire (texte, photo, note vocale ou information ajoutés depuis le Web).
 - <a id="rg-jrn-03"></a>**RG-JRN-03** — Le journal est présenté dans l'ordre chronologique de l'heure de l'événement (heure d'acquisition sur le téléphone, pas heure de réception par le serveur).
-- <a id="rg-jrn-04"></a>**RG-JRN-04** — Une note vocale est un enregistrement audio conservé sur le serveur avec sa transcription texte. Le navigateur valide la transcription avant l'envoi ([D-07](07-decisions.md#d-07)). Format AAC (`.m4a`), durée de 1 minute au plus, transcription par le moteur de reconnaissance vocale du téléphone ([D-53](07-decisions.md#d-53)).
+- <a id="rg-jrn-04"></a>**RG-JRN-04** — Une note vocale est un enregistrement de la voix, conservé sur le serveur et réécoutable ; il n'y a pas de transcription ([D-71](07-decisions.md#d-71)). Format AAC (`.m4a`), durée de 1 minute au plus ([D-53](07-decisions.md#d-53)).
 - <a id="rg-jrn-05"></a>**RG-JRN-05** — Depuis le Web, le navigateur peut ajouter à une navigation terminée des textes, photos, notes vocales et informations complémentaires.
 - <a id="rg-jrn-06"></a>**RG-JRN-06** — Le navigateur peut modifier et supprimer, depuis le Web ou l'application mobile, les notes écrites, photos, notes vocales et ajouts complémentaires, quelle que soit leur origine ([D-16](07-decisions.md#d-16)).
 - <a id="rg-jrn-07"></a>**RG-JRN-07** — Les événements de début, de fin, de position et d'alerte SOS ne sont jamais modifiables ni supprimables par le navigateur. Ils ne disparaissent qu'avec la suppression de la navigation entière ([D-16](07-decisions.md#d-16)).
 - <a id="rg-jrn-08"></a>**RG-JRN-08** — Une navigation compte au plus 20 photos, ajouts depuis le Web compris ; chaque photo est compressée à environ 1 Mo ([D-40](07-decisions.md#d-40)).
+- <a id="rg-jrn-09"></a>**RG-JRN-09** — Sur la plateforme Web, le journal d'une navigation permet de lire les notes, d'afficher les photos en grand et d'écouter les notes vocales ([D-77](07-decisions.md#d-77)).
+- <a id="rg-jrn-10"></a>**RG-JRN-10** — Dans le journal, chaque position est accompagnée du nom du lieu le plus proche (géocodage inverse, comme RG-NAV-16), sinon de ses coordonnées ([D-77](07-decisions.md#d-77)).
 
 ## 4. GPS et positions
 
@@ -73,6 +80,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-gps-03"></a>**RG-GPS-03** — Les positions sont enregistrées sur le téléphone à la fréquence de la navigation, que le serveur soit joignable ou non.
 - <a id="rg-gps-04"></a>**RG-GPS-04** — Les positions non transmises sont envoyées au serveur dès que la connexion Internet le permet, dans l'ordre d'acquisition. Gestion fine de la file d'attente et des doublons : [Q-10](06-questions-ouvertes.md#q-10).
 - <a id="rg-gps-05"></a>**RG-GPS-05** — Au premier démarrage d'une navigation sur Android, l'application demande l'exclusion de l'optimisation de la batterie et affiche les réglages propres à la marque du téléphone (Samsung, Xiaomi…) qui peuvent couper l'enregistrement ([D-52](07-decisions.md#d-52)).
+- <a id="rg-gps-06"></a>**RG-GPS-06** — Pour économiser au maximum la batterie, le GPS n'est allumé que le temps d'acquérir une position (position automatique, position manuelle, SOS) ; il est éteint entre deux acquisitions ([D-74](07-decisions.md#d-74)).
 
 ## 5. Circuits de communication
 
@@ -87,7 +95,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 - <a id="rg-sms-03"></a>**RG-SMS-03** — Sur Android, les SMS ordinaires et les invitations par SMS s'ouvrent préremplis (texte et destinataires) dans l'application SMS du téléphone ; le navigateur les envoie d'un appui. Seuls les SMS SOS partent automatiquement ([RG-SOS-16](#rg-sos-16), [D-48](07-decisions.md#d-48)). Conséquences sur les positions automatiques et les nouvelles tentatives : [Q-36](06-questions-ouvertes.md#q-36).
 - <a id="rg-sms-04"></a>**RG-SMS-04** — Si le GPS est indisponible pour un SMS ordinaire qui doit contenir une position, le SMS indique « GPS NON DISPONIBLE » au lieu d'une position ancienne.
 - <a id="rg-sms-05"></a>**RG-SMS-05** — Photo : la photo est envoyée au serveur. Si les paramètres le prévoient, un MMS la joint ; le message peut aussi contenir un lien vers la photo hébergée. Si le MMS échoue, un SMS contenant le lien vers la photo hébergée est proposé à la place ([D-49](07-decisions.md#d-49)). Taille et opérateurs : [Q-13](06-questions-ouvertes.md#q-13).
-- <a id="rg-sms-06"></a>**RG-SMS-06** — Note vocale : le SMS contient la transcription texte, pas l'audio.
+- <a id="rg-sms-06"></a>**RG-SMS-06** — Note vocale : le SMS indique « Note vocale » et donne un lien pour l'écouter sur la plateforme Web ([D-71](07-decisions.md#d-71)).
 - <a id="rg-sms-07"></a>**RG-SMS-07** — SMS SOS en échec : nouvel essai chaque minute jusqu'à la réussite ou l'arrêt par le navigateur. SMS ordinaire en échec : 3 essais, puis l'échec est affiché avec « Réessayer » ([D-50](07-decisions.md#d-50)). Restrictions Android et Google Play sur l'envoi de SMS : [Q-12](06-questions-ouvertes.md#q-12).
 - <a id="rg-sms-08"></a>**RG-SMS-08** — Tout SMS ou MMS envoyé par l'application (SMS ordinaires, SMS SOS, invitations par SMS) part aussi en copie au navigateur, au numéro de téléphone de son profil. La copie suit le même mode d'envoi que le message (automatique pour le SOS, prérempli sinon, RG-SMS-03). Sans numéro dans le profil du navigateur, pas de copie SMS. Cette copie ne se désactive pas ([D-55](07-decisions.md#d-55)).
 
@@ -96,7 +104,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 ### 7.1 Déclenchement
 
 - <a id="rg-sos-01"></a>**RG-SOS-01** — Le bouton SOS n'existe que sur les applications mobiles (Android et iPhone). Il est rouge (`#D94343`) et clairement identifiable. Il figure sur l'écran de navigation en cours et sur l'écran d'accueil ([RG-SOS-15](#rg-sos-15)).
-- <a id="rg-sos-02"></a>**RG-SOS-02** — L'appui sur le bouton ouvre une boîte de confirmation. L'envoi part à la confirmation ([D-02](07-decisions.md#d-02)).
+- <a id="rg-sos-02"></a>**RG-SOS-02** — L'appui sur le bouton ouvre une boîte de confirmation. L'envoi part à la confirmation ([D-02](07-decisions.md#d-02)). La boîte propose un champ facultatif « Problème rencontré » ; le laisser vide ne retarde pas l'envoi ([D-76](07-decisions.md#d-76)).
 - <a id="rg-sos-03"></a>**RG-SOS-03** — Le SOS reste disponible quel que soit l'état du quota ou de l'abonnement.
 - <a id="rg-sos-04"></a>**RG-SOS-04** — Après confirmation, dans cet ordre et sans qu'une étape en bloque une autre : acquisition de la position, SMS aux contacts SOS (Android seulement), envoi de l'alerte et de la position au serveur, enregistrement dans le journal, affichage du résultat.
 - <a id="rg-sos-05"></a>**RG-SOS-05** — Les SMS SOS utilisent la liste des contacts SOS présente sur le téléphone, même sans Internet.
@@ -107,7 +115,7 @@ Les sujets encore ouverts renvoient à une question `Q-nn` de [06-questions-ouve
 
 ### 7.2 Contenu des SMS SOS
 
-- <a id="rg-sos-07"></a>**RG-SOS-07** — Premier SMS : mention SOS, nom du bateau, type, longueur, immatriculation, coordonnées GPS, date et heure d'acquisition de la position, lien Google Maps vers ces coordonnées ([D-13](07-decisions.md#d-13)).
+- <a id="rg-sos-07"></a>**RG-SOS-07** — Premier SMS : mention SOS, nom du bateau, type, longueur, immatriculation, nombre de personnes à bord ([D-75](07-decisions.md#d-75)), problème rencontré s'il est saisi ([D-76](07-decisions.md#d-76)), coordonnées GPS, date et heure d'acquisition de la position, lien Google Maps vers ces coordonnées ([D-13](07-decisions.md#d-13)).
 - <a id="rg-sos-08"></a>**RG-SOS-08** — Second SMS : les autres informations de la fiche bateau (port d'attache, moteur, autonomie, capacité en carburant, vitesse, tirant d'eau).
 
 ### 7.3 Position transmise

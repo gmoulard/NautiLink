@@ -19,7 +19,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Fréquence** | Intervalle entre deux positions automatiques : 15 minutes, 30 minutes, 1 heure, 2 heures, 3 heures, 6 heures, 12 heures, 1 jour, 2 jours, 10 jours ([RG-NAV-05](02-regles-metier.md#rg-nav-05)). |
 | **Journal de bord** | Liste chronologique des événements d'une navigation. |
 | **Événement** | Entrée du journal de bord : début, position, note, photo, note vocale, alerte SOS, fin, ajout complémentaire. |
-| **Note vocale** | Enregistrement audio conservé sur le serveur, accompagné de sa transcription texte ([D-07](07-decisions.md#d-07)). |
+| **Note vocale** | Enregistrement de la voix, conservé sur le serveur et réécoutable, sans transcription ([D-71](07-decisions.md#d-71)). |
 | **Alerte SOS** | Alerte de détresse déclenchée depuis l'application mobile : SMS aux contacts SOS (Android seulement), enregistrement sur le serveur, e-mail aux suiveurs. |
 | **Contact** | Personne de la liste unique du navigateur : nom, téléphone et/ou e-mail, cases « Suiveur » et « Contact SOS », cochées par défaut ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)). |
 | **Contact SOS** | Contact dont la case « Contact SOS » est cochée ; reçoit les SMS SOS. Il a forcément un numéro de téléphone. |

@@ -85,6 +85,8 @@ L'accueil donne aussi accès aux paramètres généraux, aux contacts (suiveurs 
 
 - choix du bateau, s'il y en a plusieurs (RG-NAV-02) ;
 - destination facultative, en texte ou sur une carte (RG-NAV-04) ;
+- nombre de personnes à bord (RG-NAV-27) ;
+- personnes alertées, toutes cochées, et « Ajouter une personne » (RG-NAV-25, RG-NAV-26) ;
 - fréquence préremplie : de 15 minutes à 10 jours (RG-NAV-05) ;
 - bouton **Paramètres** pour adapter les réglages à cette navigation (RG-NAV-06) ;
 - bouton **Envoi message – Début de navigation** (RG-NAV-08).
@@ -97,7 +99,7 @@ Si le quota est épuisé sans abonnement, le démarrage est refusé avec l'expli
 - **Envoyer information position** : position manuelle, SMS si prévu, envoi au serveur, résultat affiché (RG-COM-03, RG-SMS-04) ;
 - **NOTE** : note écrite ;
 - **Photo** : prise ou sélection d'une photo (RG-SMS-05) ;
-- **Vocal** : enregistrement audio, transcription à valider (RG-JRN-04, RG-SMS-06) ;
+- **Vocal** : enregistrement de la voix, sans transcription (RG-JRN-04, RG-SMS-06) ;
 - **Envoyer un SOS** : bouton rouge, confirmation (RG-SOS-01 à RG-SOS-14) ;
 - **Terminer la navigation** : confirmation puis clôture (RG-NAV-13, RG-NAV-14).
 

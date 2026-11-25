@@ -16,7 +16,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-4 | Études SMS et MMS sur Android | TODO-2.1, TODO-2.3, TODO-2.4, TODO-1.10, TODO-1.21 | aucun | [~] |
 | LOT-5 | Études GPS, batterie, reprise et notes vocales | TODO-2.2, TODO-10.2, TODO-1.9, TODO-2.5 | aucun | [~] |
 | LOT-6 | Architecture, API et synchronisation | TODO-3.1, TODO-3.2, TODO-2.7, TODO-2.6, TODO-3.4, TODO-3.7 | LOT-4, LOT-5 | [ ] |
-| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9 | aucun | [~] |
+| LOT-7 | Maquettes, scénarios de tests et prototype | TODO-3.3, TODO-3.5, TODO-3.6, TODO-3.8, TODO-3.9, TODO-3.10 | aucun | [~] |
 | LOT-8 | Serveur : comptes, bateaux, contacts, paramètres | TODO-4.1, TODO-4.2, TODO-4.3, TODO-4.4 | LOT-1, LOT-6 | [ ] |
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [ ] |
@@ -91,6 +91,8 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 - [~] **TODO-3.9**: Choisir le design du site et de l'application parmi les 11 propositions de la [planche](../site/designs/index.html) (dont la 11 aux couleurs du guidon de la SRT), puis l'appliquer. Préférée le 2026-11-24 : la 7 « Météo marine », déclinée en 10 variantes ([planche météo](../site/designs/meteo.html)) ; reste à choisir la variante. Dépend de : aucune.
   - Critères d'acceptation : design choisi par l'utilisateur, tracé en `D-nn`, appliqué au site et au prototype, identité de marque mise à jour.
   - Fait (2026-11-24) : variante 8 « Radar de pluie » choisie (D-69) et appliquée au site, puis au prototype (D-70). Reste : relecture du site et de la démonstration en ligne.
+- [ ] **TODO-3.10**: Remarques du 2026-11-25 dans le prototype : personnes alertées cochées et ajout de contact au démarrage (RG-NAV-25, RG-NAV-26), nombre de personnes à bord (RG-NAV-27), « Problème rencontré » dans le SOS (RG-SOS-02, RG-SOS-07), note vocale en enregistrement (RG-JRN-04, RG-SMS-06), page détaillée après la fin (RG-NAV-13), journal avec photos, écoute et nom des lieux (RG-JRN-09, RG-JRN-10), météo au début et à la fin (RG-NAV-28), carte OpenStreetMap et OpenSeaMap (RG-NAV-29). Dépend de : TODO-3.6.
+  - Critères d'acceptation : chaque point visible dans la démonstration, couvert par un test quand c'est possible ; relu par l'utilisateur.
 - [~] **TODO-3.7**: Squelette du serveur en Go déployé sur pi-appliance ([D-62](07-decisions.md#d-62)) : page d'accueil de la plateforme Web, point de santé de l'API, connexion à la base, image `arm64`, fichier `compose.yaml` pour « Docker Compose libre ». Dépend de : aucune pour le squelette ; publication sur internet : TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance.
   - Critères d'acceptation : service installé sur le Pi de `vdl.moulard.org`, page ouverte depuis un téléphone à `https://nautilink.moulard.org` (redirigée vers `https://vdl.moulard.org/nautilink/`), base PostgreSQL partagée jointe, e-mail d'essai reçu par le relais, service gardé après un redémarrage du Pi.
   - Fait (2026-11-24) : serveur Go dans `server/` (accueil, espace administrateur vide, `api/sante`, PostgreSQL par pgx, commande `mail-essai`, tests), image `ghcr.io/gmoulard/nautilink-serveur` construite par le workflow « Serveur », `server/compose.yaml` ; essayé sous Docker (arm64 et amd64 construits, base jointe puis arrêtée, renvoi vers `/nautilink/`). Reste : premier passage du workflow sur GitHub, puis installation sur le Pi une fois TODO-2.72 à TODO-2.74 et TODO-3.18 de pi-appliance faits.
@@ -174,7 +176,7 @@ Pour chaque action : critères d'acceptation communs — choix de l'utilisateur 
 
 ## 9. Évolutions futures
 
-- [ ] **TODO-9.1**: Cartes marines du SHOM sur le Web ([Q-23](06-questions-ouvertes.md#q-23)). Dépend de : TODO-6.2.
+- [ ] **TODO-9.1**: Données gratuites du SHOM sur la carte du Web (priorité lancement depuis D-79) ([Q-23](06-questions-ouvertes.md#q-23)). Dépend de : TODO-6.2.
   - Critères d'acceptation : licence vérifiée, faisabilité et coût chiffrés.
 - [ ] **TODO-9.2**: Autres langues ([Q-27](06-questions-ouvertes.md#q-27)). Dépend de : aucune.
   - Critères d'acceptation : textes des interfaces séparés du code dès le départ ; une deuxième langue essayée.
