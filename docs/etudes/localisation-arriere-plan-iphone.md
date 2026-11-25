@@ -1,6 +1,6 @@
 # Étude : localisation en arrière-plan sur iPhone, batterie et App Store
 
-Action : [TODO-10.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [Q-31](../06-questions-ouvertes.md#q-31), [D-51](../07-decisions.md#d-51) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12, RG-IOS-01, RG-IOS-03.
+Action : [TODO-10.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [D-51](../07-decisions.md#d-51) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12, RG-IOS-01, RG-IOS-03.
 
 **Statut : recherche documentaire faite (novembre 2026). Le prototype sur deux modèles d'iPhone reste à faire** : aucune mesure n'est donnée ici. Rien de ce document n'est une décision.
 
@@ -51,7 +51,7 @@ Source : [App Review Guidelines](https://developer.apple.com/app-store/review/gu
 ## 5. Protocole du prototype (critères d'acceptation de TODO-10.2)
 
 1. Application minimale : `UIBackgroundModes` `location`, `allowsBackgroundLocationUpdates = true`, pause automatique désactivée, `CLBackgroundActivitySession`, une position toutes les 3 minutes enregistrée localement avec son heure.
-2. Deux modèles d'iPhone (un récent, un ancien parmi les modèles visés par [Q-31](../06-questions-ouvertes.md#q-31)), versions d'iOS notées.
+2. Deux modèles d'iPhone (un récent, un ancien parmi les modèles compatibles avec la version minimale d'iOS, RG-IOS-09), versions d'iOS notées.
 3. Essai de 8 heures, écran verrouillé, téléphone immobile puis en mouvement si possible ; autorisation « Pendant l'utilisation », puis « Toujours ».
 4. Relever : positions attendues (160) et reçues, plus long trou, batterie consommée, apparition de l'indicateur bleu.
 5. Essais de reprise : fermeture par balayage, redémarrage, terminaison par le système (forcée en remplissant la mémoire).
@@ -60,4 +60,4 @@ Source : [App Review Guidelines](https://developer.apple.com/app-store/review/gu
 
 - Autorisation demandée sur iPhone : « Pendant l'utilisation » seule (suffisante d'après Apple pour une navigation démarrée au premier plan) ou « Toujours » (utile seulement si elle améliore la reprise, à constater).
 - Présentation du SOS sur iPhone face à la règle 5.1.5 de l'App Store.
-- [Q-31](../06-questions-ouvertes.md#q-31) : version minimale d'iOS (`CLBackgroundActivitySession` demanderait iOS 17, à confirmer).
+- Version minimale d'iOS : celle par défaut de Flutter 3.47.9 ([D-89](../07-decisions.md#d-89), RG-IOS-09) ; `CLBackgroundActivitySession` demanderait iOS 17, à comparer avec elle.

@@ -60,15 +60,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant.
 - Étude : comportement de chaque écran Android sans Internet, sans réseau mobile, ou sans les deux (connexion au compte, démarrage, quota non vérifiable, etc.).
 
-### <a id="q-31"></a>Q-31 — Autorisations Android
-
-- Priorité : bloquant.
-- Décidé : localisation « Pendant l'utilisation » sur iPhone (D-54) ; exclusion de l'optimisation de la batterie sur Android (D-52).
-- Étude : [autorisations Android](etudes/autorisations-android.md) (liste, versions concernées, règles Google Play). Version visée imposée par Google Play : Android 16 (API 36).
-- Décidé (D-80) : Android 8.0 au minimum ; autorisations demandées au moment où elles servent et redemandées à chaque besoin ; localisation précise refusée : navigation sans positions (RG-AND-01 à RG-AND-03).
-- Décidé (D-81) : envoi de SMS refusé : SOS par Internet plus SMS SOS prérempli ; réveil entre deux positions par une minuterie (RG-AND-04, RG-AND-05).
-- Reste : version minimale d'iOS ; appareil photo de NautiLink ou du téléphone ; choix de la SIM sur les téléphones à deux SIM.
-
 ### <a id="q-22"></a>Q-22 — Architecture et développement
 
 - Priorité : bloquant.

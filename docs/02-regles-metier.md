@@ -198,6 +198,7 @@ L'application iPhone a les mêmes fonctions que l'application Android, avec les 
 - <a id="rg-ios-06"></a>**RG-IOS-06** — Le suiveur sur iPhone reçoit une notification push pour chaque navigation qu'il suit : alerte SOS (en plus de l'e-mail), début et fin de navigation, nouvelle photo, position en retard. Il peut désactiver chaque type, sauf le SOS ([D-44](07-decisions.md#d-44)). Une position est en retard quand aucune position n'a été reçue pendant deux fois la fréquence de la navigation ; une seule notification est envoyée jusqu'à la position suivante ([D-84](07-decisions.md#d-84)).
 - <a id="rg-ios-07"></a>**RG-IOS-07** — L'abonnement se souscrit par achat intégré de l'App Store ; le serveur le reconnaît sur tous les supports (RG-ECO-07).
 - <a id="rg-ios-08"></a>**RG-IOS-08** — L'application iPhone demande l'autorisation de localisation « Pendant l'utilisation » ; une navigation démarre à l'écran et continue en arrière-plan ([D-54](07-decisions.md#d-54)).
+- <a id="rg-ios-09"></a>**RG-IOS-09** — L'application iPhone fonctionne à partir de la version d'iOS fixée par défaut par Flutter 3.47.9 ([D-89](07-decisions.md#d-89)).
 
 ## 16. Application Android
 
@@ -206,3 +207,5 @@ L'application iPhone a les mêmes fonctions que l'application Android, avec les 
 - <a id="rg-and-03"></a>**RG-AND-03** — Si la localisation précise est refusée, la navigation démarre et se déroule sans positions ; l'application redemande l'autorisation à chaque acquisition (position automatique, position manuelle, SOS) ([D-80](07-decisions.md#d-80)).
 - <a id="rg-and-04"></a>**RG-AND-04** — Si l'envoi de SMS est refusé, le SOS part par Internet (RG-SOS-06) et l'application ouvre en plus le SMS SOS prérempli dans l'application SMS du téléphone ; la demande d'autorisation est renouvelée comme le prévoit RG-AND-02 ([D-81](07-decisions.md#d-81)).
 - <a id="rg-and-05"></a>**RG-AND-05** — Entre deux positions automatiques, le téléphone est réveillé par une minuterie du service de localisation en continu, sans alarme à l'heure exacte (RG-GPS-06, [D-81](07-decisions.md#d-81)).
+- <a id="rg-and-06"></a>**RG-AND-06** — « Photo » ouvre l'application appareil photo du téléphone ; NautiLink ne demande pas l'autorisation d'accès à l'appareil photo ([D-89](07-decisions.md#d-89)).
+- <a id="rg-and-07"></a>**RG-AND-07** — Sur un téléphone à deux cartes SIM, les SMS partent par la SIM choisie pour les SMS dans les réglages du téléphone ([D-89](07-decisions.md#d-89)).

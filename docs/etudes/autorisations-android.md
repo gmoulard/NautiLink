@@ -1,8 +1,8 @@
 # Étude : autorisations Android et versions visées
 
-Action : [TODO-2.3](../TODO.md) · Question : [Q-31](../06-questions-ouvertes.md#q-31) · Décisions prises en compte : [D-48](../07-decisions.md#d-48), [D-51](../07-decisions.md#d-51), [D-52](../07-decisions.md#d-52), [D-54](../07-decisions.md#d-54), [D-74](../07-decisions.md#d-74) · Règles : RG-GPS-05, RG-GPS-06, RG-NAV-12, RG-SMS-03, RG-SOS-16, RG-JRN-04.
+Action : [TODO-2.3](../TODO.md) · Décisions : [D-80](../07-decisions.md#d-80), [D-81](../07-decisions.md#d-81), [D-89](../07-decisions.md#d-89) · Décisions prises en compte : [D-48](../07-decisions.md#d-48), [D-51](../07-decisions.md#d-51), [D-52](../07-decisions.md#d-52), [D-54](../07-decisions.md#d-54), [D-74](../07-decisions.md#d-74) · Règles : RG-GPS-05, RG-GPS-06, RG-NAV-12, RG-SMS-03, RG-SOS-16, RG-JRN-04.
 
-**Statut : recherche documentaire (25 novembre 2026), sans essai sur téléphone.** Rien de ce document n'est une décision : la version minimale d'Android, l'ordre des demandes et le comportement en cas de refus sont des propositions, reportées dans [Q-31](../06-questions-ouvertes.md#q-31). Les pages d'aide Google Play (support.google.com) n'étaient pas joignables depuis l'environnement de rédaction : leurs liens sont donnés pour relecture, leur contenu vient des pages développeur Android qui y renvoient et des études [SMS et MMS](sms-mms-android.md) et [GPS en arrière-plan](gps-arriere-plan-android.md).
+**Statut : recherche documentaire (25 novembre 2026), sans essai sur téléphone.** Les propositions de ce document ont été tranchées (D-80, D-81, D-89) ; les règles sont RG-AND-01 à RG-AND-07. Les pages d'aide Google Play (support.google.com) n'étaient pas joignables depuis l'environnement de rédaction : leurs liens sont donnés pour relecture, leur contenu vient des pages développeur Android qui y renvoient et des études [SMS et MMS](sms-mms-android.md) et [GPS en arrière-plan](gps-arriere-plan-android.md).
 
 ## 1. Repères de versions
 
@@ -25,7 +25,7 @@ Légende : **normale** = accordée à l'installation, sans boîte de dialogue ; 
 | 3 | `FOREGROUND_SERVICE` et service de type `location` (`android:foregroundServiceType="location"`) | Service de premier plan qui garde la navigation active écran éteint, avec notification permanente | normale | `FOREGROUND_SERVICE` : 9 et plus ; type `location` déclaré : 10 et plus | Déclaration des types de services de premier plan dans la Play Console (applications visant Android 14 ou plus), avec description et vidéo [P2] [A1] |
 | 4 | `FOREGROUND_SERVICE_LOCATION` | Même service | normale | 14 et plus ; exige aussi l'autorisation n° 1 accordée et la localisation activée | Même déclaration que n° 3 [P2] [A1] |
 | 5 | `SEND_SMS` | SMS SOS envoyés automatiquement (RG-SOS-16, D-48). Les SMS ordinaires et les invitations s'ouvrent préremplis (RG-SMS-03) et ne demandent **aucune** autorisation | à l'exécution | 6.0 et plus | Politique « Groupes d'autorisations SMS et Journal d'appels » : réservée à l'application SMS par défaut, sauf exception accordée au cas par cas (ligne « urgence ») après la déclaration des autorisations [P3] ; voir l'[étude SMS § 1](sms-mms-android.md#1-ce-que-dit-google-play) |
-| 6 | `CAMERA` | Bouton « Photo » | à l'exécution | 6.0 et plus. Si la photo est prise par l'application appareil photo du téléphone (`ACTION_IMAGE_CAPTURE`), l'autorisation n'est pas nécessaire ; mais si elle est déclarée et refusée, cet appel échoue | Pas de déclaration ; données « Photos » à déclarer dans « Sécurité des données » [P5] |
+| 6 | `CAMERA` | Bouton « Photo » | à l'exécution | 6.0 et plus. Si la photo est prise par l'application appareil photo du téléphone (`ACTION_IMAGE_CAPTURE`), l'autorisation n'est pas nécessaire ; mais si elle est déclarée et refusée, cet appel échoue | Pas de déclaration ; données « Photos » à déclarer dans « Sécurité des données » [P5]. Non déclarée : « Photo » ouvre l'appareil photo du téléphone (D-89, RG-AND-06) |
 | 7 | Choix d'une photo existante (`READ_MEDIA_IMAGES` ou sélecteur de photos) | Ajout d'une photo de la galerie, si l'écran le prévoit | sélecteur : aucune ; `READ_MEDIA_IMAGES` : à l'exécution | Sélecteur natif : 11 et plus (et versions antérieures par Google Play) ; `READ_MEDIA_IMAGES` : 13 et plus | Politique « Autorisations d'accès aux photos et vidéos » : `READ_MEDIA_IMAGES` réservée aux applications dont c'est la fonction principale ; les autres utilisent le sélecteur [P4] [A2] |
 | 8 | `RECORD_AUDIO` | Bouton « Vocal », 1 minute au plus, application à l'écran (RG-JRN-04) | à l'exécution | 6.0 et plus ; depuis 12, indicateur de micro affiché par le système | Pas de déclaration ; « Enregistrements audio » à déclarer dans « Sécurité des données » [P5] |
 | 9 | `POST_NOTIFICATIONS` | Notification du service de navigation ; notification après redémarrage (RG-NAV-12, D-51) | à l'exécution | 13 et plus ; avant, accordée d'office. Refusée : le service tourne quand même, mais sa notification n'apparaît plus dans le volet, et la notification de reprise n'est pas affichée | Aucune règle propre [A3] |
@@ -36,7 +36,7 @@ Légende : **normale** = accordée à l'installation, sans boîte de dialogue ; 
 ### Points ouverts techniques, liés aux décisions déjà prises
 
 - **Réveil entre deux positions (RG-GPS-06, D-74)** : si le GPS est éteint entre deux acquisitions, il faut réveiller l'application à l'heure de la position suivante. Les alarmes exactes demandent `SCHEDULE_EXACT_ALARM` (12 et plus, refusée par défaut depuis 14, réglage spécial) ou `USE_EXACT_ALARM`, que Google Play réserve aux réveils et agendas [P6] [A6]. En Doze, `setExactAndAllowWhileIdle()` ne se déclenche pas plus d'une fois toutes les 9 minutes, ce qui reste compatible avec la fréquence minimale de 15 minutes (RG-NAV-05). Autre voie : garder le service de premier plan actif et lui confier la minuterie, sans alarme exacte. À trancher avec l'architecture (TODO-3.1) et à mesurer au prototype de TODO-2.2.
-- **Choix de la carte SIM pour le SMS SOS** : la SIM SMS par défaut (`SubscriptionManager.getDefaultSmsSubscriptionId()`) ne demande pas d'autorisation ; lister les SIM pour en choisir une demanderait `READ_PHONE_STATE`. Non décidé : à poser si les téléphones à deux SIM doivent être gérés.
+- **Choix de la carte SIM pour le SMS SOS** : la SIM SMS par défaut (`SubscriptionManager.getDefaultSmsSubscriptionId()`) ne demande pas d'autorisation ; lister les SIM pour en choisir une demanderait `READ_PHONE_STATE`. Tranché (D-89, RG-AND-07) : la SIM choisie pour les SMS dans les réglages du téléphone, donc sans `READ_PHONE_STATE`.
 - **Visibilité des applications (Android 11 et plus)** : pour vérifier qu'une application SMS existe avant d'ouvrir un SMS prérempli, déclarer `<queries>` pour l'intention `smsto:`. Pas une autorisation, mais à ne pas oublier.
 
 ## 3. Version minimale d'Android (décidée, D-80)
@@ -67,7 +67,7 @@ flowchart TD
     D -- non --> E{"Première navigation ?"}
     E -- oui --> E1["Exclusion de l'optimisation<br/>de la batterie et aide par marque<br/>(RG-GPS-05)"] --> F
     E -- non --> F["Service de premier plan location<br/>démarré : navigation en cours"]
-    F --> G["Premier appui sur « Photo »"] --> G1["Demande CAMERA<br/>(si l'appareil photo de NautiLink est utilisé)"]
+    F --> G["Appui sur « Photo »"] --> G1["Appareil photo du téléphone,<br/>sans demande CAMERA (RG-AND-06)"]
     F --> H["Premier appui sur « Vocal »"] --> H1["Demande RECORD_AUDIO"]
     F --> I["« Envoyer un SOS »"] --> I1{"SEND_SMS accordée ?"}
     I1 -- oui --> I2["SMS SOS envoyés automatiquement<br/>(RG-SOS-16)"]
@@ -83,7 +83,7 @@ Remarques :
 ## 5. Reste à faire pour TODO-2.3
 
 1. Relire les pages Google Play [P1] à [P6] (hôte support.google.com non joignable lors de la rédaction).
-2. Tranché (D-80) : version minimale, demande au moment du besoin, refus de la localisation précise. Tranché (D-81) : refus de `SEND_SMS`, réveil entre deux positions. Reste à choisir ([Q-31](../06-questions-ouvertes.md#q-31)) : appareil photo de NautiLink ou du téléphone, SIM sur les téléphones à deux SIM, version minimale d'iOS.
+2. Tranché (D-80) : version minimale, demande au moment du besoin, refus de la localisation précise. Tranché (D-81) : refus de `SEND_SMS`, réveil entre deux positions. Tranché (D-89) : appareil photo du téléphone sans `CAMERA` (RG-AND-06), SIM choisie pour les SMS dans les réglages (RG-AND-07), version minimale d'iOS par défaut de Flutter 3.47.9 (RG-IOS-09).
 3. Vérifier le parcours sur le prototype de TODO-2.2 (Android 8, 10, 13 et 14 au moins).
 
 ## Sources

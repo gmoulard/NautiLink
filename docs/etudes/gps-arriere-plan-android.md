@@ -1,6 +1,6 @@
 # Étude : GPS en arrière-plan sur Android, batterie et reprise
 
-Action : [TODO-2.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [D-51](../07-decisions.md#d-51), [Q-31](../06-questions-ouvertes.md#q-31) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12.
+Action : [TODO-2.2](../TODO.md) · Questions : [Q-09](../06-questions-ouvertes.md#q-09), [D-51](../07-decisions.md#d-51), [D-80](../07-decisions.md#d-80) · Règles : RG-GPS-03, RG-NAV-05, RG-NAV-12.
 
 **Statut : recherche documentaire faite (novembre 2026). Le prototype sur vrais téléphones reste à faire** : aucune mesure de batterie ni de positions manquantes n'est donnée ici. Rien de ce document n'est une décision.
 
@@ -66,4 +66,4 @@ Conséquence pour le produit : prévoir un écran d'aide par marque, ouvert au p
 
 - [D-51](../07-decisions.md#d-51) : reprise automatique après redémarrage, qui exige de demander « Toujours autoriser » la localisation (et de justifier cet accès auprès de Google Play), ou reprise seulement au lancement suivant de l'application.
 - Écran d'aide par marque (Samsung, Xiaomi…) et demande d'exclusion de l'optimisation de la batterie : à proposer ou non au démarrage d'une navigation.
-- [Q-31](../06-questions-ouvertes.md#q-31) : version minimale d'Android (les règles ci-dessus changent à Android 10, 12, 14 et 15).
+- Tranché ([D-80](../07-decisions.md#d-80), RG-AND-01) : Android 8.0 au minimum (les règles ci-dessus changent à Android 10, 12, 14 et 15).
