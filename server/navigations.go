@@ -6,6 +6,8 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"log"
+	"maps"
 	"math"
 	"net/http"
 	"slices"
@@ -976,7 +978,7 @@ func (a *app) deposerFichier(ctx context.Context, utilisateur, id, typeMedia str
 type operation func(ctx context.Context, r *http.Request, s *session, id, navigation string, contenu json.RawMessage) (int, any, error)
 
 func (a *app) operations() map[string]operation {
-	return map[string]operation{
+	ops := map[string]operation{
 		"demarrage": func(ctx context.Context, r *http.Request, s *session, id, _ string, contenu json.RawMessage) (int, any, error) {
 			var d demarrageJSON
 			if err := json.Unmarshal(contenu, &d); err != nil {
@@ -1005,6 +1007,8 @@ func (a *app) operations() map[string]operation {
 			return http.StatusOK, n, err
 		},
 	}
+	maps.Copy(ops, a.operationsSos())
+	return ops
 }
 
 type resultatElement struct {
@@ -1284,7 +1288,11 @@ func lireTout(r *http.Request, taille int) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-// apresDemarrage : traitements qui suivent le démarrage (lieux, e-mail de
-// début, TODO-4.7) ; ni la météo (Q-39) ni les notifications push (pas
+// apresDemarrage : traitements qui suivent le démarrage : e-mail de début
+// (RG-NOT-02, sos.go) ; ni la météo (Q-39) ni les notifications push (pas
 // d'identifiants APNs ni FCM) ne sont branchées.
-func (a *app) apresDemarrage(ctx context.Context, n navLigne) {}
+func (a *app) apresDemarrage(ctx context.Context, n navLigne) {
+	if err := a.emailsDebut(ctx, n); err != nil {
+		log.Printf("navigation %s : e-mails de début : %v", n.id, err)
+	}
+}
