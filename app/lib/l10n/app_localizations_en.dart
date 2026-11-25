@@ -749,4 +749,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pageOffline =>
       'The voyage page will be available when the connection is back.';
+
+  @override
+  String get serverQueued =>
+      'Server: waiting, sent when the connection is back';
+
+  @override
+  String get smsNotYet => 'SMS: not yet sent by this version of the app';
+
+  @override
+  String get voyageStarted => 'Voyage started';
+
+  @override
+  String get startRefused => 'Start refused';
+
+  @override
+  String startQuotaExhausted(String date) {
+    return 'Free voyage quota used up: the voyage cannot start. Minutes will be available again on $date. You can also subscribe.';
+  }
+
+  @override
+  String get startQuotaExhaustedNoDate =>
+      'Free voyage quota used up: the voyage cannot start. Wait for minutes to become available again, or subscribe.';
+
+  @override
+  String get noBoatYet =>
+      'No boat in your account: first create your boat on the web platform (\"Boats\").';
+
+  @override
+  String get locationTitle => 'Your position';
+
+  @override
+  String get locationExplain =>
+      'NautiLink will ask for the phone\'s precise location. It is used for the voyage\'s automatic and manual positions and for the SOS, even without Internet. Without it, the voyage has no positions.';
+
+  @override
+  String get gpsUnavailable => 'GPS unavailable';
+
+  @override
+  String get noSosContact =>
+      'You have no SOS contact: nobody will receive your SOS text messages. Add one to your contacts on the web platform.';
+
+  @override
+  String get noAlertablePerson => 'No follower or SOS contact.';
+
+  @override
+  String voyageRefused(String message) {
+    return 'Refused by the server: $message';
+  }
 }

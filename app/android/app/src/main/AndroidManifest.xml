@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Vraie application : échanges avec le serveur central (D-129). -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Positions de la navigation et du SOS, demandées au moment où elles
+         servent (RG-AND-02, étude des autorisations Android n° 1). -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="${appLabel}"
         android:name="${applicationName}"

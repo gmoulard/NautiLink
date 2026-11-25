@@ -352,10 +352,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 children: [
                   Row(
                     children: [
-                      Expanded(child: _Chrono(label: l.sinceStart, value: fmtClock(v.duration))),
+                      Expanded(child: Chrono(label: l.sinceStart, value: fmtClock(v.duration))),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _Chrono(label: l.sinceLastSend, value: fmtClock(DateTime.now().difference(lastSend))),
+                        child: Chrono(label: l.sinceLastSend, value: fmtClock(DateTime.now().difference(lastSend))),
                       ),
                     ],
                   ),
@@ -511,8 +511,9 @@ class _RecordDialogState extends State<_RecordDialog> {
   }
 }
 
-class _Chrono extends StatelessWidget {
-  const _Chrono({required this.label, required this.value});
+/// Chronomètre de l'écran de navigation (RG-NAV-10), commun aux deux modes.
+class Chrono extends StatelessWidget {
+  const Chrono({super.key, required this.label, required this.value});
   final String label;
   final String value;
 

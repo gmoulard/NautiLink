@@ -44,6 +44,18 @@ class StockageSession {
     await _p.remove(_expire);
   }
 
+  static const _rappel = 'nautilink.rappelPremiereNavigationVu';
+  static const _personnes = 'nautilink.personnesABord';
+
+  /// Rappel affiché avant la première navigation sur ce téléphone (RG-NAV-23).
+  bool get rappelPremiereNavigationVu => _p.getBool(_rappel) ?? false;
+  Future<void> voirRappelPremiereNavigation() => _p.setBool(_rappel, true);
+
+  /// Nombre de personnes à bord de la navigation précédente, 1 la première
+  /// fois (RG-NAV-27).
+  int get dernierNombrePersonnes => _p.getInt(_personnes) ?? 1;
+  Future<void> retenirNombrePersonnes(int n) => _p.setInt(_personnes, n);
+
   /// Identifiant du téléphone (`PUT /v1/appareils/{id}`), tiré au hasard à
   /// la première ouverture puis gardé.
   Future<String> appareilId() async {

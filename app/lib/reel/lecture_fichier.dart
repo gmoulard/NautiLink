@@ -4,3 +4,10 @@ import 'lecture_fichier_web.dart'
 
 /// Lit le fichier d'une photo ou d'une note vocale à déposer sur le serveur.
 Future<List<int>> lireFichier(String chemin) => impl.lireFichier(chemin);
+
+/// Dossier des photos et notes vocales en attente d'envoi, gardé jusqu'à leur
+/// dépôt sur le serveur (dossier de l'application, pas le cache).
+Future<String> dossierEnvois() => impl.dossierEnvois();
+
+/// Taille du fichier, en octets.
+Future<int> tailleFichier(String chemin) => impl.tailleFichier(chemin);

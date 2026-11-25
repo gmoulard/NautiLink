@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:uuid/uuid.dart';
@@ -7,6 +8,20 @@ import '../depot/depot.dart';
 import 'api.dart';
 import 'base_locale.dart';
 import 'lecture_fichier.dart' as fichiers;
+
+/// État d'un envoi de la file, lu après une passe : reçu par le serveur
+/// (sorti de la file), encore en attente (hors connexion, serveur en panne)
+/// ou refusé définitivement (4xx, mis de côté) avec l'erreur du serveur.
+class EtatEnvoi {
+  const EtatEnvoi._(this.recu, this.refus);
+  static const reussi = EtatEnvoi._(true, null);
+  static const enAttente = EtatEnvoi._(false, null);
+  const EtatEnvoi.refuse(ErreurApi this.refus) : recu = false;
+
+  final bool recu;
+  final ErreurApi? refus;
+  bool get refuse => refus != null;
+}
 
 /// Bilan d'une passe d'envoi de la file.
 class BilanEnvoi {
@@ -297,7 +312,8 @@ class FileAttente implements Envois {
     await base.noterEchec(
       e.cle,
       statut: statut,
-      erreur: erreur?.toString(),
+      // Erreur du serveur gardée en JSON, pour en relire le message (EtatEnvoi).
+      erreur: erreur is Map ? jsonEncode(erreur) : erreur?.toString(),
       misDeCote: definitif,
     );
     return definitif ? _Issue.misDeCote : _Issue.garde;
@@ -427,6 +443,40 @@ class FileAttente implements Envois {
       joignable: joignable,
     );
   }
+
+  /// État de l'élément de clé [cle] (`operation:id`) : sorti de la file,
+  /// en attente ou mis de côté avec l'erreur du serveur.
+  Future<EtatEnvoi> etat(String cle) async {
+    for (final e in await base.elementsMisDeCote()) {
+      if (e.cle != cle) continue;
+      Object? c;
+      try {
+        c = e.derniereErreur == null ? null : jsonDecode(e.derniereErreur!);
+      } on FormatException {
+        c = null;
+      }
+      return EtatEnvoi.refuse(
+        ErreurApi.depuis(ReponseApi(e.dernierStatut ?? 400, c)),
+      );
+    }
+    for (final e in await base.elementsAEnvoyer()) {
+      if (e.cle == cle) return EtatEnvoi.enAttente;
+    }
+    return EtatEnvoi.reussi;
+  }
+
+  /// Attend la passe en cours, au plus [delai] ; puis rend l'état de [cle].
+  Future<EtatEnvoi> etatApresPasse(String cle, Duration delai) async {
+    try {
+      await attendrePasse().timeout(delai);
+    } on TimeoutException {
+      // Serveur lent : l'élément reste en file et partira plus tard.
+    }
+    return etat(cle);
+  }
+
+  /// Retire un élément mis de côté (refus lu et traité par l'application).
+  Future<void> oublier(String cle) => base.retirer(cle);
 
   /// Attend la fin de la passe en cours, s'il y en a une.
   Future<void> attendrePasse() async {

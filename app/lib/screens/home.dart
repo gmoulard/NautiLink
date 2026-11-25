@@ -12,6 +12,7 @@ import 'connexion.dart';
 import 'dashboard.dart';
 import 'memo.dart';
 import 'navigation.dart';
+import 'navigation_reel.dart';
 
 /// Écran d'accueil de l'application mobile (cahier des charges §5.2).
 class HomeScreen extends StatelessWidget {
@@ -78,7 +79,7 @@ class HomeScreen extends StatelessWidget {
         FilledButton.icon(
           onPressed: (demo ? state.current != null : enCours != null)
               ? null
-              : () => demo ? openStart(context) : showNotYet(context),
+              : () => demo ? openStart(context) : openStartReel(context),
           icon: const Icon(Icons.play_arrow),
           label: Text(l.startVoyage),
         ),

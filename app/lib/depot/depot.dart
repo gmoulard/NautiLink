@@ -72,14 +72,22 @@ abstract class Envois {
   Stream<EnvoiReussi> get reussis;
 }
 
-/// Position du téléphone (RG-GPS-01, RG-SOS-09 à RG-SOS-11). Interface prévue
-/// pour les positions automatiques (TODO-5.3) et le SOS (TODO-5.5).
+/// Position du téléphone (RG-GPS-01, RG-SOS-09 à RG-SOS-11) : positions
+/// automatiques (TODO-5.3), position manuelle (TODO-5.4) et SOS (TODO-5.5).
 abstract class SourcePosition {
-  /// Position actuelle, ou vide si le GPS ne répond pas.
-  Future<PositionGps?> positionActuelle();
+  /// Position actuelle, ou vide si le GPS ne répond pas ou si la localisation
+  /// n'est pas autorisée. Avec [demander], à l'écran seulement, l'autorisation
+  /// refusée est redemandée (RG-AND-02, RG-AND-03).
+  Future<PositionGps?> positionActuelle({bool demander = false});
 
   /// Dernière position connue, si le GPS a déjà répondu.
   PositionGps? get derniereConnue;
+
+  /// Positions automatiques d'une navigation : positions remises environ
+  /// toutes les [frequence] ; sur Android, le flux garde la navigation active
+  /// écran éteint (service de premier plan, notification permanente). Le
+  /// suivi s'arrête quand l'abonnement au flux est annulé.
+  Stream<PositionGps> suivre(Duration frequence);
 }
 
 /// Dépôt de données de l'application : navigations, bateaux, contacts,

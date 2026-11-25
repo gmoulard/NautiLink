@@ -6,19 +6,10 @@ import '../config.dart';
 import '../depot/depot.dart';
 import 'api.dart';
 import 'base_locale.dart';
+import 'conduite.dart';
 import 'file_attente.dart';
+import 'gps.dart';
 import 'stockage_session.dart';
-
-/// Position non encore branchée sur le GPS du téléphone (TODO-5.3).
-class PositionsIndisponibles implements SourcePosition {
-  const PositionsIndisponibles();
-
-  @override
-  Future<PositionGps?> positionActuelle() async => null;
-
-  @override
-  PositionGps? get derniereConnue => null;
-}
 
 /// Dépôt de la vraie application (D-127) : données relues sur le serveur,
 /// gardées dans la base locale pour l'usage hors connexion (RG-COM-06),
@@ -38,6 +29,13 @@ class DepotReel extends Depot {
         file ??
         FileAttente(base: base, api: api, appareilId: session.appareilId);
     api.surSessionPerdue = _sessionPerdue;
+    conduite = ConduiteNavigation(
+      file: this.file,
+      base: base,
+      positions: this.positions,
+      appareilId: session.appareilId,
+      origine: plateforme ?? 'android',
+    )..addListener(_notifier);
   }
 
   /// Dépôt du téléphone : préférences, base SQLite (en mémoire sur le Web,
@@ -55,6 +53,7 @@ class DepotReel extends Depot {
       session: session,
       base: base,
       plateforme: plateformeDuTelephone(),
+      positions: kIsWeb ? null : GpsTelephone(),
     );
   }
 
@@ -72,6 +71,9 @@ class DepotReel extends Depot {
   final StockageSession session;
   final BaseLocale base;
   late final FileAttente file;
+
+  /// Navigation en cours sur ce téléphone : démarrage, journal, envois (TODO-5.2 à TODO-5.6).
+  late final ConduiteNavigation conduite;
   final String? plateforme;
   final String? nomAppareil;
   final String versionApplication;
@@ -109,6 +111,13 @@ class DepotReel extends Depot {
   ProfilNl? get profil => _profil;
   @override
   List<ResumeNavigation> get navigations => _navigations;
+
+  /// Navigation en cours du téléphone : celle gardée sur le téléphone, même
+  /// si son démarrage attend encore dans la file (RG-NAV-12, RG-COM-06) ;
+  /// sinon celle que le serveur dit en cours.
+  @override
+  ResumeNavigation? get navigationEnCours =>
+      conduite.enCours?.resume ?? super.navigationEnCours;
 
   /// Heure de la dernière liste de navigations reçue (« hors connexion », RG-COM-06).
   DateTime? get navigationsRecuesLe => _navigationsRecuesLe;
@@ -171,6 +180,7 @@ class DepotReel extends Depot {
   @override
   Future<void> ouvrir() async {
     await _chargerCopies();
+    await conduite.charger();
     _etat = session.ouverte ? EtatSession.connecte : EtatSession.deconnecte;
     _notifier();
     if (_etat == EtatSession.connecte) {
@@ -238,7 +248,70 @@ class DepotReel extends Depot {
     }
     if (_ferme) return;
     await _chargerCopies();
+    await _rapprocherNavigation();
     _notifier();
+  }
+
+  /// Navigation du téléphone d'après la liste reçue : nom donné par le serveur
+  /// (RG-NAV-17).
+  Future<void> _rapprocherNavigation() async {
+    final n = conduite.enCours;
+    if (n == null) return;
+    await conduite.verifierRefus();
+    if (_horsConnexion) return;
+    for (final r in _navigations) {
+      if (r.id == n.id && r.enCours) await conduite.nommer(r.nom);
+    }
+  }
+
+  // ------------------------------------------------------------ navigation
+
+  /// Bateaux proposés au démarrage et au SOS depuis l'accueil : ceux du
+  /// téléphone (RG-NAV-02, RG-SOS-15) ; si le téléphone n'en a aucun, tous
+  /// ceux du compte (Q-88).
+  Future<List<BateauNl>> bateauxDuTelephone() async {
+    final id = await session.appareilId();
+    final miens = _bateaux.where((b) => b.appareilAssocieId == id).toList();
+    return miens.isNotEmpty ? miens : _bateaux;
+  }
+
+  /// « Envoi message – Début de navigation » (RG-NAV-08). Un bateau associé à
+  /// un autre téléphone passe d'abord à celui-ci (Q-81) ; sans Internet, le
+  /// serveur le refusera, et le refus sera affiché (Q-87).
+  Future<NavigationLocale> demarrer({
+    required BateauNl bateau,
+    required int frequenceMinutes,
+    required int personnesABord,
+    required List<String> personnesAlertees,
+    String? destination,
+    ParametresGeneraux? parametres,
+  }) async {
+    final appareil = await session.appareilId();
+    final q = quota;
+    final refuse = q != null && q.epuise && !q.abonnementActif;
+    if (bateau.appareilAssocieId != appareil && !refuse && plateforme != null) {
+      try {
+        await api.appel(
+          'PUT',
+          '/v1/bateaux/${bateau.id}/telephone',
+          json: {'appareilId': appareil},
+        );
+      } on HorsConnexion {
+        // Démarrage en file : le serveur dira si le téléphone n'est pas associé.
+      }
+    }
+    final n = await conduite.demarrer(
+      bateau: bateau,
+      frequenceMinutes: frequenceMinutes,
+      personnesABord: personnesABord,
+      personnesAlertees: personnesAlertees,
+      destination: destination,
+      parametres: parametres,
+      quota: quota,
+    );
+    await session.retenirNombrePersonnes(personnesABord);
+    unawaited(actualiser());
+    return n;
   }
 
   /// Contacts relus avec le curseur `depuis`, qui ne rend que les changements (RG-CTC-03).
@@ -407,6 +480,7 @@ class DepotReel extends Depot {
   @override
   void dispose() {
     _ferme = true;
+    conduite.dispose();
     file.fermer();
     super.dispose();
   }

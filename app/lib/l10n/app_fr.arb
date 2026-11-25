@@ -252,5 +252,20 @@
   "savedOffline": "Hors connexion : dernière liste reçue le {date}",
   "@savedOffline": {"placeholders": {"date": {"type": "String"}}},
   "noSavedVoyages": "Aucune navigation enregistrée.",
-  "pageOffline": "La page de la navigation sera disponible au retour de la connexion."
+  "pageOffline": "La page de la navigation sera disponible au retour de la connexion.",
+  "serverQueued": "Serveur : en attente, envoi au retour de la connexion",
+  "smsNotYet": "SMS : pas encore envoyés par cette version de l'application",
+  "voyageStarted": "Navigation démarrée",
+  "startRefused": "Démarrage refusé",
+  "startQuotaExhausted": "Quota de navigation gratuite épuisé : la navigation ne peut pas démarrer. Des minutes redeviendront disponibles le {date}. Vous pouvez aussi vous abonner.",
+  "@startQuotaExhausted": {"placeholders": {"date": {"type": "String"}}},
+  "startQuotaExhaustedNoDate": "Quota de navigation gratuite épuisé : la navigation ne peut pas démarrer. Attendez que des minutes redeviennent disponibles, ou abonnez-vous.",
+  "noBoatYet": "Aucun bateau dans votre compte : créez d'abord la fiche de votre bateau sur la plateforme Web (« Bateaux »).",
+  "locationTitle": "Votre position",
+  "locationExplain": "NautiLink va demander l'accès à la position précise du téléphone. Elle sert aux positions automatiques et manuelles de la navigation et au SOS, même sans Internet. Sans elle, la navigation se déroule sans positions.",
+  "gpsUnavailable": "GPS non disponible",
+  "noSosContact": "Vous n'avez aucun contact SOS : personne ne recevra vos SMS SOS. Ajoutez-en un dans vos contacts sur la plateforme Web.",
+  "noAlertablePerson": "Aucun contact suiveur ou contact SOS.",
+  "voyageRefused": "Refusé par le serveur : {message}",
+  "@voyageRefused": {"placeholders": {"message": {"type": "String"}}}
 }

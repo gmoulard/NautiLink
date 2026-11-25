@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:nautilink/depot/depot.dart';
 import 'package:nautilink/reel/api.dart';
 import 'package:nautilink/reel/base_locale.dart';
 import 'package:nautilink/reel/depot_reel.dart';
@@ -30,6 +32,71 @@ class FauxServeurNautiLink {
   bool avertissementChange = false;
   bool emailVerifie = true;
   int jetons = 0;
+
+  /// Navigation « Alizé — Houat » en cours sur le serveur.
+  bool navigationEnCours = true;
+  bool quotaEpuise = false;
+
+  /// Refus du prochain démarrage reçu : (statut, code, message).
+  (int, String, String)? refusDemarrage;
+
+  /// Refus des événements reçus : (statut, code, message).
+  (int, String, String)? refusEvenements;
+
+  /// Éléments reçus par `POST /v1/synchronisation` (opération, id, contenu),
+  /// alertes SOS et fichiers reçus.
+  final elements = <(String, String, Object?)>[];
+  final alertes = <String, Object?>{};
+  final fichiers = <String, (String?, int)>{};
+
+  /// Navigations démarrées depuis le téléphone (identifiant → résumé).
+  final demarrees = <String, Map<String, Object?>>{};
+
+  /// Téléphone associé à chaque bateau (RG-BAT-02).
+  final associations = <String, String>{};
+
+  Map<String, Object?> _resultat(Map e) {
+    final op = e['operation'] as String;
+    final id = e['id'] as String;
+    elements.add((op, id, e['contenu']));
+    Map<String, Object?> refus((int, String, String) r) => {
+      'id': id,
+      'statut': r.$1,
+      'erreur': {
+        'code': r.$2,
+        'message': r.$3,
+        if (r.$2 == 'quota_epuise') 'disponibleLe': '2026-11-27T13:00:00+01:00',
+      },
+    };
+    switch (op) {
+      case 'demarrage':
+        final r = refusDemarrage;
+        if (r != null) return refus(r);
+        final c = e['contenu'] as Map;
+        final d = (c['destination'] as Map?)?['texte'];
+        demarrees[id] = {
+          'id': id,
+          'nom': d == null ? 'Alizé — 2026-11-25 10:00' : 'Alizé — $d',
+          'role': 'navigateur',
+          'etat': 'en_cours',
+          'bateau': {'id': c['bateauId'], 'nom': 'Alizé'},
+          'debut': (c['debut'] as Map)['heureAcquisition'],
+          'frequenceMinutes': c['frequenceMinutes'],
+          'personnesABord': c['personnesABord'],
+        };
+      case 'evenement':
+        final r = refusEvenements;
+        if (r != null) return refus(r);
+      case 'fin':
+        final n = demarrees[id];
+        if (n != null) {
+          n['etat'] = 'terminee';
+          n['fin'] = (e['contenu'] as Map)['heureAcquisition'];
+        }
+        if (id == 'n1') navigationEnCours = false;
+    }
+    return {'id': id, 'statut': op == 'statuts_sms' ? 204 : 201};
+  }
 
   MockClient get client => MockClient((r) async {
     if (coupe) throw http.ClientException('pas de réseau');
@@ -99,12 +166,43 @@ class FauxServeurNautiLink {
     if (chemin.startsWith('/v1/appareils/')) {
       return reponse(200, {...c as Map, 'id': chemin.split('/').last});
     }
+    if (r.method == 'PUT' && chemin.startsWith('/v1/alertes-sos/')) {
+      final id = chemin.split('/')[3];
+      final deja = alertes.containsKey(id);
+      alertes[id] = c;
+      return reponse(deja ? 200 : 201, {...c as Map, 'emailsEnvoyesA': []});
+    }
+    if (r.method == 'PUT' && chemin.startsWith('/v1/fichiers/')) {
+      fichiers[chemin.split('/').last] = (
+        r.headers['Content-Type'],
+        r.bodyBytes.length,
+      );
+      return reponse(204);
+    }
+    if (r.method == 'GET' && chemin.startsWith('/v1/navigations/')) {
+      final id = chemin.split('/').last;
+      final n = demarrees[id];
+      if (n != null) return reponse(200, n);
+      if (id == 'n1') {
+        return reponse(200, {
+          'id': 'n1',
+          'nom': 'Alizé — Houat',
+          'role': 'navigateur',
+          'etat': navigationEnCours ? 'en_cours' : 'terminee',
+          'bateau': {'id': 'b1', 'nom': 'Alizé'},
+          'debut': '2026-11-25T09:00:00+01:00',
+          'frequenceMinutes': 60,
+          'personnesABord': 3,
+        });
+      }
+    }
     if (chemin.startsWith('/v1/bateaux/') && chemin.endsWith('/telephone')) {
+      associations[chemin.split('/')[3]] = (c as Map)['appareilId'] as String;
       return reponse(200, {
         'id': chemin.split('/')[3],
         'nom': 'Alizé',
         'type': 'voilier',
-        'appareilAssocieId': (c as Map)['appareilId'],
+        'appareilAssocieId': c['appareilId'],
       });
     }
     switch ((r.method, chemin)) {
@@ -120,14 +218,16 @@ class FauxServeurNautiLink {
       case ('GET', '/v1/navigations'):
         return reponse(200, {
           'navigations': [
+            ...demarrees.values.where((n) => n['etat'] == 'en_cours'),
             {
               'id': 'n1',
               'nom': 'Alizé — Houat',
               'role': 'navigateur',
-              'etat': 'en_cours',
+              'etat': navigationEnCours ? 'en_cours' : 'terminee',
               'bateau': {'id': 'b1', 'nom': 'Alizé'},
               'debut': '2026-11-25T09:00:00+01:00',
             },
+            ...demarrees.values.where((n) => n['etat'] != 'en_cours'),
             {
               'id': 'n0',
               'nom': 'Alizé — Belle-Île',
@@ -142,9 +242,9 @@ class FauxServeurNautiLink {
         });
       case ('GET', '/v1/quota'):
         return reponse(200, {
-          'consommeMinutes': 300,
-          'disponibleMinutes': 1140,
-          'epuise': false,
+          'consommeMinutes': quotaEpuise ? 1440 : 300,
+          'disponibleMinutes': quotaEpuise ? 0 : 1140,
+          'epuise': quotaEpuise,
           'prochainesMinutes': [
             {'minutes': 240, 'disponiblesLe': '2026-11-27T13:00:00+01:00'},
           ],
@@ -156,13 +256,14 @@ class FauxServeurNautiLink {
             'id': 'b1',
             'nom': 'Alizé',
             'type': 'voilier',
-            'appareilAssocieId': null,
+            'appareilAssocieId': associations['b1'],
           },
           {
             'id': 'b2',
             'nom': 'Petit Pingouin',
             'type': 'moteur',
-            'appareilAssocieId': '00000000-0000-4000-8000-000000000000',
+            'appareilAssocieId':
+                associations['b2'] ?? '00000000-0000-4000-8000-000000000000',
           },
         ]);
       case ('GET', '/v1/contacts'):
@@ -193,16 +294,18 @@ class FauxServeurNautiLink {
       case ('POST', '/v1/synchronisation'):
         final el = (c as Map)['elements'] as List;
         return reponse(200, {
-          'resultats': [
-            for (final e in el) {'id': e['id'], 'statut': 201},
-          ],
+          'resultats': [for (final e in el) _resultat(e as Map)],
         });
     }
     return erreur(404, 'introuvable', 'Introuvable.');
   });
 
   /// Dépôt branché sur ce faux serveur, sans minuterie (les essais relancent la file eux-mêmes).
-  DepotReel depot(StockageSession session, BaseLocale base) {
+  DepotReel depot(
+    StockageSession session,
+    BaseLocale base, {
+    SourcePosition? positions,
+  }) {
     final api = ClientApi(
       base: 'https://essai.example/nautilink/api',
       session: session,
@@ -214,6 +317,7 @@ class FauxServeurNautiLink {
       base: base,
       plateforme: 'android',
       nomAppareil: 'Essai',
+      positions: positions,
       file: FileAttente(
         base: base,
         api: api,
@@ -223,3 +327,37 @@ class FauxServeurNautiLink {
     );
   }
 }
+
+/// GPS d'essai : rend [position] (vide : GPS indisponible) ; [suivi] donne
+/// les positions du flux des positions automatiques.
+class FauxGps implements SourcePosition {
+  FauxGps([this.position]);
+  PositionGps? position;
+  int demandes = 0;
+  int acquisitions = 0;
+  final suivi = StreamController<PositionGps>.broadcast();
+  Duration? frequenceSuivie;
+
+  @override
+  Future<PositionGps?> positionActuelle({bool demander = false}) async {
+    acquisitions++;
+    if (demander) demandes++;
+    return position;
+  }
+
+  @override
+  PositionGps? get derniereConnue => position;
+
+  @override
+  Stream<PositionGps> suivre(Duration frequence) {
+    frequenceSuivie = frequence;
+    return suivi.stream;
+  }
+}
+
+PositionGps positionEssai([DateTime? t]) => PositionGps(
+  latitude: 47.38,
+  longitude: -2.95,
+  heureAcquisition: t ?? DateTime(2026, 11, 25, 10),
+  precisionMetres: 8,
+);

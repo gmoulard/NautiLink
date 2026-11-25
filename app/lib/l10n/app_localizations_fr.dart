@@ -754,4 +754,53 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get pageOffline =>
       'La page de la navigation sera disponible au retour de la connexion.';
+
+  @override
+  String get serverQueued =>
+      'Serveur : en attente, envoi au retour de la connexion';
+
+  @override
+  String get smsNotYet =>
+      'SMS : pas encore envoyés par cette version de l\'application';
+
+  @override
+  String get voyageStarted => 'Navigation démarrée';
+
+  @override
+  String get startRefused => 'Démarrage refusé';
+
+  @override
+  String startQuotaExhausted(String date) {
+    return 'Quota de navigation gratuite épuisé : la navigation ne peut pas démarrer. Des minutes redeviendront disponibles le $date. Vous pouvez aussi vous abonner.';
+  }
+
+  @override
+  String get startQuotaExhaustedNoDate =>
+      'Quota de navigation gratuite épuisé : la navigation ne peut pas démarrer. Attendez que des minutes redeviennent disponibles, ou abonnez-vous.';
+
+  @override
+  String get noBoatYet =>
+      'Aucun bateau dans votre compte : créez d\'abord la fiche de votre bateau sur la plateforme Web (« Bateaux »).';
+
+  @override
+  String get locationTitle => 'Votre position';
+
+  @override
+  String get locationExplain =>
+      'NautiLink va demander l\'accès à la position précise du téléphone. Elle sert aux positions automatiques et manuelles de la navigation et au SOS, même sans Internet. Sans elle, la navigation se déroule sans positions.';
+
+  @override
+  String get gpsUnavailable => 'GPS non disponible';
+
+  @override
+  String get noSosContact =>
+      'Vous n\'avez aucun contact SOS : personne ne recevra vos SMS SOS. Ajoutez-en un dans vos contacts sur la plateforme Web.';
+
+  @override
+  String get noAlertablePerson => 'Aucun contact suiveur ou contact SOS.';
+
+  @override
+  String voyageRefused(String message) {
+    return 'Refusé par le serveur : $message';
+  }
 }

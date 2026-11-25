@@ -241,7 +241,7 @@ class PositionsDemo implements SourcePosition {
   PositionGps? _derniere;
 
   @override
-  Future<PositionGps?> positionActuelle() async {
+  Future<PositionGps?> positionActuelle({bool demander = false}) async {
     final p = state.nextPosition();
     return _derniere = PositionGps(
       latitude: p.lat,
@@ -252,4 +252,8 @@ class PositionsDemo implements SourcePosition {
 
   @override
   PositionGps? get derniereConnue => _derniere;
+
+  /// La démonstration simule ses positions sans suivi.
+  @override
+  Stream<PositionGps> suivre(Duration frequence) => const Stream.empty();
 }

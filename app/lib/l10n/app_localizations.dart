@@ -1368,6 +1368,84 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'La page de la navigation sera disponible au retour de la connexion.'**
   String get pageOffline;
+
+  /// No description provided for @serverQueued.
+  ///
+  /// In fr, this message translates to:
+  /// **'Serveur : en attente, envoi au retour de la connexion'**
+  String get serverQueued;
+
+  /// No description provided for @smsNotYet.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS : pas encore envoyés par cette version de l\'application'**
+  String get smsNotYet;
+
+  /// No description provided for @voyageStarted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation démarrée'**
+  String get voyageStarted;
+
+  /// No description provided for @startRefused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrage refusé'**
+  String get startRefused;
+
+  /// No description provided for @startQuotaExhausted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quota de navigation gratuite épuisé : la navigation ne peut pas démarrer. Des minutes redeviendront disponibles le {date}. Vous pouvez aussi vous abonner.'**
+  String startQuotaExhausted(String date);
+
+  /// No description provided for @startQuotaExhaustedNoDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quota de navigation gratuite épuisé : la navigation ne peut pas démarrer. Attendez que des minutes redeviennent disponibles, ou abonnez-vous.'**
+  String get startQuotaExhaustedNoDate;
+
+  /// No description provided for @noBoatYet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun bateau dans votre compte : créez d\'abord la fiche de votre bateau sur la plateforme Web (« Bateaux »).'**
+  String get noBoatYet;
+
+  /// No description provided for @locationTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre position'**
+  String get locationTitle;
+
+  /// No description provided for @locationExplain.
+  ///
+  /// In fr, this message translates to:
+  /// **'NautiLink va demander l\'accès à la position précise du téléphone. Elle sert aux positions automatiques et manuelles de la navigation et au SOS, même sans Internet. Sans elle, la navigation se déroule sans positions.'**
+  String get locationExplain;
+
+  /// No description provided for @gpsUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'GPS non disponible'**
+  String get gpsUnavailable;
+
+  /// No description provided for @noSosContact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous n\'avez aucun contact SOS : personne ne recevra vos SMS SOS. Ajoutez-en un dans vos contacts sur la plateforme Web.'**
+  String get noSosContact;
+
+  /// No description provided for @noAlertablePerson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun contact suiveur ou contact SOS.'**
+  String get noAlertablePerson;
+
+  /// No description provided for @voyageRefused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refusé par le serveur : {message}'**
+  String voyageRefused(String message);
 }
 
 class _AppLocalizationsDelegate

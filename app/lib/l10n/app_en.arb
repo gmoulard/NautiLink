@@ -225,5 +225,18 @@
   "notYetAvailable": "Not yet available in this version of the app.",
   "savedOffline": "Offline: last list received on {date}",
   "noSavedVoyages": "No saved voyages.",
-  "pageOffline": "The voyage page will be available when the connection is back."
+  "pageOffline": "The voyage page will be available when the connection is back.",
+  "serverQueued": "Server: waiting, sent when the connection is back",
+  "smsNotYet": "SMS: not yet sent by this version of the app",
+  "voyageStarted": "Voyage started",
+  "startRefused": "Start refused",
+  "startQuotaExhausted": "Free voyage quota used up: the voyage cannot start. Minutes will be available again on {date}. You can also subscribe.",
+  "startQuotaExhaustedNoDate": "Free voyage quota used up: the voyage cannot start. Wait for minutes to become available again, or subscribe.",
+  "noBoatYet": "No boat in your account: first create your boat on the web platform (\"Boats\").",
+  "locationTitle": "Your position",
+  "locationExplain": "NautiLink will ask for the phone's precise location. It is used for the voyage's automatic and manual positions and for the SOS, even without Internet. Without it, the voyage has no positions.",
+  "gpsUnavailable": "GPS unavailable",
+  "noSosContact": "You have no SOS contact: nobody will receive your SOS text messages. Add one to your contacts on the web platform.",
+  "noAlertablePerson": "No follower or SOS contact.",
+  "voyageRefused": "Refused by the server: {message}"
 }

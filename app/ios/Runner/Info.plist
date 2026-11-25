@@ -66,5 +66,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- Positions de la navigation et du SOS (RG-IOS-08). -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>NautiLink enregistre la position du bateau pendant la navigation et l'envoie avec le SOS.</string>
 </dict>
 </plist>
