@@ -14,6 +14,24 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-88) : la météo du début et de la fin d'une navigation (RG-NAV-28) vient de l'API de Météo-France.
 - Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 
+### <a id="q-48"></a>Q-48 — Vérification de l'adresse e-mail
+
+- Priorité : lancement (TODO-4.1).
+- Cas : à la création d'un compte par e-mail, le serveur envoie un lien qui confirme l'adresse (demande de l'utilisateur du 2026-11-25). Que peut faire un compte dont l'adresse n'est pas encore confirmée, et combien de temps le lien reste-t-il valable ?
+- Proposition (non validée) : le compte s'utilise tout de suite ; un rappel « Confirmez votre adresse e-mail » reste affiché avec « Recevoir un nouveau lien » ; le lien sert une fois et reste valable 7 jours. Ce qui est fait (TODO-4.1) : aucune restriction, lien de 7 jours, rappel sur le tableau de bord Web.
+
+### <a id="q-49"></a>Q-49 — Mot de passe oublié
+
+- Priorité : lancement (RG-CPT-02).
+- Cas : un utilisateur inscrit par e-mail a oublié son mot de passe ; aucune règle ne prévoit de le changer.
+- Proposition (non validée) : lien « Mot de passe oublié ? » sur l'écran de connexion ; e-mail portant un lien valable 1 heure, à usage unique, qui fait choisir un nouveau mot de passe ; toutes les sessions du compte sont alors fermées, sauf sur le téléphone associé pendant une navigation en cours (RG-CPT-08) ; changement du mot de passe aussi depuis « Mon compte », avec l'ancien. Rien n'est fait tant que la question est ouverte.
+
+### <a id="q-51"></a>Q-51 — Connexion Google ou Apple avec l'adresse d'un compte existant
+
+- Priorité : avant d'activer Google et Apple (TODO-4.1).
+- Cas : un utilisateur inscrit par e-mail se connecte ensuite par Google ou par Apple avec la même adresse.
+- Proposition (non validée) : la connexion est rattachée au compte existant si le fournisseur garantit l'adresse (adresse vérifiée chez Google ou chez Apple) ; sinon, refus avec un message qui invite à se connecter par e-mail. Ce qui est fait (TODO-4.1) : refus (`email_deja_utilise`) dans tous les cas.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

@@ -17,6 +17,11 @@ var pages = template.Must(template.ParseFS(fichiersWeb, "web/*.html"))
 // pi-appliance publie le service sous https://vdl.moulard.org/nautilink/
 // et Traefik garde le chemin (D-62). Les liens des pages sont relatifs.
 func nouveauRouteur(cfg config, b *base) http.Handler {
+	return nouvelleApp(cfg, b).routeur()
+}
+
+func (a *app) routeur() http.Handler {
+	cfg, b := a.cfg, a.b
 	c := cfg.Chemin
 	mux := http.NewServeMux()
 
@@ -33,8 +38,10 @@ func nouveauRouteur(cfg config, b *base) http.Handler {
 		})
 	})
 
+	a.routesComptes(mux, c+"/api/v1")
+	a.routesWebComptes(mux, c)
+
 	mux.HandleFunc("GET "+c+"/admin/{$}", page("admin.html"))
-	mux.HandleFunc("GET "+c+"/{$}", page("accueil.html"))
 
 	if c != "" {
 		// Adresse sans chemin (à la maison, ou sans la barre finale) : renvoi
@@ -66,7 +73,7 @@ func entetes(h http.Handler) http.Handler {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "same-origin")
 		w.Header().Set("X-Frame-Options", "DENY")
-		w.Header().Set("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'")
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'; form-action 'self'; base-uri 'none'")
 		h.ServeHTTP(w, r)
 	})
 }

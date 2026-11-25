@@ -30,4 +30,17 @@ until curl -fsS http://127.0.0.1:8025/api/v1/messages | grep -q 'essai@example.o
   sleep 1
 done
 echo "e-mail d'essai reçu par Mailpit"
+
+# Création d'un compte par l'API : migrations faites, e-mail de vérification envoyé.
+code=$(curl -s -o /dev/null -w '%{http_code}' -H 'Content-Type: application/json' \
+  -d '{"email":"marin@example.org","motDePasse":"motdepasse","nom":"Marin","avertissementVersion":"2026-11-24"}' \
+  http://127.0.0.1:8080/nautilink/api/v1/comptes)
+[ "$code" = 201 ] || { echo "échec : création de compte : $code"; $dc logs nautilink; exit 1; }
+i=0
+until curl -fsS http://127.0.0.1:8025/api/v1/messages | grep -q 'marin@example.org'; do
+  i=$((i + 1))
+  [ "$i" -lt 15 ] || { echo "échec : e-mail de vérification non reçu par Mailpit"; exit 1; }
+  sleep 1
+done
+echo "compte créé, e-mail de vérification reçu"
 echo "essai réussi"

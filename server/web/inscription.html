@@ -1,0 +1,19 @@
+{{template "haut" .}}
+<h1>Créer un compte</h1>
+<div class="carte">
+<form method="post" action="{{.Base}}/inscription">
+  <input type="hidden" name="retour" value="{{.Retour}}">
+  <label for="nom">Nom</label>
+  <input id="nom" name="nom" type="text" autocomplete="name" required maxlength="100" value="{{.F.nom}}">
+  <label for="email">Adresse e-mail</label>
+  <input id="email" name="email" type="email" autocomplete="email" required value="{{.F.email}}">
+  <label for="motdepasse">Mot de passe</label>
+  <input id="motdepasse" name="motdepasse" type="password" autocomplete="new-password" required minlength="8">
+  <p class="aide">8 caractères au moins.</p>
+  <label class="case"><input type="checkbox" name="avertissement" value="{{.VersionAvertissement}}" required>
+    <span>J'ai lu et j'accepte l'<a class="lien" href="{{.Avertissement}}" target="_blank" rel="noopener">avertissement : version bêta et responsabilité</a>.</span></label>
+  <button type="submit">Créer mon compte</button>
+</form>
+</div>
+<p>Déjà inscrit ? <a class="lien" href="{{.Base}}/connexion{{if .Retour}}?retour={{.Retour}}{{end}}">Se connecter</a></p>
+{{template "bas" .}}

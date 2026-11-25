@@ -120,7 +120,7 @@ paths:
     post:
       tags: [Comptes]
       summary: 'Créer un compte par e-mail et mot de passe.'
-      description: 'Refusé sans acceptation de la version en vigueur de l''avertissement bêta. Ouvre une session.'
+      description: 'Refusé sans acceptation de la version en vigueur de l''avertissement bêta (`avertissement_a_accepter`) ou si l''adresse a déjà un compte (409 `email_deja_utilise`). Ouvre une session et envoie l''e-mail de vérification de l''adresse (Q-48). Mot de passe haché (argon2id) ; 10 créations par adresse IP et par heure au plus.'
       security: []
       x-regles: [RG-CPT-01, RG-CPT-02, RG-CPT-06, RG-PRM-03]
       requestBody:
@@ -136,13 +136,17 @@ paths:
               schema: {$ref: '#/components/schemas/Session'}
         '409': {$ref: '#/components/responses/Conflit'}
         '422': {$ref: '#/components/responses/Invalide'}
+        '429': {$ref: '#/components/responses/TropDEssais'}
   /v1/sessions:
     post:
       tags: [Comptes]
       summary: 'Ouvrir une session.'
       description: |
         E-mail et mot de passe, ou jeton d'identité Google ou Apple. Une première connexion par Google
-        ou Apple crée le compte, avec la même acceptation de l'avertissement que `POST /v1/comptes`.
+        ou Apple crée le compte, avec la même acceptation de l'avertissement que `POST /v1/comptes` ;
+        une adresse déjà prise par un compte NautiLink est refusée (409 `email_deja_utilise`, Q-51).
+        Fournisseur sans identifiant client configuré : 501 `fournisseur_indisponible`. Après 5 mots
+        de passe faux pour un compte, ou 20 pour une adresse IP, en 15 minutes : 429.
         Une session expire après 90 jours sans usage, jamais sur le téléphone associé pendant une
         navigation en cours (RG-CPT-08).
       security: []
@@ -159,6 +163,13 @@ paths:
             application/json:
               schema: {$ref: '#/components/schemas/Session'}
         '401': {$ref: '#/components/responses/NonAuthentifie'}
+        '409': {$ref: '#/components/responses/Conflit'}
+        '429': {$ref: '#/components/responses/TropDEssais'}
+        '501':
+          description: 'Connexion par ce fournisseur pas encore disponible.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Erreur'}
         '428':
           description: 'Avertissement bêta pas encore accepté (premier compte Google ou Apple) ou nouvelle version à accepter.'
           content:
@@ -243,6 +254,33 @@ paths:
       responses:
         '204': {description: Acceptation enregistrée.}
         '409': {$ref: '#/components/responses/Conflit'}
+  /v1/compte/verification:
+    post:
+      tags: [Comptes]
+      summary: 'Confirmer l''adresse e-mail avec le jeton du lien reçu (page Web `/verification?jeton=…`).'
+      description: 'Lien à usage unique, valable 7 jours (proposition, Q-48).'
+      security: []
+      x-regles: [RG-CPT-02]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [jeton]
+              properties:
+                jeton: {type: string}
+      responses:
+        '204': {description: Adresse confirmée.}
+        '404': {$ref: '#/components/responses/Introuvable'}
+  /v1/compte/verification/envoi:
+    post:
+      tags: [Comptes]
+      summary: 'Recevoir un nouveau lien de vérification (5 par heure au plus).'
+      x-regles: [RG-CPT-02]
+      responses:
+        '204': {description: 'E-mail envoyé, ou adresse déjà confirmée.'}
+        '429': {$ref: '#/components/responses/TropDEssais'}
 
   # ---------------------------------------------------- Appareils et bateaux
   /v1/appareils/{appareilId}:
@@ -1303,6 +1341,11 @@ components:
       content:
         application/json:
           schema: {$ref: '#/components/schemas/Erreur'}
+    TropDEssais:
+      description: 'Trop d''essais (protection contre les essais répétés) ; en-tête Retry-After en secondes.'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Erreur'}
     Invalide:
       description: 'Données invalides.'
       content:
@@ -1319,7 +1362,8 @@ components:
           enum: [non_authentifie, avertissement_a_accepter, interdit, introuvable, invalide,
             pas_proprietaire, telephone_non_associe, navigation_en_cours, quota_epuise,
             evenement_different, evenement_non_modifiable, limite_photos, note_vocale_trop_longue,
-            contact_sos_sans_telephone, navigation_cloturee, invitation_deja_acceptee, deja_abonne]
+            contact_sos_sans_telephone, navigation_cloturee, invitation_deja_acceptee, deja_abonne,
+            email_deja_utilise, trop_d_essais, fournisseur_indisponible, service_indisponible, erreur_interne]
         message: {type: string, description: Texte dans la langue de l'utilisateur.}
         disponibleLe:
           type: string
@@ -1356,19 +1400,21 @@ components:
           properties:
             email: {type: string, format: email}
             motDePasse: {type: string}
+            avertissementVersion: {type: string, description: 'À envoyer quand le texte a changé depuis la dernière acceptation (réponse 428).'}
         - type: object
           required: [fournisseur, jetonIdentite]
           properties:
             fournisseur: {type: string, enum: [google, apple]}
             jetonIdentite: {type: string}
             avertissementVersion: {type: string}
+            nom: {type: string, description: 'Nom du compte créé, si le jeton n''en donne pas.'}
 
     Session:
       type: object
       properties:
         jetonAcces: {type: string}
         jetonRenouvellement: {type: string}
-        expireLe: {type: string, format: date-time}
+        expireLe: {type: string, format: date-time, description: 'Expiration si la session n''est plus utilisée (90 jours, repoussée à chaque usage, RG-CPT-08).'}
 
     Langue:
       type: string
@@ -1382,6 +1428,7 @@ components:
           properties:
             id: {type: string, format: uuid}
             email: {type: string, format: email}
+            emailVerifie: {type: boolean, description: 'Adresse confirmée par le lien reçu (Q-48).'}
             avertissementVersionAcceptee: {type: string}
             avertissementAccepteLe: {type: string, format: date-time}
 

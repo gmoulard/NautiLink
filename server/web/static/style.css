@@ -1,19 +1,57 @@
-/* Couleurs de docs/05-identite-marque.md ; thème clair seulement (thème sombre : Q-25). */
+/* Plateforme Web de NautiLink : design « Radar de pluie » (docs/05-identite-marque.md §14),
+   thème clair et thème sombre (D-97) selon le réglage de l'appareil. */
 :root {
-  --marine: #082B46; --turquoise: #13A6AD; --aqua: #7EDDE4;
-  --blanc: #FFFFFF; --gris: #F2F5F7; --alerte: #D94343;
+  --fond: #F2F5F7; --bandeau: #EAF4FB; --surface: #FFFFFF; --texte: #0E2A47; --texte2: #4A6278;
+  --filet: #D5E2EC; --action: #0E6BA8; --sur-action: #FFFFFF; --sos: #D94343; --beta: #F2C14E;
+  --ok: #13A6AD;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #08172A; --bandeau: #0F2438; --surface: #15314D; --texte: #E3EEF7; --texte2: #9BB4C9;
+    --filet: #24476A; --action: #5AAEE6; --sur-action: #08172A; --sos: #E35D5D;
+  }
 }
 * { box-sizing: border-box; }
 body {
-  margin: 0; background: var(--gris); color: var(--marine);
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
+  margin: 0; background: var(--fond); color: var(--texte);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.5;
 }
-header { background: var(--marine); color: var(--blanc); padding: 24px 16px; }
-header h1 { margin: 0; font-family: Montserrat, Inter, system-ui, sans-serif; font-weight: 600; }
-header p { margin: 4px 0 0; color: var(--aqua); }
-main { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
-.carte { background: var(--blanc); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-.beta { display: inline-block; background: var(--aqua); color: var(--marine); border-radius: 999px; padding: 2px 10px; font-weight: 500; font-size: .9em; }
-a { color: var(--turquoise); font-weight: 500; }
-footer { text-align: center; color: #5b6b78; font-size: .85em; padding: 16px; }
+.beta { background: var(--beta); color: #3A2A00; font-size: .92rem; padding: 6px 16px; text-align: center; }
+.beta a { color: #3A2A00; font-weight: 600; }
+header { background: var(--bandeau); border-bottom: 1px solid var(--filet); padding: 16px; }
+header .ligne { max-width: 860px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+header .marque { font-family: "Space Grotesk", Inter, system-ui, sans-serif; font-weight: 700; font-size: 1.4rem; color: var(--texte); text-decoration: none; }
+header .signature { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .8rem; color: var(--texte2); }
+nav { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; margin-left: auto; }
+nav a, .lien { color: var(--action); font-weight: 600; text-decoration: none; }
+nav a:hover, .lien:hover { text-decoration: underline; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+h1, h2 { font-family: "Space Grotesk", Inter, system-ui, sans-serif; line-height: 1.25; }
+h1 { font-size: 1.6rem; margin: 0 0 16px; }
+h2 { font-size: 1.2rem; margin: 0 0 12px; }
+.carte { background: var(--surface); border: 1px solid var(--filet); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.message { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; border: 2px solid var(--ok); }
+.erreur { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; border: 2px solid var(--sos); }
+label { display: block; font-weight: 600; margin: 12px 0 4px; }
+label.case { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; }
+label.case input { margin-top: 5px; width: 20px; height: 20px; }
+input[type=text], input[type=email], input[type=password], input[type=tel], input[type=number], select {
+  width: 100%; min-height: 44px; padding: 8px 12px; font-size: 1rem; color: var(--texte);
+  background: var(--fond); border: 1px solid var(--filet); border-radius: 8px;
+}
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--action); outline-offset: 2px; }
+button, .bouton {
+  display: inline-block; min-height: 44px; padding: 10px 18px; margin-top: 16px; font-size: 1rem; font-weight: 600;
+  color: var(--sur-action); background: var(--action); border: 0; border-radius: 8px; cursor: pointer; text-decoration: none;
+}
+button.secondaire { background: transparent; color: var(--action); border: 2px solid var(--action); }
+button.danger { background: transparent; color: var(--sos); border: 2px solid var(--sos); }
+form.enligne { display: inline; }
+form.enligne button { margin-top: 0; }
+.aide { color: var(--texte2); font-size: .9rem; margin: 4px 0 0; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--filet); vertical-align: top; }
+.grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
+.photo-bateau { max-width: 100%; max-height: 260px; border-radius: 8px; }
+code.lien-invitation { word-break: break-all; }
+footer { text-align: center; color: var(--texte2); font-size: .85rem; padding: 16px; }

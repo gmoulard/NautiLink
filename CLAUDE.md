@@ -69,7 +69,7 @@ Dans un même commit :
 
 Prototype (`app/`) : `flutter analyze` et `flutter test` sans erreur.
 
-Serveur (`server/`) : `gofmt -l .` vide, `go vet ./...` et `go test ./...` sans erreur.
+Serveur (`server/`) : `gofmt -l .` vide, `go vet ./...` et `go test ./...` sans erreur. Les essais avec PostgreSQL demandent `NAUTILINK_BASE_TEST` sur une base jetable (voir `server/README.md`).
 
 
 ```bash

@@ -14,6 +14,15 @@ type config struct {
 	SMTPHote      string // NAUTILINK_SMTP_HOTE, relais d'e-mails de pi-appliance
 	SMTPPort      string // NAUTILINK_SMTP_PORT, 25 par défaut
 	Expediteur    string // NAUTILINK_EXPEDITEUR, adresse de l'expéditeur
+	// AdressePublique : NAUTILINK_ADRESSE_PUBLIQUE, adresse vue des
+	// utilisateurs, chemin compris (ex. https://vdl.moulard.org/nautilink),
+	// pour les liens des e-mails ; vide : déduite de la requête.
+	AdressePublique string
+	// Identifiants clients OAuth (NAUTILINK_GOOGLE_CLIENTS,
+	// NAUTILINK_APPLE_CLIENTS, séparés par des virgules) : vides, la
+	// connexion par Google ou par Apple est désactivée.
+	GoogleClients []string
+	AppleClients  []string
 }
 
 func configDepuisEnv() config {
@@ -24,6 +33,10 @@ func configDepuisEnv() config {
 		SMTPHote:      os.Getenv("NAUTILINK_SMTP_HOTE"),
 		SMTPPort:      env("NAUTILINK_SMTP_PORT", "25"),
 		Expediteur:    env("NAUTILINK_EXPEDITEUR", "nautilink@moulard.org"),
+
+		AdressePublique: strings.TrimRight(strings.TrimSpace(os.Getenv("NAUTILINK_ADRESSE_PUBLIQUE")), "/"),
+		GoogleClients:   liste(os.Getenv("NAUTILINK_GOOGLE_CLIENTS")),
+		AppleClients:    liste(os.Getenv("NAUTILINK_APPLE_CLIENTS")),
 	}
 }
 
@@ -32,6 +45,16 @@ func env(nom, defaut string) string {
 		return v
 	}
 	return defaut
+}
+
+func liste(v string) []string {
+	var l []string
+	for _, e := range strings.Split(v, ",") {
+		if e = strings.TrimSpace(e); e != "" {
+			l = append(l, e)
+		}
+	}
+	return l
 }
 
 // normaliserChemin : "nautilink/", "/nautilink" → "/nautilink" ; "", "/" → "".

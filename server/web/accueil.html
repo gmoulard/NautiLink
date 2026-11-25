@@ -1,22 +1,22 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NautiLink</title>
-<link rel="stylesheet" href="static/style.css">
-</head>
-<body>
-<header>
-  <h1>NautiLink</h1>
-  <p>Your sea, your safety, your story.</p>
-</header>
-<main>
-  <div class="carte">
-    <p><span class="beta">Version bêta</span></p>
-    <p>La plateforme Web de NautiLink est en préparation. Vous pourrez bientôt y suivre vos navigations, consulter votre journal de bord et gérer vos suiveurs.</p>
-  </div>
-</main>
-<footer>NautiLink {{.Version}}</footer>
-</body>
-</html>
+{{template "haut" .}}
+{{if .Connecte}}
+<h1>Bonjour {{.Nom}}</h1>
+{{if not .EmailVerifie}}
+<div class="carte">
+  <p>Confirmez votre adresse e-mail : ouvrez le lien que nous vous avons envoyé.</p>
+  <form method="post" action="{{.Base}}/verification/envoi"><button class="secondaire" type="submit">Recevoir un nouveau lien</button></form>
+</div>
+{{end}}
+<div class="carte">
+  <h2>Votre espace</h2>
+  <p><a class="lien" href="{{.Base}}/compte">Mon compte</a> : nom, téléphone, langue, e-mails et notifications.</p>
+</div>
+{{else}}
+<h1>Bienvenue sur NautiLink</h1>
+<div class="carte">
+  <p>Suivez vos navigations, tenez votre journal de bord et prévenez vos proches en cas de besoin.</p>
+  <p><a class="bouton" href="{{.Base}}/inscription">Créer un compte</a></p>
+  <p>Déjà inscrit ? <a class="lien" href="{{.Base}}/connexion">Se connecter</a></p>
+</div>
+{{end}}
+{{template "bas" .}}

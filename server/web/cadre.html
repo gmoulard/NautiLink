@@ -1,0 +1,38 @@
+{{define "haut"}}<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{if .Titre}}{{.Titre}} · {{end}}NautiLink</title>
+<link rel="stylesheet" href="{{.Base}}/static/style.css">
+</head>
+<body>
+<div class="beta" role="note"><b>Version bêta</b> — NautiLink est en phase de test. <a href="{{.Avertissement}}">Lire l'avertissement</a></div>
+<header>
+  <div class="ligne">
+    <a class="marque" href="{{.Base}}/">NautiLink</a>
+    <span class="signature">Your sea, your safety, your story.</span>
+    <nav aria-label="Menu principal">
+    {{if .Connecte}}
+      <a href="{{.Base}}/">Accueil</a>
+      <a href="{{.Base}}/compte">Mon compte</a>
+      <form class="enligne" method="post" action="{{.Base}}/deconnexion"><button class="secondaire" type="submit">Se déconnecter</button></form>
+    {{else}}
+      <a href="{{.Base}}/connexion">Se connecter</a>
+      <a href="{{.Base}}/inscription">Créer un compte</a>
+    {{end}}
+    </nav>
+  </div>
+</header>
+<main>
+{{if .Message}}<div class="message" role="status">{{.Message}}</div>{{end}}
+{{if .Erreur}}<div class="erreur" role="alert">{{.Erreur}}</div>{{end}}
+{{end}}
+
+{{define "bas"}}
+</main>
+<footer>NautiLink {{.Version}} · Version bêta</footer>
+</body>
+</html>
+{{end}}

@@ -12,6 +12,7 @@ services:
     environment:
       NAUTILINK_ADRESSE: ":8080"
       NAUTILINK_CHEMIN: "/nautilink"
+      NAUTILINK_ADRESSE_PUBLIQUE: "http://127.0.0.1:8080/nautilink"
       NAUTILINK_BASE: "postgres://nautilink:essai@base:5432/nautilink?sslmode=disable"
       NAUTILINK_SMTP_HOTE: "courrier"
       NAUTILINK_SMTP_PORT: "1025"

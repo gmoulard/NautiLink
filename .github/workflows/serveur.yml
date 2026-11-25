@@ -23,6 +23,19 @@ concurrency:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    # Base jetable pour les essais avec PostgreSQL (NAUTILINK_BASE_TEST).
+    services:
+      base:
+        image: postgres:16.6-alpine
+        env:
+          POSTGRES_USER: nautilink
+          POSTGRES_PASSWORD: essai
+          POSTGRES_DB: nautilink_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U nautilink" --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      NAUTILINK_BASE_TEST: postgres://nautilink:essai@localhost:5432/nautilink_test?sslmode=disable
     defaults:
       run:
         working-directory: server

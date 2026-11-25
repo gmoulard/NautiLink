@@ -1,6 +1,6 @@
 // Serveur NautiLink : API, plateforme Web et espace administrateur
-// (D-62). Squelette (TODO-3.7) : page d'accueil, point de santé,
-// connexion à la base PostgreSQL et envoi d'un e-mail d'essai.
+// (D-62) : comptes (TODO-4.1), point de santé, base PostgreSQL et ses
+// migrations, envoi d'e-mails par le relais de pi-appliance.
 //
 // Commandes :
 //

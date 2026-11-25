@@ -1,0 +1,31 @@
+{{template "haut" .}}
+<h1>Mon compte</h1>
+{{with .D}}
+<div class="carte">
+<form method="post" action="{{$.Base}}/compte">
+  <p>Adresse e-mail : <strong>{{.Email}}</strong>{{if not .EmailVerifie}} (pas encore confirmée){{end}}</p>
+  <label for="nom">Nom</label>
+  <input id="nom" name="nom" type="text" autocomplete="name" required maxlength="100" value="{{.Nom}}">
+  <label for="telephone">Téléphone</label>
+  <input id="telephone" name="telephone" type="tel" autocomplete="tel" value="{{if .Telephone}}{{.Telephone}}{{end}}">
+  <p class="aide">Au format international, par exemple +33 6 12 34 56 78. Il reçoit la copie de vos SMS.</p>
+  <label class="case"><input type="checkbox" name="recevoirSms" {{if .RecevoirSms}}checked{{end}}>
+    <span>Recevoir les SMS des navigations que je suis</span></label>
+  <label for="langue">Langue</label>
+  <select id="langue" name="langue">
+    <option value="fr" {{if eq .Langue "fr"}}selected{{end}}>Français</option>
+    <option value="en" {{if eq .Langue "en"}}selected{{end}}>English</option>
+  </select>
+  <h2 style="margin-top:20px">Quand je suis une navigation</h2>
+  <p class="aide">Ces réglages valent pour tous les navigateurs que vous suivez. Les alertes SOS arrivent toujours.</p>
+  <label class="case"><input type="checkbox" name="emailsDebut" {{if .EmailsDebut}}checked{{end}}><span>E-mail au début d'une navigation</span></label>
+  <p class="aide">Notifications sur le téléphone :</p>
+  <label class="case"><input type="checkbox" name="pushDebut" {{if .Push.Debut}}checked{{end}}><span>Début de navigation</span></label>
+  <label class="case"><input type="checkbox" name="pushFin" {{if .Push.Fin}}checked{{end}}><span>Fin de navigation</span></label>
+  <label class="case"><input type="checkbox" name="pushPhoto" {{if .Push.Photo}}checked{{end}}><span>Nouvelle photo</span></label>
+  <label class="case"><input type="checkbox" name="pushPositionEnRetard" {{if .Push.PositionEnRetard}}checked{{end}}><span>Position en retard</span></label>
+  <button type="submit">Enregistrer</button>
+</form>
+</div>
+{{end}}
+{{template "bas" .}}
