@@ -63,7 +63,7 @@ x-traitements:
     description: 'Relevée auprès de l''API de Météo-France au point de départ et d''arrivée (Q-39).'
     x-regles: [RG-NAV-28]
   - nom: 'E-mails'
-    description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur.'
+    description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur ; contenu des e-mails SOS et de début : Q-56 ; e-mail SOS non accepté par le relais : relancé chaque minute pendant 24 heures (Q-57).'
     x-regles: [RG-NOT-01, RG-NOT-02, RG-NOT-03, RG-SOS-06, RG-SOS-15, RG-PRM-04, RG-PAR-04]
   - nom: 'Notifications push des suiveurs'
     description: 'APNs (iPhone) et FCM (Android) — SOS, début, fin, nouvelle photo, position en retard (aucune position reçue pendant deux fois la fréquence, une seule notification jusqu''à la position suivante).'

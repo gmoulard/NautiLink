@@ -33,6 +33,36 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : RG-NAV-20 supprime définitivement la navigation au bout de 30 jours dans la corbeille ; rien ne dit ce que deviennent les accès de périmètre *navigation* (RG-PAR-02) donnés sur elle.
 - Proposition (non validée) : ils sont retirés avec la navigation ; le contact reste dans la liste des contacts du navigateur, et les accès de périmètre *navigateur* ne changent pas. Ce qui est fait (TODO-4.8) : cette proposition, appliquée en attendant.
 
+### <a id="q-56"></a>Q-56 — Contenu des e-mails SOS et de début de navigation
+
+- Priorité : avant la version Android réelle (TODO-4.7).
+- Cas : RG-SOS-06, RG-SOS-15 et RG-NOT-02 disent à qui partent l'e-mail SOS et l'e-mail de début, pas ce qu'ils contiennent ; RG-SOS-07 et RG-SOS-08 ne décrivent que les SMS SOS.
+- Proposition (non validée) : e-mail SOS au sujet « SOS — <bateau> : alerte de <navigateur> », qui reprend le contenu des deux SMS SOS (RG-SOS-07, RG-SOS-08, position selon RG-SOS-09 à RG-SOS-11 avec le lien Google Maps), les heures en UTC, et, en navigation, le lien vers la page de la navigation ; la copie au navigateur (RG-NOT-03) donne en tête la liste des adresses prévenues. E-mail de début : nom du navigateur, nom de la navigation, bateau, heure, destination, lien vers la page de la navigation, et comment se désinscrire (« E-mail au début d'une navigation » dans « Mon compte »). Les deux en français ou en anglais selon la langue du navigateur (RG-PRM-04). Ce qui est fait (TODO-4.7) : cette proposition, appliquée en attendant.
+
+### <a id="q-57"></a>Q-57 — E-mail SOS non accepté par le relais d'envoi
+
+- Priorité : avant la version Android réelle (TODO-4.7).
+- Cas : si le relais d'e-mails refuse ou ne répond pas au moment de l'alerte, rien ne dit si le serveur réessaie, ni combien de temps.
+- Proposition (non validée) : comme pour les SMS SOS (RG-SMS-07), le serveur réessaie chaque minute les adresses qui n'ont pas été acceptées, pendant 24 heures après la réception de l'alerte ; les destinataires sont recalculés à chaque essai. L'alerte garde les adresses acceptées par le relais (`emailsEnvoyesA`). Ce qui est fait (TODO-4.7) : cette proposition, appliquée en attendant.
+
+### <a id="q-58"></a>Q-58 — SOS déclenché après la fin d'une navigation
+
+- Priorité : avant la version Android réelle (TODO-4.7).
+- Cas : RG-ECO-12 enregistre comme SOS depuis l'accueil un SOS acquis après une clôture automatique ; rien ne dit ce que devient un SOS rattaché par le téléphone à une navigation déjà terminée normalement (heure de déclenchement postérieure à la fin enregistrée, par exemple après une fin saisie sur un autre support).
+- Proposition (non validée) : même traitement qu'après une clôture automatique : SOS depuis l'accueil, rattaché au bateau de la navigation (RG-SOS-15). Ce qui est fait (TODO-4.7) : cette proposition, appliquée en attendant.
+
+### <a id="q-59"></a>Q-59 — Historique des SOS depuis l'accueil vu par les suiveurs
+
+- Priorité : avant le Web suiveur (TODO-6.x).
+- Cas : RG-PAR-07 donne au suiveur les alertes SOS des navigations auxquelles il a accès ; un SOS depuis l'accueil n'appartient à aucune navigation (RG-SOS-15), et rien ne dit quels suiveurs le voient dans l'historique.
+- Proposition (non validée) : les suiveurs de périmètre *navigateur*, ceux qui ont reçu l'e-mail (RG-SOS-15), le voient dans l'historique des alertes du bateau ; les suiveurs de périmètre *navigation* ne le voient pas. Ce qui est fait (TODO-4.7) : cette proposition, appliquée en attendant.
+
+### <a id="q-60"></a>Q-60 — Personne ajoutée pendant une navigation
+
+- Priorité : avant la version Android réelle (TODO-4.7).
+- Cas : RG-NAV-25 retire des alertes les personnes décochées à l'écran de démarrage. Un suiveur ou un contact SOS ajouté après le démarrage n'a pas été proposé sur cet écran : rien ne dit s'il est prévenu d'un SOS de cette navigation.
+- Proposition (non validée) : il est prévenu, puisqu'il n'a pas été décoché. Ce qui est fait (TODO-4.7) : appliqué aux suiveurs (accès accordé après le démarrage) ; pas encore aux contacts SOS, dont le serveur ne garde pas la date de création : un contact SOS ajouté pendant la navigation n'est pas prévenu par e-mail tant qu'une colonne de date de création n'est pas ajoutée aux contacts.
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
