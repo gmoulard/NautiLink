@@ -44,6 +44,14 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Options : A) l'Application web reprend les écrans de gestion de l'application mobile (contacts, paramètres, quota et abonnement, historique des alertes SOS, assistance, mémo sécurité en mer), sans conduite de navigation ; B) A, plus la conduite d'une navigation depuis le navigateur Internet (démarrage, position manuelle par la localisation du navigateur Internet, NOTE, Photo, Vocal, fin), sans positions automatiques écran éteint ni SMS ; C) B, plus un SOS par Internet seulement, comme sur iPhone (RG-IOS-03).
 - Proposition (non validée) : A, qui garde le téléphone comme seul outil de bord (RG-COM-01, RG-SOS-05) ; B et C demanderaient des règles nouvelles (téléphone associé, file d'attente, RG-BAT-02).
 
+### <a id="q-97"></a>Q-97 — Heures affichées sur l'Application web et dans le PDF
+
+- Priorité : avant la mise en service de l'Application web (TODO-6.1 à TODO-6.4).
+- Cas : RG-PRM-07 fixe le format des heures envoyées aux suiveurs et aux contacts SOS (heure locale du téléphone du navigateur, puis UTC), mais pas celui des heures affichées sur l'Application web (tableau de bord, page d'une navigation, journal) et dans l'export PDF. Les pages déjà faites (corbeille, espace administrateur) donnent l'heure de Paris.
+- Options : A) comme RG-PRM-07 : « 2026-11-26 14:32 (13:32 UTC) », heure locale du téléphone au début de la navigation ; B) heure de Paris ; C) heure du navigateur Internet de la personne qui consulte (demande du JavaScript).
+- Proposition (non validée) : A, la même heure que celle des SMS et des e-mails reçus par les suiveurs.
+- Appliqué en attendant dans l'Application web et le PDF (`heureWeb`, `server/web_navigations.go`).
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

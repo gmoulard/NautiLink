@@ -304,6 +304,7 @@ type navigationJSON struct {
 	Suiveurs                  []personneJSON   `json:"suiveurs,omitempty"`
 	ContactsSos               []personneJSON   `json:"contactsSos,omitempty"`
 	AdressePage               string           `json:"adressePage,omitempty"`
+	decalage                  *int             // fuseau du téléphone au début (RG-PRM-07), pour l'affichage Web
 }
 
 const dureeCorbeille = 30 * 24 * time.Hour // RG-NAV-20
@@ -322,7 +323,7 @@ func distance(p, q positionJSON) float64 {
 // d'arrivée (première et dernière position non masquées), durée, distance
 // (somme des distances entre positions successives, D-35).
 func (a *app) resumer(ctx context.Context, n navLigne, role string) (navigationJSON, error) {
-	r := navigationJSON{ID: n.id, Nom: n.nom, Role: role, Debut: n.debut, Fin: n.fin}
+	r := navigationJSON{ID: n.id, Nom: n.nom, Role: role, Debut: n.debut, Fin: n.fin, decalage: n.decalage}
 	switch {
 	case n.supprimee != nil:
 		r.Etat = "corbeille"

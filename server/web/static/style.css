@@ -69,3 +69,29 @@ textarea, input[type=date] { width: 100%; padding: 8px 12px; font: inherit; colo
 .admin nav a { color: var(--fond); }
 dl.chiffres { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
 dl.chiffres dd { margin: 0; font-weight: 600; }
+
+/* Tableau de bord (TODO-6.1) : aperçu au survol (ordinateur) ou au toucher
+   de « Aperçu » (mobile), sans JavaScript. */
+h3 { font-size: 1.05rem; margin: 0 0 4px; }
+section { margin-bottom: 24px; }
+.filtres .actif { text-decoration: underline; }
+article.navigation { background: var(--surface); border: 1px solid var(--filet); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+dl.resume { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 8px 0 0; }
+dl.resume dt { color: var(--texte2); }
+dl.resume dd { margin: 0; }
+details.apercu summary { display: inline-flex; align-items: center; min-height: 44px; color: var(--action); font-weight: 600; cursor: pointer; }
+.bulle { display: none; margin-top: 4px; }
+details.apercu[open] + .bulle { display: block; }
+@media (hover: hover) { article.navigation:hover .bulle { display: block; } }
+.bulle svg.carte { max-width: 320px; }
+
+/* Carte (RG-NAV-29) : dalles OpenStreetMap et OpenSeaMap, tracé, points. */
+svg.carte { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--filet); }
+svg.carte .mer { fill: #AAD3DF; }
+svg.carte .trace { fill: none; stroke: #0E6BA8; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+svg.carte .point { stroke: #FFFFFF; stroke-width: 2; fill: #0E6BA8; }
+svg.carte .point.position { fill: #0E6BA8; stroke-width: 1; }
+svg.carte .point.depart { fill: #13A6AD; }
+svg.carte .point.arrivee, svg.carte .point.derniere { fill: #0E2A47; }
+svg.carte .point.evenement { fill: #F2C14E; }
+svg.carte .point.sos { fill: #D94343; }

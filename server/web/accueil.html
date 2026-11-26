@@ -1,31 +1,8 @@
 {{template "haut" .}}
-{{if .Connecte}}
-{{range .Annonces}}
-<div class="annonce" role="note">
-  <p>{{.Texte}}</p>
-  <form class="enligne" method="post" action="{{$.Base}}/annonces/{{.ID}}/fermeture"><button class="secondaire" type="submit">Fermer</button></form>
-</div>
-{{end}}
-<h1>Bonjour {{.Nom}}</h1>
-{{if not .EmailVerifie}}
-<div class="carte">
-  <p>Confirmez votre adresse e-mail : ouvrez le lien que nous vous avons envoyé. D'ici là, vous ne pouvez ni démarrer une navigation ni inviter un suiveur.</p>
-  <form method="post" action="{{.Base}}/verification/envoi"><button class="secondaire" type="submit">Recevoir un nouveau lien</button></form>
-</div>
-{{end}}
-<div class="carte">
-  <h2>Votre espace</h2>
-  <p><a class="lien" href="{{.Base}}/bateaux">Bateaux</a> : fiches de vos bateaux et téléphone associé.</p>
-  <p><a class="lien" href="{{.Base}}/contacts">Contacts</a> : vos suiveurs et contacts SOS, les navigateurs que vous suivez.</p>
-  <p><a class="lien" href="{{.Base}}/parametres">Paramètres</a> : SMS envoyés à vos suiveurs et fréquence des positions.</p>
-  <p><a class="lien" href="{{.Base}}/compte">Mon compte</a> : nom, téléphone, langue, e-mails et notifications.</p>
-</div>
-{{else}}
 <h1>Bienvenue sur NautiLink</h1>
 <div class="carte">
   <p>Suivez vos navigations, tenez votre journal de bord et prévenez vos proches en cas de besoin.</p>
   <p><a class="bouton" href="{{.Base}}/inscription">Créer un compte</a></p>
   <p>Déjà inscrit ? <a class="lien" href="{{.Base}}/connexion">Se connecter</a></p>
 </div>
-{{end}}
 {{template "bas" .}}

@@ -21,7 +21,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-9 | Serveur : navigations, quota, SOS, corbeille | TODO-4.5, TODO-4.6, TODO-4.7, TODO-4.8 | LOT-2, LOT-8 | [ ] |
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [~] |
 | LOT-11 | Android : journal, fin, contacts, abonnement | TODO-5.4, TODO-5.6, TODO-5.7, TODO-5.8 | LOT-10 | [~] |
-| LOT-12 | Web : consultation des navigations | TODO-6.1, TODO-6.2, TODO-6.3, TODO-6.4 | LOT-7, LOT-9 | [ ] |
+| LOT-12 | Web : consultation des navigations | TODO-6.1, TODO-6.2, TODO-6.3, TODO-6.4 | LOT-7, LOT-9 | [~] |
 | LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7, TODO-6.8, TODO-6.9 | LOT-12 | [ ] |
 | LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [~] |
 | LOT-15 | Marque et publication Android | TODO-3.15, TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5, TODO-8.6 | LOT-3, LOT-11 | [~] |
@@ -190,8 +190,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 ## 6. Étape 3 — Application web
 
-- [ ] **TODO-6.1**: Tableau de bord (cahier des charges 6.1, D-23). Dépend de : TODO-4.5, TODO-3.3.
+- [~] **TODO-6.1**: Tableau de bord (cahier des charges 6.1, D-23). Dépend de : TODO-4.5, TODO-3.3.
   - Critères d'acceptation : navigations en cours en haut, historique trié et filtrable, prévisualisation au survol et au toucher ; après la connexion, l'Application web ouvre directement ce tableau de bord, liste des navigations (journal de bord) comprise (demande du 2026-11-26, boîte de réception ; D-23).
+  - Fait (2026-11-26) : tableau de bord servi par le serveur à `<chemin>/` dès la connexion (`server/web_navigations.go`, `server/web/tableau.html`, `server/web/carte.html`) : « Navigations en cours » (les miennes et celles que je suis) puis « Historique » des navigations terminées, de la plus récente à la plus ancienne, filtres « Toutes », « Comme navigateur », « Comme suiveur », 50 par page avec « Navigations plus anciennes » ; pour chacune nom (lien vers sa page), bateau, départ (heure et lieu), arrivée, durée, distance en km et en milles (RG-NAV-16) ; « Aperçu » au survol sur ordinateur et au toucher sur mobile, en CSS seul : tracé sans fond de carte et dernière position ; menu « Tableau de bord » ; heures au format de RG-PRM-07 en attendant [Q-97](06-questions-ouvertes.md#q-97) ; essais Go sans base (calcul de la carte, textes, rendu) et avec PostgreSQL (non exécuté sur ce poste). Reste : Q-97 ; maquette Web non validée (TODO-3.3) ; essai avec PostgreSQL et dans un vrai navigateur ; relecture par l'utilisateur.
 - [ ] **TODO-6.2**: Page d'une navigation : carte, journal, photos, notes vocales, mise à jour en direct (cahier des charges 6.2). Dépend de : TODO-6.1.
   - Critères d'acceptation : une position envoyée par Android apparaît sans recharger la page.
 - [ ] **TODO-6.3**: Compléter et corriger le journal, renommer (RG-JRN-05, RG-JRN-06, RG-NAV-17). Dépend de : TODO-6.2, TODO-1.7.
