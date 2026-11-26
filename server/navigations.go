@@ -704,8 +704,9 @@ func lireEvenement(l pgx.Row, n navLigne) (evenementJSON, error) {
 		e.Fichier = &fichierJSON{TypeMedia: *ft, TailleOctets: taille, DureeSecondes: duree, Recu: recu}
 	}
 	// Un SOS n'est jamais masqué du journal, même hors de la plage affichée
-	// ou déclenché après la fin (RG-SOS-19, D-120).
-	e.Masque = e.Type != "sos" && n.masque(e.HeureAcquisition)
+	// ou déclenché après la fin (RG-SOS-19, D-120) ; un ajout non plus : il
+	// porte l'heure à laquelle il est fait, après la fin (RG-JRN-05, D-152).
+	e.Masque = e.Type != "sos" && e.Type != "ajout" && n.masque(e.HeureAcquisition)
 	return e, err
 }
 

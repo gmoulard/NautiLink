@@ -46,9 +46,7 @@
   <label for="ajout-fichier">Photo (JPEG) ou note vocale (AAC .m4a, 1 minute au plus), facultative</label>
   <input id="ajout-fichier" name="fichier" type="file" accept="image/jpeg,audio/mp4,audio/x-m4a,.m4a">
   <p class="aide">{{if .PhotosRestantes}}Encore {{.PhotosRestantes}} photo{{if gt .PhotosRestantes 1}}s{{end}} possible{{if gt .PhotosRestantes 1}}s{{end}} (20 par navigation).{{else}}Cette navigation a déjà 20 photos.{{end}} 5 Mo au plus.</p>
-  <label for="ajout-heure">Heure dans le journal</label>
-  <input id="ajout-heure" name="heure" type="datetime-local" required value="{{.HeureAjout}}" min="{{.AjoutMin}}" max="{{.AjoutMax}}">
-  <p class="aide">Entre le début et la fin de la navigation, en {{.Zone}}.</p>
+  <p class="aide">L'ajout prend l'heure à laquelle vous le faites et se place à la fin du journal.</p>
   <button type="submit">Ajouter</button>
 </form>
 </section>

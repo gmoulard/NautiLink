@@ -19,8 +19,8 @@ import (
 // que soit leur origine (RG-JRN-06), jamais début, fin, positions ni SOS
 // (RG-JRN-07) ; ajouts complémentaires (texte, photo ou note vocale) à une
 // navigation terminée (RG-JRN-05), 20 photos au plus (RG-JRN-08), note
-// vocale d'une minute au plus (RG-JRN-04). Heure d'un ajout : choisie entre
-// le début et la fin, préremplie avec la fin, en attendant Q-98.
+// vocale d'une minute au plus (RG-JRN-04). Un ajout porte l'heure à laquelle
+// il est fait, sans choix (RG-JRN-05, D-152).
 
 const formatSaisie = "2006-01-02T15:04" // champ « datetime-local »
 
@@ -129,8 +129,6 @@ type modificationNav struct {
 	BateauID           string
 	Bateaux            []bateauJSON
 	Debut, Fin, Zone   string
-	HeureAjout         string
-	AjoutMin, AjoutMax string
 	PhotosRestantes    int
 }
 
@@ -148,7 +146,6 @@ func (a *app) modificationDe(ctx context.Context, utilisateur string, n navLigne
 		return nil, err
 	}
 	m.Fin = valeurSaisie(*n.fin, n.decalage)
-	m.HeureAjout, m.AjoutMin, m.AjoutMax = m.Fin, m.Debut, m.Fin
 	var photos int
 	if err := a.b.pool.QueryRow(ctx, `SELECT count(*) FROM evenements WHERE navigation_id = $1 AND fichier_type = 'image/jpeg'
 		AND supprime_le IS NULL`, n.id).Scan(&photos); err != nil {
@@ -280,18 +277,8 @@ func (a *app) routesWebJournal(mux *http.ServeMux, c string) {
 		if e.Texte == nil && e.Fichier == nil {
 			return echec(w, r, s, d, errInvalide("Écrivez un texte ou choisissez une photo ou une note vocale."))
 		}
-		if e.HeureAcquisition, err = heureSaisie(r.FormValue("heure"), n.decalage); err != nil {
-			return echec(w, r, s, d, err)
-		}
-		switch r.FormValue("heure") { // minute du début ou de la fin : leur heure exacte
-		case valeurSaisie(n.debut, n.decalage):
-			e.HeureAcquisition = n.debut
-		case valeurSaisie(*n.fin, n.decalage):
-			e.HeureAcquisition = *n.fin
-		}
-		if n.masque(e.HeureAcquisition) {
-			return echec(w, r, s, d, errInvalide("Choisissez une heure entre le début et la fin de la navigation."))
-		}
+		// Heure de l'ajout, dans le fuseau du téléphone au début (RG-PRM-07).
+		e.HeureAcquisition = a.maintenant().In(zoneDe(n.decalage)).Truncate(time.Second)
 		if _, _, err := a.envoyerEvenement(r.Context(), s.utilisateur, id, e); err != nil {
 			return echec(w, r, s, d, err)
 		}

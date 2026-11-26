@@ -168,11 +168,12 @@ func TestCorbeille(t *testing.T) {
 }
 
 func TestDateFrancaise(t *testing.T) {
+	paris := 120 // heure d'été du téléphone (RG-PRM-07)
 	for d, attendu := range map[time.Time]string{
 		time.Date(2026, 12, 25, 12, 0, 0, 0, time.UTC): "25 décembre 2026",
-		time.Date(2026, 7, 31, 23, 30, 0, 0, time.UTC): "1er août 2026", // heure de Paris
+		time.Date(2026, 7, 31, 23, 30, 0, 0, time.UTC): "1er août 2026", // fuseau du téléphone
 	} {
-		if got := dateFrancaise(d); got != attendu {
+		if got := dateFrancaise(d, &paris); got != attendu {
 			t.Errorf("%v : %q", d, got)
 		}
 	}
@@ -195,7 +196,7 @@ func TestCorbeilleWeb(t *testing.T) {
 		t.Fatalf("suppression : %d %s", rec.Code, rec.Header().Get("Location"))
 	}
 	page := web.envoyer("GET", "/nautilink/corbeille?ok=corbeille", nil).Body.String()
-	for _, attendu := range []string{"Alizé — Glénan", "16 novembre 2026", "le 16 décembre 2026", "Restaurer", "restaurer pendant 30 jours"} {
+	for _, attendu := range []string{"Alizé — Glénan", "2026-11-16 08:00 (08:00 UTC)", "le 16 décembre 2026", "Restaurer", "restaurer pendant 30 jours"} {
 		if !strings.Contains(page, attendu) {
 			t.Fatalf("page de la corbeille sans %q : %s", attendu, page)
 		}

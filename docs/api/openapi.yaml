@@ -1787,7 +1787,7 @@ components:
         type:
           type: string
           enum: [debut, position_automatique, position_manuelle, note, photo, note_vocale, sos, fin, ajout, incident]
-          description: 'RG-JRN-02. `incident` : incident ou avarie (RG-JRN-11), texte obligatoire, une photo (image/jpeg) ou une note vocale (audio/mp4) facultative, pendant la navigation ; jamais ajouté depuis le Web après la fin.'
+          description: 'RG-JRN-02. `ajout` : depuis le Web, après la fin, à l''heure où il est fait (RG-JRN-05, D-152). `incident` : incident ou avarie (RG-JRN-11), texte obligatoire, une photo (image/jpeg) ou une note vocale (audio/mp4) facultative, pendant la navigation ; jamais ajouté depuis le Web après la fin.'
         heureAcquisition: {type: string, format: date-time}
         numeroOrdre: {type: integer, description: Rang de création sur le téléphone pour cette navigation (08-architecture.md §5).}
         position: {$ref: '#/components/schemas/Position'}

@@ -128,7 +128,7 @@ func (a *app) donneesDeLaNavigation(ctx context.Context, utilisateur, id string)
 	}
 	d.Navigateur, d.EnCours, d.Corbeille = role == "navigateur", d.N.Etat == "en_cours", d.N.Etat == "corbeille"
 	if d.Corbeille {
-		d.Suppression = dateFrancaise(*d.N.SupprimeeDefinitivementLe)
+		d.Suppression = dateFrancaise(*d.N.SupprimeeDefinitivementLe, n.decalage)
 	}
 	if d.L, err = a.ligneDe(ctx, d.N); err != nil {
 		return d, err

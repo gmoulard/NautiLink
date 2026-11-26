@@ -126,13 +126,12 @@ func TestRenduModifier(t *testing.T) {
 	d := donneesNavEssai(true, false)
 	nav := d.D.(donneesNavigation)
 	nav.Modifier = &modificationNav{Terminee: true, Nom: nav.N.Nom, BateauID: "b1", Bateaux: []bateauJSON{{ID: "b1", Nom: "Alizé"}, {ID: "b2", Nom: "Mistral"}},
-		Debut: "2026-11-20T09:00", Fin: "2026-11-20T11:05", Zone: "heure UTC", HeureAjout: "2026-11-20T11:05", AjoutMin: "2026-11-20T09:00",
-		AjoutMax: "2026-11-20T11:05", PhotosRestantes: 19}
+		Debut: "2026-11-20T09:00", Fin: "2026-11-20T11:05", Zone: "heure UTC", PhotosRestantes: 19}
 	d.D = nav
 	page := rendu(t, "navigation.html", d)
 	for _, attendu := range []string{"Modifier la navigation", `action="/nautilink/navigations/11111111-0000-4000-8000-000000000001/modification"`,
 		`<option value="b1" selected>Alizé</option>`, `<option value="b2" >Mistral</option>`, `name="debut" type="datetime-local" required value="2026-11-20T09:00"`,
-		"Ajouter au journal", `enctype="multipart/form-data"`, "Encore 19 photos possibles", `min="2026-11-20T09:00" max="2026-11-20T11:05"`,
+		"Ajouter au journal", `enctype="multipart/form-data"`, "Encore 19 photos possibles", "L'ajout prend l'heure à laquelle vous le faites",
 		`action="/nautilink/navigations/11111111-0000-4000-8000-000000000001/evenements/e3"`, ">Dauphins par le travers</textarea>",
 		"/evenements/e4/suppression", "et de son fichier"} {
 		if !strings.Contains(page, attendu) {
@@ -192,7 +191,7 @@ func TestJournalWeb(t *testing.T) {
 	if rec := web.envoyer("POST", base+"/modification", map[string]string{"nom": "Sortie du matin", "destination": "Groix"}); rec.Code != 303 {
 		t.Fatalf("renommer en cours : %d", rec.Code)
 	}
-	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"texte": "x", "heure": "2026-11-20T10:00"}, nil); rec.Code != 422 {
+	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"texte": "x"}, nil); rec.Code != 422 {
 		t.Fatalf("ajout en cours : %d", rec.Code)
 	}
 	fin := t0.Add(3 * time.Hour)
@@ -248,23 +247,32 @@ func TestJournalWeb(t *testing.T) {
 		t.Fatalf("suppression de la note : %d", rec.Code)
 	}
 
-	// Ajouts : texte, photo, note vocale ; heure hors de la navigation refusée.
+	// Ajouts : texte, photo, note vocale, à l'heure où ils sont faits, après
+	// la fin, sans être masqués (RG-JRN-05, D-152) ; une heure envoyée par le
+	// formulaire est ignorée.
+	ajout := time.Date(2026, 11, 22, 18, 45, 12, 0, time.UTC)
+	horloge(e, ajout)
 	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"texte": "Escale à Port-Tudy", "heure": "2026-11-20T09:15"}, nil); rec.Code != 303 {
 		t.Fatalf("ajout de texte : %d %s", rec.Code, rec.Body.String())
 	}
-	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"heure": "2026-11-20T11:30"}, jpegEssai); rec.Code != 303 {
+	if rec := web.envoyerFichier(base+"/ajouts", nil, jpegEssai); rec.Code != 303 {
 		t.Fatalf("ajout de photo : %d %s", rec.Code, rec.Body.String())
 	}
-	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"heure": "2026-11-20T08:00"}, m4aEssai(30)); rec.Code != 303 {
+	if rec := web.envoyerFichier(base+"/ajouts", nil, m4aEssai(30)); rec.Code != 303 {
 		t.Fatalf("ajout de note vocale : %d %s", rec.Code, rec.Body.String())
 	}
-	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"texte": "trop tard", "heure": "2026-11-20T13:00"}, nil); rec.Code != 422 {
-		t.Fatalf("ajout hors de la navigation : %d", rec.Code)
+	_, j = e.appel("GET", "/navigations/"+id+"/evenements", nav, nil)
+	evts := j["evenements"].([]any)
+	for _, x := range evts[len(evts)-3:] {
+		ev := x.(map[string]any)
+		if ev["type"] != "ajout" || !memeHeure(ev["heureAcquisition"], heure(ajout)) || ev["masque"] != false {
+			t.Fatalf("ajout à la fin du journal, à l'heure de l'ajout : %v", ev)
+		}
 	}
-	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"heure": "2026-11-20T09:00"}, m4aEssai(90)); rec.Code != 422 {
+	if rec := web.envoyerFichier(base+"/ajouts", nil, m4aEssai(90)); rec.Code != 422 {
 		t.Fatalf("note vocale trop longue : %d", rec.Code)
 	}
-	if rec := web.envoyerFichier(base+"/ajouts", map[string]string{"heure": "2026-11-20T09:00"}, nil); rec.Code != 422 {
+	if rec := web.envoyerFichier(base+"/ajouts", nil, nil); rec.Code != 422 {
 		t.Fatalf("ajout vide : %d", rec.Code)
 	}
 	if nb := e.compter(`SELECT count(*) FROM evenements e JOIN fichiers f ON f.evenement_id = e.id
@@ -283,7 +291,7 @@ func TestJournalWeb(t *testing.T) {
 	if rec := webLea.envoyer("POST", base+"/modification", map[string]string{"nom": "Pirate"}); rec.Code != 403 {
 		t.Fatalf("modification par un suiveur : %d", rec.Code)
 	}
-	if rec := webLea.envoyerFichier(base+"/ajouts", map[string]string{"texte": "x", "heure": "2026-11-20T09:00"}, nil); rec.Code != 403 {
+	if rec := webLea.envoyerFichier(base+"/ajouts", map[string]string{"texte": "x"}, nil); rec.Code != 403 {
 		t.Fatalf("ajout par un suiveur : %d", rec.Code)
 	}
 }

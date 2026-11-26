@@ -18,8 +18,7 @@ import (
 // aperçu au survol sur ordinateur, au toucher sur mobile (CSS seul).
 
 // heureWeb : heure affichée sur l'Application web et dans le PDF : heure
-// locale du téléphone du navigateur, puis UTC (format de RG-PRM-07,
-// appliqué en attendant Q-97).
+// locale du téléphone du navigateur, puis UTC (RG-PRM-07, D-151).
 func heureWeb(t time.Time, decalage *int) string {
 	return heureEnvoyee(t, decalage, true)
 }
