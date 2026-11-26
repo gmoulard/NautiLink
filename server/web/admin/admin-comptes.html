@@ -3,15 +3,15 @@
 {{template "admin-recherche" .Recherche}}
 <div class="carte">
 {{if .D}}
-<table>
+<table class="empilable">
   <thead><tr><th scope="col">Nom</th><th scope="col">Adresse e-mail</th><th scope="col">Téléphone</th><th scope="col">Créé le</th><th scope="col">Bateaux</th><th scope="col">Contacts</th></tr></thead>
   <tbody>
   {{range .D}}
-  <tr><td><a class="lien" href="{{$.Base}}/admin/utilisateurs/{{.ID}}">{{.Nom}}</a></td>
-      <td>{{.Email}}{{if not .EmailVerifie}} (non confirmée){{end}}</td>
-      <td>{{deref .Telephone}}</td>
-      <td>{{.CreeLe.Format "02/01/2006"}}</td>
-      <td>{{.Bateaux}}</td><td>{{.Contacts}}</td></tr>
+  <tr><td data-label="Nom"><a class="lien" href="{{$.Base}}/admin/utilisateurs/{{.ID}}">{{.Nom}}</a></td>
+      <td data-label="Adresse e-mail">{{.Email}}{{if not .EmailVerifie}} (non confirmée){{end}}</td>
+      <td data-label="Téléphone">{{deref .Telephone}}</td>
+      <td data-label="Créé le">{{.CreeLe.Format "02/01/2006"}}</td>
+      <td data-label="Bateaux">{{.Bateaux}}</td><td data-label="Contacts">{{.Contacts}}</td></tr>
   {{end}}
   </tbody>
 </table>
@@ -48,12 +48,12 @@
 <div class="carte">
 <h2>Contacts</h2>
 {{if .Contacts}}
-<table>
+<table class="empilable">
   <thead><tr><th scope="col">Nom</th><th scope="col">Téléphone</th><th scope="col">Adresse e-mail</th><th scope="col">Rôle</th><th scope="col"></th></tr></thead>
   <tbody>
   {{range .Contacts}}
-  <tr><td>{{.Nom}}</td><td>{{deref .Telephone}}</td><td>{{deref .Email}}</td>
-      <td>{{if .Suiveur}}Suiveur{{end}}{{if and .Suiveur .ContactSos}}, {{end}}{{if .ContactSos}}Contact SOS{{end}}</td>
+  <tr><td data-label="Nom">{{.Nom}}</td><td data-label="Téléphone">{{deref .Telephone}}</td><td data-label="Adresse e-mail">{{deref .Email}}</td>
+      <td data-label="Rôle">{{if .Suiveur}}Suiveur{{end}}{{if and .Suiveur .ContactSos}}, {{end}}{{if .ContactSos}}Contact SOS{{end}}</td>
       <td><form class="enligne" method="post" action="{{$.Base}}/admin/contacts/{{.ID}}/suppression"><button class="danger" type="submit">Supprimer</button></form></td></tr>
   {{end}}
   </tbody>
@@ -76,14 +76,14 @@
 {{template "admin-recherche" .Recherche}}
 <div class="carte">
 {{if .D}}
-<table>
+<table class="empilable">
   <thead><tr><th scope="col">Nom</th><th scope="col">Type</th><th scope="col">Immatriculation</th><th scope="col">Propriétaire</th></tr></thead>
   <tbody>
   {{range .D}}
-  <tr><td><a class="lien" href="{{$.Base}}/admin/bateaux/{{.ID}}">{{.Nom}}</a></td>
-      <td>{{if eq .Type "voilier"}}Voilier{{else}}Bateau à moteur{{end}}</td>
-      <td>{{.Immatriculation}}</td>
-      <td><a class="lien" href="{{$.Base}}/admin/utilisateurs/{{.ProprietaireID}}">{{.ProprietaireEmail}}</a></td></tr>
+  <tr><td data-label="Nom"><a class="lien" href="{{$.Base}}/admin/bateaux/{{.ID}}">{{.Nom}}</a></td>
+      <td data-label="Type">{{if eq .Type "voilier"}}Voilier{{else}}Bateau à moteur{{end}}</td>
+      <td data-label="Immatriculation">{{.Immatriculation}}</td>
+      <td data-label="Propriétaire"><a class="lien" href="{{$.Base}}/admin/utilisateurs/{{.ProprietaireID}}">{{.ProprietaireEmail}}</a></td></tr>
   {{end}}
   </tbody>
 </table>
@@ -132,12 +132,12 @@
 <div class="carte">
 <h2>Annonces publiées</h2>
 {{if .D}}
-<table>
+<table class="empilable">
   <thead><tr><th scope="col">Texte</th><th scope="col">Publiée le</th><th scope="col">Fin</th><th scope="col"></th></tr></thead>
   <tbody>
   {{range .D}}
-  <tr><td>{{.Texte}}</td><td>{{.CreeeLe.Format "02/01/2006"}}</td>
-      <td>{{if .FinLe}}{{.FinLe.UTC.Format "02/01/2006 15:04"}} UTC{{else}}Aucune{{end}}{{if not .EnCours}} (terminée){{end}}</td>
+  <tr><td data-label="Texte">{{.Texte}}</td><td data-label="Publiée le">{{.CreeeLe.Format "02/01/2006"}}</td>
+      <td data-label="Fin">{{if .FinLe}}{{.FinLe.UTC.Format "02/01/2006 15:04"}} UTC{{else}}Aucune{{end}}{{if not .EnCours}} (terminée){{end}}</td>
       <td>{{if .EnCours}}<form class="enligne" method="post" action="{{$.Base}}/admin/annonces/{{.ID}}/fin"><button class="secondaire" type="submit">Terminer</button></form>{{end}}
           <form class="enligne" method="post" action="{{$.Base}}/admin/annonces/{{.ID}}/suppression"><button class="danger" type="submit">Supprimer</button></form></td></tr>
   {{end}}
@@ -155,12 +155,12 @@
 {{template "admin-recherche" .Recherche}}
 <div class="carte">
 {{if .D}}
-<table>
+<table class="empilable">
   <thead><tr><th scope="col">Date (UTC)</th><th scope="col">Administrateur</th><th scope="col">Action</th><th scope="col">Sur</th><th scope="col">Détails</th></tr></thead>
   <tbody>
   {{range .D}}
-  <tr><td>{{.Le.UTC.Format "02/01/2006 15:04:05"}}</td><td>{{.Admin}}</td><td>{{.Action}}</td>
-      <td>{{.Ressource}} {{.Cible}}</td><td><code>{{.DetailsTxt}}</code></td></tr>
+  <tr><td data-label="Date (UTC)">{{.Le.UTC.Format "02/01/2006 15:04:05"}}</td><td data-label="Administrateur">{{.Admin}}</td><td data-label="Action">{{.Action}}</td>
+      <td data-label="Sur">{{.Ressource}} {{.Cible}}</td><td data-label="Détails"><code>{{.DetailsTxt}}</code></td></tr>
   {{end}}
   </tbody>
 </table>

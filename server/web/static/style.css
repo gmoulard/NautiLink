@@ -197,3 +197,37 @@ button.pleine { display: block; width: 100%; min-height: 48px; font-size: 1.05re
   .acces-decor .ciel-bas { stop-color: #15314D; }
   .acces-nom, .acces-signature { color: #E3EEF7; }
 }
+
+/* Application web sur l'écran d'un téléphone (RG-WEB-04, D-162) : menu
+   replié derrière « Menu », tableaux empilés avec l'intitulé de chaque
+   colonne, zones à toucher de 44 px, rien de plus large que l'écran. */
+html { -webkit-text-size-adjust: 100%; }
+img, svg, video, audio, iframe { max-width: 100%; }
+main, .carte, dd, td, .texte { overflow-wrap: anywhere; }
+dl.resume { grid-template-columns: max-content minmax(0, 1fr); }
+.menu-bouton { margin: 0 0 0 auto; }
+@media (min-width: 721px) { .menu-bouton { display: none; } }
+@media (max-width: 720px) {
+  header .ligne { gap: 8px 12px; }
+  header .signature { flex-basis: 100%; order: 3; }
+  header.menu-js nav { display: none; flex-basis: 100%; order: 4; flex-direction: column; align-items: stretch; margin: 4px 0 0; gap: 0; }
+  header.menu-js.ouvert nav { display: flex; }
+  nav a { display: flex; align-items: center; min-height: 44px; padding: 0 4px; border-top: 1px solid var(--filet); }
+  nav form.enligne { display: block; padding-top: 8px; }
+  nav form.enligne button { width: 100%; }
+  main { padding: 16px 12px; }
+  .carte { padding: 16px; }
+  h1 { font-size: 1.5rem; }
+  table.empilable, table.empilable tbody, table.empilable tr, table.empilable td { display: block; width: 100%; }
+  table.empilable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.empilable tr { border-bottom: 1px solid var(--filet); padding: 8px 0; }
+  table.empilable td { border: 0; padding: 2px 0; }
+  table.empilable td[data-label]::before { content: attr(data-label) " : "; color: var(--texte2); font-weight: 600; }
+  .filtres a, .lien { display: inline-flex; align-items: center; min-height: 44px; }
+  dl.resume, dl.chiffres { grid-template-columns: minmax(0, 1fr); }
+  dl.resume dt { margin-top: 6px; }
+  ul.log li.navigation { white-space: normal; }
+  .bulle { left: 0; width: calc(100vw - 40px); }
+  .annonce { flex-wrap: wrap; }
+}
+[hidden] { display: none !important; }

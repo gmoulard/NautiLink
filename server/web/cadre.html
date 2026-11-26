@@ -13,7 +13,8 @@
   <div class="ligne">
     <a class="marque" href="{{.Base}}/"><img class="logo" src="{{.Base}}/static/logo-nautilink.png" alt="" width="36" height="36">NautiLink</a>
     <span class="signature">Your sea, your safety, your story.</span>
-    <nav aria-label="Menu principal">
+    <button class="menu-bouton secondaire" type="button" aria-expanded="false" aria-controls="menu" hidden>Menu</button>
+    <nav id="menu" aria-label="Menu principal">
     {{if .Connecte}}
       <a href="{{.Base}}/">Log de nav</a>
       <a href="{{.Base}}/bateaux">Bateaux</a>
@@ -32,6 +33,7 @@
     {{end}}
     </nav>
   </div>
+<script src="{{.Base}}/static/menu.js"></script>
 </header>
 <main>
 {{if .Message}}<div class="message" role="status">{{.Message}}</div>{{end}}

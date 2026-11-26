@@ -3,14 +3,14 @@
 {{with .D}}
 <div class="carte">
 {{if .Bateaux}}
-<table>
+<table class="empilable">
   <thead><tr><th scope="col">Nom</th><th scope="col">Type</th><th scope="col">Port d'attache</th><th scope="col">Téléphone associé</th></tr></thead>
   <tbody>
   {{range .Bateaux}}
-  <tr><td><a class="lien" href="{{$.Base}}/bateaux/{{.ID}}">{{.Nom}}</a></td>
-      <td>{{if eq .Type "voilier"}}Voilier{{else}}Bateau à moteur{{end}}</td>
-      <td>{{.PortAttache}}</td>
-      <td>{{if .AppareilAssocieID}}Oui{{else}}Aucun{{end}}</td></tr>
+  <tr><td data-label="Nom"><a class="lien" href="{{$.Base}}/bateaux/{{.ID}}">{{.Nom}}</a></td>
+      <td data-label="Type">{{if eq .Type "voilier"}}Voilier{{else}}Bateau à moteur{{end}}</td>
+      <td data-label="Port d'attache">{{.PortAttache}}</td>
+      <td data-label="Téléphone associé">{{if .AppareilAssocieID}}Oui{{else}}Aucun{{end}}</td></tr>
   {{end}}
   </tbody>
 </table>

@@ -13,7 +13,8 @@
   <div class="ligne">
     <a class="marque" href="{{.Base}}/admin/">NautiLink · Administration</a>
     {{if .Connecte}}<span class="signature">{{.Email}}</span>{{end}}
-    <nav aria-label="Menu de l'administration">
+    <button class="menu-bouton secondaire" type="button" aria-expanded="false" aria-controls="menu" hidden>Menu</button>
+    <nav id="menu" aria-label="Menu de l'administration">
     {{if .Connecte}}
       <a href="{{.Base}}/admin/">Tableau de bord</a>
       <a href="{{.Base}}/admin/utilisateurs">Utilisateurs</a>
@@ -24,6 +25,7 @@
     {{end}}
     </nav>
   </div>
+<script src="{{.Base}}/static/menu.js"></script>
 </header>
 <main>
 {{if .Message}}<div class="message" role="status">{{.Message}}</div>{{end}}
