@@ -46,6 +46,10 @@ func (construction) Depot() string { return depot }
 // l'Application web (D-149) ; l'espace administrateur garde le dépôt (D-128).
 func (construction) Site() string { return "https://gmoulard.github.io/NautiLink/" }
 
+// Memo : mémo sécurité en mer du site, lien du pied de page de chaque page
+// de l'Application web (RG-SOS-22, D-166).
+func (construction) Memo() string { return adresseMemo }
+
 // String : « 0.0.1 (build 12, commit 93b0f97) ».
 func (c construction) String() string {
 	return fmt.Sprintf("%s (build %s, commit %s)", c.Numero, c.Build, c.CommitCourt())

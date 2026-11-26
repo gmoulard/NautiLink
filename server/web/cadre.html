@@ -43,7 +43,7 @@
 {{define "bas"}}
 </main>
 <footer>
-<p>NautiLink · Version bêta</p>
+<p>NautiLink · Version bêta · <a href="{{.Version.Memo}}">Mémo sécurité en mer</a></p>
 <p class="construction">Tous droits réservés · <a href="{{.Version.Site}}">NautiLink</a> · V{{.Version.Numero}} · build {{.Version.Build}} · commit {{if .Version.Commit}}<a href="{{.Version.Depot}}/commit/{{.Version.Commit}}">{{.Version.CommitCourt}}</a>{{else}}local{{end}}</p>
 </footer>
 </body>

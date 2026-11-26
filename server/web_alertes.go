@@ -18,6 +18,9 @@ import (
 const (
 	adresseEquipe = "https://github.com/gmoulard/NautiLink/issues" // RG-COM-09, D-138
 	adresseMemo   = "https://gmoulard.github.io/NautiLink/securite.html"
+	// Prévision marine de Météo-France (RG-NAV-37, D-166), adresse vérifiée
+	// le 2026-11-26 ; ouverture sur la position actuelle : Q-103.
+	adresseMeteoMarine = "https://meteofrance.com/meteo-marine"
 )
 
 var libellesStatutSms = map[string]string{

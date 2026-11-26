@@ -31,6 +31,7 @@ var fonctionsPages = template.FuncMap{
 			L    ligneNav
 		}{base, l}
 	},
+	"meteoMarine": func() string { return adresseMeteoMarine },
 	"deref": func(s *string) string {
 		if s == nil {
 			return ""

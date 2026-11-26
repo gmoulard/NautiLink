@@ -119,7 +119,7 @@ func TestDemarrageWeb(t *testing.T) {
 	web := e.webConnecte("nav@exemple.org")
 
 	page := web.envoyer("GET", "/nautilink/demarrer", nil).Body.String()
-	for _, attendu := range []string{"Alizé", "Marc", `value="`+marc+`"`, `value="Paul"`, "Début de navigation"} {
+	for _, attendu := range []string{"Alizé", "Marc", `value="` + marc + `"`, `value="Paul"`, "Début de navigation"} {
 		if !strings.Contains(page, attendu) {
 			t.Fatalf("écran de démarrage : %q absent", attendu)
 		}
@@ -207,5 +207,23 @@ func TestDemarrageWeb(t *testing.T) {
 	}
 	if rec := web.envoyer("POST", base+"/position", map[string]string{"type": "position_automatique", "latitude": "47.7", "longitude": "-3.3"}); rec.Code != 409 {
 		t.Fatalf("position après la fin : %d", rec.Code)
+	}
+}
+
+// TestLiensRelectureWeb : D-166 : « Mémo sécurité en mer » dans le pied de
+// page de chaque page (RG-SOS-22), « Météo marine » pendant la navigation
+// (RG-NAV-37).
+func TestLiensRelectureWeb(t *testing.T) {
+	h := nouveauRouteur(config{Chemin: "/nautilink"}, &base{})
+	for _, chemin := range []string{"/nautilink/", "/nautilink/connexion", "/nautilink/inscription"} {
+		if corps := requete(t, h, chemin).Body.String(); !strings.Contains(corps, `<a href="`+adresseMemo+`">Mémo sécurité en mer</a>`) {
+			t.Errorf("%s : mémo absent du pied de page", chemin)
+		}
+	}
+	if page := rendu(t, "navigation.html", donneesNavEssai(true, true)); !strings.Contains(page, `<a class="lien" href="https://meteofrance.com/meteo-marine">Météo marine</a>`) {
+		t.Error("navigation en cours : lien « Météo marine » absent")
+	}
+	if page := rendu(t, "navigation.html", donneesNavEssai(true, false)); strings.Contains(page, "Météo marine") {
+		t.Error("navigation terminée : lien « Météo marine » affiché")
 	}
 }
