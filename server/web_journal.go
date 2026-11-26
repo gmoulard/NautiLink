@@ -124,12 +124,12 @@ func fichierAjout(donnees []byte) (*fichierJSON, error) {
 
 // modificationNav : formulaires du navigateur sur la page de la navigation.
 type modificationNav struct {
-	Terminee           bool
-	Nom, Destination   string
-	BateauID           string
-	Bateaux            []bateauJSON
-	Debut, Fin, Zone   string
-	PhotosRestantes    int
+	Terminee         bool
+	Nom, Destination string
+	BateauID         string
+	Bateaux          []bateauJSON
+	Debut, Fin, Zone string
+	PhotosRestantes  int
 }
 
 func (a *app) modificationDe(ctx context.Context, utilisateur string, n navLigne) (*modificationNav, error) {
