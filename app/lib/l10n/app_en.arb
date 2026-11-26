@@ -346,7 +346,7 @@
   "smsPermissionTitle": "Sending text messages",
   "smsPermissionExplain": "NautiLink itself sends SOS text messages to your SOS contacts, and automatic position messages to your followers, even with the screen off. Allow sending text messages on the next screen. Without this permission, the SOS message will open prefilled and automatic positions will go to the server only.",
   "smsAutoOffNotice": "Without permission to send text messages, automatic positions will go to the server only, without SMS.",
-  "smsAutoFailed": "Automatic position SMS not sent to {phone}",
+  "smsAutoFailed": "Text message not sent to {phone}",
   "retry": "Retry",
   "sosSmsAutoSent": "SOS text messages sent automatically: {count}",
   "sosSmsRetrying": "SOS text messages failed: retrying every minute",
@@ -405,5 +405,6 @@
   "pushEnd": "Voyage end",
   "pushPhoto": "New photo",
   "pushLate": "Overdue position",
-  "pushSosAlways": "SOS alerts are always notified."
+  "pushSosAlways": "SOS alerts are always notified.",
+  "inviteSmsSent": "Invitation sent by text message, with a copy to your number."
 }

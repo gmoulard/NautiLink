@@ -394,7 +394,7 @@
   "smsPermissionTitle": "Envoi de SMS",
   "smsPermissionExplain": "NautiLink envoie lui-même les SMS SOS à vos contacts SOS, et les SMS de positions automatiques à vos suiveurs, même écran éteint. Autorisez l'envoi de SMS à l'écran suivant. Sans cette autorisation, le SMS SOS s'ouvrira prérempli et les positions automatiques partiront au serveur seulement.",
   "smsAutoOffNotice": "Sans autorisation d'envoi de SMS, les positions automatiques partiront au serveur seulement, sans SMS.",
-  "smsAutoFailed": "SMS de position automatique non envoyé à {phone}",
+  "smsAutoFailed": "SMS non envoyé à {phone}",
   "@smsAutoFailed": {"placeholders": {"phone": {"type": "String"}}},
   "retry": "Réessayer",
   "sosSmsAutoSent": "SMS SOS envoyés automatiquement : {count}",
@@ -459,5 +459,6 @@
   "pushEnd": "Fin de navigation",
   "pushPhoto": "Nouvelle photo",
   "pushLate": "Position en retard",
-  "pushSosAlways": "Les alertes SOS sont toujours notifiées."
+  "pushSosAlways": "Les alertes SOS sont toujours notifiées.",
+  "inviteSmsSent": "Invitation envoyée par SMS, avec la copie à votre numéro."
 }

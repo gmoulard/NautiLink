@@ -2100,7 +2100,7 @@ abstract class AppLocalizations {
   /// No description provided for @smsAutoFailed.
   ///
   /// In fr, this message translates to:
-  /// **'SMS de position automatique non envoyé à {phone}'**
+  /// **'SMS non envoyé à {phone}'**
   String smsAutoFailed(String phone);
 
   /// No description provided for @retry.
@@ -2456,6 +2456,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Les alertes SOS sont toujours notifiées.'**
   String get pushSosAlways;
+
+  /// No description provided for @inviteSmsSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Invitation envoyée par SMS, avec la copie à votre numéro.'**
+  String get inviteSmsSent;
 }
 
 class _AppLocalizationsDelegate

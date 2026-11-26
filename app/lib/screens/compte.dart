@@ -6,6 +6,7 @@ import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../reel/depot_reel.dart';
+import '../reel/sms_navigation.dart';
 import '../theme.dart';
 import 'connexion.dart';
 import 'memo.dart';
@@ -527,20 +528,26 @@ class _ContactScreenState extends State<ContactScreen> {
     return null;
   }
 
-  /// Invitation par téléphone : SMS prérempli sur Android (avec la copie au
-  /// navigateur, RG-SMS-08), lien affiché sur iPhone (RG-PAR-04, RG-IOS-02, D-137).
+  /// Invitation par téléphone : SMS envoyé automatiquement sur Android avec
+  /// la permission d'envoi de SMS, sinon prérempli (D-146), avec la copie au
+  /// navigateur (RG-SMS-08) ; lien affiché sur iPhone (RG-PAR-04, RG-IOS-02,
+  /// D-137).
   Future<void> _envoyerSms(ContactNl c, InvitationNl i) async {
+    final l = AppLocalizations.of(context);
     final nom = _depot.profil?.nom ?? '';
     final texte =
         '$nom vous invite à suivre ses navigations sur NautiLink : ${i.lien}';
-    final numeros = [
-      i.telephone ?? c.telephone,
-      _depot.profil?.telephone,
-    ].whereType<String>().join(',');
-    await launchUrl(
-      Uri.parse('sms:$numeros?body=${Uri.encodeComponent(texte)}'),
-      mode: LaunchMode.externalApplication,
+    final numero = i.telephone ?? c.telephone;
+    if (numero == null) return;
+    final (issue, _) = await _depot.sms.invitation(
+      i.id,
+      numero,
+      texte,
+      contactId: c.id,
     );
+    if (issue == IssueSms.automatique && mounted) {
+      _message(context, l.inviteSmsSent);
+    }
   }
 
   @override

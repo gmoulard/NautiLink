@@ -21,8 +21,12 @@ enum IssueSms {
   /// Aucun suiveur de la navigation avec un numéro (RG-SMS-01).
   sansDestinataire,
 
-  /// Envoyé automatiquement (positions automatiques, SOS).
+  /// Envoyé automatiquement, avec la permission d'envoi de SMS (RG-SMS-03, D-146).
   automatique,
+
+  /// Envoyé automatiquement avec le lien, et MMS prérempli avec la photo
+  /// ouvert en plus (RG-SMS-05).
+  automatiqueEtMms,
 
   /// Ouvert prérempli dans l'application SMS (RG-SMS-03).
   prerempli,
@@ -47,6 +51,8 @@ String? ligneSms(AppLocalizations l, IssueSms i, {int nombre = 0}) =>
       IssueSms.desactive => l.smsResultOff,
       IssueSms.sansDestinataire => l.smsResultNoRecipient,
       IssueSms.automatique => l.smsResultAuto(nombre),
+      IssueSms.automatiqueEtMms =>
+        '${l.smsResultAuto(nombre)} · ${l.smsResultMms}',
       IssueSms.prerempli => l.smsResultPrefilled,
       IssueSms.mms => l.smsResultMms,
       IssueSms.mmsRemplace => l.smsResultMmsFailed,
@@ -223,10 +229,11 @@ class SmsNavigation {
     ].join('\n');
   }
 
-  /// SMS ordinaire ouvert prérempli (RG-SMS-03) : début, position manuelle,
+  /// SMS ordinaire envoyé automatiquement avec la permission d'envoi de SMS
+  /// (D-146), sinon ouvert prérempli (RG-SMS-03) : début, position manuelle,
   /// note, photo (MMS si prévu, RG-SMS-05), note vocale, fin ; adressé aux
   /// suiveurs de la navigation et au navigateur (copie, RG-SMS-08).
-  Future<(IssueSms, int)> prerempli(
+  Future<(IssueSms, int)> ordinaire(
     NavigationLocale n,
     String type, {
     ParametresGeneraux? defaut,
@@ -253,6 +260,25 @@ class SmsNavigation {
         type == 'photo' &&
         photo != null &&
         (n.parametres ?? defaut)?.photoEnMms == true;
+    // D-146 : avec la permission, le SMS part automatiquement (3 essais puis
+    // « Réessayer », RG-SMS-07) ; la photo, avec son lien (RG-SMS-05).
+    if (await canal.autorise()) {
+      await envois.envoyer(
+        'sms:$type:${evenementId ?? n.id}',
+        [...d, ?_copie],
+        [t],
+      );
+      if (mms) {
+        try {
+          if (await canal.ouvrirPrerempli(numeros, t, image: photo)) {
+            return (IssueSms.automatiqueEtMms, numeros.length);
+          }
+        } catch (e) {
+          debugPrint('MMS : $e');
+        }
+      }
+      return (IssueSms.automatique, numeros.length);
+    }
     try {
       if (mms) {
         if (await canal.ouvrirPrerempli(numeros, t, image: photo)) {
@@ -268,6 +294,33 @@ class SmsNavigation {
           : (IssueSms.echec, 0);
     } catch (e) {
       debugPrint('SMS prérempli : $e');
+      return (IssueSms.echec, 0);
+    }
+  }
+
+  /// Invitation par SMS (RG-PAR-11) : envoyée automatiquement à l'invité et
+  /// en copie au navigateur avec la permission d'envoi de SMS (D-146) ; sinon
+  /// préremplie. Rend l'issue et le nombre de destinataires.
+  Future<(IssueSms, int)> invitation(
+    String invitationId,
+    String numero,
+    String texte, {
+    String? contactId,
+  }) async {
+    if (!disponible) return (IssueSms.aucun, 0);
+    final dests = [DestinataireSms(numero, contactId: contactId), ?_copie];
+    if (await canal.autorise()) {
+      await envois.envoyer('invitation:$invitationId', dests, [texte]);
+      return (IssueSms.automatique, dests.length);
+    }
+    try {
+      return await canal.ouvrirPrerempli([
+            for (final x in dests) x.numero,
+          ], texte)
+          ? (IssueSms.prerempli, dests.length)
+          : (IssueSms.echec, 0);
+    } catch (e) {
+      debugPrint('Invitation par SMS : $e');
       return (IssueSms.echec, 0);
     }
   }

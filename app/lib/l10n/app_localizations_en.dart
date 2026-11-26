@@ -1201,7 +1201,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String smsAutoFailed(String phone) {
-    return 'Automatic position SMS not sent to $phone';
+    return 'Text message not sent to $phone';
   }
 
   @override
@@ -1401,4 +1401,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pushSosAlways => 'SOS alerts are always notified.';
+
+  @override
+  String get inviteSmsSent =>
+      'Invitation sent by text message, with a copy to your number.';
 }

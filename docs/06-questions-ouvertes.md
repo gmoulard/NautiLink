@@ -36,6 +36,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant, à étudier en premier.
 - Décidé (D-48) : exception « urgence » de Google Play pour les SMS SOS ; SMS ordinaires préremplis.
 - Décidé (D-82) : les SMS de positions automatiques partent aussi automatiquement ; la demande de permission auprès de Google Play doit couvrir ce cas, avec le risque accepté d'un refus en dehors de l'exception « urgence » ; sans cette permission, positions au serveur seulement (D-91).
+- Décidé (D-146) : avec la permission, tous les SMS de l'application partent automatiquement, invitations comprises ; la demande auprès de Google Play doit couvrir cet usage, hors de la seule exception « urgence ».
 - Reste : lire la page officielle de Google Play et vérifier que l'exception existe et couvre NautiLink. Si elle est refusée, revenir vers l'utilisateur.
 - Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md) (voies possibles §3).
 

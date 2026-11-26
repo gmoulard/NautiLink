@@ -194,8 +194,8 @@ class SmsSuivi {
 
 /// Envois automatiques et leurs nouvelles tentatives (RG-SMS-07) : SMS SOS
 /// retenté chaque minute jusqu'à la réussite ou l'arrêt par le navigateur ;
-/// SMS de position automatique : 3 essais, puis l'échec est affiché avec
-/// « Réessayer ».
+/// autre SMS (positions, début, notes, photos, notes vocales, fin,
+/// invitations) : 3 essais, puis l'échec est affiché avec « Réessayer ».
 class EnvoisSms extends ChangeNotifier {
   EnvoisSms({
     required this.canal,
@@ -223,7 +223,8 @@ class EnvoisSms extends ChangeNotifier {
   final _minuteries = <String, Timer>{};
   final _rappels = <String, void Function(List<SmsSuivi>)>{};
 
-  /// SMS de positions automatiques en échec après 3 essais (« Réessayer »).
+  /// SMS envoyés automatiquement, hors SOS, en échec après 3 essais
+  /// (« Réessayer », RG-SMS-07, D-146).
   final List<SmsSuivi> echecsPosition = [];
 
   /// SMS d'un groupe (une alerte SOS, une position) dans leur dernier état.

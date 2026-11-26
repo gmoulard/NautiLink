@@ -398,7 +398,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
       final etat = await depot.file.etat('demarrage:${n.id}');
       // SMS de début, prérempli (RG-NAV-08, RG-SMS-03).
       final sms = depot.canalSms.disponible
-          ? await depot.sms.prerempli(
+          ? await depot.sms.ordinaire(
               n,
               'debut',
               defaut: depot.parametres,
@@ -818,7 +818,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           n.journal.isNotEmpty &&
           depot.canalSms.disponible) {
         final e = n.journal.last;
-        sms = await depot.sms.prerempli(
+        sms = await depot.sms.ordinaire(
           n,
           type,
           defaut: depot.parametres,
@@ -879,7 +879,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     final (id, etat) = r;
     // SMS de fin, prérempli (RG-NAV-13, RG-SMS-03), avec la position de fin.
     final sms = avant != null && depot.canalSms.disponible && !etat.refuse
-        ? await depot.sms.prerempli(
+        ? await depot.sms.ordinaire(
             avant,
             'fin',
             defaut: depot.parametres,

@@ -109,7 +109,7 @@ void main() {
   });
 
   test('SMS prérempli : suiveurs et copie au navigateur ; type désactivé (RG-SMS-02, RG-SMS-03, RG-SMS-08)', () async {
-    final (i, nombre) = await sms.prerempli(
+    final (i, nombre) = await sms.ordinaire(
       navigation(),
       'note',
       note: 'Cap au 270',
@@ -126,7 +126,7 @@ void main() {
       ),
     );
     expect(
-      (await sms.prerempli(off, 'note', note: 'x')).$1,
+      (await sms.ordinaire(off, 'note', note: 'x')).$1,
       IssueSms.desactive,
     );
   });
@@ -140,7 +140,7 @@ void main() {
         frequenceParDefaut: 60,
       ),
     );
-    var r = await sms.prerempli(
+    var r = await sms.ordinaire(
       mms,
       'photo',
       evenementId: 'e1',
@@ -149,7 +149,7 @@ void main() {
     expect(r.$1, IssueSms.mms);
     expect(canal.preremplis.last.$3, '/tmp/p.jpg');
     canal.ouvre = false;
-    r = await sms.prerempli(
+    r = await sms.ordinaire(
       mms,
       'photo',
       evenementId: 'e1',
@@ -293,5 +293,80 @@ void main() {
     expect(t, contains('Carburant : 40 L.'));
     expect(t, contains('Vitesse : 6.5 nd.'));
     expect(t, contains("Tirant d'eau : 1.8 m."));
+  });
+
+  test('avec la permission : SMS ordinaire envoyé automatiquement, avec la copie (D-146, RG-SMS-03)', () async {
+    canal.autorisee = true;
+    final (i, nombre) = await sms.ordinaire(
+      navigation(),
+      'note',
+      note: 'Cap au 270',
+      evenementId: 'e5',
+    );
+    expect(i, IssueSms.automatique);
+    expect(nombre, 2);
+    expect(canal.preremplis, isEmpty);
+    expect(canal.envoyes.map((s) => s.$2), ['+33611111111', '+33600000000']);
+    expect(canal.envoyes.first.$3, contains('Note : Cap au 270'));
+  });
+
+  test('photo avec la permission : SMS automatique avec le lien, MMS prérempli en plus si prévu (RG-SMS-05, D-146)', () async {
+    canal.autorisee = true;
+    final mms = navigation(
+      parametres: const ParametresGeneraux(
+        smsActifs: true,
+        smsParType: {},
+        photoEnMms: true,
+        frequenceParDefaut: 60,
+      ),
+    );
+    final r = await sms.ordinaire(
+      mms,
+      'photo',
+      evenementId: 'e7',
+      photo: '/tmp/p.jpg',
+    );
+    expect(r.$1, IssueSms.automatiqueEtMms);
+    expect(
+      canal.envoyes.first.$3,
+      contains('Photo : https://essai.example/navigations/nav1#evenement-e7'),
+    );
+    expect(canal.preremplis.single.$3, '/tmp/p.jpg');
+  });
+
+  test('invitation par SMS : automatique avec la permission, sinon préremplie (RG-PAR-11, D-146)', () async {
+    var r = await sms.invitation(
+      'i1',
+      '+33655555555',
+      'Marin vous invite : https://l',
+      contactId: 'c9',
+    );
+    expect(r.$1, IssueSms.prerempli);
+    expect(canal.preremplis.single.$1, ['+33655555555', '+33600000000']);
+    canal.autorisee = true;
+    r = await sms.invitation(
+      'i2',
+      '+33655555555',
+      'Marin vous invite : https://l',
+      contactId: 'c9',
+    );
+    expect(r.$1, IssueSms.automatique);
+    expect(canal.envoyes.map((s) => s.$2), ['+33655555555', '+33600000000']);
+  });
+
+  test('SMS ordinaire automatique en échec : 3 essais puis « Réessayer » (RG-SMS-07, D-146)', () {
+    fakeAsync((f) {
+      monter();
+      canal
+        ..autorisee = true
+        ..reponse = EtatSms.echec;
+      sms.ordinaire(navigation(), 'fin');
+      f.flushMicrotasks();
+      f.elapse(const Duration(minutes: 3));
+      f.flushMicrotasks();
+      // 2 destinataires, 3 essais chacun.
+      expect(canal.envoyes.length, 6);
+      expect(envois.echecsPosition.length, 2);
+    });
   });
 }

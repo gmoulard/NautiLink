@@ -444,4 +444,22 @@ void main() {
       expect(serveur.appels.last, startsWith('DELETE'));
     },
   );
+
+  testWidgets(
+    'autorisation SMS accordée : SMS de début et de position envoyés automatiquement (D-146)',
+    (tester) async {
+      sms.autorisee = true;
+      await naviguer(tester);
+      // SMS de début parti tout seul, sans application SMS.
+      expect(sms.preremplis, isEmpty);
+      expect(sms.envoyes.single.$3, contains('début de navigation'));
+      await toucher(tester, 'Envoyer information position');
+      expect(
+        find.text('SMS : envoyé automatiquement à 1 destinataire'),
+        findsOneWidget,
+      );
+      expect(sms.envoyes.length, 2);
+      expect(sms.preremplis, isEmpty);
+    },
+  );
 }
