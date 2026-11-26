@@ -1400,11 +1400,11 @@ class _SosReelScreenState extends State<SosReelScreen> {
       switch (position?.$2) {
         NaturePosition.actuelle => l.sosSmsPosition(
           coord,
-          fmtTime(p!.heureAcquisition),
+          heureEnvoyee(l, p!.heureAcquisition),
         ),
         NaturePosition.derniereConnue => l.sosReelSmsLastKnown(
           coord,
-          fmtDate(l, p!.heureAcquisition),
+          heureEnvoyee(l, p!.heureAcquisition, avecDate: true),
         ),
         _ => l.sosReelSmsNoPosition,
       },
@@ -1497,11 +1497,11 @@ class _SosReelScreenState extends State<SosReelScreen> {
       textePosition = switch (p.$2) {
         NaturePosition.actuelle => l.sosSmsPosition(
           coord,
-          fmtTime(q!.heureAcquisition),
+          heureEnvoyee(l, q!.heureAcquisition),
         ),
         NaturePosition.derniereConnue => l.sosReelSmsLastKnown(
           coord,
-          fmtDate(l, q!.heureAcquisition),
+          heureEnvoyee(l, q!.heureAcquisition, avecDate: true),
         ),
         NaturePosition.aucune => l.sosReelSmsNoPosition,
       };

@@ -1,6 +1,10 @@
 import 'package:fake_async/fake_async.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:nautilink/data.dart';
 import 'package:nautilink/depot/depot.dart';
+import 'package:nautilink/l10n/app_localizations.dart';
 import 'package:nautilink/reel/conduite.dart';
 import 'package:nautilink/reel/sms.dart';
 import 'package:nautilink/reel/sms_navigation.dart';
@@ -80,6 +84,49 @@ void main() {
     ]);
     // Hors navigation : tous les contacts SOS avec un numéro.
     expect(sms.contactsSos(null).length, 4);
+  });
+
+  test('heures envoyées : heure locale puis UTC (RG-PRM-07, D-146)', () async {
+    await initializeDateFormatting('fr');
+    await initializeDateFormatting('en');
+    final fr = lookupAppLocalizations(const Locale('fr'));
+    final en = lookupAppLocalizations(const Locale('en'));
+    const hiver = Duration(hours: 1);
+    final t = DateTime.utc(2026, 11, 26, 13, 32);
+    expect(heureEnvoyee(fr, t, decalage: hiver), '14:32 (13:32 UTC)');
+    expect(heureEnvoyee(en, t, decalage: hiver), '14:32 (13:32 UTC)');
+    expect(
+      heureEnvoyee(fr, t, decalage: hiver, avecDate: true),
+      '26 nov. 2026, 14:32 (13:32 UTC)',
+    );
+    // Jour local différent du jour UTC : date UTC dans la parenthèse.
+    expect(
+      heureEnvoyee(
+        fr,
+        DateTime.utc(2026, 11, 26, 23, 30),
+        decalage: hiver,
+        avecDate: true,
+      ),
+      '27 nov. 2026, 00:30 (26 nov. 2026, 23:30 UTC)',
+    );
+    expect(
+      heureEnvoyee(
+        fr,
+        DateTime.utc(2026, 7, 1, 2, 5),
+        decalage: const Duration(hours: -4),
+      ),
+      '22:05 (02:05 UTC)',
+    );
+    // Sans décalage donné : celui du téléphone.
+    final ici = DateTime(2026, 11, 26, 9, 15);
+    expect(
+      heureEnvoyee(fr, ici),
+      '09:15 (${fmtTime(ici.toUtc())} UTC)',
+    );
+    expect(
+      sms.texte(navigation(), 'position_manuelle', heure: ici),
+      startsWith('NautiLink Alizé — position à 09:15 (${fmtTime(ici.toUtc())} UTC).'),
+    );
   });
 
   test('texte : position ou « GPS NON DISPONIBLE », liens (RG-SMS-04, RG-SMS-06, RG-SMS-09)', () {

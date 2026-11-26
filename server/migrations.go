@@ -320,6 +320,10 @@ var migrations = []string{
 	// 7 — notifications push : position en retard notifiée une seule fois
 	// jusqu'à la position suivante (RG-IOS-06, D-84).
 	`ALTER TABLE navigations ADD COLUMN retard_push_le timestamptz;`,
+	// 9 — RG-PRM-07, D-146 : décalage horaire du téléphone, en minutes, pour
+	// l'heure locale des messages envoyés ; nul avant cette migration.
+	`ALTER TABLE navigations ADD COLUMN decalage_minutes integer;
+	ALTER TABLE alertes_sos ADD COLUMN decalage_minutes integer;`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

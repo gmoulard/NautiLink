@@ -178,6 +178,9 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-PRM-04** ([RG-PRM-04](../02-regles-metier.md#rg-prm-04)) — Étant donné un navigateur dont l'application est en anglais, quand il démarre une navigation, alors les SMS et les e-mails envoyés à ses suiveurs sont en anglais, quelle que soit la langue des suiveurs.
 - **TS-PRM-05** ([RG-PRM-05](../02-regles-metier.md#rg-prm-05)) — Étant donné chaque écran de l'application mobile et de la plateforme Web, quand on le contrôle selon WCAG 2.2 niveau AA, alors contrastes, zones à toucher, lecture par TalkBack ou VoiceOver et textes agrandis sont conformes.
 - **TS-PRM-06** ([RG-PRM-06](../02-regles-metier.md#rg-prm-06)) — Étant donné un compte qui vient d'être créé, quand il ouvre les paramètres généraux, alors les SMS sont activés, tous les types sont cochés, la photo en MMS ne l'est pas et la fréquence est de 30 minutes.
+- **TS-PRM-07** ([RG-PRM-07](../02-regles-metier.md#rg-prm-07)) — Étant donné un téléphone Android à l'heure de Paris en hiver (UTC+1), quand le navigateur envoie une position manuelle à 14:32, alors le SMS dit « position à 14:32 (13:32 UTC) » ; quand il déclenche un SOS, alors le premier SMS donne l'heure d'acquisition de la position sous la même forme.
+- **TS-PRM-08** ([RG-PRM-07](../02-regles-metier.md#rg-prm-07)) — Étant donné une navigation démarrée à 14:32 sur un téléphone à UTC+1, quand le serveur envoie l'e-mail de début, l'e-mail SOS et les notifications push, alors chaque heure apparaît en heure locale puis en UTC (« 2026-11-26 14:32 (13:32 UTC) » dans les e-mails, « 14:32 (13:32 UTC) » dans les notifications) ; à 00:30 le 27 à UTC+1, l'e-mail donne « 2026-11-27 00:30 (2026-11-26 23:30 UTC) ».
+- **TS-PRM-09** ([RG-PRM-07](../02-regles-metier.md#rg-prm-07)) — Étant donné une alerte SOS enregistrée avant la règle, sans décalage connu, quand l'e-mail SOS est relancé, alors ses heures sont en UTC seule.
 
 ## 13. Notifications (RG-NOT)
 

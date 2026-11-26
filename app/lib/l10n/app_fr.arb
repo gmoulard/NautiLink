@@ -459,5 +459,7 @@
   "pushEnd": "Fin de navigation",
   "pushPhoto": "Nouvelle photo",
   "pushLate": "Position en retard",
-  "pushSosAlways": "Les alertes SOS sont toujours notifiées."
+  "pushSosAlways": "Les alertes SOS sont toujours notifiées.",
+  "timeWithUtc": "{local} ({utc} UTC)",
+  "@timeWithUtc": {"description": "Heure envoyée aux suiveurs et contacts SOS (RG-PRM-07) : heure locale du téléphone, puis UTC.", "placeholders": {"local": {"type": "String"}, "utc": {"type": "String"}}}
 }

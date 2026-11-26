@@ -259,32 +259,35 @@ func (a *app) notifierMaintenant(ctx context.Context, navigateur string, navigat
 	return nil
 }
 
-// infosPush : nom du navigateur, du bateau et de la navigation, pour les textes.
-func (a *app) infosPush(ctx context.Context, navigation string) (navigateur, nomNav, bateau, nomNavigateur string, err error) {
-	err = a.b.pool.QueryRow(ctx, `SELECT n.navigateur_id, n.nom, b.nom, u.nom FROM navigations n
+// infosPush : nom du navigateur, du bateau et de la navigation, et décalage
+// horaire du téléphone (RG-PRM-07), pour les textes.
+func (a *app) infosPush(ctx context.Context, navigation string) (navigateur, nomNav, bateau, nomNavigateur string, decalage *int, err error) {
+	err = a.b.pool.QueryRow(ctx, `SELECT n.navigateur_id, n.nom, b.nom, u.nom, n.decalage_minutes FROM navigations n
 		JOIN bateaux b ON b.id = n.bateau_id JOIN utilisateurs u ON u.id = n.navigateur_id WHERE n.id = $1`, navigation).
-		Scan(&navigateur, &nomNav, &bateau, &nomNavigateur)
+		Scan(&navigateur, &nomNav, &bateau, &nomNavigateur, &decalage)
 	return
 }
 
-// notifierNavigation : début, fin ou nouvelle photo d'une navigation.
-func (a *app) notifierNavigation(ctx context.Context, navigation, typ string) {
+// notifierNavigation : début, fin ou nouvelle photo d'une navigation, avec
+// l'heure de l'événement (RG-PRM-07).
+func (a *app) notifierNavigation(ctx context.Context, navigation, typ string, heure time.Time) {
 	if !a.push.actif() {
 		return
 	}
-	navigateur, nomNav, bateau, qui, err := a.infosPush(ctx, navigation)
+	navigateur, nomNav, bateau, qui, decalage, err := a.infosPush(ctx, navigation)
 	if err != nil {
 		log.Printf("notification push %s : %v", typ, err)
 		return
 	}
+	h := heureEnvoyee(heure, decalage, false)
 	a.notifier(navigateur, &navigation, typ, func(l string) (string, string) {
 		switch typ {
 		case "debut":
-			return enLangue(l, qui+" a démarré une navigation", qui+" has started a trip"), nomNav + " · " + bateau
+			return enLangue(l, qui+" a démarré une navigation", qui+" has started a trip"), nomNav + " · " + bateau + " · " + h
 		case "fin":
-			return enLangue(l, qui+" a terminé sa navigation", qui+" has ended the trip"), nomNav + " · " + bateau
+			return enLangue(l, qui+" a terminé sa navigation", qui+" has ended the trip"), nomNav + " · " + bateau + " · " + h
 		case "photo":
-			return enLangue(l, "Nouvelle photo", "New photo"), nomNav + " · " + qui
+			return enLangue(l, "Nouvelle photo", "New photo"), nomNav + " · " + qui + " · " + h
 		}
 		return nomNav, bateau
 	})
@@ -297,14 +300,18 @@ func (a *app) notifierSos(ctx context.Context, alerte string) {
 	}
 	var navigateur, bateau, qui string
 	var navigation, probleme *string
-	if err := a.b.pool.QueryRow(ctx, `SELECT al.navigateur_id, al.navigation_id::text, b.nom, u.nom, al.probleme
+	var heure time.Time
+	var decalage *int
+	if err := a.b.pool.QueryRow(ctx, `SELECT al.navigateur_id, al.navigation_id::text, b.nom, u.nom, al.probleme,
+		al.heure_declenchement, al.decalage_minutes
 		FROM alertes_sos al JOIN bateaux b ON b.id = al.bateau_id JOIN utilisateurs u ON u.id = al.navigateur_id
-		WHERE al.id = $1`, alerte).Scan(&navigateur, &navigation, &bateau, &qui, &probleme); err != nil {
+		WHERE al.id = $1`, alerte).Scan(&navigateur, &navigation, &bateau, &qui, &probleme, &heure, &decalage); err != nil {
 		log.Printf("notification push SOS : %v", err)
 		return
 	}
 	a.notifier(navigateur, navigation, "sos", func(l string) (string, string) {
-		t := enLangue(l, qui+" a déclenché une alerte SOS.", qui+" has raised an SOS alert.")
+		h := heureEnvoyee(heure, decalage, false)
+		t := enLangue(l, qui+" a déclenché une alerte SOS à "+h+".", qui+" raised an SOS alert at "+h+".")
 		if probleme != nil && *probleme != "" {
 			t += " " + *probleme
 		}
@@ -319,7 +326,7 @@ func (a *app) positionsEnRetard(ctx context.Context) error {
 	if !a.push.actif() {
 		return nil
 	}
-	lignes, err := a.b.pool.Query(ctx, `SELECT n.id, extract(epoch FROM $1 - d.derniere)::bigint / 60 FROM navigations n
+	lignes, err := a.b.pool.Query(ctx, `SELECT n.id, extract(epoch FROM $1 - d.derniere)::bigint / 60, d.derniere FROM navigations n
 		CROSS JOIN LATERAL (SELECT coalesce(max(e.recu_le), n.creee_le) AS derniere FROM evenements e
 			WHERE e.navigation_id = n.id AND e.latitude IS NOT NULL) d
 		WHERE n.fin_enregistree IS NULL AND n.supprimee_le IS NULL
@@ -329,12 +336,13 @@ func (a *app) positionsEnRetard(ctx context.Context) error {
 		return err
 	}
 	type retard struct {
-		id      string
-		minutes int64
+		id       string
+		minutes  int64
+		derniere time.Time
 	}
 	retards, err := pgx.CollectRows(lignes, func(l pgx.CollectableRow) (retard, error) {
 		var r retard
-		err := l.Scan(&r.id, &r.minutes)
+		err := l.Scan(&r.id, &r.minutes, &r.derniere)
 		return r, err
 	})
 	if err != nil {
@@ -344,15 +352,16 @@ func (a *app) positionsEnRetard(ctx context.Context) error {
 		if _, err := a.b.pool.Exec(ctx, "UPDATE navigations SET retard_push_le = $2 WHERE id = $1", r.id, a.maintenant()); err != nil {
 			return err
 		}
-		navigateur, nomNav, bateau, _, err := a.infosPush(ctx, r.id)
+		navigateur, nomNav, bateau, _, decalage, err := a.infosPush(ctx, r.id)
 		if err != nil {
 			return err
 		}
 		id := r.id
 		duree := fmt.Sprintf("%d h %02d", r.minutes/60, r.minutes%60)
+		h := heureEnvoyee(r.derniere, decalage, false)
 		a.notifier(navigateur, &id, "position_en_retard", func(l string) (string, string) {
 			return enLangue(l, "Position en retard — ", "Position overdue — ") + bateau,
-				nomNav + enLangue(l, " : aucune position reçue depuis ", ": no position received for ") + duree
+				nomNav + enLangue(l, " : aucune position reçue depuis "+h+", soit ", ": no position received since "+h+", that is ") + duree
 		})
 	}
 	return nil

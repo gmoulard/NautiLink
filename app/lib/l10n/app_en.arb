@@ -405,5 +405,6 @@
   "pushEnd": "Voyage end",
   "pushPhoto": "New photo",
   "pushLate": "Overdue position",
-  "pushSosAlways": "SOS alerts are always notified."
+  "pushSosAlways": "SOS alerts are always notified.",
+  "timeWithUtc": "{local} ({utc} UTC)"
 }

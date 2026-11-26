@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import 'conduite.dart';
@@ -61,9 +63,25 @@ String coordonnees(PositionGps p) =>
 String lienCarte(PositionGps p) =>
     'https://maps.google.com/?q=${p.latitude.toStringAsFixed(5)},${p.longitude.toStringAsFixed(5)}';
 
-String _hhmm(DateTime t) {
-  final l = t.toLocal();
-  return '${l.hour.toString().padLeft(2, '0')}:${l.minute.toString().padLeft(2, '0')}';
+/// Heure d'un SMS ou d'un MMS (RG-PRM-07, D-146) : heure locale du
+/// téléphone, puis UTC entre parenthèses, « 14:32 (13:32 UTC) » ; avec
+/// [avecDate], la date locale en tête et la date UTC dans la parenthèse quand
+/// elle diffère. [decalage] : celui du téléphone, sauf dans les essais.
+String heureEnvoyee(
+  AppLocalizations l,
+  DateTime t, {
+  bool avecDate = false,
+  Duration? decalage,
+}) {
+  final u = t.toUtc();
+  final local = u.add(decalage ?? t.toLocal().timeZoneOffset);
+  String jour(DateTime x) => DateFormat.yMMMd(l.localeName).format(x);
+  final memeJour =
+      local.year == u.year && local.month == u.month && local.day == u.day;
+  return l.timeWithUtc(
+    avecDate ? l.dateTime(jour(local), fmtTime(local)) : fmtTime(local),
+    avecDate && !memeJour ? l.dateTime(jour(u), fmtTime(u)) : fmtTime(u),
+  );
 }
 
 /// SMS d'une navigation, sur Android (RG-SMS-01 à RG-SMS-09, RG-SOS-05 à
@@ -209,7 +227,7 @@ class SmsNavigation {
       'fin',
     }.contains(type);
     return [
-      l.smsHeader(n.bateauNom, kind, _hhmm(heure ?? DateTime.now())),
+      l.smsHeader(n.bateauNom, kind, heureEnvoyee(l, heure ?? DateTime.now())),
       if (type == 'debut' && (n.destination?.isNotEmpty ?? false))
         l.smsDestination(n.destination!),
       if (avecPosition)

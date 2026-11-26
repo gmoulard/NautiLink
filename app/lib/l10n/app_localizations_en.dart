@@ -1401,4 +1401,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pushSosAlways => 'SOS alerts are always notified.';
+
+  @override
+  String timeWithUtc(String local, String utc) {
+    return '$local ($utc UTC)';
+  }
 }

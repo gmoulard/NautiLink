@@ -173,17 +173,18 @@ type navLigne struct {
 	meteoDepart, meteoArrivee             []byte
 	epuise, cloture, supprimee            *time.Time
 	empreinte                             []byte
+	decalage                              *int
 }
 
 const colonnesNav = `id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes, parametres,
 	personnes_a_bord, personnes_alertees::text[], debut_enregistre, fin_enregistree, debut, fin, meteo_depart, meteo_arrivee,
-	epuise_le, cloture_automatique_le, supprimee_le, empreinte, version`
+	epuise_le, cloture_automatique_le, supprimee_le, empreinte, version, decalage_minutes`
 
 func lireNav(l pgx.Row) (navLigne, error) {
 	var n navLigne
 	err := l.Scan(&n.id, &n.navigateur, &n.bateau, &n.appareil, &n.nom, &n.destination, &n.frequence, &n.parametres,
 		&n.personnes, &n.alertees, &n.debutEnr, &n.finEnr, &n.debut, &n.fin, &n.meteoDepart, &n.meteoArrivee,
-		&n.epuise, &n.cloture, &n.supprimee, &n.empreinte, &n.version)
+		&n.epuise, &n.cloture, &n.supprimee, &n.empreinte, &n.version, &n.decalage)
 	return n, err
 }
 
@@ -554,10 +555,10 @@ func (a *app) demarrer(ctx context.Context, utilisateur, id string, d demarrageJ
 	}
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `INSERT INTO navigations (id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes,
-		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12)`,
+		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte, decalage_minutes)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13)`,
 		id, utilisateur, d.BateauID, d.AppareilID, nom, d.Destination, d.FrequenceMinutes, jsonOuNul(d.Parametres),
-		d.PersonnesABord, d.PersonnesAlertees, d.Debut.HeureAcquisition, emp)
+		d.PersonnesABord, d.PersonnesAlertees, d.Debut.HeureAcquisition, emp, decalageHoraire(d.Debut.HeureAcquisition))
 	if estDoublon(err) {
 		return 0, navigationJSON{}, &erreurAPI{http.StatusConflict, "navigation_en_cours",
 			"Une navigation est déjà en cours sur ce bateau ou sur ce téléphone.", 0}
@@ -670,7 +671,7 @@ func (a *app) terminer(ctx context.Context, utilisateur, id string, e evenementJ
 	if err := tx.Commit(ctx); err != nil {
 		return navigationJSON{}, err
 	}
-	a.notifierNavigation(ctx, id, "fin") // RG-IOS-06
+	a.notifierNavigation(ctx, id, "fin", e.HeureAcquisition) // RG-IOS-06
 	if n, err = a.navigation(ctx, a.b.pool, id); err != nil {
 		return navigationJSON{}, err
 	}
@@ -790,7 +791,7 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 		return 0, e, err
 	}
 	if estPhoto(e) {
-		a.notifierNavigation(ctx, navID, "photo") // RG-IOS-06
+		a.notifierNavigation(ctx, navID, "photo", e.HeureAcquisition) // RG-IOS-06
 	}
 	r, err := lireEvenement(a.b.pool.QueryRow(ctx, "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", e.ID), n)
 	return http.StatusCreated, r, err
@@ -1301,5 +1302,5 @@ func (a *app) apresDemarrage(ctx context.Context, n navLigne) {
 	if err := a.emailsDebut(ctx, n); err != nil {
 		log.Printf("navigation %s : e-mails de début : %v", n.id, err)
 	}
-	a.notifierNavigation(ctx, n.id, "debut")
+	a.notifierNavigation(ctx, n.id, "debut", n.debutEnr)
 }

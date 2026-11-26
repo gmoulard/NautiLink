@@ -1717,7 +1717,9 @@ components:
           type: array
           description: 'Contacts cochés à l''écran de démarrage ; les décochés ne reçoivent rien de cette navigation, SOS compris (RG-NAV-25).'
           items: {type: string, format: uuid}
-        debut: {$ref: '#/components/schemas/Evenement'}
+        debut:
+          allOf: [{$ref: '#/components/schemas/Evenement'}]
+          description: 'Le décalage horaire de debut.heureAcquisition (RFC 3339, ex. 2026-11-26T14:32:00+01:00) est celui du téléphone ; le serveur le garde pour donner l''heure locale de toute la navigation dans les messages envoyés (RG-PRM-07).'
 
     NavigationModifiable:
       type: object
@@ -1811,7 +1813,10 @@ components:
         bateauId: {type: string, format: uuid}
         navigationId: {type: [string, 'null'], format: uuid, description: Absent pour un SOS depuis l'accueil (RG-SOS-15).}
         appareilId: {type: string, format: uuid}
-        heureDeclenchement: {type: string, format: date-time}
+        heureDeclenchement:
+          type: string
+          format: date-time
+          description: 'Avec le décalage horaire du téléphone (RFC 3339), gardé par le serveur pour l''heure locale de l''e-mail SOS et de la notification push (RG-PRM-07).'
         position: {$ref: '#/components/schemas/Position'}
         naturePosition:
           type: string

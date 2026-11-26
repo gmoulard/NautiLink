@@ -2456,6 +2456,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Les alertes SOS sont toujours notifiées.'**
   String get pushSosAlways;
+
+  /// Heure envoyée aux suiveurs et contacts SOS (RG-PRM-07) : heure locale du téléphone, puis UTC.
+  ///
+  /// In fr, this message translates to:
+  /// **'{local} ({utc} UTC)'**
+  String timeWithUtc(String local, String utc);
 }
 
 class _AppLocalizationsDelegate
