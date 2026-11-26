@@ -47,11 +47,28 @@ android {
         versionName = flutter.versionName
     }
 
+    // Clé de signature fixe de la production (D-145) : fichier et mots de
+    // passe donnés par le workflow « Site GitHub Pages » à partir des secrets
+    // ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS et
+    // ANDROID_KEY_PASSWORD. Sans eux (poste de développement, démonstration),
+    // clé de débogage comme avant.
+    val cleProduction = System.getenv("NAUTILINK_KEYSTORE")?.let { file(it) }?.takeIf { it.exists() }
+    signingConfigs {
+        if (cleProduction != null) {
+            create("production") {
+                storeFile = cleProduction
+                storePassword = System.getenv("NAUTILINK_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("NAUTILINK_KEY_ALIAS")
+                keyPassword = System.getenv("NAUTILINK_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig =
+                if (cleProduction != null && modeReel) signingConfigs.getByName("production")
+                else signingConfigs.getByName("debug")
         }
     }
 }

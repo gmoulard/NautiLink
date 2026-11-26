@@ -73,6 +73,10 @@ Sur le Web, un premier écran propose de jouer le navigateur (dans un cadre de t
 
 Textes des écrans dans `lib/l10n/` (TODO-9.2, [Q-27](../docs/06-questions-ouvertes.md#q-27)) : `app_fr.arb`, langue de référence, dont les libellés sont ceux que cite la spécification (à modifier ensemble) ; `app_en.arb`, traduction d'essai non relue. `flutter pub get` régénère `app_localizations*.dart` (configuration : `l10n.yaml`). Le français est la langue par défaut ; essai en anglais : `flutter run --dart-define=NAUTILINK_LANG=en`. Restent en français dans le code : le contenu des SMS et du journal, et les textes de `lib/data.dart` (types d'événements, fréquences, dates).
 
+## Signature de l'APK de production
+
+L'APK de production (`nautilink.apk`) est signé par le workflow « Site GitHub Pages » avec une clé fixe, pour que chaque version s'installe par-dessus la précédente (D-145). La clé se crée une fois (`keytool -genkeypair -keystore nautilink-production.jks -alias nautilink -keyalg RSA -keysize 4096 -validity 10000`), se garde hors du dépôt avec ses mots de passe, et se donne au dépôt GitHub par quatre secrets (Settings → Secrets and variables → Actions) : `ANDROID_KEYSTORE_BASE64` (le fichier en base64), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. Sans ces secrets, et sur un poste de développement, la clé de débogage sert (`android/app/build.gradle.kts`, variables `NAUTILINK_KEYSTORE…`). La démonstration V0 reste signée avec la clé de débogage.
+
 ## Commandes
 
 Flutter 3.47.9 (version fixée aussi dans `.github/workflows/pages.yml`).
