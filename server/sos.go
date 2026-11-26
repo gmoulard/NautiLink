@@ -183,6 +183,7 @@ func (a *app) envoyerAlerte(ctx context.Context, r *http.Request, utilisateur, i
 		return 0, al, err
 	}
 	a.lancerEmailsSos(a.adressePublique(r), id)
+	a.notifierSos(ctx, id) // RG-IOS-06, RG-AND-08
 	res, err := a.alerte(ctx, id)
 	return http.StatusCreated, res, err
 }

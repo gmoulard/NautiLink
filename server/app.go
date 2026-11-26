@@ -31,6 +31,11 @@ type app struct {
 	// maintenant : horloge du serveur (quota, clôture automatique, corbeille) ;
 	// remplacée dans les essais.
 	maintenant func() time.Time
+
+	// Achats intégrés et notifications push (achats.go, push.go) : services
+	// externes, adresses remplacées dans les essais.
+	achats *achatsIntegres
+	push   *envoiPush
 }
 
 func nouvelleApp(cfg config, b *base) *app {
@@ -47,6 +52,8 @@ func nouvelleApp(cfg config, b *base) *app {
 		maintenant:        time.Now,
 	}
 	a.envoyer = func(dest, sujet, texte string) error { return envoyerMail(cfg, dest, sujet, texte) }
+	a.achats = nouveauxAchats(cfg)
+	a.push = nouvelEnvoiPush(cfg)
 	return a
 }
 

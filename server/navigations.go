@@ -670,6 +670,7 @@ func (a *app) terminer(ctx context.Context, utilisateur, id string, e evenementJ
 	if err := tx.Commit(ctx); err != nil {
 		return navigationJSON{}, err
 	}
+	a.notifierNavigation(ctx, id, "fin") // RG-IOS-06
 	if n, err = a.navigation(ctx, a.b.pool, id); err != nil {
 		return navigationJSON{}, err
 	}
@@ -787,6 +788,9 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return 0, e, err
+	}
+	if estPhoto(e) {
+		a.notifierNavigation(ctx, navID, "photo") // RG-IOS-06
 	}
 	r, err := lireEvenement(a.b.pool.QueryRow(ctx, "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", e.ID), n)
 	return http.StatusCreated, r, err
@@ -1291,10 +1295,11 @@ func lireTout(r *http.Request, taille int) ([]byte, error) {
 }
 
 // apresDemarrage : traitements qui suivent le démarrage : e-mail de début
-// (RG-NOT-02, sos.go) ; ni la météo (Q-39) ni les notifications push (pas
-// d'identifiants APNs ni FCM) ne sont branchées.
+// (RG-NOT-02, sos.go) et notification push (RG-IOS-06, push.go) ; la météo
+// n'est pas branchée (Q-39).
 func (a *app) apresDemarrage(ctx context.Context, n navLigne) {
 	if err := a.emailsDebut(ctx, n); err != nil {
 		log.Printf("navigation %s : e-mails de début : %v", n.id, err)
 	}
+	a.notifierNavigation(ctx, n.id, "debut")
 }

@@ -317,6 +317,9 @@ var migrations = []string{
 	UPDATE contacts c SET creee_le = least(c.modifie_le,
 		(SELECT min(n.creee_le) FROM navigations n WHERE n.navigateur_id = c.navigateur_id));
 	ALTER TABLE contacts ALTER COLUMN creee_le SET DEFAULT now(), ALTER COLUMN creee_le SET NOT NULL;`,
+	// 7 — notifications push : position en retard notifiée une seule fois
+	// jusqu'à la position suivante (RG-IOS-06, D-84).
+	`ALTER TABLE navigations ADD COLUMN retard_push_le timestamptz;`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

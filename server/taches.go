@@ -41,7 +41,7 @@ func (a *app) tachesDeFond(ctx context.Context) {
 
 // tachesMinute : tâches jouées chaque minute, dans cet ordre.
 func (a *app) tachesMinute() []func(context.Context) error {
-	return []func(context.Context) error{a.cloturesAutomatiques, a.purgerLaCorbeille, a.relancerEmailsSos}
+	return []func(context.Context) error{a.cloturesAutomatiques, a.purgerLaCorbeille, a.relancerEmailsSos, a.positionsEnRetard}
 }
 
 // ------------------------------------------------------------------ lieux

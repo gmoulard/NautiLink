@@ -59,6 +59,15 @@ GARDER=1 ./essai-test.sh # garde l'environnement lancé
 | `NAUTILINK_ADMINS` | Adresses e-mail des administrateurs, séparées par des virgules (RG-ADM-07) ; le compte doit exister et son adresse être confirmée ; vide : espace administrateur fermé | vide |
 | `NAUTILINK_APPLE_CLIENTS` | Identifiants clients Apple acceptés (identifiant de l'application, Services ID), séparés par des virgules ; vide : connexion Apple désactivée | vide |
 | `NAUTILINK_NOMINATIM` | Service de géocodage inverse pour les noms de lieux (D-96), une requête par seconde au plus, avec cache. Sur le Pi : `https://nominatim.openstreetmap.org` ; vide : coordonnées à la place des noms | vide |
+| `NAUTILINK_PRODUIT` | Identifiant de l'achat unique de 10 ans, le même sur Google Play et l'App Store (RG-ECO-06) | `nautilink_abonnement_10_ans` |
+| `NAUTILINK_GOOGLE_PLAY_COMPTE` | Fichier JSON du compte de service Google qui a accès à la Google Play Developer API ; vide : achat Google Play refusé (`achat_non_configure`) | vide |
+| `NAUTILINK_GOOGLE_PLAY_PAQUET` | Nom du paquet Android | `fr.nautilink.nautilink` |
+| `NAUTILINK_APP_STORE_CLE`, `NAUTILINK_APP_STORE_CLE_ID`, `NAUTILINK_APP_STORE_EMETTEUR` | Clé `.p8`, identifiant de la clé et « Issuer ID » de l'App Store Server API ; vides : achat App Store refusé | vides |
+| `NAUTILINK_APPLE_BUNDLE` | Identifiant de l'application iPhone (achats et notifications) | `fr.nautilink.nautilink` |
+| `NAUTILINK_APP_STORE_SANDBOX` | `1` : achats d'essai (environnement « sandbox ») | vide |
+| `NAUTILINK_FCM_COMPTE` | Fichier JSON du compte de service Firebase (notifications push Android, RG-AND-08) ; vide : pas de push Android | vide |
+| `NAUTILINK_APNS_CLE`, `NAUTILINK_APNS_CLE_ID`, `NAUTILINK_APNS_EQUIPE` | Clé `.p8` d'APNs, identifiant de la clé, « Team ID » (notifications push iPhone, RG-IOS-06) ; vides : pas de push iPhone | vides |
+| `NAUTILINK_APNS_SANDBOX` | `1` : applications d'essai (APNs « sandbox ») | vide |
 
 ## Base de données
 

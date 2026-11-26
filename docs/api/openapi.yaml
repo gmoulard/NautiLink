@@ -1194,7 +1194,9 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Quota'}
-        '402': {description: Paiement non confirmé.}
+        '402': {description: 'Paiement non confirmé (`paiement_non_confirme`).'}
+        '409': {description: 'Achat déjà reconnu pour un autre compte (`achat_deja_utilise`).'}
+        '503': {description: 'Achat pas encore ouvert sur ce serveur : identifiants absents (`achat_non_configure`).'}
   /v1/abonnement/app-store:
     post:
       tags: [Quota et abonnement]
@@ -1215,7 +1217,9 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Quota'}
-        '402': {description: Paiement non confirmé.}
+        '402': {description: 'Paiement non confirmé (`paiement_non_confirme`).'}
+        '409': {description: 'Achat déjà reconnu pour un autre compte (`achat_deja_utilise`).'}
+        '503': {description: 'Achat pas encore ouvert sur ce serveur : identifiants absents (`achat_non_configure`).'}
   /v1/rappels/stripe:
     post:
       tags: [Quota et abonnement]
