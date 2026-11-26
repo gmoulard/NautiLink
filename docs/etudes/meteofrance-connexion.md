@@ -72,6 +72,20 @@ Proposition (non validée) pour les points 4 à 6 : comportement en cas d'échec
 - [ ] Type de code choisi, nom de la variable validé, code posé sur pi-appliance.
 - [ ] Ce document corrigé d'après ce qui a été constaté.
 
+## 9. Souscription Nautilink
+
+API Package Modèles de vague et surcote. : 
+https://public-api.meteofrance.fr/public/wavesmodels/1.0
+
+API Modèle AROME
+https://public-api.meteofrance.fr/public/arome/1.0
+
+API Modèle ARPEGE
+https://public-api.meteofrance.fr/public/arpege/1.0
+
+API Environnement
+https://public-api.meteofrance.fr/previnum/DPPaquetENVIRONNEMENT/v1
+
 ## Sources
 
 - [FAQ du portail API de Météo-France](https://portail-api.meteofrance.fr/web/faq)
