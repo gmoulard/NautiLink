@@ -82,25 +82,27 @@ L'accueil affiche aussi le bouton rouge **Envoyer un SOS** (RG-SOS-15).
 
 L'accueil donne aussi accès aux paramètres généraux, aux contacts (suiveurs et contacts SOS), au quota et à l'abonnement, à l'historique des alertes SOS et à l'assistance.
 
-L'accueil donne enfin accès au mémo sécurité en mer du site de présentation, par « Mémo sécurité en mer » (intégré, lisible hors connexion : RG-SOS-22).
+L'accueil donne enfin accès au mémo sécurité en mer du site de présentation, par « Mémo sécurité en mer » (intégré, lisible hors connexion : RG-SOS-22), aussi présent dans le pied de page de chaque écran.
 
 ### 5.3 Écran de démarrage
 
 - choix du bateau, s'il y en a plusieurs (RG-NAV-02) ;
 - destination facultative, en texte ou sur une carte (RG-NAV-04) ;
 - nombre de personnes à bord (RG-NAV-27) ;
-- personnes alertées, toutes cochées, et « Ajouter une personne » (RG-NAV-25, RG-NAV-26) ;
+- chef de bord, prérempli avec le nom du navigateur (RG-NAV-35, RG-NAV-36) ;
+- personnes alertées, avec leurs cases « E-mail » et « SMS » cochées, et « Ajouter une personne » (RG-NAV-25, RG-NAV-26) ;
 - fréquence préremplie : de 15 minutes à 10 jours (RG-NAV-05) ;
 - bouton **Paramètres** pour adapter les réglages à cette navigation (RG-NAV-06) ;
-- bouton **Envoi message – Début de navigation** (RG-NAV-08).
+- bouton **Début de navigation** (RG-NAV-08).
 
 Si le quota est épuisé sans abonnement, le démarrage est refusé avec l'explication et les choix possibles (RG-ECO-04).
 
 ### 5.4 Écran de navigation en cours
 
-- deux chronomètres : depuis le début, depuis le dernier envoi (RG-NAV-10) ;
-- **Envoyer information position** : position manuelle, SMS si prévu, envoi au serveur, résultat affiché (RG-COM-03, RG-SMS-04) ;
-- **NOTE** : note écrite ;
+- deux chronomètres : « Depuis le début », « Depuis le dernier envoi position » (RG-NAV-10) ;
+- lien « Météo marine » vers la prévision marine de Météo-France (RG-NAV-37) ;
+- **Envoyer position** : position manuelle, SMS si prévu, envoi au serveur, résultat affiché (RG-COM-03, RG-SMS-04) ;
+- **NOTE** : note écrite, ou « Incident - avarie » (RG-JRN-11) ;
 - **Photo** : prise ou sélection d'une photo (RG-SMS-05) ;
 - **Vocal** : enregistrement de la voix, sans transcription (RG-JRN-04, RG-SMS-06) ;
 - **Envoyer un SOS** : bouton rouge, confirmation (RG-SOS-01 à RG-SOS-14) ;
@@ -158,11 +160,11 @@ Pendant une navigation en cours, la page se met à jour à mesure que les positi
 
 ### 6.4 Côté suiveur
 
-Le suiveur voit sur son tableau de bord les navigations auxquelles il a accès et les consulte en lecture seule ; il voit aussi la fiche du bateau, les autres suiveurs et les contacts SOS, et peut exporter en PDF (RG-PAR-07, RG-PAR-08). Le suivi est gratuit (RG-ECO-08).
+Le suiveur voit sur son tableau de bord les navigations auxquelles il a accès et les consulte en lecture seule ; il voit aussi la fiche du bateau, les autres suiveurs de la navigation et les contacts SOS, et peut exporter en PDF (RG-PAR-07, RG-PAR-08). Le suivi est gratuit (RG-ECO-08).
 
 ### 6.5 Fonctions de l'application mobile
 
-L'Application web a aussi toutes les fonctions de l'application mobile, conduite d'une navigation et SOS compris, par Internet seulement, sans SMS (RG-WEB-01, RG-WEB-02, [D-150](07-decisions.md#d-150)) ; un administrateur y trouve le menu « Administration » (RG-WEB-03). Conduite depuis un navigateur Internet : [Q-99](06-questions-ouvertes.md#q-99).
+L'Application web a aussi toutes les fonctions de l'application mobile, conduite d'une navigation et SOS compris, par Internet seulement, sans SMS (RG-WEB-01, RG-WEB-02, [D-150](07-decisions.md#d-150)) ; un administrateur y trouve le menu « Administration » (RG-WEB-03). Conduite depuis un navigateur Internet : géolocalisation du navigateur Internet, positions automatiques tant que la page reste ouverte, démarrage sans téléphone repris par le téléphone associé, fuseau du navigateur Internet (RG-WEB-05 à RG-WEB-07).
 
 ## 7. Espace administrateur
 

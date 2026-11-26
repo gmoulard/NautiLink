@@ -213,8 +213,25 @@ jobs:
       - name: APK Android (vraie application et démonstration)
         if: needs.choix.outputs.android == 'true'
         working-directory: app
+        env:
+          # Clé de signature fixe de la production (D-145) : les mises à jour
+          # s'installent par-dessus la version précédente. Sans ces secrets,
+          # clé de débogage (une désinstallation à chaque version).
+          CLE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          NAUTILINK_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          NAUTILINK_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          NAUTILINK_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          if [ -n "$CLE_BASE64" ]; then
+            echo "$CLE_BASE64" | base64 -d > "$RUNNER_TEMP/nautilink-production.jks"
+            export NAUTILINK_KEYSTORE="$RUNNER_TEMP/nautilink-production.jks"
+            echo "APK de production signé avec la clé fixe"
+          else
+            echo "::warning::Secrets de signature absents : APK de production signé avec une clé de débogage"
+          fi
           flutter build apk --release $DEFINES --dart-define=NAUTILINK_MODE=reel
+          rm -f "$RUNNER_TEMP/nautilink-production.jks"
+          unset NAUTILINK_KEYSTORE
           cp build/app/outputs/flutter-apk/app-release.apk "$APK_PROD"
           # Démonstration V0 depuis son commit figé (D-144).
           (cd ../demo-v0/app && flutter pub get \

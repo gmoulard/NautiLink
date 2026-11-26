@@ -29,18 +29,18 @@ Le parcours est décrit pour Android. Sur iPhone, il est identique sans aucun SM
 2. Si le quota est épuisé sans abonnement : message, proposition d'abonnement ou heure de disponibilité ; fin du parcours (RG-ECO-04).
 3. Choix du bateau, si le téléphone en sert plusieurs (RG-NAV-02).
 4. Destination facultative, en texte ou sur une carte (RG-NAV-04).
-5. Fréquence préremplie, modifiable (RG-NAV-05).
+5. Fréquence préremplie, modifiable (RG-NAV-05) ; chef de bord prérempli (RG-NAV-35) ; personnes alertées avec leurs cases « E-mail » et « SMS » (RG-NAV-25).
 6. Facultatif : « Paramètres » pour adapter les réglages à cette navigation (RG-NAV-06).
-7. « Envoi message – Début de navigation » (RG-NAV-08) : position, envoi au serveur, SMS de début si prévu, positions automatiques activées.
+7. « Début de navigation » (RG-NAV-08) : position, envoi au serveur, SMS de début si prévu, positions automatiques activées.
 8. L'écran de navigation en cours s'affiche.
 
 ### 3.2 Pendant la navigation
 
 L'écran affiche le temps depuis le début et le temps depuis le dernier envoi (RG-NAV-10).
 
-**Envoyer une position** : « Envoyer information position » → position acquise → SMS aux destinataires si prévu → envoi au serveur → résultat affiché, par exemple « Position envoyée » (RG-COM-03).
+**Envoyer une position** : « Envoyer position » → position acquise → SMS aux destinataires si prévu → envoi au serveur → résultat affiché, par exemple « Position envoyée » (RG-COM-03).
 
-**Note écrite** : « NOTE » → saisie → validation → journal, serveur, SMS si prévu.
+**Note écrite** : « NOTE » → saisie (ou choix « Incident - avarie », RG-JRN-11) → validation → journal, serveur, SMS si prévu.
 
 **Photo** : « Photo » → prise ou sélection → validation → serveur et journal ; MMS si prévu (RG-SMS-05).
 

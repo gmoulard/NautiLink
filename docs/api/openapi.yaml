@@ -755,7 +755,7 @@ paths:
       - {$ref: '#/components/parameters/NavigationId'}
     put:
       tags: [Navigations]
-      summary: 'Démarrer une navigation (« Envoi message – Début de navigation »).'
+      summary: 'Démarrer une navigation (« Début de navigation »).'
       description: |
         Envoyé par l'application mobile à la confirmation du démarrage, avec l'identifiant tiré par le
         téléphone et l'événement de début (heure et position d'acquisition). Rejouable : le même
@@ -803,9 +803,9 @@ paths:
         '404': {$ref: '#/components/responses/Introuvable'}
     patch:
       tags: [Navigations]
-      summary: 'Modifier nom, destination, bateau (parmi les siens) et heures (navigateur seulement).'
-      description: 'Un changement d''heures ne change pas le quota ; les événements hors de la nouvelle plage sont gardés et marqués `masque`. Seuls les champs envoyés sont modifiés ; la dernière modification reçue l''emporte, champ par champ (RG-COM-04).'
-      x-regles: [RG-NAV-17, RG-NAV-22, RG-ECO-02, RG-PAR-07, RG-COM-04]
+      summary: 'Modifier nom, chef de bord, destination, bateau (parmi les siens) et heures (navigateur seulement).'
+      description: 'Nom et chef de bord se modifient à tout moment, le reste une fois la navigation terminée (`navigation_en_cours`). Un changement d''heures ne change pas le quota ; les événements hors de la nouvelle plage sont gardés et marqués `masque`. Seuls les champs envoyés sont modifiés ; la dernière modification reçue l''emporte, champ par champ (RG-COM-04).'
+      x-regles: [RG-NAV-17, RG-NAV-22, RG-NAV-36, RG-ECO-02, RG-PAR-07, RG-COM-04]
       requestBody:
         required: true
         content:
@@ -1723,6 +1723,10 @@ components:
           type: array
           description: 'Contacts cochés à l''écran de démarrage ; les décochés ne reçoivent rien de cette navigation, SOS compris (RG-NAV-25).'
           items: {type: string, format: uuid}
+        chefDeBord:
+          type: [string, 'null']
+          maxLength: 200
+          description: 'Chef de bord, texte libre (RG-NAV-35, RG-NAV-36) ; absent, vide ou null : le navigateur.'
         debut:
           allOf: [{$ref: '#/components/schemas/Evenement'}]
           description: 'Le décalage horaire de debut.heureAcquisition (RFC 3339, ex. 2026-11-26T14:32:00+01:00) est celui du téléphone ; le serveur le garde pour donner l''heure locale de toute la navigation dans les messages envoyés (RG-PRM-07).'
@@ -1731,6 +1735,7 @@ components:
       type: object
       properties:
         nom: {type: string}
+        chefDeBord: {type: [string, 'null'], maxLength: 200, description: 'Vide ou null : le navigateur (RG-NAV-36).'}
         destination:
           type: [object, 'null']
           properties:
@@ -1764,6 +1769,7 @@ components:
           properties:
             version: {type: integer}
             navigateur: {$ref: '#/components/schemas/Personne'}
+            chefDeBord: {type: string, description: 'Chef de bord saisi, sinon le nom du navigateur (RG-NAV-36).'}
             destination:
               type: [object, 'null']
               properties:

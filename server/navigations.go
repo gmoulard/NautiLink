@@ -183,17 +183,18 @@ type navLigne struct {
 	epuise, cloture, supprimee            *time.Time
 	empreinte                             []byte
 	decalage                              *int
+	chef                                  *string // chef de bord saisi ; nul : le navigateur (RG-NAV-36)
 }
 
 const colonnesNav = `id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes, parametres,
 	personnes_a_bord, personnes_alertees::text[], debut_enregistre, fin_enregistree, debut, fin, meteo_depart, meteo_arrivee,
-	epuise_le, cloture_automatique_le, supprimee_le, empreinte, version, decalage_minutes`
+	epuise_le, cloture_automatique_le, supprimee_le, empreinte, version, decalage_minutes, chef_de_bord`
 
 func lireNav(l pgx.Row) (navLigne, error) {
 	var n navLigne
 	err := l.Scan(&n.id, &n.navigateur, &n.bateau, &n.appareil, &n.nom, &n.destination, &n.frequence, &n.parametres,
 		&n.personnes, &n.alertees, &n.debutEnr, &n.finEnr, &n.debut, &n.fin, &n.meteoDepart, &n.meteoArrivee,
-		&n.epuise, &n.cloture, &n.supprimee, &n.empreinte, &n.version, &n.decalage)
+		&n.epuise, &n.cloture, &n.supprimee, &n.empreinte, &n.version, &n.decalage, &n.chef)
 	return n, err
 }
 
@@ -301,6 +302,7 @@ type navigationJSON struct {
 	SupprimeeDefinitivementLe *time.Time       `json:"supprimeeDefinitivementLe,omitempty"`
 	Version                   int              `json:"version,omitempty"`
 	Navigateur                *personneJSON    `json:"navigateur,omitempty"`
+	ChefDeBord                string           `json:"chefDeBord,omitempty"`
 	Destination               *destinationJSON `json:"destination,omitempty"`
 	DebutEnregistre           *time.Time       `json:"debutEnregistre,omitempty"`
 	FinEnregistree            *time.Time       `json:"finEnregistree,omitempty"`
@@ -418,6 +420,7 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 		return r, err
 	}
 	r.Navigateur = &p
+	r.ChefDeBord = chefDeBord(n, p.Nom)
 	b, err := lireBateau(a.b.pool.QueryRow(ctx, "SELECT "+colonnesBateau+" FROM bateaux WHERE id = $1", n.bateau))
 	if err != nil {
 		return r, err
@@ -437,6 +440,29 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 		return p, err
 	})
 	return r, err
+}
+
+// chefDeBord : chef de bord saisi, sinon le nom du navigateur (RG-NAV-36).
+func chefDeBord(n navLigne, navigateur string) string {
+	if n.chef != nil {
+		return *n.chef
+	}
+	return navigateur
+}
+
+// texteChef : chef de bord saisi ; vide : nul, c'est-à-dire le navigateur.
+func texteChef(c *string) (*string, error) {
+	if c == nil {
+		return nil, nil
+	}
+	t := strings.TrimSpace(*c)
+	if t == "" {
+		return nil, nil
+	}
+	if len([]rune(t)) > 200 {
+		return nil, errInvalide("Chef de bord : 200 caractères au plus.")
+	}
+	return &t, nil
 }
 
 // suiveursDe : comptes ayant accès à la navigation (RG-PAR-02, RG-PAR-06).
@@ -470,6 +496,7 @@ type demarrageJSON struct {
 	Parametres        json.RawMessage  `json:"parametres"`
 	PersonnesABord    int              `json:"personnesABord"`
 	PersonnesAlertees *[]string        `json:"personnesAlertees"`
+	ChefDeBord        *string          `json:"chefDeBord"`
 	Debut             evenementJSON    `json:"debut"`
 }
 
@@ -478,8 +505,12 @@ func (d *demarrageJSON) empreinte() []byte {
 	if len(d.Parametres) > 0 {
 		_ = json.Compact(&p, d.Parametres)
 	}
-	b, _ := json.Marshal([]any{d.BateauID, d.AppareilID, d.Destination, d.FrequenceMinutes, p.String(),
-		d.PersonnesABord, d.PersonnesAlertees, d.Debut.empreinte("")})
+	l := []any{d.BateauID, d.AppareilID, d.Destination, d.FrequenceMinutes, p.String(),
+		d.PersonnesABord, d.PersonnesAlertees, d.Debut.empreinte("")}
+	if d.ChefDeBord != nil { // absent : même empreinte qu'avant le chef de bord
+		l = append(l, *d.ChefDeBord)
+	}
+	b, _ := json.Marshal(l)
 	h := sha256.Sum256(b)
 	return h[:]
 }
@@ -514,6 +545,10 @@ func (a *app) demarrer(ctx context.Context, utilisateur, id string, d demarrageJ
 				return 0, navigationJSON{}, errInvalide("Personne alertée invalide.")
 			}
 		}
+	}
+	var err error
+	if d.ChefDeBord, err = texteChef(d.ChefDeBord); err != nil {
+		return 0, navigationJSON{}, err
 	}
 	if d.Destination != nil {
 		d.Destination.Texte = strings.TrimSpace(d.Destination.Texte)
@@ -569,10 +604,10 @@ func (a *app) demarrer(ctx context.Context, utilisateur, id string, d demarrageJ
 	}
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `INSERT INTO navigations (id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes,
-		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte, decalage_minutes)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13)`,
+		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte, decalage_minutes, chef_de_bord)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13, $14)`,
 		id, utilisateur, d.BateauID, d.AppareilID, nom, d.Destination, d.FrequenceMinutes, jsonOuNul(d.Parametres),
-		d.PersonnesABord, d.PersonnesAlertees, d.Debut.HeureAcquisition, emp, decalageHoraire(d.Debut.HeureAcquisition))
+		d.PersonnesABord, d.PersonnesAlertees, d.Debut.HeureAcquisition, emp, decalageHoraire(d.Debut.HeureAcquisition), d.ChefDeBord)
 	if estDoublon(err) {
 		return 0, navigationJSON{}, &erreurAPI{http.StatusConflict, "navigation_en_cours",
 			"Une navigation est déjà en cours sur ce bateau ou sur ce téléphone.", 0}
@@ -918,6 +953,15 @@ func (a *app) modifierNavigation(ctx context.Context, utilisateur, id string, c 
 		}
 		n.nom = nom
 	}
+	if c.a("chefDeBord") { // à tout moment, comme le nom (RG-NAV-36)
+		var chef *string
+		if err := c.lire("chefDeBord", &chef); err != nil {
+			return navigationJSON{}, err
+		}
+		if n.chef, err = texteChef(chef); err != nil {
+			return navigationJSON{}, err
+		}
+	}
 	if c.a("destination") {
 		if err := c.lire("destination", &n.destination); err != nil {
 			return navigationJSON{}, err
@@ -953,7 +997,7 @@ func (a *app) modifierNavigation(ctx context.Context, utilisateur, id string, c 
 		return navigationJSON{}, errInvalide("La fin ne peut pas précéder le début.")
 	}
 	if _, err := a.b.pool.Exec(ctx, `UPDATE navigations SET nom = $2, destination = $3, bateau_id = $4, debut = $5, fin = $6,
-		version = version + 1, modifiee_le = now() WHERE id = $1`, id, n.nom, n.destination, n.bateau, n.debut, n.fin); err != nil {
+		chef_de_bord = $7, version = version + 1, modifiee_le = now() WHERE id = $1`, id, n.nom, n.destination, n.bateau, n.debut, n.fin, n.chef); err != nil {
 		return navigationJSON{}, err
 	}
 	if n, err = a.navigation(ctx, a.b.pool, id); err != nil {

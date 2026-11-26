@@ -333,6 +333,8 @@ var migrations = []string{
 	// déjà ouvertes : persistantes, comme avant.
 	`ALTER TABLE sessions ADD COLUMN persistante boolean NOT NULL DEFAULT true;
 	ALTER TABLE sessions_admin ADD COLUMN persistante boolean NOT NULL DEFAULT true;`,
+	// 12 — RG-NAV-36, D-164 : chef de bord saisi ; null : le navigateur.
+	`ALTER TABLE navigations ADD COLUMN chef_de_bord text;`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de
