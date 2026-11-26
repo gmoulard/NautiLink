@@ -30,7 +30,7 @@ Pied de page de toutes les pages du site et de l'espace administrateur (et de la
 
 > Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 · build 12 · commit 93b0f97
 
-Pied de page de l'Application web et de tous les écrans de l'application mobile (Android, iPhone) : l'adresse du dépôt est remplacée par le lien « NautiLink » vers le site de présentation <https://gmoulard.github.io/NautiLink/> ([D-149](07-decisions.md#d-149) ; fait sur l'application mobile, reste l'Application web : TODO-3.19). Sur l'application mobile, ce pied de page suit le contenu de la page, sous les boutons, avec le lien « Mémo sécurité en mer » (TODO-5.12, [Q-102](06-questions-ouvertes.md#q-102)) :
+Pied de page de l'Application web et de tous les écrans de l'application mobile (Android, iPhone) : l'adresse du dépôt est remplacée par le lien « NautiLink » vers le site de présentation <https://gmoulard.github.io/NautiLink/> ([D-149](07-decisions.md#d-149) ; fait sur l'application mobile, reste l'Application web : TODO-3.19). Sur l'application mobile, ce pied de page suit le contenu de la page, sous les boutons, avec le lien « Mémo sécurité en mer » (TODO-5.12, [D-166](07-decisions.md#d-166)) :
 
 > Tous droits réservés · [NautiLink](https://gmoulard.github.io/NautiLink/) · V0.0.1 · build 13 · commit 7ace1f5
 

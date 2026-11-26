@@ -17,12 +17,12 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Log de nav** | Page d'accueil de l'Application web : navigations de chaque bateau, une ligne par navigation ([D-156](07-decisions.md#d-156)). |
 | **Position** | Coordonnées GPS horodatées à l'instant de leur acquisition par le téléphone. |
 | **Position automatique** | Position acquise et transmise à la fréquence de la navigation. |
-| **Position manuelle** | Position acquise et transmise à la demande du navigateur (« Envoyer information position »). |
+| **Position manuelle** | Position acquise et transmise à la demande du navigateur (« Envoyer position »). |
 | **Fréquence** | Intervalle entre deux positions automatiques : 15 minutes, 30 minutes, 1 heure, 2 heures, 3 heures, 6 heures, 12 heures, 1 jour, 2 jours, 10 jours ([RG-NAV-05](02-regles-metier.md#rg-nav-05)). |
 | **Journal de bord** | Liste chronologique des événements d'une navigation. |
 | **Événement** | Entrée du journal de bord : début, position, note, photo, note vocale, alerte SOS, incident ou avarie, fin, ajout complémentaire. |
 | **Incident - avarie** | Événement du journal de bord qui consigne un incident ou une avarie : texte, avec photo et note vocale facultatives ([RG-JRN-11](02-regles-metier.md#rg-jrn-11)). |
-| **Chef de bord** | Personne responsable du bateau pendant la navigation, choisie sur l'écran de démarrage, par défaut le navigateur ([RG-NAV-35](02-regles-metier.md#rg-nav-35)). |
+| **Chef de bord** | Personne responsable du bateau pendant la navigation, choisie sur l'écran de démarrage, par défaut le navigateur ; texte libre, modifiable ensuite ([RG-NAV-35](02-regles-metier.md#rg-nav-35), [RG-NAV-36](02-regles-metier.md#rg-nav-36)). |
 | **Note vocale** | Enregistrement de la voix, conservé sur le serveur et réécoutable, sans transcription ([D-71](07-decisions.md#d-71)). |
 | **Alerte SOS** | Alerte de détresse déclenchée depuis l'application mobile ou l'Application web ([RG-WEB-02](02-regles-metier.md#rg-web-02)) : SMS aux contacts SOS (Android seulement), enregistrement sur le serveur, e-mail aux suiveurs. |
 | **Contact** | Personne de la liste unique du navigateur : nom, téléphone et/ou e-mail, cases « Suiveur » et « Contact SOS », cochées par défaut ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)). |
