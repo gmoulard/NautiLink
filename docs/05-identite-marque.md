@@ -189,7 +189,7 @@ Choisie le 2026-11-26 ([D-157](07-decisions.md#d-157)) d'après l'étude [Nautil
 | Fond de page | dégradé ciel `#DDEFFB` vers `#F4FAFE` | `#0F2438` vers `#08172A` |
 | Cartes, champs | blanc, coins arrondis (16 à 18 px), ombre douce | `#15314D` |
 | Filets | `#D6E6F2` | `#24476A` |
-| Boutons d'action | turquoise `#17A2B0`, texte blanc, en pilule ; sur le site, fond turquoise foncé `#0B7F86` pour le contraste AA du texte blanc ([D-161](07-decisions.md#d-161)) ; le turquoise `#17A2B0` y reste pour les traits et soulignés | `#2BC0C6`, texte `#08172A` |
+| Boutons d'action | turquoise `#17A2B0`, texte blanc, en pilule ; sur le site et dans l'Application web, fond turquoise foncé `#0B7F86` pour le contraste AA du texte blanc et du texte turquoise sur blanc ([D-161](07-decisions.md#d-161), RG-PRM-05) ; le turquoise `#17A2B0` reste pour les traits, soulignés et décors | `#2BC0C6`, texte `#08172A` |
 | Liens | bleu `#1565C0` | `#5AAEE6` |
 | SOS | rouge `#D94343` | `#E35D5D` |
 | Avertissement bêta | texte rouge `#B3261E` sur rose `#FDE8E8`, précédé de ⚠ | `#FFB4AB` sur `#3A1518` |

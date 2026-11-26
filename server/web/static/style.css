@@ -4,8 +4,8 @@
    réglage de l'appareil. */
 :root {
   --fond: #F4FAFE; --bandeau: rgba(255,255,255,.82); --surface: #FFFFFF; --texte: #0B2A55; --texte2: #4A6380;
-  --filet: #D6E6F2; --action: #1565C0; --bouton: #17A2B0; --sur-action: #FFFFFF; --sos: #D94343; --beta: #FDE8E8;
-  --sur-beta: #B3261E; --ok: #17A2B0; --ciel: #DDEFFB; --ombre: 0 6px 20px rgba(11,42,85,.08);
+  --filet: #D6E6F2; --action: #1565C0; --bouton: #0B7F86; --sur-action: #FFFFFF; --sos: #D94343; --beta: #FDE8E8;
+  --sur-beta: #B3261E; --ok: #0B7F86; --ciel: #DDEFFB; --ombre: 0 6px 20px rgba(11,42,85,.08);
 }
 @media (prefers-color-scheme: dark) {
   :root {
