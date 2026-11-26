@@ -186,7 +186,7 @@ func (a *app) routesWebComptes(mux *http.ServeMux, c string) {
 		id, err := a.creerCompte(r.Context(), r, r.FormValue("email"), r.FormValue("motdepasse"), r.FormValue("nom"), "", r.FormValue("avertissement"))
 		if err == nil {
 			var jeton string
-			// Pas de case à l'inscription : comme « Rester connecté », coché par défaut (D-158).
+			// Pas de case à l'inscription : comme « Rester connecté », coché par défaut (D-159).
 			if jeton, _, err = a.ouvrirSession(r.Context(), id, "web", true); err == nil {
 				a.poserCookie(w, jeton, true)
 				http.Redirect(w, r, ajouterOK(a.retourSur(d.Retour), "inscrit"), http.StatusSeeOther)
@@ -203,7 +203,7 @@ func (a *app) routesWebComptes(mux *http.ServeMux, c string) {
 
 	mux.HandleFunc("GET "+c+"/connexion", a.web(false, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
 		d.Titre, d.Retour = "Se connecter", r.URL.Query().Get("retour")
-		d.F["rester"] = "oui" // « Rester connecté » coché par défaut (D-158)
+		d.F["rester"] = "oui" // « Rester connecté » coché par défaut (D-159)
 		a.rendre(w, "connexion.html", d)
 		return nil
 	}))

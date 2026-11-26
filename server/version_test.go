@@ -15,17 +15,22 @@ func TestConstruction(t *testing.T) {
 	}
 }
 
-// Pied de page de toutes les pages Web : licence, dépôt, version, build, commit (D-128).
+// Pied de page de toutes les pages Web : licence, lien « NautiLink » vers le
+// site pour l'Application web (D-149), dépôt pour l'espace administrateur
+// (D-128), version, build, commit.
 func TestPiedDePage(t *testing.T) {
 	ancienV, ancienB, ancienC := version, build, commit
 	version, build, commit = "0.0.1", "12", "93b0f974518eacd5a3357763ed9eae4e437f1d33"
 	t.Cleanup(func() { version, build, commit = ancienV, ancienB, ancienC })
 
 	h := nouveauRouteur(config{Chemin: "/nautilink"}, &base{})
-	for _, chemin := range []string{"/nautilink/", "/nautilink/admin/"} {
+	for chemin, lien := range map[string]string{
+		"/nautilink/":       `<a href="https://gmoulard.github.io/NautiLink/">NautiLink</a>`,
+		"/nautilink/admin/": `<a href="https://github.com/gmoulard/NautiLink">https://github.com/gmoulard/NautiLink</a>`,
+	} {
 		corps := requete(t, h, chemin).Body.String()
 		for _, attendu := range []string{
-			"Tous droits réservés", `<a href="https://github.com/gmoulard/NautiLink">https://github.com/gmoulard/NautiLink</a>`,
+			"Tous droits réservés", lien,
 			"V0.0.1", "build 12", `commit <a href="https://github.com/gmoulard/NautiLink/commit/93b0f974518eacd5a3357763ed9eae4e437f1d33">93b0f97</a>`,
 		} {
 			if !strings.Contains(corps, attendu) {

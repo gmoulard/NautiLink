@@ -43,6 +43,11 @@ type config struct {
 	AppleBundle      string // NAUTILINK_APPLE_BUNDLE, identifiant de l'application iPhone
 	AppStoreSandbox  bool   // NAUTILINK_APP_STORE_SANDBOX=1 : achats d'essai
 
+	// Paiement Web par Stripe (RG-ECO-11, TODO-6.7) ; vides : achat refusé
+	// (achat_non_configure), avis de Stripe refusés.
+	StripeCle          string // NAUTILINK_STRIPE_CLE, clé secrète de l'API Stripe
+	StripeSecretRappel string // NAUTILINK_STRIPE_SECRET_RAPPEL, secret de signature des avis
+
 	// Notifications push (RG-IOS-06, RG-AND-08, D-86) ; vides : pas de push.
 	FCMCompte   string // NAUTILINK_FCM_COMPTE, fichier JSON du compte de service Firebase
 	APNsCle     string // NAUTILINK_APNS_CLE, fichier .p8 d'APNs
@@ -66,19 +71,21 @@ func configDepuisEnv() config {
 		Admins:          liste(strings.ToLower(os.Getenv("NAUTILINK_ADMINS"))),
 		Nominatim:       strings.TrimRight(strings.TrimSpace(os.Getenv("NAUTILINK_NOMINATIM")), "/"),
 
-		Produit:          env("NAUTILINK_PRODUIT", "nautilink_abonnement_10_ans"),
-		GooglePlayCompte: os.Getenv("NAUTILINK_GOOGLE_PLAY_COMPTE"),
-		GooglePlayPaquet: env("NAUTILINK_GOOGLE_PLAY_PAQUET", "fr.nautilink.nautilink"),
-		AppStoreCle:      os.Getenv("NAUTILINK_APP_STORE_CLE"),
-		AppStoreCleID:    os.Getenv("NAUTILINK_APP_STORE_CLE_ID"),
-		AppStoreEmetteur: os.Getenv("NAUTILINK_APP_STORE_EMETTEUR"),
-		AppleBundle:      env("NAUTILINK_APPLE_BUNDLE", "fr.nautilink.nautilink"),
-		AppStoreSandbox:  os.Getenv("NAUTILINK_APP_STORE_SANDBOX") == "1",
-		FCMCompte:        os.Getenv("NAUTILINK_FCM_COMPTE"),
-		APNsCle:          os.Getenv("NAUTILINK_APNS_CLE"),
-		APNsCleID:        os.Getenv("NAUTILINK_APNS_CLE_ID"),
-		APNsEquipe:       os.Getenv("NAUTILINK_APNS_EQUIPE"),
-		APNsSandbox:      os.Getenv("NAUTILINK_APNS_SANDBOX") == "1",
+		Produit:            env("NAUTILINK_PRODUIT", "nautilink_abonnement_10_ans"),
+		GooglePlayCompte:   os.Getenv("NAUTILINK_GOOGLE_PLAY_COMPTE"),
+		GooglePlayPaquet:   env("NAUTILINK_GOOGLE_PLAY_PAQUET", "fr.nautilink.nautilink"),
+		AppStoreCle:        os.Getenv("NAUTILINK_APP_STORE_CLE"),
+		AppStoreCleID:      os.Getenv("NAUTILINK_APP_STORE_CLE_ID"),
+		AppStoreEmetteur:   os.Getenv("NAUTILINK_APP_STORE_EMETTEUR"),
+		AppleBundle:        env("NAUTILINK_APPLE_BUNDLE", "fr.nautilink.nautilink"),
+		AppStoreSandbox:    os.Getenv("NAUTILINK_APP_STORE_SANDBOX") == "1",
+		StripeCle:          os.Getenv("NAUTILINK_STRIPE_CLE"),
+		StripeSecretRappel: os.Getenv("NAUTILINK_STRIPE_SECRET_RAPPEL"),
+		FCMCompte:          os.Getenv("NAUTILINK_FCM_COMPTE"),
+		APNsCle:            os.Getenv("NAUTILINK_APNS_CLE"),
+		APNsCleID:          os.Getenv("NAUTILINK_APNS_CLE_ID"),
+		APNsEquipe:         os.Getenv("NAUTILINK_APNS_EQUIPE"),
+		APNsSandbox:        os.Getenv("NAUTILINK_APNS_SANDBOX") == "1",
 	}
 }
 

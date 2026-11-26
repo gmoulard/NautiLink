@@ -531,7 +531,7 @@ class _ContactScreenState extends State<ContactScreen> {
   }
 
   /// Invitation par téléphone : SMS envoyé automatiquement sur Android avec
-  /// la permission d'envoi de SMS, sinon prérempli (D-156), avec la copie au
+  /// la permission d'envoi de SMS, sinon prérempli (D-157), avec la copie au
   /// navigateur (RG-SMS-08) ; lien affiché sur iPhone (RG-PAR-04, RG-IOS-02,
   /// D-137).
   Future<void> _envoyerSms(ContactNl c, InvitationNl i) async {

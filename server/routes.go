@@ -58,6 +58,8 @@ func (a *app) routeur() http.Handler {
 	a.routesWebPDF(mux, c)
 	a.routesQuota(mux, c+"/api/v1")
 	a.routesAchats(mux, c+"/api/v1")
+	a.routesStripe(mux, c+"/api/v1")
+	a.routesWebQuota(mux, c)
 	a.routesSos(mux, c+"/api/v1")
 
 	a.routesAdmin(mux, c+"/api/v1")

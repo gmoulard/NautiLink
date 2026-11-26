@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// Trace au navigateur (RG-NOT-06, D-157) : un e-mail pour chaque élément
+// Trace au navigateur (RG-NOT-06, D-158) : un e-mail pour chaque élément
 // reçu de sa navigation, positions automatiques comprises, puis un
 // récapitulatif avec tout le journal à la fin. Ne se désactive pas ; langue
 // du navigateur (RG-PRM-04).

@@ -23,7 +23,7 @@ enum IssueSms {
   /// Aucun suiveur de la navigation avec un numéro (RG-SMS-01).
   sansDestinataire,
 
-  /// Envoyé automatiquement, avec la permission d'envoi de SMS (RG-SMS-03, D-156).
+  /// Envoyé automatiquement, avec la permission d'envoi de SMS (RG-SMS-03, D-157).
   automatique,
 
   /// Envoyé automatiquement avec le lien, et MMS prérempli avec la photo
@@ -171,7 +171,7 @@ class SmsNavigation {
   /// Destinataires d'un SMS de navigation : les suiveurs si les paramètres
   /// le prévoient (RG-SMS-01, RG-SMS-02), et toujours le navigateur, pour la
   /// trace, même sans suiveur et même si ce type de SMS est désactivé
-  /// (RG-SMS-08, D-157).
+  /// (RG-SMS-08, D-158).
   List<DestinataireSms> destinataires(
     NavigationLocale n,
     String type,
@@ -260,7 +260,7 @@ class SmsNavigation {
   }
 
   /// SMS ordinaire envoyé automatiquement avec la permission d'envoi de SMS
-  /// (D-156), sinon ouvert prérempli (RG-SMS-03) : début, position manuelle,
+  /// (D-157), sinon ouvert prérempli (RG-SMS-03) : début, position manuelle,
   /// note, photo (MMS si prévu, RG-SMS-05), note vocale, fin ; adressé aux
   /// suiveurs de la navigation et au navigateur (copie, RG-SMS-08).
   Future<(IssueSms, int)> ordinaire(
@@ -292,7 +292,7 @@ class SmsNavigation {
         type == 'photo' &&
         photo != null &&
         (n.parametres ?? defaut)?.photoEnMms == true;
-    // D-156 : avec la permission, le SMS part automatiquement (3 essais puis
+    // D-157 : avec la permission, le SMS part automatiquement (3 essais puis
     // « Réessayer », RG-SMS-07) ; la photo, avec son lien (RG-SMS-05).
     if (await canal.autorise()) {
       await envois.envoyer('sms:$type:${evenementId ?? n.id}', dests, [t]);
@@ -327,7 +327,7 @@ class SmsNavigation {
   }
 
   /// Invitation par SMS (RG-PAR-11) : envoyée automatiquement à l'invité et
-  /// en copie au navigateur avec la permission d'envoi de SMS (D-156) ; sinon
+  /// en copie au navigateur avec la permission d'envoi de SMS (D-157) ; sinon
   /// préremplie. Rend l'issue et le nombre de destinataires.
   Future<(IssueSms, int)> invitation(
     String invitationId,

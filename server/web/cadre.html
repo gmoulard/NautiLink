@@ -11,14 +11,15 @@
 <div class="beta" role="note"><b>Version bêta</b> — NautiLink est en phase de test. <a href="{{.Avertissement}}">Lire l'avertissement</a></div>
 <header>
   <div class="ligne">
-    <a class="marque" href="{{.Base}}/">NautiLink</a>
+    <a class="marque" href="{{.Base}}/"><img class="logo" src="{{.Base}}/static/logo-nautilink.png" alt="" width="36" height="36">NautiLink</a>
     <span class="signature">Your sea, your safety, your story.</span>
     <nav aria-label="Menu principal">
     {{if .Connecte}}
-      <a href="{{.Base}}/">Tableau de bord</a>
+      <a href="{{.Base}}/">Log de nav</a>
       <a href="{{.Base}}/bateaux">Bateaux</a>
       <a href="{{.Base}}/contacts">Contacts</a>
       <a href="{{.Base}}/parametres">Paramètres</a>
+      <a href="{{.Base}}/quota">Quota et abonnement</a>
       <a href="{{.Base}}/alertes-sos">Alertes SOS</a>
       <a href="{{.Base}}/corbeille">Corbeille</a>
       <a href="{{.Base}}/compte">Mon compte</a>
@@ -41,7 +42,7 @@
 </main>
 <footer>
 <p>NautiLink · Version bêta</p>
-<p class="construction">Tous droits réservés · <a href="{{.Version.Depot}}">{{.Version.Depot}}</a> · V{{.Version.Numero}} · build {{.Version.Build}} · commit {{if .Version.Commit}}<a href="{{.Version.Depot}}/commit/{{.Version.Commit}}">{{.Version.CommitCourt}}</a>{{else}}local{{end}}</p>
+<p class="construction">Tous droits réservés · <a href="{{.Version.Site}}">NautiLink</a> · V{{.Version.Numero}} · build {{.Version.Build}} · commit {{if .Version.Commit}}<a href="{{.Version.Depot}}/commit/{{.Version.Commit}}">{{.Version.CommitCourt}}</a>{{else}}local{{end}}</p>
 </footer>
 </body>
 </html>

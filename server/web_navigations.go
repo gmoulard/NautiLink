@@ -9,8 +9,12 @@ import (
 	"time"
 )
 
-// Tableau de bord de l'Application web (TODO-6.1, cahier des charges 6.1,
-// D-23) : page ouverte dès la connexion (demande du 2026-11-26) ; en haut les
+// Log de nav de l'Application web (anciennement « Tableau de bord » ; D-156,
+// TODO-6.1, cahier des charges 6.1, D-23) : une liste par bateau, « Log de
+// nav de <bateau> », sous le filtre « Afficher » ; une ligne par navigation
+// (« 26-nov-26 14:00-18:00 7 milles vers Toulon ») ; au survol, une fenêtre
+// avec le détail et l'aperçu ; un clic ouvre la page de la navigation.
+// Avant D-156 : page ouverte dès la connexion (demande du 2026-11-26) ; en haut les
 // navigations en cours, les miennes et celles que je suis ; en dessous
 // l'historique, de la plus récente à la plus ancienne, filtrable « comme
 // navigateur » / « comme suiveur » ; pour chacune nom, bateau, date et heure
@@ -78,8 +82,52 @@ func lieuTexte(l *lieuJSON) string {
 	return ""
 }
 
-// ligneNav : une navigation du tableau de bord.
+// moisCourts : mois du titre d'une ligne du log de nav (D-156).
+var moisCourts = [...]string{"jan", "fév", "mar", "avr", "mai", "jun", "jul", "aoû", "sep", "oct", "nov", "déc"}
+
+// millesTexte : « 7 milles », « 1 mille », « 0,4 mille » (D-156).
+func millesTexte(metres float64) string {
+	m := metres / 1852
+	if m < 1 {
+		return decimal(m, 1) + " mille"
+	}
+	n := int(math.Round(m))
+	if n == 1 {
+		return "1 mille"
+	}
+	return strconv.Itoa(n) + " milles"
+}
+
+// titreLog : une ligne du log de nav (D-156) : « 26-nov-26 14:00-18:00
+// 7 milles vers Toulon » ; heures locales du téléphone du navigateur
+// (RG-PRM-07), en UTC si son fuseau est inconnu ; « en cours » sans fin ;
+// « vers » la destination, sinon le lieu d'arrivée.
+func titreLog(n navigationJSON) string {
+	zone, utc := time.UTC, " UTC"
+	if n.decalage != nil {
+		zone, utc = time.FixedZone("", *n.decalage*60), ""
+	}
+	d := n.Debut.In(zone)
+	s := deuxChiffres(d.Day()) + "-" + moisCourts[d.Month()-1] + "-" + d.Format("06") + " " + d.Format("15:04") + "-"
+	if n.Fin != nil {
+		s += n.Fin.In(zone).Format("15:04") + utc
+	} else {
+		s += "en cours" + utc
+	}
+	s += " " + millesTexte(n.DistanceMetres)
+	vers := strings.TrimSpace(n.destinationTexte)
+	if vers == "" && n.Fin != nil {
+		vers = lieuTexte(n.LieuArrivee)
+	}
+	if vers != "" {
+		s += " vers " + vers
+	}
+	return s
+}
+
+// ligneNav : une navigation du log de nav.
 type ligneNav struct {
+	Titre            string
 	N                navigationJSON
 	Depart, Fin      string
 	LieuDepart       string
@@ -89,10 +137,40 @@ type ligneNav struct {
 	Apercu           *carte
 }
 
+// groupeBateau : « Log de nav de <bateau> » (D-156) : navigations en cours,
+// puis terminées, de la plus récente à la plus ancienne.
+type groupeBateau struct {
+	Nom    string
+	Lignes []ligneNav
+}
+
+// parBateau : lignes rangées par bateau, dans l'ordre de leur première
+// apparition (en cours d'abord).
+func parBateau(listes ...[]ligneNav) []groupeBateau {
+	var g []groupeBateau
+	index := map[string]int{}
+	for _, l := range listes {
+		for _, x := range l {
+			cle := x.N.Bateau.ID + "\x00" + x.N.Bateau.Nom
+			i, ok := index[cle]
+			if !ok {
+				i = len(g)
+				index[cle] = i
+				g = append(g, groupeBateau{Nom: x.N.Bateau.Nom})
+			}
+			g[i].Lignes = append(g[i].Lignes, x)
+		}
+	}
+	return g
+}
+
 type donneesTableau struct {
 	EnCours, Historique []ligneNav
-	Role                string // filtre de l'historique : "", navigateur ou suiveur
-	Suivant             int    // décalage de la page suivante de l'historique, 0 sans suite
+	Bateaux             []groupeBateau
+	Role                string     // filtre : "", navigateur ou suiveur (D-156 : en cours compris)
+	Suivant             int        // décalage de la page suivante de l'historique, 0 sans suite
+	Quota               *quotaJSON // résumé du quota (RG-ECO-09)
+	Disponible          string
 }
 
 // traceDe : positions non masquées d'une navigation, dans l'ordre
@@ -124,7 +202,7 @@ func (a *app) traceDe(ctx context.Context, n navigationJSON) ([]pointCarte, erro
 // ligneDe : présentation d'une navigation, avec l'aperçu (tracé seul, sans
 // dalles : le tableau de bord ne charge aucune image de carte).
 func (a *app) ligneDe(ctx context.Context, n navigationJSON) (ligneNav, error) {
-	l := ligneNav{N: n, Depart: heureWeb(n.Debut, n.decalage), LieuDepart: lieuTexte(n.LieuDepart),
+	l := ligneNav{Titre: titreLog(n), N: n, Depart: heureWeb(n.Debut, n.decalage), LieuDepart: lieuTexte(n.LieuDepart),
 		LieuArrivee: lieuTexte(n.LieuArrivee), Duree: dureeTexte(n.DureeMinutes), Distance: distanceTexte(n.DistanceMetres)}
 	if n.Fin != nil {
 		l.Fin = heureWeb(*n.Fin, n.decalage)
@@ -169,7 +247,8 @@ func (a *app) tableauDeBord(ctx context.Context, utilisateur, role string, decal
 	}
 	d := donneesTableau{Role: role}
 	if decalage == 0 {
-		enCours, _, err := a.navigations(ctx, utilisateur, "", "en_cours", "", 0)
+		// Le filtre « Afficher » vaut aussi pour les navigations en cours (D-156).
+		enCours, _, err := a.navigations(ctx, utilisateur, role, "en_cours", "", 0)
 		if err != nil {
 			return d, err
 		}
@@ -182,8 +261,11 @@ func (a *app) tableauDeBord(ctx context.Context, utilisateur, role string, decal
 		return d, err
 	}
 	d.Suivant = suivant
-	d.Historique, err = a.lignesDe(ctx, hist)
-	return d, err
+	if d.Historique, err = a.lignesDe(ctx, hist); err != nil {
+		return d, err
+	}
+	d.Bateaux = parBateau(d.EnCours, d.Historique)
+	return d, nil
 }
 
 func (a *app) pageTableau(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
@@ -196,7 +278,12 @@ func (a *app) pageTableau(w http.ResponseWriter, r *http.Request, s *session, d 
 	if err != nil {
 		return err
 	}
-	d.Titre, d.D = "Tableau de bord", t
+	q, err := a.quota(r.Context(), s.utilisateur)
+	if err != nil {
+		return err
+	}
+	t.Quota, t.Disponible = &q, dureeTexte(q.DisponibleMinutes)
+	d.Titre, d.D = "Log de nav", t
 	a.rendre(w, "tableau.html", d)
 	return nil
 }

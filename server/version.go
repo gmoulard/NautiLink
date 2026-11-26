@@ -42,6 +42,10 @@ func (c construction) CommitCourt() string {
 // Depot : adresse du dépôt, pour les gabarits.
 func (construction) Depot() string { return depot }
 
+// Site : site de présentation, lien « NautiLink » du pied de page de
+// l'Application web (D-149) ; l'espace administrateur garde le dépôt (D-128).
+func (construction) Site() string { return "https://gmoulard.github.io/NautiLink/" }
+
 // String : « 0.0.1 (build 12, commit 93b0f97) ».
 func (c construction) String() string {
 	return fmt.Sprintf("%s (build %s, commit %s)", c.Numero, c.Build, c.CommitCourt())

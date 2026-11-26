@@ -328,7 +328,7 @@ var migrations = []string{
 	// jamais réglé, comme les autres types (valeurs d'un nouveau compte :
 	// RG-PRM-06, TODO-4.9).
 	`ALTER TABLE parametres ADD COLUMN sms_incidents boolean;`,
-	// 11 — D-158 : « Rester connecté » sur l'Application web et l'espace
+	// 11 — D-159 : « Rester connecté » sur l'Application web et l'espace
 	// administrateur : cookie persistant si coché, de session sinon. Sessions
 	// déjà ouvertes : persistantes, comme avant.
 	`ALTER TABLE sessions ADD COLUMN persistante boolean NOT NULL DEFAULT true;

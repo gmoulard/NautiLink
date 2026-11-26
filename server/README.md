@@ -8,7 +8,7 @@ Réalisé :
 - bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
 - contacts, invitations et accès des suiveurs (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
-- Application web (pages servies par le serveur, en français, sans JavaScript sauf la mise à jour en direct de la page d'une navigation) : inscription, connexion (case « Rester connecté », 1 heure sans usage, RG-CPT-08), déconnexion, tableau de bord (TODO-6.1), « Mon compte », « Bateaux », « Contacts », « Paramètres », « Alertes SOS », « Corbeille », « Assistance » (TODO-6.5), page d'invitation, menu « Administration » pour les administrateurs (TODO-6.9, RG-WEB-03), conduite d'une navigation en cours (note, photo, note vocale, fin) et « Envoyer un SOS » par Internet (TODO-6.8, RG-WEB-01, RG-WEB-02) ;
+- Application web (pages servies par le serveur, en français, sans JavaScript sauf la mise à jour en direct de la page d'une navigation) : inscription, connexion (case « Rester connecté », 1 heure sans usage, RG-CPT-08), déconnexion, tableau de bord (TODO-6.1), « Mon compte », « Bateaux », « Contacts », « Paramètres », « Quota et abonnement » avec paiement Stripe (TODO-6.7), « Alertes SOS », « Corbeille », « Assistance » (TODO-6.5), page d'invitation, menu « Administration » pour les administrateurs (TODO-6.9, RG-WEB-03), conduite d'une navigation en cours (note, photo, note vocale, fin) et « Envoyer un SOS » par Internet (TODO-6.8, RG-WEB-01, RG-WEB-02) ;
 - espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte (1 heure sans usage, case « Rester connecté »), utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
 
 ## Lancer en local
@@ -65,6 +65,8 @@ GARDER=1 ./essai-test.sh # garde l'environnement lancé
 | `NAUTILINK_APP_STORE_CLE`, `NAUTILINK_APP_STORE_CLE_ID`, `NAUTILINK_APP_STORE_EMETTEUR` | Clé `.p8`, identifiant de la clé et « Issuer ID » de l'App Store Server API ; vides : achat App Store refusé | vides |
 | `NAUTILINK_APPLE_BUNDLE` | Identifiant de l'application iPhone (achats et notifications) | `fr.nautilink.nautilink` |
 | `NAUTILINK_APP_STORE_SANDBOX` | `1` : achats d'essai (environnement « sandbox ») | vide |
+| `NAUTILINK_STRIPE_CLE` | Clé secrète de l'API Stripe (`sk_test_…` en essai, `sk_live_…` en production), dans `.env` du Pi, jamais dans le dépôt ; vide : paiement Web refusé (`achat_non_configure`) | vide |
+| `NAUTILINK_STRIPE_SECRET_RAPPEL` | Secret de signature des avis Stripe (`whsec_…`), pour `POST <chemin>/api/v1/rappels/stripe` (événements `checkout.session.completed` et `checkout.session.async_payment_succeeded`) ; vide : avis refusés, l'abonnement s'ouvre alors au retour de la page de paiement | vide |
 | `NAUTILINK_FCM_COMPTE` | Fichier JSON du compte de service Firebase (notifications push Android, RG-AND-08) ; vide : pas de push Android | vide |
 | `NAUTILINK_APNS_CLE`, `NAUTILINK_APNS_CLE_ID`, `NAUTILINK_APNS_EQUIPE` | Clé `.p8` d'APNs, identifiant de la clé, « Team ID » (notifications push iPhone, RG-IOS-06) ; vides : pas de push iPhone | vides |
 | `NAUTILINK_APNS_SANDBOX` | `1` : applications d'essai (APNs « sandbox ») | vide |

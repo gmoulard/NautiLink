@@ -126,9 +126,9 @@ Chaque note, photo et note vocale est enregistrée dans le journal et transmise 
 
 ## 6. Application web
 
-### 6.1 Tableau de bord
+### 6.1 Log de nav
 
-Page d'accueil après connexion ([D-23](07-decisions.md#d-23)) :
+Page d'accueil après connexion, appelée « Log de nav » ([D-23](07-decisions.md#d-23), [D-156](07-decisions.md#d-156)) : sous le filtre « Afficher », une liste par bateau (« Log de nav de <bateau> »), une ligne par navigation ; avant D-156 :
 
 - en haut, les navigations **en cours** : les miennes et celles que je suis ;
 - en dessous, l'**historique**, de la plus récente à la plus ancienne, filtrable « comme navigateur » / « comme suiveur » ;

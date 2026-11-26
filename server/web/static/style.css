@@ -20,7 +20,8 @@ body {
 .beta a { color: #3A2A00; font-weight: 600; }
 header { background: var(--bandeau); border-bottom: 1px solid var(--filet); padding: 16px; }
 header .ligne { max-width: 860px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
-header .marque { font-family: "Space Grotesk", Inter, system-ui, sans-serif; font-weight: 700; font-size: 1.4rem; color: var(--texte); text-decoration: none; }
+header .marque { font-family: "Space Grotesk", Inter, system-ui, sans-serif; font-weight: 700; font-size: 1.4rem; color: var(--texte); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+header .marque img.logo { border-radius: 8px; } /* logo devant le titre (D-156) */
 header .signature { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .8rem; color: var(--texte2); }
 nav { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; margin-left: auto; }
 nav a, .lien { color: var(--action); font-weight: 600; text-decoration: none; }
@@ -74,20 +75,29 @@ textarea, input[type=date] { width: 100%; padding: 8px 12px; font: inherit; colo
 dl.chiffres { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
 dl.chiffres dd { margin: 0; font-weight: 600; }
 
-/* Tableau de bord (TODO-6.1) : aperçu au survol (ordinateur) ou au toucher
-   de « Aperçu » (mobile), sans JavaScript. */
+/* Log de nav (TODO-6.1, D-156) : une ligne par navigation ; au survol (ou
+   au clavier), une fenêtre avec le détail et l'aperçu, sans JavaScript. */
 h3 { font-size: 1.05rem; margin: 0 0 4px; }
 section { margin-bottom: 24px; }
+.masque { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.filtres { margin-bottom: 8px; }
 .filtres .actif { text-decoration: underline; }
-article.navigation { background: var(--surface); border: 1px solid var(--filet); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+ul.log { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--filet); border-radius: 12px; }
+ul.log li.navigation { position: relative; padding: 10px 16px; border-top: 1px solid var(--filet); white-space: nowrap; overflow: visible; }
+ul.log li.navigation:first-child { border-top: 0; }
+ul.log li.navigation:hover, ul.log li.navigation:focus-within { background: var(--fond); }
+a.titre-log { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .95rem; color: var(--texte); text-decoration: none; white-space: normal; }
+a.titre-log:hover { text-decoration: underline; }
+.etiquette { display: inline-block; padding: 0 8px; border-radius: 10px; background: var(--action); color: var(--fond); font-size: .8rem; font-weight: 600; }
 dl.resume { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 8px 0 0; }
 dl.resume dt { color: var(--texte2); }
 dl.resume dd { margin: 0; }
-details.apercu summary { display: inline-flex; align-items: center; min-height: 44px; color: var(--action); font-weight: 600; cursor: pointer; }
-.bulle { display: none; margin-top: 4px; }
-details.apercu[open] + .bulle { display: block; }
-@media (hover: hover) { article.navigation:hover .bulle { display: block; } }
-.bulle svg.carte { max-width: 320px; }
+.bulle { display: none; position: absolute; z-index: 10; left: 16px; top: 100%; width: min(360px, calc(100vw - 48px)); white-space: normal;
+  background: var(--surface); border: 1px solid var(--filet); border-radius: 12px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.bulle p { margin: 0 0 4px; }
+@media (hover: hover) { ul.log li.navigation:hover .bulle { display: block; } }
+ul.log li.navigation:focus-within .bulle { display: block; }
+.bulle svg.carte { max-width: 332px; margin-top: 8px; }
 
 /* Carte (RG-NAV-29) : dalles OpenStreetMap et OpenSeaMap, tracé, points. */
 svg.carte { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--filet); }
