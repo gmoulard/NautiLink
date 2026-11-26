@@ -12,6 +12,25 @@
 {{if .EnCours}}<p class="aide" id="maj" aria-live="polite">La page se met à jour toute seule pendant la navigation.</p>
 <noscript><p class="aide">Rechargez la page pour voir les dernières positions.</p></noscript>{{end}}
 
+{{if .Navigateur}}{{if .EnCours}}
+<section class="carte" aria-labelledby="titre-conduite">
+<h2 id="titre-conduite">Pendant la navigation</h2>
+<p><a class="bouton sos" href="{{$.Base}}/sos?navigation={{.N.ID}}">Envoyer un SOS</a></p>
+<form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/conduite" enctype="multipart/form-data">
+  <label for="conduite-texte">Note</label>
+  <textarea id="conduite-texte" name="texte" rows="3" maxlength="4000"></textarea>
+  <label for="conduite-fichier">Photo (JPEG) ou note vocale (AAC .m4a, 1 minute au plus), facultative</label>
+  <input id="conduite-fichier" name="fichier" type="file" accept="image/jpeg,audio/mp4,audio/x-m4a,.m4a">
+  <p class="aide">L'envoi entre au journal de bord à l'heure où vous le faites, sans position. Aucun SMS ne part de l'Application web.</p>
+  <button type="submit">Envoyer</button>
+</form>
+<form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/fin">
+  <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la fin de la navigation</span></label>
+  <button class="secondaire" type="submit">Terminer la navigation</button>
+</form>
+</section>
+{{end}}{{end}}
+
 {{with .Modifier}}
 <section class="carte" aria-labelledby="titre-modifier">
 <h2 id="titre-modifier">Modifier la navigation</h2>
@@ -122,7 +141,7 @@
 <h2 id="titre-carte">Carte</h2>
 {{if .Carte}}
 {{template "carte" .Carte}}
-<p class="aide legende"><span class="pastille depart"></span> départ · <span class="pastille {{if .EnCours}}derniere{{else}}arrivee{{end}}"></span> {{if .EnCours}}dernière position{{else}}arrivée{{end}} · <span class="pastille evenement"></span> note, photo ou note vocale · <span class="pastille sos"></span> alerte SOS. Survolez un point pour son heure.</p>
+<p class="aide legende"><span class="pastille depart"></span> départ · <span class="pastille {{if .EnCours}}derniere{{else}}arrivee{{end}}"></span> {{if .EnCours}}dernière position{{else}}arrivée{{end}} · <span class="pastille evenement"></span> note, photo ou note vocale · <span class="pastille incident"></span> incident ou avarie · <span class="pastille sos"></span> alerte SOS. Survolez un point pour son heure.</p>
 <p class="aide source">Fond de carte © <a href="https://www.openstreetmap.org/copyright">les contributeurs d'OpenStreetMap</a> · balisage © <a href="https://www.openseamap.org">OpenSeaMap</a></p>
 {{else}}<p class="aide">Aucune position reçue pour l'instant.</p>{{end}}
 </section>

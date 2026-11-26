@@ -145,6 +145,15 @@ func validerEvenement(e *evenementJSON, types ...string) error {
 		if e.Fichier != nil && e.Fichier.TypeMedia != "image/jpeg" && e.Fichier.TypeMedia != "audio/mp4" {
 			return errInvalide("Fichier image/jpeg ou audio/mp4.")
 		}
+	case "incident":
+		// Incident ou avarie (RG-JRN-11, D-154) : texte obligatoire, une
+		// photo ou une note vocale facultative (une pièce jointe, Q-101).
+		if e.Texte == nil {
+			return errInvalide("Décrivez l'incident ou l'avarie.")
+		}
+		if e.Fichier != nil && e.Fichier.TypeMedia != "image/jpeg" && e.Fichier.TypeMedia != "audio/mp4" {
+			return errInvalide("Fichier image/jpeg ou audio/mp4.")
+		}
 	default:
 		e.Fichier = nil
 	}
@@ -743,7 +752,7 @@ func (a *app) journalDeBord(ctx context.Context, n navLigne, depuis int64) (evts
 // envoyerEvenement : PUT /v1/navigations/{id}/evenements/{evenementId} ;
 // idempotent (08-architecture.md §5). Rend 201 (enregistré) ou 200 (déjà reçu).
 func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e evenementJSON) (int, evenementJSON, error) {
-	if err := validerEvenement(&e, "position_automatique", "position_manuelle", "note", "photo", "note_vocale", "ajout"); err != nil {
+	if err := validerEvenement(&e, "position_automatique", "position_manuelle", "note", "photo", "note_vocale", "ajout", "incident"); err != nil {
 		return 0, e, err
 	}
 	n, err := a.navigationDuNavigateur(ctx, utilisateur, navID)
@@ -792,32 +801,33 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 	if err := tx.Commit(ctx); err != nil {
 		return 0, e, err
 	}
-	if estPhoto(e) {
+	if estPhoto(e) && e.Type != "incident" { // incident : sans notification push (RG-JRN-11)
 		a.notifierNavigation(ctx, navID, "photo", e.HeureAcquisition) // RG-IOS-06
 	}
 	r, err := lireEvenement(a.b.pool.QueryRow(ctx, "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", e.ID), n)
 	return http.StatusCreated, r, err
 }
 
-// evenementModifiable : notes, photos, notes vocales et ajouts, quelle que
-// soit leur origine (RG-JRN-06) ; jamais début, fin, positions ni SOS (RG-JRN-07).
-func (a *app) evenementModifiable(ctx context.Context, utilisateur, navID, id string) (navLigne, error) {
+// evenementModifiable : notes, photos, notes vocales, incidents et avaries,
+// et ajouts, quelle que soit leur origine (RG-JRN-06, RG-JRN-11) ; jamais
+// début, fin, positions ni SOS (RG-JRN-07). Rend aussi le type.
+func (a *app) evenementModifiable(ctx context.Context, utilisateur, navID, id string) (navLigne, string, error) {
 	n, err := a.navigationModifiable(ctx, utilisateur, navID)
 	if err != nil {
-		return n, err
+		return n, "", err
 	}
 	if !estUUID(id) {
-		return n, errIntrouvable()
+		return n, "", errIntrouvable()
 	}
 	var typ string
 	if err := a.b.pool.QueryRow(ctx, "SELECT type FROM evenements WHERE id = $1 AND navigation_id = $2 AND supprime_le IS NULL",
 		id, navID).Scan(&typ); err != nil {
-		return n, err
+		return n, "", err
 	}
-	if !slices.Contains([]string{"note", "photo", "note_vocale", "ajout"}, typ) {
-		return n, errInterdit("evenement_non_modifiable", "Le début, la fin, les positions et les alertes SOS ne se modifient pas.")
+	if !slices.Contains([]string{"note", "photo", "note_vocale", "ajout", "incident"}, typ) {
+		return n, "", errInterdit("evenement_non_modifiable", "Le début, la fin, les positions et les alertes SOS ne se modifient pas.")
 	}
-	return n, nil
+	return n, typ, nil
 }
 
 // ------------------------------------------------------------------ liste
@@ -1238,9 +1248,12 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 // modifierTexteEvenement : texte d'une note, d'une photo, d'une note vocale
 // ou d'un ajout (RG-JRN-06), depuis l'API ou la page de la navigation.
 func (a *app) modifierTexteEvenement(ctx context.Context, utilisateur, navID, id string, texte *string) (evenementJSON, error) {
-	n, err := a.evenementModifiable(ctx, utilisateur, navID, id)
+	n, typ, err := a.evenementModifiable(ctx, utilisateur, navID, id)
 	if err != nil {
 		return evenementJSON{}, err
+	}
+	if typ == "incident" && texteOuNul(texte) == nil { // texte obligatoire (RG-JRN-11)
+		return evenementJSON{}, errInvalide("Décrivez l'incident ou l'avarie.")
 	}
 	if _, err := a.b.pool.Exec(ctx, `UPDATE evenements SET texte = $2, modification = nextval('modifications')
 		WHERE id = $1`, id, texteOuNul(texte)); err != nil {
@@ -1252,7 +1265,7 @@ func (a *app) modifierTexteEvenement(ctx context.Context, utilisateur, navID, id
 // supprimerEvenement : note, photo, note vocale ou ajout, avec son fichier
 // (RG-JRN-06) ; jamais début, fin, positions ni SOS (RG-JRN-07).
 func (a *app) supprimerEvenement(ctx context.Context, utilisateur, navID, id string) error {
-	if _, err := a.evenementModifiable(ctx, utilisateur, navID, id); err != nil {
+	if _, _, err := a.evenementModifiable(ctx, utilisateur, navID, id); err != nil {
 		return err
 	}
 	if _, err := a.b.pool.Exec(ctx, `UPDATE evenements SET supprime_le = now(), texte = NULL,

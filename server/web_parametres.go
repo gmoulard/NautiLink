@@ -55,7 +55,7 @@ func (a *app) routesWebParametres(mux *http.ServeMux, c string) {
 	mux.HandleFunc("POST "+c+"/parametres", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
 		f := formulaireEnChamps(r, map[string]string{"smsActifs": "case", "photoEnMms": "case"})
 		f["smsParType"] = enJSON(formulaireEnChamps(r, map[string]string{"debut": "case", "positionsAutomatiques": "case",
-			"positionsManuelles": "case", "notes": "case", "photos": "case", "notesVocales": "case", "fin": "case"}))
+			"positionsManuelles": "case", "notes": "case", "photos": "case", "notesVocales": "case", "incidents": "case", "fin": "case"}))
 		if v := r.FormValue("frequenceParDefaut"); v != "" {
 			n, err := strconv.Atoi(v)
 			if err != nil {

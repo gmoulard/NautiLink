@@ -324,6 +324,10 @@ var migrations = []string{
 	// l'heure locale des messages envoyés ; nul avant cette migration.
 	`ALTER TABLE navigations ADD COLUMN decalage_minutes integer;
 	ALTER TABLE alertes_sos ADD COLUMN decalage_minutes integer;`,
+	// 10 — RG-JRN-11, D-154 : type de SMS « Incidents - avaries » ; null :
+	// jamais réglé, comme les autres types (valeurs d'un nouveau compte :
+	// RG-PRM-06, TODO-4.9).
+	`ALTER TABLE parametres ADD COLUMN sms_incidents boolean;`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

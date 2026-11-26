@@ -19,7 +19,7 @@ import (
 var (
 	couleurAction = [3]int{14, 107, 168}
 	couleursPoint = map[string][3]int{"depart": {19, 166, 173}, "arrivee": {14, 42, 71}, "derniere": {14, 42, 71},
-		"evenement": {242, 193, 78}, "sos": {217, 67, 67}}
+		"evenement": {242, 193, 78}, "incident": {232, 131, 58}, "sos": {217, 67, 67}}
 )
 
 // exportPDF : le document, avec les photos du journal déjà lues

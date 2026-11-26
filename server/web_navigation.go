@@ -21,7 +21,7 @@ import (
 var libellesEvenement = map[string]string{
 	"debut": "Début de navigation", "position_automatique": "Position automatique",
 	"position_manuelle": "Position manuelle", "note": "Note écrite", "photo": "Photo", "note_vocale": "Note vocale",
-	"sos": "Alerte SOS", "fin": "Fin de navigation", "ajout": "Ajout complémentaire",
+	"sos": "Alerte SOS", "fin": "Fin de navigation", "ajout": "Ajout complémentaire", "incident": "Incident - avarie",
 }
 
 // ligneJournal : un événement du journal de bord.
@@ -68,7 +68,7 @@ func journalPresente(evts []evenementJSON, decalage *int, modifiable bool) []lig
 			j.Photo, j.Vocal = e.Fichier.TypeMedia == "image/jpeg", e.Fichier.TypeMedia == "audio/mp4"
 		}
 		switch e.Type {
-		case "note", "photo", "note_vocale", "ajout":
+		case "note", "photo", "note_vocale", "ajout", "incident":
 			j.Modifiable = modifiable
 		}
 		l = append(l, j)
@@ -95,6 +95,9 @@ func carteDe(evts []evenementJSON, enCours bool, decalage *int, largeur, hauteur
 			continue
 		case e.Masque:
 			continue
+		case e.Type == "incident": // mis en évidence (RG-JRN-11)
+			p.Sorte = "incident"
+			marques = append(marques, p)
 		case e.Type == "note" || e.Type == "photo" || e.Type == "note_vocale" || e.Type == "ajout":
 			p.Sorte = "evenement"
 			marques = append(marques, p)

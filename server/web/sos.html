@@ -1,0 +1,21 @@
+{{template "haut" .}}
+<h1>Envoyer un SOS ?</h1>
+{{with .D}}
+<div class="carte alertes">
+<p>Vos suiveurs et vos contacts SOS dont l'e-mail est connu recevront un e-mail avec {{if .Navigation}}la dernière position connue de la navigation{{else}}l'alerte{{end}} et la fiche du bateau. Aucun SMS ne part de l'Application web. Alertez aussi les secours : canal 16 de la VHF ou 196.</p>
+{{if or .Navigation .Bateaux}}
+<form method="post" action="{{$.Base}}/sos">
+  {{if .Navigation}}<input type="hidden" name="navigationId" value="{{.Navigation.ID}}">
+  <p>Navigation : <strong>{{.Navigation.Nom}}</strong></p>
+  {{else}}{{if eq (len .Bateaux) 1}}{{range .Bateaux}}<input type="hidden" name="bateauId" value="{{.ID}}"><p>Bateau : <strong>{{.Nom}}</strong></p>{{end}}
+  {{else}}<label for="bateau">Bateau</label>
+  <select id="bateau" name="bateauId" required>{{range .Bateaux}}<option value="{{.ID}}">{{.Nom}}</option>{{end}}</select>{{end}}{{end}}
+  <label for="probleme">Problème rencontré (facultatif)</label>
+  <textarea id="probleme" name="probleme" rows="3" maxlength="1000"></textarea>
+  <button class="sos" type="submit">Confirmer le SOS</button>
+</form>
+{{end}}
+<p><a class="lien" href="{{$.Base}}/{{if .Navigation}}navigations/{{.Navigation.ID}}{{end}}">Annuler</a></p>
+</div>
+{{end}}
+{{template "bas" .}}
