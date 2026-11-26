@@ -467,5 +467,8 @@
   "alertBySms": "SMS",
   "weatherLink": "Météo marine",
   "voyageEndingSending": "Navigation terminée, en cours d'envoi",
-  "homeSecurityRules": "Règles de sécurité en mer"
+  "homeSecurityRules": "Règles de sécurité en mer",
+  "loginSubtitle": "Accédez à votre compte NautiLink",
+  "showPassword": "Afficher le mot de passe",
+  "hidePassword": "Masquer le mot de passe"
 }

@@ -2498,6 +2498,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Règles de sécurité en mer'**
   String get homeSecurityRules;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accédez à votre compte NautiLink'**
+  String get loginSubtitle;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher le mot de passe'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Masquer le mot de passe'**
+  String get hidePassword;
 }
 
 class _AppLocalizationsDelegate

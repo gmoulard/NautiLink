@@ -1435,4 +1435,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeSecurityRules => 'Règles de sécurité en mer';
+
+  @override
+  String get loginSubtitle => 'Accédez à votre compte NautiLink';
+
+  @override
+  String get showPassword => 'Afficher le mot de passe';
+
+  @override
+  String get hidePassword => 'Masquer le mot de passe';
 }

@@ -25,6 +25,8 @@ class PiedDePage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Vagues au-dessus du pied de page (D-157, §15).
+            const Vagues(),
             TextButton.icon(
               key: const Key('footer-memo'),
               icon: const Icon(Icons.health_and_safety_outlined),

@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.2.0+1
+version: 0.3.0+1
 
 environment:
   sdk: ^3.13.7
@@ -84,19 +84,26 @@ flutter:
   generate: true
   assets:
     - assets/sponsor-srt.png
+    # Logo (docs/05-identite-marque.md §5.5), en-tête de l'écran de connexion (D-157).
+    - assets/logo-nautilink.png
     # Mémo sécurité en mer, copié de site/securite.html par outils/copier-memo.sh (RG-SOS-22).
     - assets/memo/securite.html
-  # Polices du design « Radar de pluie » (D-69, D-70), sous licence OFL : assets/fonts/*-OFL.txt.
+  # Police de l'identité graphique du 2026-11-26 (D-157, docs/05-identite-marque.md §15),
+  # sous licence OFL : assets/fonts/Inter-OFL.txt.
   fonts:
-    - family: SpaceGrotesk
+    - family: Inter
       fonts:
-        - asset: assets/fonts/SpaceGrotesk-Variable.ttf
-    - family: IBMPlexMono
-      fonts:
-        - asset: assets/fonts/IBMPlexMono-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/IBMPlexMono-SemiBold.ttf
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-SemiBold.ttf
           weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Inter-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Inter-MediumItalic.ttf
+          weight: 500
+          style: italic
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -412,5 +412,8 @@
   "alertBySms": "SMS",
   "weatherLink": "Marine weather",
   "voyageEndingSending": "Voyage ended, sending",
-  "homeSecurityRules": "Safety rules at sea"
+  "homeSecurityRules": "Safety rules at sea",
+  "loginSubtitle": "Access your NautiLink account",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password"
 }

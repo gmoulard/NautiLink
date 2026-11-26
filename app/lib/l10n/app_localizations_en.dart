@@ -1425,4 +1425,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeSecurityRules => 'Safety rules at sea';
+
+  @override
+  String get loginSubtitle => 'Access your NautiLink account';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
 }

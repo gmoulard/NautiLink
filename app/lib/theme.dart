@@ -5,43 +5,57 @@ import 'depot/depot.dart';
 import 'data.dart';
 import 'l10n/app_localizations.dart';
 
-/// Couleurs du design « Radar de pluie » (docs/05-identite-marque.md §14, D-69, D-70).
+/// Couleurs de l'identité graphique du 2026-11-26 (docs/05-identite-marque.md
+/// §15, D-157), qui remplace le design « Radar de pluie » (D-69, D-70) ; thème
+/// sombre de D-97.
 class NlColors {
-  static const sky = Color(0xFFEAF4FB); // fond
-  static const ink = Color(0xFF0E2A47); // texte
-  static const accent = Color(0xFF0E6BA8); // actions
-  static const line = Color(0xFFCFE0EE);
-  // Thème sombre validé (D-97).
-  static const skyDark = Color(0xFF0F2438);
+  static const sky = Color(0xFFF4FAFE); // fond des écrans
+  static const skyTop = Color(0xFFDDEFFB); // haut du dégradé ciel
+  static const ink = Color(0xFF0B2A55); // bleu marine : titres, texte
+  static const ink2 = Color(0xFF4A6380); // texte secondaire
+  static const accent = Color(0xFF1565C0); // liens
+  static const turquoise = Color(0xFF17A2B0); // traits, décors
+  static const button = Color(0xFF0B7F86); // boutons : contraste AA (D-161)
+  static const line = Color(0xFFD6E6F2);
+  // Thème sombre (D-97).
+  static const skyDark = Color(0xFF08172A);
+  static const skyTopDark = Color(0xFF0F2438);
   static const accentDark = Color(0xFF5AAEE6);
+  static const buttonDark = Color(0xFF2BC0C6);
   static const inkDark = Color(0xFFE3EEF7);
   static const surfaceDark = Color(0xFF15314D);
   static const lineDark = Color(0xFF24476A);
   static const onAccentDark = Color(0xFF08172A);
   static const alertDark = Color(0xFFE35D5D);
-  static const radarGreen = Color(0x614CAF50);
-  static const radarYellow = Color(0x80F2C14E);
-  static const radarRed = Color(0x80D94343);
+  // Avertissement bêta : rouge sur rose (§15).
+  static const betaBg = Color(0xFFFDE8E8);
+  static const betaFg = Color(0xFFB3261E);
+  static const betaBgDark = Color(0xFF3A1518);
+  static const betaFgDark = Color(0xFFFFB4AB);
   // Noms historiques, conservés pour le reste du code.
   static const navy = ink;
-  static const teal = accent;
+  static const teal = button;
   static const aqua = accentDark;
   static const white = Color(0xFFFFFFFF);
   static const lightGrey = sky;
   static const alert = Color(0xFFD94343);
-  static const beta = Color(0xFFF2C14E);
+  static const beta = betaBg;
 }
 
-const kDisplayFont = 'SpaceGrotesk';
-const kMonoFont = 'IBMPlexMono';
+/// Inter partout (§15) ; les chiffres des chronomètres en chiffres tabulaires.
+const kFont = 'Inter';
+const kDisplayFont = kFont;
+const kMonoFont = kFont;
 
-/// Titres en Space Grotesk (police variable : la graisse passe par l'axe wght).
-TextStyle displayStyle(double size, {double weight = 700, Color? color}) =>
+/// Titres en Inter ExtraBold, resserrés (§15).
+TextStyle displayStyle(double size, {double weight = 800, Color? color}) =>
     TextStyle(
       fontFamily: kDisplayFont,
       fontSize: size,
-      fontVariations: [FontVariation('wght', weight)],
-      fontWeight: weight >= 600 ? FontWeight.w700 : FontWeight.w500,
+      fontWeight: weight >= 750
+          ? FontWeight.w800
+          : (weight >= 650 ? FontWeight.w700 : FontWeight.w600),
+      letterSpacing: -0.2,
       color: color,
       height: 1.15,
     );
@@ -51,116 +65,178 @@ ThemeData nlTheme(Brightness brightness) {
   final bg = dark ? NlColors.skyDark : NlColors.sky;
   final fg = dark ? NlColors.inkDark : NlColors.ink;
   final accent = dark ? NlColors.accentDark : NlColors.accent;
+  final bouton = dark ? NlColors.buttonDark : NlColors.button;
+  final ligne = dark ? NlColors.lineDark : NlColors.line;
   final scheme =
       ColorScheme.fromSeed(
-        seedColor: NlColors.accent,
+        seedColor: NlColors.button,
         brightness: brightness,
       ).copyWith(
-        primary: accent,
+        primary: bouton,
         onPrimary: dark ? NlColors.onAccentDark : NlColors.white,
-        secondary: fg,
+        secondary: accent,
         error: dark ? NlColors.alertDark : NlColors.alert,
         surface: dark ? NlColors.surfaceDark : NlColors.white,
         onSurface: fg,
+        outline: ligne,
       );
   final base = ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
     brightness: brightness,
+    fontFamily: kFont,
   );
+  const pilule = StadiumBorder();
   return base.copyWith(
     scaffoldBackgroundColor: bg,
     textTheme: base.textTheme.copyWith(
       headlineSmall: displayStyle(24, color: fg),
       titleLarge: displayStyle(20, color: fg),
-      titleMedium: displayStyle(16, weight: 600, color: fg),
+      titleMedium: displayStyle(16, weight: 700, color: fg),
     ),
     appBarTheme: AppBarTheme(
-      backgroundColor: bg,
+      backgroundColor: dark ? NlColors.skyTopDark : NlColors.white,
       foregroundColor: fg,
       surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 2,
+      shadowColor: const Color(0x220B2A55),
       centerTitle: false,
       titleTextStyle: displayStyle(20, color: fg),
-      shape: Border(
-        bottom: BorderSide(color: dark ? NlColors.lineDark : NlColors.line),
-      ),
+      shape: Border(bottom: BorderSide(color: ligne)),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size.fromHeight(56),
-        backgroundColor: accent,
+        backgroundColor: bouton,
         foregroundColor: scheme.onPrimary,
-        textStyle: base.textTheme.labelLarge?.copyWith(
+        elevation: 2,
+        shadowColor: NlColors.turquoise.withValues(alpha: .4),
+        textStyle: const TextStyle(
+          fontFamily: kFont,
           fontSize: 17,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: pilule,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(52),
-        foregroundColor: accent,
-        side: BorderSide(color: accent, width: 1.5),
-        textStyle: base.textTheme.labelLarge?.copyWith(
+        foregroundColor: fg,
+        backgroundColor: scheme.surface,
+        side: BorderSide(color: ligne, width: 1.2),
+        textStyle: const TextStyle(
+          fontFamily: kFont,
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: pilule,
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(foregroundColor: accent),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: scheme.surface,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: ligne),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: ligne),
       ),
     ),
     cardTheme: CardThemeData(
-      elevation: 0,
+      elevation: 2,
+      shadowColor: const Color(0x1F0B2A55),
       color: scheme.surface,
+      surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: dark ? NlColors.lineDark : NlColors.line),
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: ligne),
       ),
     ),
   );
 }
 
-/// Échos radar vert, jaune, rouge en décor, derrière le contenu (design « Radar de pluie »).
+/// Fond des écrans (§15) : dégradé ciel et vagues en bas, derrière le contenu.
+/// Garde son ancien nom (décor « Radar de pluie » jusqu'à D-157).
 class RadarBackground extends StatelessWidget {
   const RadarBackground({super.key, required this.child});
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned.fill(
-          child: IgnorePointer(child: CustomPaint(painter: _RadarPainter())),
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: const [0, .45],
+          colors: dark
+              ? const [NlColors.skyTopDark, NlColors.skyDark]
+              : const [NlColors.skyTop, NlColors.sky],
         ),
-        child,
-      ],
+      ),
+      child: child,
     );
   }
 }
 
-class _RadarPainter extends CustomPainter {
-  const _RadarPainter();
+/// Vagues turquoise et bleues (§15), au-dessus du pied de page.
+class Vagues extends StatelessWidget {
+  const Vagues({super.key, this.hauteur = 36});
+  final double hauteur;
 
-  void _echo(Canvas canvas, Offset c, double rx, double ry, Color color) {
-    final rect = Rect.fromCenter(center: c, width: rx * 2, height: ry * 2);
-    canvas.drawOval(
-      rect,
-      Paint()
-        ..shader = RadialGradient(colors: [color, color.withValues(alpha: 0)])
-            .createShader(rect),
-    );
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: hauteur,
+    width: double.infinity,
+    child: const CustomPaint(painter: _VaguesPainter()),
+  );
+}
+
+class _VaguesPainter extends CustomPainter {
+  const _VaguesPainter();
+
+  Path _vague(Size s, double base, double amplitude, double decalage) {
+    final p = Path()..moveTo(0, s.height * base);
+    for (var i = 0; i < 2; i++) {
+      final x0 = s.width * i / 2;
+      final w = s.width / 2;
+      p.cubicTo(
+        x0 + w * .25 + decalage,
+        s.height * (base - amplitude),
+        x0 + w * .75 + decalage,
+        s.height * (base + amplitude),
+        x0 + w,
+        s.height * base,
+      );
+    }
+    return p
+      ..lineTo(s.width, s.height)
+      ..lineTo(0, s.height)
+      ..close();
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    final c = Offset(size.width * .78, size.height * .16);
-    _echo(canvas, c.translate(-20, 30), 190, 140, NlColors.radarGreen);
-    _echo(canvas, c, 120, 90, NlColors.radarYellow);
-    _echo(canvas, c.translate(10, -8), 62, 46, NlColors.radarRed);
+    canvas.drawPath(
+      _vague(size, .45, .35, 0),
+      Paint()..color = NlColors.turquoise.withValues(alpha: .22),
+    );
+    canvas.drawPath(
+      _vague(size, .65, .3, 30),
+      Paint()..color = NlColors.accent.withValues(alpha: .18),
+    );
   }
 
   @override
-  bool shouldRepaint(covariant _RadarPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _VaguesPainter oldDelegate) => false;
 }
 
 /// Bouton SOS rouge, réservé à l'alerte (RG-SOS-01).
@@ -270,7 +346,7 @@ class DemoBanner extends StatelessWidget {
       child: Text(
         AppLocalizations.of(context).demoBanner,
         style: const TextStyle(
-          color: Color(0xFF3A2A00),
+          color: NlColors.betaFg,
           fontWeight: FontWeight.w600,
           fontSize: 13,
         ),

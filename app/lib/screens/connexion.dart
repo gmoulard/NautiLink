@@ -28,19 +28,83 @@ class BetaBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    // Avertissement bêta rouge sur rose, précédé de ⚠ (D-157, §15).
+    final rouge = dark ? NlColors.betaFgDark : NlColors.betaFg;
     return Container(
       width: double.infinity,
-      color: NlColors.beta,
+      color: dark ? NlColors.betaBgDark : NlColors.betaBg,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Text(
-        detail == null ? l.betaBanner : '${l.betaBanner} · $detail',
-        style: const TextStyle(
-          color: Color(0xFF3A2A00),
-          fontWeight: FontWeight.w600,
-          fontSize: 13,
-        ),
-        textAlign: TextAlign.center,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.warning_amber_rounded, size: 16, color: rouge),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              detail == null ? l.betaBanner : '${l.betaBanner} · $detail',
+              style: TextStyle(
+                color: rouge,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+/// En-tête de marque (D-157, §15) : logo en carré arrondi, « NautiLink » et
+/// la signature, sur le dégradé ciel, avec des vagues.
+class EnTeteMarque extends StatelessWidget {
+  const EnTeteMarque({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                'assets/logo-nautilink.png',
+                key: const Key('brand-logo'),
+                width: 64,
+                height: 64,
+                excludeFromSemantics: true,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'NautiLink',
+                    style: displayStyle(30, color: theme.colorScheme.onSurface),
+                  ),
+                  Text(
+                    'Your sea, your safety, your story.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        const Vagues(hauteur: 28),
+      ],
     );
   }
 }
@@ -58,6 +122,7 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
   final _email = TextEditingController();
   final _mdp = TextEditingController();
   bool _occupe = false;
+  bool _mdpVisible = false;
   String? _erreur;
 
   @override
@@ -150,131 +215,160 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
     final l = AppLocalizations.of(context);
     final depot = _depot(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l.loginTitle)),
       body: Column(
         children: [
           const BetaBanner(),
           Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 480),
-                child: AutofillGroup(
-                  child: ListView(
-                    padding: const EdgeInsets.all(20),
-                    children: [
-                      if (depot.sessionExpiree) ...[
-                        Text(
-                          l.sessionExpired,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                      ],
-                      TextField(
-                        key: const Key('login-email'),
-                        controller: _email,
-                        keyboardType: TextInputType.emailAddress,
-                        autofillHints: const [AutofillHints.email],
-                        decoration: InputDecoration(
-                          labelText: l.email,
-                          border: const OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextField(
-                        key: const Key('login-password'),
-                        controller: _mdp,
-                        obscureText: true,
-                        autofillHints: const [AutofillHints.password],
-                        decoration: InputDecoration(
-                          labelText: l.password,
-                          border: const OutlineInputBorder(),
-                        ),
-                        onSubmitted: (_) => _seConnecter(),
-                      ),
-                      if (_erreur != null) ...[
+            child: RadarBackground(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: AutofillGroup(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 32, 20, 20),
+                      children: [
+                        // D-157 : en-tête de l'étude, puis « Connexion ».
+                        const EnTeteMarque(),
                         const SizedBox(height: 12),
                         Text(
-                          _erreur!,
-                          key: const Key('login-error'),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
+                          l.loginTitle,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                      ],
-                      const SizedBox(height: 16),
-                      FilledButton(
-                        onPressed: _occupe ? null : _seConnecter,
-                        child: _occupe
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : Text(l.loginButton),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  MotDePasseOublieScreen(email: _email.text),
+                        Text(
+                          l.loginSubtitle,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 20),
+                        if (depot.sessionExpiree) ...[
+                          Text(
+                            l.sessionExpired,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
                             ),
                           ),
-                          child: Text(l.forgotPassword),
+                          const SizedBox(height: 12),
+                        ],
+                        TextField(
+                          key: const Key('login-email'),
+                          controller: _email,
+                          keyboardType: TextInputType.emailAddress,
+                          autofillHints: const [AutofillHints.email],
+                          decoration: InputDecoration(
+                            labelText: l.email,
+                            prefixIcon: const Icon(Icons.mail_outline),
+                          ),
                         ),
-                      ),
-                      const Divider(height: 32),
-                      // Connexion par Google et Apple (RG-CPT-02, RG-CPT-11) : active
-                      // avec les identifiants clients donnés à la construction
-                      // (app/README.md) ; Apple sur iPhone seulement.
-                      OutlinedButton.icon(
-                        key: const Key('login-google'),
-                        onPressed: _occupe || !identites.google
-                            ? null
-                            : () => _seConnecterPar('google'),
-                        icon: const Icon(Icons.account_circle_outlined),
-                        label: Text(l.continueGoogle),
-                      ),
-                      if (identites.apple || !identites.google) ...[
-                        const SizedBox(height: 8),
-                        OutlinedButton.icon(
-                          key: const Key('login-apple'),
-                          onPressed: _occupe || !identites.apple
-                              ? null
-                              : () => _seConnecterPar('apple'),
-                          icon: const Icon(Icons.apple),
-                          label: Text(l.continueApple),
-                        ),
-                      ],
-                      if (!identites.google && !identites.apple) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          l.providerUnavailable,
-                          style: Theme.of(context).textTheme.bodySmall,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                      const Divider(height: 32),
-                      OutlinedButton(
-                        onPressed: _occupe
-                            ? null
-                            : () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const CreationCompteScreen(),
-                                ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          key: const Key('login-password'),
+                          controller: _mdp,
+                          obscureText: !_mdpVisible,
+                          autofillHints: const [AutofillHints.password],
+                          decoration: InputDecoration(
+                            labelText: l.password,
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              key: const Key('login-eye'),
+                              tooltip: _mdpVisible
+                                  ? l.hidePassword
+                                  : l.showPassword,
+                              icon: Icon(
+                                _mdpVisible
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
                               ),
-                        child: Text(l.createAccount),
-                      ),
-                      // Sponsor intégré à la page, après les boutons (Q-102).
-                      const SizedBox(height: 24),
-                      const SponsorFooter(),
-                      const PiedDePage(),
-                    ],
+                              onPressed: () =>
+                                  setState(() => _mdpVisible = !_mdpVisible),
+                            ),
+                          ),
+                          onSubmitted: (_) => _seConnecter(),
+                        ),
+                        if (_erreur != null) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            _erreur!,
+                            key: const Key('login-error'),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        FilledButton(
+                          onPressed: _occupe ? null : _seConnecter,
+                          child: _occupe
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(l.loginButton),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    MotDePasseOublieScreen(email: _email.text),
+                              ),
+                            ),
+                            child: Text(l.forgotPassword),
+                          ),
+                        ),
+                        const Divider(height: 32),
+                        // Connexion par Google et Apple (RG-CPT-02, RG-CPT-11) : active
+                        // avec les identifiants clients donnés à la construction
+                        // (app/README.md) ; Apple sur iPhone seulement.
+                        OutlinedButton.icon(
+                          key: const Key('login-google'),
+                          onPressed: _occupe || !identites.google
+                              ? null
+                              : () => _seConnecterPar('google'),
+                          icon: const Icon(Icons.account_circle_outlined),
+                          label: Text(l.continueGoogle),
+                        ),
+                        if (identites.apple || !identites.google) ...[
+                          const SizedBox(height: 8),
+                          OutlinedButton.icon(
+                            key: const Key('login-apple'),
+                            onPressed: _occupe || !identites.apple
+                                ? null
+                                : () => _seConnecterPar('apple'),
+                            icon: const Icon(Icons.apple),
+                            label: Text(l.continueApple),
+                          ),
+                        ],
+                        if (!identites.google && !identites.apple) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            l.providerUnavailable,
+                            style: Theme.of(context).textTheme.bodySmall,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                        const Divider(height: 32),
+                        OutlinedButton(
+                          onPressed: _occupe
+                              ? null
+                              : () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const CreationCompteScreen(),
+                                  ),
+                                ),
+                          child: Text(l.createAccount),
+                        ),
+                        // Sponsor intégré à la page, après les boutons (Q-102).
+                        const SizedBox(height: 24),
+                        const SponsorFooter(),
+                        const PiedDePage(),
+                      ],
+                    ),
                   ),
                 ),
               ),
