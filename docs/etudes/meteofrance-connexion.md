@@ -66,9 +66,10 @@ Proposition (non validée) pour les points 4 à 6 : comportement en cas d'échec
 
 ## 8. Avant de cocher Q-39
 
-- [ ] Compte créé et validé.
+- [x] Compte créé et validé (2026-11-26).
 - [ ] Conditions d'utilisation lues : usage serveur, gratuité, mention de la source.
-- [ ] API souscrites ; vent, pression et état de la mer obtenus pour un point au large de Lorient.
+- [x] API souscrites (2026-11-26, § 9).
+- [ ] Vent, pression et état de la mer obtenus pour un point au large de Lorient (§ 10, étape 3).
 - [ ] Type de code choisi, nom de la variable validé, code posé sur pi-appliance.
 - [ ] Ce document corrigé d'après ce qui a été constaté.
 
@@ -85,6 +86,23 @@ https://public-api.meteofrance.fr/public/arpege/1.0
 
 API Environnement
 https://public-api.meteofrance.fr/previnum/DPPaquetENVIRONNEMENT/v1
+
+Identifiant d'application OAuth2 créé ; son secret est gardé par le porteur du projet, hors du dépôt (§ 5).
+
+## 10. Prochaines étapes
+
+Dans cet ordre ; reporter chaque constat dans ce document et dans [Q-39](../06-questions-ouvertes.md#q-39).
+
+1. **Jeton** : les quatre souscriptions faites, (re)générer le jeton ou vérifier que l'identifiant d'application couvre bien les quatre API (un jeton créé avant une souscription ne vaut pas pour elle, § 3). Essai depuis un poste, sans écrire le secret dans un fichier suivi par Git : demander un jeton (§ 6, étape 1) et noter ici l'adresse exacte du point `/token` constatée.
+2. **Conditions d'utilisation** : les lire et cocher la ligne du § 8 (usage par un serveur pour une application publique, gratuité après la bêta, mention de la source « Météo-France »).
+3. **Données en un point** : pour un point au large de Lorient, à l'heure courante, constater et noter ici, API par API, ce qui est obtenu et sous quelle forme (valeur en un point, ou fichier de grille, GRIB2 par exemple, à découper au point de grille le plus proche) :
+   - vent et pression : API « Modèle AROME » (côtes françaises) ; API « Modèle ARPEGE » pour un point hors de la zone d'AROME (**à vérifier** : couverture de chaque modèle) ;
+   - état de la mer (hauteur des vagues, houle) : API « Package Modèles de vague et surcote » ;
+   - API « Environnement » : noter ce qu'elle apporte à RG-NAV-28 ; si rien, la souscription peut être retirée.
+   Si l'une des trois données manque, revenir vers le porteur du projet (D-88 à revoir).
+4. **Décisions à prendre avec le porteur du projet** (Q-39) : type de code (identifiant OAuth2, proposé au § 4), nom de la variable (`NAUTILINK_METEOFRANCE`, proposé au § 5), comportement en cas d'échec et conservation (§ 6, points 4 à 6), API retenue pour chaque donnée d'après l'étape 3. Puis trancher Q-39 (`D-nn`, règles, selon « Trancher une question » de `CLAUDE.md`).
+5. **Code du serveur** : action [TODO-4.10](../TODO.md) : client Météo-France (jeton en mémoire, file d'appels, nouvel essai), relevé au début et à la fin de chaque navigation, colonnes `meteo_depart` et `meteo_arrivee`, affichage sur la page de la navigation de l'Application web et dans le PDF, essais avec un faux Météo-France ; sans variable posée, aucun relevé et aucune erreur.
+6. **Mise en service** : poser la variable sur pi-appliance par la console (§ 5), redémarrer le serveur, démarrer puis terminer une navigation d'essai et constater la météo sur sa page ; cocher le § 8.
 
 ## Sources
 
