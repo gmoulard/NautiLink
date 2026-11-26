@@ -51,7 +51,7 @@ void main() {
       expect(d.profil?.emailVerifie, isFalse);
       expect(d.quota, isNotNull);
 
-      // Bateau créé après le compte, puis associé à ce téléphone (Q-81).
+      // Bateau créé après le compte, puis associé à ce téléphone (D-132).
       final bateau = await d.api.appelObjet(
         'POST',
         '/v1/bateaux',

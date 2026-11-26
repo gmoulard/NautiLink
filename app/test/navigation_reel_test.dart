@@ -157,7 +157,7 @@ void main() {
       expect(d2.conduite.enCours?.dernierEnvoi, isNotNull);
     });
 
-    test('démarrage hors connexion refusé à sa réception : message gardé sur l\'écran de navigation (Q-90)', () async {
+    test('démarrage hors connexion refusé à sa réception : message gardé sur l\'écran de navigation (D-140)', () async {
       final d = await connecte();
       serveur.coupe = true;
       final n = await demarrer(d);
@@ -186,7 +186,7 @@ void main() {
       expect(debut.containsKey('position'), isFalse);
     });
 
-    test('bateau associé à un autre téléphone : il passe à celui-ci au démarrage (Q-81)', () async {
+    test('bateau associé à un autre téléphone : il passe à celui-ci au démarrage (D-132)', () async {
       final d = await connecte();
       final b2 = d.bateaux.firstWhere((b) => b.id == 'b2');
       await d.demarrer(
@@ -241,7 +241,7 @@ void main() {
     );
 
     test(
-      'GPS sans réponse : position automatique « GPS non disponible » (Q-89)',
+      'GPS sans réponse : position automatique « GPS non disponible » (D-139)',
       () async {
         final d = await connecte();
         await demarrer(d);
@@ -520,7 +520,7 @@ void main() {
       expect((c as Map)['heureAcquisition'], fin);
     });
 
-    test('reprise d\'une navigation en cours inconnue du téléphone, relue sur le serveur (RG-NAV-12, Q-90)', () async {
+    test('reprise d\'une navigation en cours inconnue du téléphone, relue sur le serveur (RG-NAV-12, D-140)', () async {
       serveur.navigationEnCours = true;
       final d = await connecte();
       expect(d.conduite.enCours, isNull);
@@ -537,7 +537,7 @@ void main() {
       expect(serveur.navigationEnCours, isFalse);
     });
 
-    test('navigation terminée sur un autre support : elle n\'est plus en cours sur le téléphone (Q-90)', () async {
+    test('navigation terminée sur un autre support : elle n\'est plus en cours sur le téléphone (D-140)', () async {
       final d = await connecte();
       final n = await demarrer(d);
       serveur.demarrees[n.id]!['etat'] = 'terminee';

@@ -314,7 +314,7 @@ void main() {
       d2.dispose();
     });
 
-    test('erreur 5xx : modification gardée ; refus 4xx : retirée avec son message (Q-86)', () async {
+    test('erreur 5xx : modification gardée ; refus 4xx : retirée avec son message (D-136)', () async {
       final d = serveur.depotSur(session, base);
       await d.ouvrir();
       await d.connexion('marin@example.org', 'secret123');

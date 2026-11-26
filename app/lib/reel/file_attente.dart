@@ -50,7 +50,7 @@ class BilanEnvoi {
 ///   au plus (`POST /v1/synchronisation`), enfin les fichiers
 ///   (`PUT /v1/fichiers/{id}`), chacun après son événement ;
 /// - **sortie de la file** à la réponse 200 ou 201 seulement (204 pour les
-///   statuts des SMS et les fichiers, dont c'est la réponse : Q-83) ; autre
+///   statuts des SMS et les fichiers, dont c'est la réponse : D-134) ; autre
 ///   4xx : mis de côté, sans nouvel essai ; 5xx ou pas de réponse : gardé ;
 /// - **renvoi** à chaque nouvel envoi, sur [relancer] (retour de la connexion,
 ///   ouverture de l'application) et sinon après un délai croissant

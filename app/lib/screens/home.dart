@@ -194,7 +194,7 @@ class HomeScreen extends StatelessWidget {
             child: RadarBackground(
               child: demo
                   ? list
-                  // Actualisation de l'accueil en tirant la liste (Q-84).
+                  // Actualisation de l'accueil en tirant la liste (D-135).
                   : RefreshIndicator(onRefresh: depot.actualiser, child: list),
             ),
           ),

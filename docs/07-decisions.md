@@ -261,3 +261,22 @@ Les documents d'origine (deux cahiers des charges, règles métier, parcours uti
 | Id | Sujet | Demande | Décision | Règles |
 |----|-------|---------|----------|--------|
 | <a id="d-131"></a>D-131 | Sponsor et version sur l'accueil de l'application | Demande de l'utilisateur du 2026-11-25 : référence au sponsor SRT sur la page centrale, sans texte, le guidon seul ; descendre en bas, entre le guidon et le lien du mémo sécurité, un texte beaucoup plus court : « version gratuite » ou « version abonné ». | Accueil de l'application : le bandeau du sponsor du bas est retiré ; sous le SOS, dans la page, le guidon de la SRT seul, puis le lien « Version gratuite » (« Version abonné » avec un abonnement actif) vers « Quota et abonnement », puis « Mémo sécurité en mer » et le petit lien « Site de NautiLink ». Le temps disponible n'est plus sur l'accueil : il reste sur « Quota et abonnement », avec l'heure du dernier état reçu hors connexion. Les autres écrans gardent le bandeau du sponsor. | RG-ECO-10, tableau hors connexion (D-114) |
+
+## 2026-11-26 — Propositions de l'application mobile validées
+
+Demande de l'utilisateur du 2026-11-26 : « Finie l'App androïde et iphone ». Les propositions des questions ancienne question 81 à ancienne question 92, déjà appliquées « en attendant » dans l'application, sont validées en bloc par l'utilisateur ; vue suiveur aussi sur Android.
+
+| Id | Sujet | Demande | Décision | Règles |
+|----|-------|---------|----------|--------|
+| <a id="d-132"></a>D-132 | Association du téléphone à la connexion | ancienne question 81 : quels bateaux associer au téléphone à la connexion. | Proposition validée : téléphone enregistré, associé aux bateaux sans téléphone ; les autres restent associés à leur téléphone. | RG-BAT-05 |
+| <a id="d-133"></a>D-133 | Autre compte sur le même téléphone | ancienne question 82 : sort des copies locales et de la file à la connexion d'un autre compte. | Proposition validée : copies locales effacées, file gardée ; session expirée : retour à la connexion avec message. | RG-CPT-13 |
+| <a id="d-134"></a>D-134 | Sortie de la file sur 204 | ancienne question 83 : le dépôt d'un fichier et les statuts des SMS SOS répondent 204. | Proposition validée : 204 vaut réception pour ces deux envois. | 08-architecture.md §5 |
+| <a id="d-135"></a>D-135 | Relecture de l'accueil | ancienne question 84 : moments où l'application relit le serveur. | Proposition validée, avec le retour du réseau en plus. | RG-COM-07 |
+| <a id="d-136"></a>D-136 | Modifications hors connexion | ancienne question 86 : ordre, moment et refus des modifications de contacts et de paramètres faites hors connexion. | Proposition validée. | RG-COM-08 |
+| <a id="d-137"></a>D-137 | Invitations par SMS, réglages SMS sur iPhone | ancienne question 87 : texte du SMS d'invitation ; réglages SMS sur l'écran « Paramètres » de l'iPhone. | Propositions validées. | RG-PAR-11, RG-IOS-10 |
+| <a id="d-138"></a>D-138 | « Écrire à l'équipe NautiLink » | ancienne question 88 : contact de l'équipe dans l'assistance. | Proposition validée : page de suivi du projet sur GitHub en attendant une adresse e-mail. | RG-COM-09 |
+| <a id="d-139"></a>D-139 | GPS sans réponse | ancienne question 89 : attente du GPS pour une position automatique. | Proposition validée : 45 secondes, puis « GPS non disponible ». | RG-GPS-07 |
+| <a id="d-140"></a>D-140 | Démarrage refusé, navigation inconnue ou terminée ailleurs | ancienne question 90. | Propositions validées. | RG-NAV-32, RG-NAV-33 |
+| <a id="d-141"></a>D-141 | Bateau proposé au démarrage | ancienne question 91 : téléphone sans bateau associé, compte sans bateau. | Proposition validée. | RG-NAV-34 |
+| <a id="d-142"></a>D-142 | Détails du SOS | ancienne question 92 : attente du GPS, choix du bateau, personnes à bord, SMS sans envoi automatique. | Proposition validée. | RG-SOS-23 |
+| <a id="d-143"></a>D-143 | Suiveur sur Android | Choix proposé à l'utilisateur : vue suiveur sur Android et iPhone, ou iPhone seulement : « Android et iPhone ». | Le suiveur sur Android a le tableau de bord et la page de la navigation avec la carte, comme sur iPhone ; une notification push ouvre la navigation dans l'application. | RG-AND-09 |

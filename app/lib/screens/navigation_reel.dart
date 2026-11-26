@@ -72,7 +72,7 @@ Future<void> openStartReel(BuildContext context) async {
   final bateaux = await depot.bateauxDuTelephone();
   if (!context.mounted) return;
   if (bateaux.isEmpty) {
-    // Compte sans bateau : la fiche se crée sur le Web (Q-81, Q-91).
+    // Compte sans bateau : la fiche se crée sur le Web (D-132, D-141).
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -799,7 +799,7 @@ Future<bool> Function(Uri) ouvrirLien = (u) =>
 /// « Envoyer un SOS » de la vraie application, depuis l'accueil ou l'écran
 /// de navigation (RG-SOS-01, RG-SOS-15). Pendant la navigation du téléphone,
 /// l'alerte lui est rattachée ; sinon au bateau du téléphone, choisi s'il y
-/// en a plusieurs, avant la confirmation (Q-92).
+/// en a plusieurs, avant la confirmation (D-142).
 Future<void> confirmSosReel(BuildContext context) async {
   final depot = _depot(context);
   final l = AppLocalizations.of(context);

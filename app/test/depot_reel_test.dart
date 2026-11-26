@@ -176,7 +176,7 @@ void main() {
     expect(await d.envois.enAttente(), 0);
   });
 
-  test('déconnexion : jetons oubliés, file d\'attente gardée ; autre compte : copies locales effacées (Q-82)', () async {
+  test('déconnexion : jetons oubliés, file d\'attente gardée ; autre compte : copies locales effacées (D-133)', () async {
     final d = serveur.depot(session, base);
     await d.ouvrir();
     await d.connexion('marin@example.org', 'secret123');

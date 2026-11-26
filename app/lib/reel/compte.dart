@@ -6,7 +6,7 @@ import 'base_locale.dart';
 
 /// Modification du compte faite sur le téléphone, pas encore reçue par le
 /// serveur : ajout, modification ou suppression d'un contact, modification
-/// des paramètres généraux (RG-COM-06, Q-86).
+/// des paramètres généraux (RG-COM-06, D-136).
 class ModificationCompte {
   const ModificationCompte(this.type, this.id, this.champs);
 
@@ -222,7 +222,7 @@ class GestionCompte {
   /// Envoie les modifications gardées, dans l'ordre. Lève [HorsConnexion] si
   /// le serveur ne répond pas ; une erreur 5xx arrête la passe (gardée pour la
   /// suivante) ; un autre refus retire la modification et garde son message
-  /// dans [dernierRefus] (Q-86).
+  /// dans [dernierRefus] (D-136).
   Future<void> envoyer() async {
     if (_envoiEnCours) return;
     _envoiEnCours = true;
@@ -261,7 +261,7 @@ class GestionCompte {
           r = await api.appel('POST', '/v1/contacts', json: m.champs);
         } on ErreurApi catch (e) {
           // Adresse du navigateur non confirmée : l'invitation est refusée,
-          // le contact est gardé sans « Suiveur » (RG-CPT-09, Q-86).
+          // le contact est gardé sans « Suiveur » (RG-CPT-09, D-136).
           if (e.code != 'email_non_verifie' || m.champs['suiveur'] != true) {
             rethrow;
           }

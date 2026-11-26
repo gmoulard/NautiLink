@@ -73,7 +73,7 @@ class _NautiLinkAppState extends State<NautiLinkApp>
   }
 
   /// Retour au premier plan : relecture du serveur et relance de la file
-  /// (08-architecture.md §5, Q-84).
+  /// (08-architecture.md §5, D-135).
   @override
   void didChangeAppLifecycleState(AppLifecycleState s) {
     if (s == AppLifecycleState.resumed) {

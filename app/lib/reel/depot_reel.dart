@@ -141,7 +141,7 @@ class DepotReel extends Depot {
   List<BateauNl> get bateaux => _bateaux;
 
   /// Contacts reçus, avec les modifications du téléphone pas encore reçues
-  /// par le serveur (RG-COM-06, Q-86) : utilisables hors connexion pour le SOS.
+  /// par le serveur (RG-COM-06, D-136) : utilisables hors connexion pour le SOS.
   @override
   List<ContactNl> get contacts => compte.appliquerContacts(_contacts);
   @override
@@ -236,7 +236,7 @@ class DepotReel extends Depot {
     final maintenant = DateTime.now();
     try {
       // Modifications des contacts et des paramètres gardées sur le téléphone
-      // d'abord, puis relecture (RG-CTC-03, RG-PRM-02, Q-86).
+      // d'abord, puis relecture (RG-CTC-03, RG-PRM-02, D-136).
       await compte.envoyer();
       final profil = await api.appelObjet('GET', '/v1/compte');
       await base.ecrireCopie('profil', profil, maintenant);
@@ -305,7 +305,7 @@ class DepotReel extends Depot {
       if (r.enCours) {
         await conduite.nommer(r.nom);
       } else {
-        // Terminée sur un autre support ou clôturée par le serveur (Q-90).
+        // Terminée sur un autre support ou clôturée par le serveur (D-140).
         await conduite.oublierTerminee();
       }
     }
@@ -314,7 +314,7 @@ class DepotReel extends Depot {
   /// « Reprendre la dernière navigation » (RG-NAV-12) : la navigation gardée
   /// sur le téléphone ; sinon celle que le serveur dit en cours, relue sur le
   /// serveur (fréquence, personnes à bord) ou, hors connexion, d'après la
-  /// dernière liste reçue (Q-90). Vide s'il n'y en a pas.
+  /// dernière liste reçue (D-140). Vide s'il n'y en a pas.
   Future<NavigationLocale?> reprendre() async {
     final locale = conduite.enCours;
     if (locale != null) return locale;
@@ -363,7 +363,7 @@ class DepotReel extends Depot {
 
   /// Bateaux proposés au démarrage et au SOS depuis l'accueil : ceux du
   /// téléphone (RG-NAV-02, RG-SOS-15) ; si le téléphone n'en a aucun, tous
-  /// ceux du compte (Q-91).
+  /// ceux du compte (D-141).
   Future<List<BateauNl>> bateauxDuTelephone() async {
     final id = await session.appareilId();
     final miens = _bateaux.where((b) => b.appareilAssocieId == id).toList();
@@ -371,8 +371,8 @@ class DepotReel extends Depot {
   }
 
   /// « Envoi message – Début de navigation » (RG-NAV-08). Un bateau associé à
-  /// un autre téléphone passe d'abord à celui-ci (Q-81) ; sans Internet, le
-  /// serveur le refusera, et le refus sera affiché (Q-90).
+  /// un autre téléphone passe d'abord à celui-ci (D-132) ; sans Internet, le
+  /// serveur le refusera, et le refus sera affiché (D-140).
   Future<NavigationLocale> demarrer({
     required BateauNl bateau,
     required int frequenceMinutes,
@@ -509,8 +509,8 @@ class DepotReel extends Depot {
   Future<void> _ouvrirSession(Map<String, Object?> s, String email) async {
     final compte = email.trim().toLowerCase();
     if (session.compteEmail != null && session.compteEmail != compte) {
-      // Autre compte sur ce téléphone : ses copies locales s'effacent, la file reste (Q-82) ;
-      // ses modifications de contacts et de paramètres non envoyées aussi (Q-86).
+      // Autre compte sur ce téléphone : ses copies locales s'effacent, la file reste (D-133) ;
+      // ses modifications de contacts et de paramètres non envoyées aussi (D-136).
       await base.effacerCopies();
       await this.compte.charger();
       await _chargerCopies();
@@ -528,7 +528,7 @@ class DepotReel extends Depot {
   /// Association du téléphone (cahier des charges §5.1, RG-BAT-02) :
   /// enregistrement du téléphone (`PUT /v1/appareils/{id}`, identifiant tiré
   /// une fois et gardé), puis association aux bateaux du compte qui n'ont pas
-  /// encore de téléphone (Q-81).
+  /// encore de téléphone (D-132).
   Future<void> associerTelephone() async {
     final p = plateforme;
     if (p == null) return;

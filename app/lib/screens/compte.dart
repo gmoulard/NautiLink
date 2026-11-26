@@ -528,7 +528,7 @@ class _ContactScreenState extends State<ContactScreen> {
   }
 
   /// Invitation par téléphone : SMS prérempli sur Android (avec la copie au
-  /// navigateur, RG-SMS-08), lien affiché sur iPhone (RG-PAR-04, RG-IOS-02, Q-87).
+  /// navigateur, RG-SMS-08), lien affiché sur iPhone (RG-PAR-04, RG-IOS-02, D-137).
   Future<void> _envoyerSms(ContactNl c, InvitationNl i) async {
     final nom = _depot.profil?.nom ?? '';
     final texte =
@@ -825,7 +825,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // iPhone : réglages gardés pour les navigations menées depuis un
-          // téléphone Android, sans effet sur l'iPhone (RG-IOS-02, Q-87).
+          // téléphone Android, sans effet sur l'iPhone (RG-IOS-02, D-137).
           if (!demo && _plateforme(depot) == 'ios')
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -1000,10 +1000,10 @@ class _SosHistoryScreenState extends State<SosHistoryScreen> {
 // Assistance
 // ======================================================================
 
-/// Page de suivi du projet, en attendant l'adresse e-mail de l'équipe (Q-88).
+/// Page de suivi du projet, en attendant l'adresse e-mail de l'équipe (D-138).
 const assistanceUrl = '$repositoryUrl/issues';
 
-/// Assistance : contact de l'équipe NautiLink (Q-88), avertissement bêta
+/// Assistance : contact de l'équipe NautiLink (D-138), avertissement bêta
 /// consultable à tout moment, texte inclus dans l'application (RG-CPT-07),
 /// mémo sécurité en mer (RG-SOS-22) ; hors connexion, contact impossible
 /// (RG-COM-06).

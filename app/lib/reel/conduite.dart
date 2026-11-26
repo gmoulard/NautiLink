@@ -90,7 +90,7 @@ class NavigationLocale {
   DateTime? dernierEnvoi;
 
   /// Message du serveur qui a refusé cette navigation ou ses envois
-  /// (démarrage refusé après coup, clôture automatique : Q-90, RG-ECO-12).
+  /// (démarrage refusé après coup, clôture automatique : D-140, RG-ECO-12).
   String? refus;
 
   Map<String, Object?> versJson() => {
@@ -312,7 +312,7 @@ class ConduiteNavigation extends ChangeNotifier {
   /// Enregistre une position automatique si elle est due. Position remise
   /// par le suivi si elle est récente, sinon acquisition ; sans réponse du
   /// GPS, la position automatique est enregistrée « GPS non disponible »
-  /// (Q-89).
+  /// (D-139).
   Future<void> verifierPositionAutomatique() async {
     final n = _nav;
     final due = prochaineAutomatique;
@@ -557,7 +557,7 @@ class ConduiteNavigation extends ChangeNotifier {
 
   /// Reprend sur ce téléphone une navigation en cours qu'il ne connaît pas
   /// (copie locale perdue : réinstallation, autre compte entre-temps), d'après
-  /// le serveur (Q-90).
+  /// le serveur (D-140).
   Future<void> adopter(NavigationLocale n) async {
     if (_nav != null) return;
     _nav = n;
@@ -568,7 +568,7 @@ class ConduiteNavigation extends ChangeNotifier {
 
   /// Navigation terminée ailleurs (Web, clôture automatique) : elle n'est
   /// plus en cours sur le téléphone, les positions automatiques s'arrêtent
-  /// (Q-90).
+  /// (D-140).
   Future<void> oublierTerminee() async {
     if (_nav == null) return;
     _arreterAutomatiques();
@@ -580,7 +580,7 @@ class ConduiteNavigation extends ChangeNotifier {
   // ------------------------------------------------ alerte SOS
 
   /// Attente maximale du GPS pour une alerte SOS, avant de prendre la
-  /// dernière position connue (Q-92).
+  /// dernière position connue (D-142).
   static const attenteGpsSos = Duration(seconds: 20);
 
   /// Position d'une alerte SOS : actuelle (RG-SOS-09), sinon la dernière
@@ -668,7 +668,7 @@ class ConduiteNavigation extends ChangeNotifier {
   /// (adresse non confirmée, bateau d'un autre, navigation déjà en cours…) :
   /// le message du serveur est gardé et affiché sur l'écran de navigation ;
   /// la navigation reste sur le téléphone jusqu'à « Terminer la navigation »
-  /// (Q-90).
+  /// (D-140).
   Future<void> verifierRefus() async {
     final n = _nav;
     if (n == null || n.refus != null) return;

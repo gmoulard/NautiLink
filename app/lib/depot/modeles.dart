@@ -182,7 +182,7 @@ class ContactNl {
   final String? utilisateurId;
 
   /// Modification faite sur le téléphone, pas encore reçue par le serveur
-  /// (RG-COM-06, Q-86).
+  /// (RG-COM-06, D-136).
   final bool enAttente;
 
   static ContactNl? depuisJson(Object? j) {

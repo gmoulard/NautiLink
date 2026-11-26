@@ -21,7 +21,7 @@ class StockageSession {
   String? get jetonRenouvellement => _p.getString(_renouvellement);
   bool get ouverte => jetonAcces != null && jetonRenouvellement != null;
 
-  /// Adresse du dernier compte connecté sur ce téléphone (changement de compte : Q-82).
+  /// Adresse du dernier compte connecté sur ce téléphone (changement de compte : D-133).
   String? get compteEmail => _p.getString(_compte);
   Future<void> retenirCompte(String email) => _p.setString(_compte, email);
 
