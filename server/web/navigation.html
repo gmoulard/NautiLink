@@ -1,6 +1,7 @@
 {{template "haut" .}}
 {{with .D}}
 <h1>{{.N.Nom}}</h1>
+{{if not .Navigateur}}<p class="aide suivi">Navigation de {{.N.Navigateur.Nom}} : vous la suivez en lecture seule.</p>{{end}}
 <p><a class="bouton" href="{{$.Base}}/navigations/{{.N.ID}}/pdf" download>Exporter en PDF</a></p>
 {{if .Corbeille}}
 <div class="carte"><p>Cette navigation est dans la corbeille : elle sera supprimée définitivement le {{.Suppression}}. Vos suiveurs n'y ont plus accès. <a class="lien" href="{{$.Base}}/corbeille">Corbeille</a></p></div>
