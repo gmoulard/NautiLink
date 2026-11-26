@@ -150,8 +150,8 @@ paths:
         vérifiée, sinon refusée (409 `email_deja_utilise`, RG-CPT-11).
         Fournisseur sans identifiant client configuré : 501 `fournisseur_indisponible`. Après 5 mots
         de passe faux pour un compte, ou 20 pour une adresse IP, en 15 minutes : 429.
-        Une session expire après 90 jours sans usage, jamais sur le téléphone associé pendant une
-        navigation en cours (RG-CPT-08).
+        Une session mobile expire après 90 jours sans usage, jamais sur le téléphone associé pendant
+        une navigation en cours (RG-CPT-08).
       security: []
       x-regles: [RG-CPT-02, RG-CPT-06, RG-CPT-08, RG-CPT-11, RG-CPT-12, RG-DON-03]
       requestBody:
@@ -1360,12 +1360,12 @@ components:
       type: apiKey
       in: cookie
       name: nautilink_session
-      description: 'Session de la plateforme Web (cookie HttpOnly, Secure, SameSite=Lax).'
+      description: 'Session de la plateforme Web (cookie HttpOnly, Secure, SameSite=Lax), ouverte par le formulaire de la page « Se connecter » ; expire après 1 heure sans usage ; cookie persistant si « Rester connecté » est coché, cookie de session sinon (RG-CPT-08, D-148).'
     cookieAdmin:
       type: apiKey
       in: cookie
       name: nautilink_admin
-      description: 'Session de l''espace administrateur, distincte de celle des utilisateurs.'
+      description: 'Session de l''espace administrateur, distincte de celle des utilisateurs ; expire après 1 heure sans usage ; cookie persistant si « Rester connecté » est coché, cookie de session sinon (RG-ADM-07, D-148).'
 
   parameters:
     NavigationId:

@@ -441,7 +441,7 @@ func (a *app) routesComptes(mux *http.ServeMux, v string) {
 		if err != nil {
 			return err
 		}
-		acces, renouv, err := a.ouvrirSession(r.Context(), id, "mobile")
+		acces, renouv, err := a.ouvrirSession(r.Context(), id, "mobile", true)
 		if err != nil {
 			return err
 		}
@@ -464,7 +464,7 @@ func (a *app) routesComptes(mux *http.ServeMux, v string) {
 		if err != nil {
 			return err
 		}
-		acces, renouv, err := a.ouvrirSession(r.Context(), id, "mobile")
+		acces, renouv, err := a.ouvrirSession(r.Context(), id, "mobile", true)
 		if err != nil {
 			return err
 		}

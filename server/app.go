@@ -183,11 +183,13 @@ type session struct {
 	utilisateur string
 	support     string // "mobile" ou "web"
 	parCookie   bool
+	persistante bool // plateforme Web : « Rester connecté » coché (D-148)
 }
 
 const (
-	nomCookie      = "nautilink_session"
-	dureeSansUsage = 90 * 24 * time.Hour // RG-CPT-08
+	nomCookie         = "nautilink_session"
+	dureeSansUsage    = 90 * 24 * time.Hour // applications mobiles, RG-CPT-08
+	dureeSansUsageWeb = time.Hour           // plateforme Web, RG-CPT-08, D-148
 )
 
 // jetonDe : jeton porteur (applications mobiles) ou cookie (plateforme Web).
@@ -201,9 +203,11 @@ func jetonDe(r *http.Request) (string, bool) {
 	return "", false
 }
 
-// sessionDe : session de la requête, ou nil. Une session expire après 90 jours
-// sans usage, jamais sur le téléphone associé pendant une navigation en cours
-// (RG-CPT-08) ; chaque usage repousse l'expiration.
+// sessionDe : session de la requête, ou nil. Une session des applications
+// mobiles expire après 90 jours sans usage, jamais sur le téléphone associé
+// pendant une navigation en cours ; une session de la plateforme Web expire
+// après 1 heure sans usage (RG-CPT-08, D-148). Chaque usage repousse
+// l'expiration.
 func (a *app) sessionDe(ctx context.Context, r *http.Request) (*session, error) {
 	jeton, parCookie := jetonDe(r)
 	if jeton == "" || !a.b.prete() {
@@ -212,15 +216,19 @@ func (a *app) sessionDe(ctx context.Context, r *http.Request) (*session, error) 
 	s := &session{parCookie: parCookie}
 	var derniere time.Time
 	var appareil *string
-	err := a.b.pool.QueryRow(ctx, `SELECT id, utilisateur_id, support, appareil_id, derniere_utilisation
-		FROM sessions WHERE jeton_acces = $1`, empreinte(jeton)).Scan(&s.id, &s.utilisateur, &s.support, &appareil, &derniere)
+	err := a.b.pool.QueryRow(ctx, `SELECT id, utilisateur_id, support, persistante, appareil_id, derniere_utilisation
+		FROM sessions WHERE jeton_acces = $1`, empreinte(jeton)).Scan(&s.id, &s.utilisateur, &s.support, &s.persistante, &appareil, &derniere)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, err
 	}
-	if time.Since(derniere) > dureeSansUsage && !(appareil != nil && a.navigationEnCoursSurAppareil(ctx, *appareil)) {
+	duree := dureeSansUsage
+	if s.support != "mobile" {
+		duree = dureeSansUsageWeb
+	}
+	if time.Since(derniere) > duree && !(appareil != nil && a.navigationEnCoursSurAppareil(ctx, *appareil)) {
 		_, err := a.b.pool.Exec(ctx, "DELETE FROM sessions WHERE id = $1", s.id)
 		return nil, err
 	}
@@ -243,15 +251,16 @@ func (a *app) navigationEnCoursSurAppareil(ctx context.Context, appareil string)
 
 // ouvrirSession : crée une session et rend le jeton d'accès et celui de
 // renouvellement (ce dernier pour les applications mobiles seulement).
-func (a *app) ouvrirSession(ctx context.Context, utilisateur, support string) (acces, renouvellement string, err error) {
+// persistante : « Rester connecté » coché sur la plateforme Web (D-148).
+func (a *app) ouvrirSession(ctx context.Context, utilisateur, support string, persistante bool) (acces, renouvellement string, err error) {
 	acces = nouveauJeton()
 	var empRenouv []byte
 	if support == "mobile" {
 		renouvellement = nouveauJeton()
 		empRenouv = empreinte(renouvellement)
 	}
-	_, err = a.b.pool.Exec(ctx, `INSERT INTO sessions (utilisateur_id, jeton_acces, jeton_renouvellement, support)
-		VALUES ($1, $2, $3, $4)`, utilisateur, empreinte(acces), empRenouv, support)
+	_, err = a.b.pool.Exec(ctx, `INSERT INTO sessions (utilisateur_id, jeton_acces, jeton_renouvellement, support, persistante)
+		VALUES ($1, $2, $3, $4, $5)`, utilisateur, empreinte(acces), empRenouv, support, persistante)
 	return acces, renouvellement, err
 }
 
@@ -265,10 +274,22 @@ func nouvelleSessionJSON(acces, renouvellement string) sessionJSON {
 	return sessionJSON{acces, renouvellement, time.Now().Add(dureeSansUsage).UTC().Truncate(time.Second)}
 }
 
-// poserCookie : cookie de session de la plateforme Web, prolongé à chaque page.
-func (a *app) poserCookie(w http.ResponseWriter, jeton string) {
+// poserCookie : cookie de la plateforme Web, prolongé à chaque page.
+// « Rester connecté » coché : cookie persistant d'une heure, qui survit à la
+// fermeture du navigateur Internet ; décoché : cookie de session, sans date
+// d'expiration (RG-CPT-08, D-148).
+func (a *app) poserCookie(w http.ResponseWriter, jeton string, persistante bool) {
 	http.SetCookie(w, &http.Cookie{Name: nomCookie, Value: jeton, Path: a.cfg.Chemin + "/",
-		MaxAge: int(dureeSansUsage.Seconds()), HttpOnly: true, Secure: true, SameSite: http.SameSiteLaxMode})
+		MaxAge: maxAgeCookie(persistante, dureeSansUsageWeb), HttpOnly: true, Secure: true, SameSite: http.SameSiteLaxMode})
+}
+
+// maxAgeCookie : durée d'un cookie persistant, 0 pour un cookie de session
+// (ni Max-Age ni Expires).
+func maxAgeCookie(persistant bool, duree time.Duration) int {
+	if persistant {
+		return int(duree.Seconds())
+	}
+	return 0
 }
 
 func (a *app) effacerCookie(w http.ResponseWriter) {

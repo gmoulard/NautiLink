@@ -4,12 +4,12 @@ Serveur central de NautiLink : API, plateforme Web et espace administrateur, en 
 
 Réalisé :
 
-- comptes (TODO-4.1) : création par e-mail avec acceptation de l'avertissement bêta, vérification de l'adresse par e-mail, connexion, mot de passe oublié (lien d'une heure, toutes les sessions fermées, RG-CPT-10), sessions (90 jours sans usage, RG-CPT-08), profil ; Google et Apple prêts (rattachement à un compte existant si l'adresse est garantie vérifiée, RG-CPT-11), désactivés sans identifiants clients ;
+- comptes (TODO-4.1) : création par e-mail avec acceptation de l'avertissement bêta, vérification de l'adresse par e-mail, connexion, mot de passe oublié (lien d'une heure, toutes les sessions fermées, RG-CPT-10), sessions (90 jours sans usage sur mobile, 1 heure sur le Web avec la case « Rester connecté », RG-CPT-08), profil ; Google et Apple prêts (rattachement à un compte existant si l'adresse est garantie vérifiée, RG-CPT-11), désactivés sans identifiants clients ;
 - bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
 - contacts, invitations et accès des suiveurs (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
 - plateforme Web minimale (pages servies par le serveur, en français, sans JavaScript) : inscription, connexion, déconnexion, « Mon compte », « Bateaux », « Contacts », « Paramètres », page d'invitation ;
-- espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte, utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
+- espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte (1 heure sans usage, case « Rester connecté »), utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
 
 ## Lancer en local
 

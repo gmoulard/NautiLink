@@ -11,6 +11,8 @@
   <label class="case"><input type="checkbox" name="avertissement" value="{{.VersionAvertissement}}" required>
     <span>L'avertissement a changé : j'ai lu et j'accepte la nouvelle version de l'<a class="lien" href="{{.Avertissement}}" target="_blank" rel="noopener">avertissement</a>.</span></label>
   {{end}}
+  <label class="case"><input type="checkbox" name="rester" value="oui"{{if .F.rester}} checked{{end}}>
+    <span>Rester connecté</span></label>
   <button type="submit">Se connecter</button>
 </form>
 <p><a class="lien" href="{{.Base}}/mot-de-passe-oublie">Mot de passe oublié ?</a></p>

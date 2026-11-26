@@ -194,8 +194,10 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
   - Critères d'acceptation : lecture seule ; fiche bateau, autres suiveurs, contacts SOS et export visibles ; plus rien après un retrait.
 - [ ] **TODO-6.7**: Quota et abonnement Web (RG-ECO-07, RG-ECO-09). Dépend de : TODO-4.6, TODO-1.13, TODO-1.14.
   - Critères d'acceptation : abonnement souscrit sur le Web reconnu sur Android.
-- [ ] **TODO-6.8**: Demande du 2026-11-26 : case à cocher « Rester connecté » sur la page de connexion de la plateforme Web, pour garder la session active. Précision de l'utilisateur du 2026-11-26 : sans la case, une session sans usage se coupe au bout d'une heure. Dépend de : décision sur le reste (case cochée : 90 jours sans usage comme aujourd'hui, RG-CPT-08 ? case cochée par défaut ou non ? même case pour l'espace administrateur, aujourd'hui 12 heures sans usage ?), puis écriture en `D-nn` et dans les règles métier (RG-CPT-08).
+- [~] **TODO-6.8**: Demande du 2026-11-26 : case à cocher « Rester connecté » sur la page de connexion de la plateforme Web, pour garder la session active. Précision de l'utilisateur du 2026-11-26 : sans la case, une session sans usage se coupe au bout d'une heure. Décision prise le 2026-11-26 : [D-148](07-decisions.md#d-148) (RG-CPT-08, RG-ADM-07).
   - Critères d'acceptation : case présente sur la page de connexion Web ; cochée, la session survit à la fermeture du navigateur Internet pendant la durée décidée ; décochée, elle se ferme après une heure sans usage ; essais du serveur.
+  - Fait (2026-11-26) : décision [D-148](07-decisions.md#d-148) (RG-CPT-08, RG-ADM-07) ; serveur : case « Rester connecté », cochée par défaut, sur la page de connexion Web et sur celle de l'espace administrateur ; sessions Web et administrateur coupées après 1 heure sans usage, sessions mobiles inchangées (90 jours) ; cookie persistant (`Max-Age` d'une heure, prolongé à chaque page) si la case est cochée, cookie de session sinon ; migration 9 (colonne `persistante` de `sessions` et `sessions_admin`) ; essais avec PostgreSQL (`server/rester_connecte_test.go`).
+  - Reste : essai sur le Pi (fermeture et réouverture du navigateur Internet, case cochée puis décochée, Web et administration).
 
 ## 7. Étape 4 — Administration
 

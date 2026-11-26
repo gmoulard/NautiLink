@@ -62,6 +62,8 @@
   <input id="email" name="email" type="email" required autocomplete="username" value="{{index .F "email"}}">
   <label for="motdepasse">Mot de passe</label>
   <input id="motdepasse" name="motdepasse" type="password" required autocomplete="current-password">
+  <label class="case"><input type="checkbox" name="rester" value="oui"{{if index .F "rester"}} checked{{end}}>
+    <span>Rester connecté</span></label>
   <button type="submit">Se connecter</button>
 </form>
 </div>

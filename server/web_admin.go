@@ -60,7 +60,7 @@ func (a *app) webAdmin(connecte bool, p pageAdmin) http.HandlerFunc {
 			}
 		} else {
 			c, _ := r.Cookie(nomCookieAdmin)
-			a.poserCookieAdmin(w, c.Value)
+			a.poserCookieAdmin(w, c.Value, s.persistante)
 			d.Connecte, d.Email = true, s.email
 		}
 		if connecte && s == nil {
@@ -127,14 +127,16 @@ func (a *app) routesWebAdmin(mux *http.ServeMux, c string) {
 
 	mux.HandleFunc("GET "+ca+"/connexion", a.webAdmin(false, func(w http.ResponseWriter, r *http.Request, s *sessionAdmin, d *donneesAdmin) error {
 		d.Titre = "Connexion à l'espace administrateur"
+		d.F["rester"] = "oui" // « Rester connecté » coché par défaut (D-148)
 		a.rendreAdmin(w, "admin-connexion.html", d)
 		return nil
 	}))
 	mux.HandleFunc("POST "+ca+"/connexion", a.webAdmin(false, func(w http.ResponseWriter, r *http.Request, s *sessionAdmin, d *donneesAdmin) error {
-		d.Titre, d.F["email"] = "Connexion à l'espace administrateur", r.FormValue("email")
-		jeton, err := a.connexionAdmin(r.Context(), r, r.FormValue("email"), r.FormValue("motdepasse"))
+		d.Titre, d.F["email"], d.F["rester"] = "Connexion à l'espace administrateur", r.FormValue("email"), r.FormValue("rester")
+		rester := d.F["rester"] != ""
+		jeton, err := a.connexionAdmin(r.Context(), r, r.FormValue("email"), r.FormValue("motdepasse"), rester)
 		if err == nil {
-			a.poserCookieAdmin(w, jeton)
+			a.poserCookieAdmin(w, jeton, rester)
 			http.Redirect(w, r, ca+"/", http.StatusSeeOther)
 			return nil
 		}

@@ -23,8 +23,8 @@ import (
 
 const (
 	nomCookieAdmin      = "nautilink_admin"
-	dureeSansUsageAdmin = 12 * time.Hour // RG-ADM-07
-	dureeJournalAdmin   = "3 years"      // RG-DON-02
+	dureeSansUsageAdmin = time.Hour // RG-ADM-07, D-148
+	dureeJournalAdmin   = "3 years" // RG-DON-02
 )
 
 var errPasAdministrateur = &erreurAPI{http.StatusForbidden, "interdit",
@@ -36,6 +36,7 @@ var errPasDisponible = &erreurAPI{http.StatusNotFound, "non_disponible",
 // sessionAdmin : session ouverte dans l'espace administrateur.
 type sessionAdmin struct {
 	id, utilisateur, email string
+	persistante            bool // « Rester connecté » coché (D-148)
 }
 
 func (a *app) estAdmin(email string) bool {
@@ -57,7 +58,8 @@ func (a *app) adminValide(ctx context.Context, utilisateur string) (string, bool
 
 // connexionAdmin : e-mail et mot de passe du compte NautiLink, avec la même
 // protection contre les essais répétés ; rend le jeton de la session.
-func (a *app) connexionAdmin(ctx context.Context, r *http.Request, email, mdp string) (string, error) {
+// persistante : « Rester connecté » coché (RG-ADM-07, D-148).
+func (a *app) connexionAdmin(ctx context.Context, r *http.Request, email, mdp string, persistante bool) (string, error) {
 	id, err := a.connexionEmail(ctx, r, email, mdp, "")
 	if err != nil && err != errAvertissement {
 		return "", err
@@ -70,8 +72,8 @@ func (a *app) connexionAdmin(ctx context.Context, r *http.Request, email, mdp st
 		return "", errPasAdministrateur
 	}
 	jeton := nouveauJeton()
-	if _, err := a.b.pool.Exec(ctx, "INSERT INTO sessions_admin (utilisateur_id, jeton) VALUES ($1, $2)",
-		id, empreinte(jeton)); err != nil {
+	if _, err := a.b.pool.Exec(ctx, "INSERT INTO sessions_admin (utilisateur_id, jeton, persistante) VALUES ($1, $2, $3)",
+		id, empreinte(jeton), persistante); err != nil {
 		return "", err
 	}
 	s := &sessionAdmin{utilisateur: id, email: adresse}
@@ -91,8 +93,8 @@ func (a *app) sessionAdminDe(ctx context.Context, r *http.Request) (*sessionAdmi
 	}
 	s := &sessionAdmin{}
 	var derniere time.Time
-	err = a.b.pool.QueryRow(ctx, "SELECT id, utilisateur_id, derniere_utilisation FROM sessions_admin WHERE jeton = $1",
-		empreinte(c.Value)).Scan(&s.id, &s.utilisateur, &derniere)
+	err = a.b.pool.QueryRow(ctx, "SELECT id, utilisateur_id, persistante, derniere_utilisation FROM sessions_admin WHERE jeton = $1",
+		empreinte(c.Value)).Scan(&s.id, &s.utilisateur, &s.persistante, &derniere)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
@@ -116,9 +118,11 @@ func (a *app) sessionAdminDe(ctx context.Context, r *http.Request) (*sessionAdmi
 	return s, nil
 }
 
-func (a *app) poserCookieAdmin(w http.ResponseWriter, jeton string) {
+// poserCookieAdmin : cookie de l'espace administrateur, prolongé à chaque
+// page ; persistant si « Rester connecté » est coché, de session sinon (D-148).
+func (a *app) poserCookieAdmin(w http.ResponseWriter, jeton string, persistante bool) {
 	http.SetCookie(w, &http.Cookie{Name: nomCookieAdmin, Value: jeton, Path: a.cfg.Chemin + "/",
-		MaxAge: int(dureeSansUsageAdmin.Seconds()), HttpOnly: true, Secure: true, SameSite: http.SameSiteStrictMode})
+		MaxAge: maxAgeCookie(persistante, dureeSansUsageAdmin), HttpOnly: true, Secure: true, SameSite: http.SameSiteStrictMode})
 }
 
 func (a *app) effacerCookieAdmin(w http.ResponseWriter) {
