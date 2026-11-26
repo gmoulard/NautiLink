@@ -180,7 +180,7 @@ Bandeau du sponsor SRT : sur le fond de l'application, en thème clair comme en 
 
 ## 15. Identité graphique du 2026-11-26
 
-Choisie le 2026-11-26 ([D-157](07-decisions.md#d-157)) d'après l'étude [Nautilinkimages261126.png](etudes/Nautilinkimages261126.png) (source : `Nautilinkimages261126.pptx`). Elle vaut pour tous les supports : site de présentation (`site/style.css`, bloc « Identité graphique du 2026-11-26 »), Application web et espace administrateur (`server/web/static/style.css`), application mobile (`app/lib/theme.dart`, police Inter dans `app/assets/fonts/`, en-tête de marque de l'écran de connexion : application 0.3.0, publiée sur demande explicite de construction, TODO-3.20).
+Choisie le 2026-11-26 ([D-157](07-decisions.md#d-157)) d'après l'étude [Nautilinkimages261126.png](etudes/Nautilinkimages261126.png) (source : `Nautilinkimages261126.pptx`). Elle vaut pour tous les supports : site de présentation (`site/style.css`, bloc « Identité graphique du 2026-11-26 »), Application web et espace administrateur (`server/web/static/style.css`), application mobile (`app/lib/theme.dart`, police Inter dans `app/assets/fonts/`, en-tête de marque de l'écran de connexion : application 0.3.0, APK publié le 2026-11-26, TODO-3.20).
 
 | Rôle | Thème clair | Thème sombre (D-97) |
 |------|-------------|---------------------|
