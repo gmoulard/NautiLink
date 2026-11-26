@@ -4,6 +4,7 @@ import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../reel/api.dart';
 import '../reel/depot_reel.dart';
+import '../reel/identites.dart';
 import '../theme.dart';
 import 'warning.dart';
 
@@ -52,6 +53,7 @@ class ConnexionScreen extends StatefulWidget {
 }
 
 class _ConnexionScreenState extends State<ConnexionScreen> {
+  static const identites = Identites();
   final _email = TextEditingController();
   final _mdp = TextEditingController();
   bool _occupe = false;
@@ -92,6 +94,46 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
         await depot.connexion(
           _email.text,
           _mdp.text,
+          avertissementVersion: version,
+        );
+      }
+    } catch (e) {
+      if (mounted) setState(() => _erreur = messageErreur(l, e));
+    } finally {
+      if (mounted) setState(() => _occupe = false);
+    }
+  }
+
+  /// « Continuer avec Google » ou « Continuer avec Apple » : jeton
+  /// d'identité vérifié par le serveur ; un premier compte demande
+  /// l'acceptation de l'avertissement bêta (428, RG-CPT-06).
+  Future<void> _seConnecterPar(String fournisseur) async {
+    final l = AppLocalizations.of(context);
+    final depot = _depot(context);
+    setState(() {
+      _occupe = true;
+      _erreur = null;
+    });
+    try {
+      final jeton = fournisseur == 'google'
+          ? await identites.jetonGoogle()
+          : await identites.jetonApple();
+      if (jeton == null) return; // abandon
+      try {
+        await depot.connexionFournisseur(fournisseur, jeton);
+      } on ErreurApi catch (e) {
+        if (e.statut != 428) rethrow;
+        final version = await depot.versionAvertissement();
+        if (!mounted) return;
+        final ok = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) => const AccepterAvertissementScreen(),
+          ),
+        );
+        if (ok != true) return;
+        await depot.connexionFournisseur(
+          fournisseur,
+          jeton,
           avertissementVersion: version,
         );
       }
@@ -186,25 +228,36 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                         ),
                       ),
                       const Divider(height: 32),
-                      // Connexion par Google et Apple (RG-CPT-02, RG-CPT-11) : désactivée tant que
-                      // les identifiants clients ne sont pas configurés (app/README.md).
+                      // Connexion par Google et Apple (RG-CPT-02, RG-CPT-11) : active
+                      // avec les identifiants clients donnés à la construction
+                      // (app/README.md) ; Apple sur iPhone seulement.
                       OutlinedButton.icon(
-                        onPressed: null,
+                        key: const Key('login-google'),
+                        onPressed: _occupe || !identites.google
+                            ? null
+                            : () => _seConnecterPar('google'),
                         icon: const Icon(Icons.account_circle_outlined),
                         label: Text(l.continueGoogle),
                       ),
-                      const SizedBox(height: 8),
-                      OutlinedButton.icon(
-                        onPressed: null,
-                        icon: const Icon(Icons.apple),
-                        label: Text(l.continueApple),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l.providerUnavailable,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        textAlign: TextAlign.center,
-                      ),
+                      if (identites.apple || !identites.google) ...[
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          key: const Key('login-apple'),
+                          onPressed: _occupe || !identites.apple
+                              ? null
+                              : () => _seConnecterPar('apple'),
+                          icon: const Icon(Icons.apple),
+                          label: Text(l.continueApple),
+                        ),
+                      ],
+                      if (!identites.google && !identites.apple) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          l.providerUnavailable,
+                          style: Theme.of(context).textTheme.bodySmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                       const Divider(height: 32),
                       OutlinedButton(
                         onPressed: _occupe

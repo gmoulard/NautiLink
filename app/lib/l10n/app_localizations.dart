@@ -2390,6 +2390,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Voir dans le journal complet'**
   String get eventFullLog;
+
+  /// No description provided for @subscribeDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Abonnement ouvert pour 10 ans : merci !'**
+  String get subscribeDone;
+
+  /// No description provided for @subscribeRefused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement non confirmé : l\'abonnement n\'est pas ouvert.'**
+  String get subscribeRefused;
+
+  /// No description provided for @subscribeCanceled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Achat abandonné.'**
+  String get subscribeCanceled;
+
+  /// No description provided for @subscribePending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement reçu par le magasin : l\'abonnement sera ouvert au retour de la connexion.'**
+  String get subscribePending;
+
+  /// No description provided for @subscribePrice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Souscrire l\'abonnement — {price}'**
+  String subscribePrice(String price);
+
+  /// No description provided for @pushTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications des navigations suivies'**
+  String get pushTitle;
+
+  /// No description provided for @pushStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Début de navigation'**
+  String get pushStart;
+
+  /// No description provided for @pushEnd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fin de navigation'**
+  String get pushEnd;
+
+  /// No description provided for @pushPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle photo'**
+  String get pushPhoto;
+
+  /// No description provided for @pushLate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Position en retard'**
+  String get pushLate;
+
+  /// No description provided for @pushSosAlways.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les alertes SOS sont toujours notifiées.'**
+  String get pushSosAlways;
 }
 
 class _AppLocalizationsDelegate

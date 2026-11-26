@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,7 @@ import 'reel/depot_reel.dart';
 import 'screens/connexion.dart';
 import 'screens/dashboard.dart';
 import 'screens/home.dart';
+import 'screens/suivi_reel.dart';
 import 'screens/warning.dart';
 import 'theme.dart';
 
@@ -44,6 +47,10 @@ const kDefaultLanguage = String.fromEnvironment(
   defaultValue: 'fr',
 );
 
+/// Navigation de l'application, pour ouvrir une navigation depuis une
+/// notification push (RG-AND-09).
+final navigateurApp = GlobalKey<NavigatorState>();
+
 class NautiLinkApp extends StatefulWidget {
   const NautiLinkApp({
     super.key,
@@ -76,6 +83,27 @@ class _NautiLinkAppState extends State<NautiLinkApp>
     WidgetsBinding.instance.addObserver(this);
     depot.ouvrir();
     if (widget.langueDuTelephone) depot.addListener(_langueChangee);
+    _ecouterNotifications();
+  }
+
+  StreamSubscription<String>? _touchees;
+
+  /// Notification touchée : la navigation s'ouvre dans l'application, sur
+  /// Android comme sur iPhone (RG-AND-09, D-143).
+  Future<void> _ecouterNotifications() async {
+    final d = depot;
+    final n = d is DepotReel ? d.notifications : null;
+    if (n == null) return;
+    void ouvrir(String id) => navigateurApp.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => NavigationSuivieScreen(navigationId: id),
+      ),
+    );
+    _touchees = n.navigationsTouchees.listen(ouvrir);
+    final initiale = await n.navigationInitiale();
+    if (initiale != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => ouvrir(initiale));
+    }
   }
 
   String? _langue;
@@ -92,6 +120,7 @@ class _NautiLinkAppState extends State<NautiLinkApp>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     depot.removeListener(_langueChangee);
+    _touchees?.cancel();
     super.dispose();
   }
 
@@ -120,6 +149,7 @@ class _NautiLinkAppState extends State<NautiLinkApp>
       child: DepotScope(
         depot: depot,
         child: MaterialApp(
+          navigatorKey: navigateurApp,
           onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
           locale: _locale(),
           localeResolutionCallback: (l, supportees) =>

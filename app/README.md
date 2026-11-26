@@ -20,7 +20,8 @@ La spécification fait foi : [`docs/02-regles-metier.md`](../docs/02-regles-meti
 
 ## Vraie application : état (TODO-5.1 à TODO-5.7)
 
-- connexion par e-mail et mot de passe ; les boutons « Continuer avec Google » et « Continuer avec Apple » sont présents mais **désactivés** : il faut créer les identifiants clients OAuth (Google : Android, iPhone, Web ; Apple : identifiant de l'application et Services ID), les déclarer au serveur (`NAUTILINK_GOOGLE_CLIENTS`, `NAUTILINK_APPLE_CLIENTS`, voir `server/README.md`) et ajouter les paquets de connexion à l'application ;
+- connexion par e-mail et mot de passe, par Google (`google_sign_in`) et par Apple sur iPhone (`sign_in_with_apple`), ces deux dernières actives avec leurs identifiants clients (section « Services externes ») ;
+- vue suiveur sur Android et iPhone (« Navigations suivies », `lib/screens/suivi_reel.dart`) ; notifications push (`firebase_messaging`, `lib/reel/notifications.dart`) qui ouvrent la navigation ; achat de l'abonnement (`in_app_purchase`, `lib/reel/achats.dart`) ;
 - à chaque connexion, le téléphone est enregistré (`PUT /v1/appareils/{id}`, identifiant tiré une fois et gardé) puis associé aux bateaux du compte qui n'en ont pas (D-132) ;
 - accueil : navigation en cours, quota (avec l'heure du dernier état reçu hors connexion), adresse à confirmer (« Recevoir un nouveau lien »), « Navigations enregistrées » ; relu à l'ouverture, au retour au premier plan et en tirant la liste vers le bas (D-135) ; les trois boutons et le SOS sont branchés (TODO-5.2 à TODO-5.6) ;
 - démarrage (TODO-5.2, `lib/reel/conduite.dart`, `lib/screens/navigation_reel.dart`) : rappel avant la première navigation, écran de démarrage de la démonstration branché sur le serveur (bateau, destination en texte, personnes à bord, fréquence, paramètres de cette navigation, personnes alertées, avertissement sans contact SOS), position acquise au démarrage, envoi par la file d'attente, refus affiché (quota épuisé d'après le dernier état reçu ou message du serveur, D-140), navigation gardée sur le téléphone ; restent le SMS de début, la carte de la destination et « Ajouter une personne » (TODO-5.7) ;
@@ -35,6 +36,19 @@ La spécification fait foi : [`docs/02-regles-metier.md`](../docs/02-regles-meti
 - « Paramètres » : fréquence par défaut, SMS, types de SMS, photo en MMS, synchronisés champ par champ avec le Web ; sur iPhone, mention que les SMS sont sans effet (D-137) ;
 - « Alertes SOS » (historique, statuts des SMS, e-mails ; alertes encore en file hors connexion), « Assistance » (« Écrire à l'équipe NautiLink » vers la page de suivi du projet en attendant une adresse : D-138 ; avertissement bêta ; mémo), « Quota et abonnement » (« Souscrire l'abonnement » : achat Google Play et App Store pas encore ouvert, TODO-5.8, TODO-10.6) ;
 - mémo sécurité en mer : copie de `site/securite.html` dans `assets/memo/`, faite par `outils/copier-memo.sh` (lancé par le workflow avant les essais et les constructions ; `test/memo_test.dart` échoue si la copie est périmée) ; ouvert dans l'application sur Android et iPhone, dans les deux modes, et sur le site depuis la démonstration Web (RG-SOS-22).
+
+## Services externes : réglages de construction
+
+Le code est prêt ; chaque service reste inactif tant que ses identifiants ne sont pas donnés (`--dart-define=…` à la construction, et variables du serveur, voir [`server/README.md`](../server/README.md)) :
+
+| Service | Application (`--dart-define`) | Reste à faire hors du code |
+|---------|-------------------------------|----------------------------|
+| Connexion par Google (RG-CPT-02) | `NAUTILINK_GOOGLE_SERVEUR` (identifiant client OAuth de type Web), `NAUTILINK_GOOGLE_IOS` (identifiant client iOS) | créer les identifiants dans Google Cloud, empreinte SHA-1 de la clé de signature Android, schéma d'URL inversé dans `ios/Runner/Info.plist` ; serveur : `NAUTILINK_GOOGLE_CLIENTS` |
+| Connexion par Apple (iPhone) | `NAUTILINK_APPLE=1` | capacité « Sign in with Apple » dans Xcode (fichier d'autorisations) ; serveur : `NAUTILINK_APPLE_CLIENTS` |
+| Notifications push (RG-IOS-06, RG-AND-08) | `NAUTILINK_FCM_CLE`, `NAUTILINK_FCM_APPLICATION` (identifiant de l'application Firebase de la plateforme), `NAUTILINK_FCM_EXPEDITEUR`, `NAUTILINK_FCM_PROJET` | projet Firebase ; sur iPhone, capacité « Push Notifications » et clé APNs ; serveur : `NAUTILINK_FCM_COMPTE`, `NAUTILINK_APNS_*` |
+| Achat de l'abonnement (RG-ECO-11, RG-IOS-07) | `NAUTILINK_PRODUIT` (par défaut `nautilink_abonnement_10_ans`) | produit « achat unique » à 15 € dans la Google Play Console et App Store Connect ; serveur : `NAUTILINK_GOOGLE_PLAY_COMPTE`, `NAUTILINK_APP_STORE_*` |
+
+Sans ces réglages : boutons Google et Apple désactivés, aucune notification push, « Souscrire l'abonnement » dit que l'achat n'est pas encore ouvert.
 
 ## Ce que montre la démonstration
 

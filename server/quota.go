@@ -89,9 +89,8 @@ type abonnementJSON struct {
 }
 
 // abonnement : un seul état par compte, quel que soit le canal (RG-ECO-07) ;
-// actif de son début à sa fin, 10 ans après (RG-ECO-06). La souscription
-// (Stripe, Google Play, App Store) n'est pas branchée : TODO-5.8, TODO-6.7,
-// TODO-10.6.
+// actif de son début à sa fin, 10 ans après (RG-ECO-06). Souscription par
+// Google Play et l'App Store : achats.go ; par Stripe sur le Web : TODO-6.7.
 func (a *app) abonnement(ctx context.Context, utilisateur string, t time.Time) (abonnementJSON, error) {
 	var ab abonnementJSON
 	err := a.b.pool.QueryRow(ctx, "SELECT canal, debut, fin FROM abonnements WHERE utilisateur_id = $1", utilisateur).

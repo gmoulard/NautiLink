@@ -1364,4 +1364,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventFullLog => 'View in the full logbook';
+
+  @override
+  String get subscribeDone => 'Subscription open for 10 years: thank you!';
+
+  @override
+  String get subscribeRefused =>
+      'Payment not confirmed: the subscription is not open.';
+
+  @override
+  String get subscribeCanceled => 'Purchase cancelled.';
+
+  @override
+  String get subscribePending =>
+      'Payment received by the store: the subscription will open when the connection is back.';
+
+  @override
+  String subscribePrice(String price) {
+    return 'Subscribe — $price';
+  }
+
+  @override
+  String get pushTitle => 'Notifications of followed voyages';
+
+  @override
+  String get pushStart => 'Voyage start';
+
+  @override
+  String get pushEnd => 'Voyage end';
+
+  @override
+  String get pushPhoto => 'New photo';
+
+  @override
+  String get pushLate => 'Overdue position';
+
+  @override
+  String get pushSosAlways => 'SOS alerts are always notified.';
 }

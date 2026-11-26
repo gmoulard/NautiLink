@@ -394,5 +394,16 @@
   "eventDelete": "Delete",
   "eventDeleteConfirm": "Delete this logbook entry?",
   "eventChangeOffline": "Cannot change without Internet: try again when the connection is back.",
-  "eventFullLog": "View in the full logbook"
+  "eventFullLog": "View in the full logbook",
+  "subscribeDone": "Subscription open for 10 years: thank you!",
+  "subscribeRefused": "Payment not confirmed: the subscription is not open.",
+  "subscribeCanceled": "Purchase cancelled.",
+  "subscribePending": "Payment received by the store: the subscription will open when the connection is back.",
+  "subscribePrice": "Subscribe — {price}",
+  "pushTitle": "Notifications of followed voyages",
+  "pushStart": "Voyage start",
+  "pushEnd": "Voyage end",
+  "pushPhoto": "New photo",
+  "pushLate": "Overdue position",
+  "pushSosAlways": "SOS alerts are always notified."
 }

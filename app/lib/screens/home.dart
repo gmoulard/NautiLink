@@ -6,6 +6,7 @@ import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../main.dart';
+import '../reel/achats.dart';
 import '../reel/depot_reel.dart';
 import '../theme.dart';
 import 'compte.dart';
@@ -483,22 +484,10 @@ class QuotaScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            // Achat Google Play ou App Store pas encore branché (TODO-5.8,
-            // TODO-10.6) ; hors connexion, souscription impossible (RG-COM-06).
+            // Achat intégré Google Play ou App Store (RG-ECO-11, RG-IOS-07) ;
+            // hors connexion, souscription impossible (RG-COM-06).
             if (!depot.demonstration && q?.abonnementActif != true) ...[
-              FilledButton(
-                key: const Key('subscribe'),
-                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      depot.horsConnexion
-                          ? l.subscribeOffline
-                          : l.subscribeNotYet,
-                    ),
-                  ),
-                ),
-                child: Text(l.subscribe),
-              ),
+              const BoutonAbonnement(),
               const SizedBox(height: 12),
             ],
             // RG-ECO-10 : page d'information sur l'abonnement du site.
@@ -513,6 +502,78 @@ class QuotaScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// « Souscrire l'abonnement » : achat unique de 10 ans par le magasin du
+/// téléphone, vérifié par le serveur (RG-ECO-06, RG-ECO-11).
+class BoutonAbonnement extends StatefulWidget {
+  const BoutonAbonnement({super.key});
+
+  @override
+  State<BoutonAbonnement> createState() => _BoutonAbonnementState();
+}
+
+class _BoutonAbonnementState extends State<BoutonAbonnement> {
+  String? prix;
+  bool achat = false;
+
+  AchatsAbonnement? get _achats {
+    final d = DepotScope.of(context);
+    return d is DepotReel ? d.achats : null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final p = await _achats?.prix();
+      if (mounted && p != null) setState(() => prix = p);
+    });
+  }
+
+  Future<void> _acheter() async {
+    final l = AppLocalizations.of(context);
+    final depot = DepotScope.of(context);
+    void dire(String m) =>
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+    if (depot.horsConnexion) return dire(l.subscribeOffline);
+    final a = _achats;
+    if (a == null) return dire(l.subscribeNotYet);
+    setState(() => achat = true);
+    ResultatAchat r;
+    try {
+      r = await a.acheter();
+    } catch (e) {
+      debugPrint('Achat : $e');
+      r = ResultatAchat.indisponible;
+    }
+    if (!mounted) return;
+    setState(() => achat = false);
+    dire(switch (r) {
+      ResultatAchat.ouvert => l.subscribeDone,
+      ResultatAchat.annule => l.subscribeCanceled,
+      ResultatAchat.refuse => l.subscribeRefused,
+      ResultatAchat.indisponible => l.subscribeNotYet,
+      ResultatAchat.enAttente => l.subscribePending,
+    });
+    if (r == ResultatAchat.ouvert) await depot.actualiser();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return FilledButton(
+      key: const Key('subscribe'),
+      onPressed: achat ? null : _acheter,
+      child: achat
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Text(prix == null ? l.subscribe : l.subscribePrice(prix!)),
     );
   }
 }

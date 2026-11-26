@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:nautilink/depot/depot.dart';
+import 'package:nautilink/reel/achats.dart';
 import 'package:nautilink/reel/api.dart';
 import 'package:nautilink/reel/base_locale.dart';
 import 'package:nautilink/reel/depot_reel.dart';
@@ -503,6 +504,7 @@ class FauxServeurNautiLink {
     CanalSms? sms,
     String plateforme = 'android',
     Stream<bool>? reseau,
+    AchatsAbonnement? achats,
   }) {
     final api = ClientApi(
       base: 'https://essai.example/nautilink/api',
@@ -521,6 +523,7 @@ class FauxServeurNautiLink {
       medias: medias,
       canalSms: sms,
       reseau: reseau,
+      achats: achats,
       file: FileAttente(
         base: base,
         api: api,
@@ -635,5 +638,27 @@ class FauxSms implements CanalSms {
   }) async {
     preremplis.add((numeros, texte, image));
     return ouvre;
+  }
+}
+
+/// Magasin d'essai : rend [resultat] ; [prixAffiche] comme Google Play.
+class FauxAchats implements AchatsAbonnement {
+  FauxAchats(this.resultat, {this.prixAffiche});
+  ResultatAchat resultat;
+  final String? prixAffiche;
+  int achats = 0;
+  void Function()? _ouvert;
+
+  @override
+  set surOuvert(void Function()? f) => _ouvert = f;
+
+  @override
+  Future<String?> prix() async => prixAffiche;
+
+  @override
+  Future<ResultatAchat> acheter() async {
+    achats++;
+    if (resultat == ResultatAchat.ouvert) _ouvert?.call();
+    return resultat;
   }
 }

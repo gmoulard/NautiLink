@@ -447,5 +447,17 @@
   "eventDelete": "Supprimer",
   "eventDeleteConfirm": "Supprimer cet élément du journal ?",
   "eventChangeOffline": "Modification impossible sans Internet : réessayez au retour de la connexion.",
-  "eventFullLog": "Voir dans le journal complet"
+  "eventFullLog": "Voir dans le journal complet",
+  "subscribeDone": "Abonnement ouvert pour 10 ans : merci !",
+  "subscribeRefused": "Paiement non confirmé : l'abonnement n'est pas ouvert.",
+  "subscribeCanceled": "Achat abandonné.",
+  "subscribePending": "Paiement reçu par le magasin : l'abonnement sera ouvert au retour de la connexion.",
+  "subscribePrice": "Souscrire l'abonnement — {price}",
+  "@subscribePrice": {"placeholders": {"price": {"type": "String"}}},
+  "pushTitle": "Notifications des navigations suivies",
+  "pushStart": "Début de navigation",
+  "pushEnd": "Fin de navigation",
+  "pushPhoto": "Nouvelle photo",
+  "pushLate": "Position en retard",
+  "pushSosAlways": "Les alertes SOS sont toujours notifiées."
 }

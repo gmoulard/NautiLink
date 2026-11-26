@@ -1374,4 +1374,41 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get eventFullLog => 'Voir dans le journal complet';
+
+  @override
+  String get subscribeDone => 'Abonnement ouvert pour 10 ans : merci !';
+
+  @override
+  String get subscribeRefused =>
+      'Paiement non confirmé : l\'abonnement n\'est pas ouvert.';
+
+  @override
+  String get subscribeCanceled => 'Achat abandonné.';
+
+  @override
+  String get subscribePending =>
+      'Paiement reçu par le magasin : l\'abonnement sera ouvert au retour de la connexion.';
+
+  @override
+  String subscribePrice(String price) {
+    return 'Souscrire l\'abonnement — $price';
+  }
+
+  @override
+  String get pushTitle => 'Notifications des navigations suivies';
+
+  @override
+  String get pushStart => 'Début de navigation';
+
+  @override
+  String get pushEnd => 'Fin de navigation';
+
+  @override
+  String get pushPhoto => 'Nouvelle photo';
+
+  @override
+  String get pushLate => 'Position en retard';
+
+  @override
+  String get pushSosAlways => 'Les alertes SOS sont toujours notifiées.';
 }

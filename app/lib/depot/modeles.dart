@@ -516,6 +516,7 @@ class ProfilNl {
     this.telephone,
     this.langue,
     this.id,
+    this.push = const {},
   });
   final String email;
   final String nom;
@@ -530,6 +531,10 @@ class ProfilNl {
   /// Identifiant du compte (navigations suivies, RG-AND-09).
   final String? id;
 
+  /// Notifications push voulues, par type (RG-IOS-06) : debut, fin, photo,
+  /// positionEnRetard.
+  final Map<String, bool> push;
+
   static ProfilNl? depuisJson(Object? j) {
     if (j is! Map) return null;
     return ProfilNl(
@@ -539,6 +544,12 @@ class ProfilNl {
       telephone: j['telephone'] as String?,
       langue: j['langue'] as String?,
       id: j['id'] as String?,
+      push: {
+        if (j['push'] is Map)
+          for (final e in (j['push'] as Map).entries)
+            if (e.key is String && e.value is bool)
+              e.key as String: e.value as bool,
+      },
     );
   }
 }

@@ -38,7 +38,11 @@ class _SuiviReelScreenState extends State<SuiviReelScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _charger());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _charger();
+      // RG-AND-02 : autorisation des notifications au moment où elle sert.
+      (DepotScope.of(context) as DepotReel).preparerNotifications();
+    });
   }
 
   Future<void> _charger() async {

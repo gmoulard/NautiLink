@@ -890,6 +890,24 @@ class SettingsScreen extends StatelessWidget {
             ),
           const SizedBox(height: 8),
           Text(l.sosAlwaysSent),
+          // RG-IOS-06, RG-AND-08 : notifications push par type, sauf le SOS.
+          if (depot is DepotReel && depot.notifications != null) ...[
+            const Divider(height: 32),
+            Text(l.pushTitle, style: Theme.of(context).textTheme.titleMedium),
+            for (final (cle, titre) in [
+              ('debut', l.pushStart),
+              ('fin', l.pushEnd),
+              ('photo', l.pushPhoto),
+              ('positionEnRetard', l.pushLate),
+            ])
+              SwitchListTile(
+                key: Key('push-$cle'),
+                title: Text(titre),
+                value: depot.profil?.push[cle] ?? true,
+                onChanged: (v) => depot.modifierPush({cle: v}),
+              ),
+            Text(l.pushSosAlways),
+          ],
         ],
       ),
     );

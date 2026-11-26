@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -7,12 +8,14 @@ import 'package:flutter/foundation.dart';
 import '../config.dart';
 import '../depot/depot.dart';
 import 'api.dart';
+import 'achats.dart';
 import 'base_locale.dart';
 import 'compte.dart';
 import 'conduite.dart';
 import 'file_attente.dart';
 import 'gps.dart';
 import 'medias.dart';
+import 'notifications.dart';
 import 'sms.dart';
 import 'sms_navigation.dart';
 import 'stockage_session.dart';
@@ -36,6 +39,8 @@ class DepotReel extends Depot {
     this.medias,
     CanalSms? canalSms,
     this.telephone,
+    this.achats,
+    this.notifications,
     this.pageNavigation = _pageParDefaut,
     Stream<bool>? reseau,
   }) : positions = positions ?? const PositionsIndisponibles(),
@@ -70,6 +75,11 @@ class DepotReel extends Depot {
     conduite.surPositionAutomatique = (n, e) =>
         unawaited(sms.positionAutomatique(n, e, defaut: parametres));
     conduite.surEnCours = (v) => unawaited(session.marquerNavigationEnCours(v));
+    achats?.surOuvert = () => unawaited(actualiser());
+    // Jeton push renouvelé : remis au serveur.
+    _jetons = notifications?.jetonsRenouveles.listen((_) {
+      if (_etat == EtatSession.connecte) unawaited(associerTelephone());
+    });
     // Retour du réseau : relance de la file et relecture (D-135, RG-COM-07).
     _reseau = reseau?.listen((connecte) {
       if (!connecte || _etat != EtatSession.connecte) return;
@@ -92,8 +102,11 @@ class DepotReel extends Depot {
     } catch (_) {
       base = BaseMemoire();
     }
+    final api = ClientApi(base: kApiUrl, session: session);
+    final p = plateformeDuTelephone();
+    final push = p == null ? null : await PushFirebase.creer(ios: p == 'ios');
     return DepotReel(
-      api: ClientApi(base: kApiUrl, session: session),
+      api: api,
       session: session,
       base: base,
       plateforme: plateformeDuTelephone(),
@@ -103,6 +116,14 @@ class DepotReel extends Depot {
       telephone: plateformeDuTelephone() == 'android'
           ? const TelephoneAndroid()
           : null,
+      notifications: push,
+      achats: plateformeDuTelephone() == null
+          ? null
+          : AchatsMagasin(
+              api: api,
+              produit: kProduit,
+              ios: plateformeDuTelephone() == 'ios',
+            ),
       reseau: kIsWeb
           ? null
           : Connectivity().onConnectivityChanged.map(
@@ -140,6 +161,14 @@ class DepotReel extends Depot {
   final CanalSms canalSms;
   late final EnvoisSms envoisSms;
   late final SmsNavigation sms;
+
+  /// Notifications push du suiveur (RG-IOS-06, RG-AND-08) ; vides sans
+  /// configuration Firebase.
+  final NotificationsPush? notifications;
+  StreamSubscription<String>? _jetons;
+
+  /// Achat intégré de l'abonnement (TODO-5.8, TODO-10.6) ; vide sur le Web.
+  final AchatsAbonnement? achats;
 
   /// Réglages du téléphone Android (batterie, notifications) ; vide ailleurs.
   final TelephoneAndroid? telephone;
@@ -482,6 +511,21 @@ class DepotReel extends Depot {
     );
   }
 
+  /// Préférences des notifications push par type, sauf le SOS (RG-IOS-06) :
+  /// `debut`, `fin`, `photo`, `positionEnRetard`.
+  Future<void> modifierPush(Map<String, bool> champs) async {
+    await api.appel('PATCH', '/v1/compte', json: {'push': champs});
+    await actualiser();
+  }
+
+  /// Autorisation des notifications demandée à l'ouverture des navigations
+  /// suivies, puis jeton remis au serveur (RG-AND-02).
+  Future<void> preparerNotifications() async {
+    final n = notifications;
+    if (n == null) return;
+    if (await n.demander()) await associerTelephone();
+  }
+
   /// Fermeture d'une annonce par l'utilisateur (RG-ADM-06).
   Future<void> fermerAnnonce(String id) async {
     annonces = [
@@ -612,6 +656,45 @@ class DepotReel extends Depot {
     await _ouvrirSession(s, email);
   }
 
+  /// Connexion par Google ou par Apple (RG-CPT-02, RG-CPT-11) : la première
+  /// crée le compte, avec l'avertissement accepté (428 sinon, comme
+  /// [connexion]).
+  Future<void> connexionFournisseur(
+    String fournisseur,
+    String jetonIdentite, {
+    String? avertissementVersion,
+  }) async {
+    final s = await api.appelObjet(
+      'POST',
+      '/v1/sessions',
+      authentifie: false,
+      json: {
+        'fournisseur': fournisseur,
+        'jetonIdentite': jetonIdentite,
+        'avertissementVersion': ?avertissementVersion,
+      },
+    );
+    await _ouvrirSession(
+      s,
+      _emailDuJeton(jetonIdentite) ?? '$fournisseur:compte',
+    );
+  }
+
+  /// Adresse e-mail lue dans le jeton d'identité, pour reconnaître un
+  /// changement de compte sur le téléphone (D-133) ; le serveur, lui,
+  /// vérifie le jeton.
+  static String? _emailDuJeton(String jwt) {
+    try {
+      final p = jwt.split('.')[1];
+      final j = jsonDecode(
+        utf8.decode(base64Url.decode(base64Url.normalize(p))),
+      );
+      return j is Map && j['email'] is String ? j['email'] as String : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Création du compte, avec l'acceptation de l'avertissement bêta (RG-CPT-06) ;
   /// le serveur envoie le lien de confirmation de l'adresse (RG-CPT-09).
   Future<void> creerCompte({
@@ -684,6 +767,7 @@ class DepotReel extends Depot {
           'plateforme': p,
           'nom': ?nomAppareil,
           'versionApplication': versionApplication,
+          'jetonPush': ?await notifications?.jeton(),
         },
       );
       final bateaux = _liste(
@@ -723,6 +807,7 @@ class DepotReel extends Depot {
     envoisSms.dispose();
     _fichiersDeposes?.cancel();
     _reseau?.cancel();
+    _jetons?.cancel();
     file.fermer();
     super.dispose();
   }
