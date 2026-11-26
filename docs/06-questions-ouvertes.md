@@ -42,6 +42,17 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Cas : RG-JRN-11 (D-154) crée le type « Incident - avarie » ; l'utilisateur n'a pas retenu l'option « Bouton Incident - avarie sur l'écran de navigation », sans dire comment il se crée. Le serveur range une seule pièce jointe par événement, alors que la photo et la note vocale sont toutes deux facultatives.
 - Options : A) bouton « Incident - avarie » sur l'écran de navigation ; B) choix « Incident - avarie » dans la fenêtre de « NOTE » ; C) entrée dans un menu de l'écran de navigation. Pièce jointe : une photo ou une note vocale, ou les deux.
 - Proposition (non validée) : B, qui n'ajoute pas de bouton à l'écran de navigation ; une seule pièce jointe, photo ou note vocale (appliqué en attendant par le serveur).
+### <a id="q-102"></a>Q-102 — Remarques de relecture de l'application Android
+
+- Priorité : avant la version suivante de l'application mobile (TODO-5.12).
+- Demande de l'utilisateur du 2026-11-26 : document de relecture de l'application Android (captures commentées, TODO-5.12). Certaines remarques changent une règle ou un libellé écrit dans les règles :
+  1. personnes alertées : un choix e-mail et un choix SMS par personne sur l'écran de démarrage, au lieu d'une seule case (RG-NAV-25) ;
+  2. « Le personnes son toujours suiveur et contact SOS il n'y a pas de difference » : contredit les deux cases « Suiveur » et « Contact SOS » de chaque contact (RG-CTC-01, RG-CTC-04, RG-CTC-05 : un contact SOS a un numéro, un suiveur une invitation acceptée) ;
+  3. libellés : « Début de navigation » au lieu de « Envoi message – Début de navigation » (RG-NAV-08), « Envoyer position » au lieu de « Envoyer information position » (glossaire), « Depuis le dernier envoi position » pour le second chronomètre (RG-NAV-10 compte tout envoi, pas seulement les positions) ;
+  4. lien vers « la page MTO » sur l'écran de navigation : la météo n'est relevée qu'au début et à la fin et affichée sur l'Application web (RG-NAV-28), son service n'est pas ouvert ([Q-39](#q-39)) ;
+  5. mémo sécurité en mer « sur toutes les pages comme le pied de page » (RG-SOS-22 : depuis l'accueil) ;
+  6. « Enlevé la notion de limité à 1 minute » : retirer seulement la mention à l'écran, ou la limite elle-même (RG-JRN-04, D-53).
+- Proposition (non validée) : 1) deux cases « E-mail » et « SMS » par personne, cochées ; une personne décochée des deux n'est pas alertée, SOS compris (comme RG-NAV-25) ; 2) garder les deux cases sur la fiche du contact (un contact SOS doit avoir un numéro), mais ne plus les afficher dans la liste de l'écran de démarrage ; 3) libellés adoptés, le second chronomètre gardant sa règle (tout envoi le remet à zéro) ; 4) lien vers la prévision marine de Météo-France pour la position actuelle, sans relevé par NautiLink ; 5) lien « Mémo sécurité en mer » dans le pied de page de chaque écran ; 6) retirer la mention seulement, la limite d'une minute restant (taille des fichiers et des MMS).
 
 ## 2. Études techniques
 

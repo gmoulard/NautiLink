@@ -187,6 +187,17 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
   - Critères d'acceptation : chef de bord prérempli avec le navigateur au démarrage, modifiable selon la décision, visible là où la décision le dit ; essais de l'application et du serveur.
 - [ ] **TODO-5.11**: Demande du 2026-11-26 (boîte de réception) : consigner un « Incident - avarie » dans les applications mobiles (RG-JRN-11, RG-SMS-02, D-154 : texte, photo et note vocale facultatives, SMS selon le type « Incidents - avaries », modifiable comme une note). Dépend de : [Q-101](06-questions-ouvertes.md#q-101) (moyen de le créer sur l'écran de navigation) ; serveur (nouveau type d'événement) et Application web (journal, carte).
   - Critères d'acceptation : un incident ou une avarie saisi pendant la navigation figure dans le journal de bord, part selon la décision, et s'affiche sur la page de la navigation ; essais de l'application et du serveur.
+- [ ] **TODO-5.12**: Demande du 2026-11-26 (boîte de réception) : modifier l'application Android selon les remarques du document de relecture `docs/tmp/levite-guillaumeMoulard-26Oct2026.pdf` (captures d'écran de la version 0.0.1 commentées), puis supprimer ce document. Dépend de : TODO-5.1 à TODO-5.6 ; [Q-102](06-questions-ouvertes.md#q-102) pour les remarques qui changent une règle ; TODO-3.19 pour le pied de page (D-149).
+  - Critères d'acceptation (une remarque par point, essais de l'application et comparaison aux captures) :
+    - accueil : un lien vers les règles de sécurité (mémo sécurité en mer, RG-SOS-22) près du rappel « En cas de détresse… » sous « Envoyer un SOS » ;
+    - connexion et autres écrans : le pied de page n'est plus fixé en bas de l'écran, il suit le contenu de la page, sous les boutons ;
+    - écran de démarrage : pour chaque personne alertée, un choix e-mail et un choix SMS, tous cochés au départ ; plus de distinction « suiveur » / « contact SOS » dans la liste ; bouton « Début de navigation » qui envoie l'information et démarre la navigation (selon Q-102) ;
+    - écran de navigation : les deux chronomètres dans la même zone, le grand pour « Depuis le début », le second titré « Depuis le dernier envoi position » ; lien vers la page de la météo ; bouton « Envoyer position » ; « NOTE », « Photo » et « Vocal » de la même couleur que « Envoyer position » (libellés et météo selon Q-102) ;
+    - mémo sécurité en mer accessible depuis toutes les pages, comme le pied de page (selon Q-102) ;
+    - boîte de confirmation du SOS : champ « Problème rencontré » sur 3 lignes ;
+    - enregistrement d'une note vocale : plus de mention de la limite d'une minute (selon Q-102) ;
+    - fin de navigation : pendant l'envoi, le message « Navigation terminée, en cours d'envoi » ;
+    - puis supprimer `docs/tmp/levite-guillaumeMoulard-26Oct2026.pdf`.
 
 ## 6. Étape 3 — Application web
 

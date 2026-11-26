@@ -1,1 +1,1 @@
-- modifie l'appli androide avec les remarque du doc: levite-guillaumeMoulard-26Oct2026.pdf puis suprime le pdf
+- 
