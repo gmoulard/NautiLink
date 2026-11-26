@@ -41,7 +41,7 @@ func (a *app) navigationModifiable(ctx context.Context, utilisateur, id string) 
 // dans la corbeille y reste, sans repousser sa suppression définitive.
 func (a *app) mettreALaCorbeille(ctx context.Context, s *session, id string) error {
 	if s.support != "web" {
-		return errInterdit("web_seulement", "Une navigation se supprime depuis la plateforme Web.") // RG-NAV-20
+		return errInterdit("web_seulement", "Une navigation se supprime depuis l'Application web.") // RG-NAV-20
 	}
 	n, err := a.navigationDuNavigateur(ctx, s.utilisateur, id)
 	if err != nil {

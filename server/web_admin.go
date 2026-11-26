@@ -7,7 +7,7 @@ import (
 )
 
 // Pages de l'espace administrateur (TODO-7.1), sous <chemin>/admin/, servies
-// par le serveur sans JavaScript, comme la plateforme Web ; elles appellent
+// par le serveur sans JavaScript, comme l'Application web ; elles appellent
 // les mêmes fonctions que l'API d'administration et tracent chaque action.
 
 type donneesAdmin struct {

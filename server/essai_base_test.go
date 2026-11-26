@@ -152,7 +152,7 @@ func jetonDuTexte(t *testing.T, texte string) string {
 	return m[1]
 }
 
-// navigateurWeb : client de la plateforme Web qui garde ses cookies.
+// navigateurWeb : client de l'Application web qui garde ses cookies.
 type navigateurWeb struct {
 	e       *essai
 	cookies map[string]*http.Cookie

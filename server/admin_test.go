@@ -53,7 +53,7 @@ func TestEspaceAdministrateur(t *testing.T) {
 
 	n := e.navigateur()
 	// Espace distinct : sans session administrateur, renvoi vers sa connexion ;
-	// la session de la plateforme Web ne suffit pas.
+	// la session de l'Application web ne suffit pas.
 	if rec := n.envoyer("GET", "/nautilink/admin/", nil); rec.Code != http.StatusSeeOther ||
 		rec.Header().Get("Location") != "/nautilink/admin/connexion" {
 		t.Fatalf("sans session : %d %q", rec.Code, rec.Header().Get("Location"))
@@ -181,6 +181,6 @@ func TestEspaceAdministrateur(t *testing.T) {
 	if rec := n.envoyer("GET", "/nautilink/admin/", nil); rec.Code != http.StatusSeeOther {
 		t.Fatalf("accès après retrait : %d", rec.Code)
 	}
-	// Déconnexion de la plateforme Web sans effet sur l'API admin : déjà vu.
+	// Déconnexion de l'Application web sans effet sur l'API admin : déjà vu.
 	_ = code
 }

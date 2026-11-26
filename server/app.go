@@ -14,7 +14,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// app : état partagé par l'API (/api/v1/…) et la plateforme Web.
+// app : état partagé par l'API (/api/v1/…) et l'Application web.
 type app struct {
 	cfg           config
 	b             *base
@@ -194,7 +194,7 @@ const (
 	dureeSansUsageWeb = time.Hour           // Application web, RG-CPT-08, D-160
 )
 
-// jetonDe : jeton porteur (applications mobiles) ou cookie (plateforme Web).
+// jetonDe : jeton porteur (applications mobiles) ou cookie (Application web).
 func jetonDe(r *http.Request) (string, bool) {
 	if h := r.Header.Get("Authorization"); strings.HasPrefix(h, "Bearer ") {
 		return strings.TrimSpace(h[7:]), false

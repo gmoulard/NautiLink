@@ -1,4 +1,4 @@
-// Serveur NautiLink : API, plateforme Web et espace administrateur
+// Serveur NautiLink : API, Application web et espace administrateur
 // (D-62) : comptes (TODO-4.1), point de santé, base PostgreSQL et ses
 // migrations, envoi d'e-mails par le relais de pi-appliance.
 //

@@ -170,8 +170,8 @@ func (a *app) reprendreAppareil(ctx context.Context, utilisateur, id string) err
 	a.courriel(email,
 		enLangue(langue, "NautiLink : téléphone connecté à un autre compte", "NautiLink: phone signed in to another account"),
 		enLangue(langue,
-			"Bonjour,\n\nLe téléphone « "+telephone+" » vient d'être connecté à un autre compte NautiLink. Il n'est plus associé à vos bateaux : "+liste+".\nPour démarrer une navigation, associez un téléphone à votre bateau dans « Bateaux » sur la plateforme Web, ou connectez-vous depuis l'application.\n\nNautiLink — Version bêta\n",
-			"Hello,\n\nThe phone “"+telephone+"” has just been signed in to another NautiLink account. It is no longer associated with your boats: "+liste+".\nTo start a trip, associate a phone with your boat in “Boats” on the web platform, or sign in from the app.\n\nNautiLink — Beta version\n"))
+			"Bonjour,\n\nLe téléphone « "+telephone+" » vient d'être connecté à un autre compte NautiLink. Il n'est plus associé à vos bateaux : "+liste+".\nPour démarrer une navigation, associez un téléphone à votre bateau dans « Bateaux » sur l'Application web, ou connectez-vous depuis l'application.\n\nNautiLink — Version bêta\n",
+			"Hello,\n\nThe phone “"+telephone+"” has just been signed in to another NautiLink account. It is no longer associated with your boats: "+liste+".\nTo start a trip, associate a phone with your boat in “Boats” in the web app, or sign in from the app.\n\nNautiLink — Beta version\n"))
 	return nil
 }
 
