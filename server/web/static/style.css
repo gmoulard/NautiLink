@@ -54,6 +54,9 @@ th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--file
 .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
 .photo-bateau { max-width: 100%; max-height: 260px; border-radius: 8px; }
 code.lien-invitation { word-break: break-all; }
+.historique-sos, .liens-assistance { list-style: none; padding: 0; margin: 0; }
+.alerte-sos { border-left: 4px solid var(--sos); padding: 4px 0 4px 12px; margin-bottom: 16px; }
+.liens-assistance li { margin-bottom: 12px; }
 footer { text-align: center; color: var(--texte2); font-size: .85rem; padding: 16px; }
 footer p { margin: .2rem 0; }
 footer .construction { font-size: .75rem; }
