@@ -22,43 +22,26 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : une première ligne « NautiLink <bateau> — <type d'envoi> à <heure>. », l'heure selon RG-PRM-07 (types : « début de navigation », « position », « note », « photo », « note vocale », « fin de navigation ») ; puis, selon le type : « Destination : <destination>. » au début ; « Position <latitude>, <longitude> : <lien Google Maps> » ou « GPS NON DISPONIBLE » pour le début, les positions et la fin ; « Note : <texte> » ; « Photo : <lien> » ou « Note vocale : <lien> » vers l'élément dans la page de la navigation ; « Suivre la navigation : <lien de la page> » au début. Dans la langue du navigateur (RG-PRM-04). Le second SMS SOS commence par « SOS <bateau> (suite). ».
 - Appliqué en attendant dans l'application (`app/lib/reel/sms_navigation.dart`, textes `sms…` de `app/lib/l10n/`).
 
-### <a id="q-94"></a>Q-94 — Chef de bord
+### <a id="q-99"></a>Q-99 — Conduite d'une navigation depuis l'Application web
+
+- Priorité : avant la conduite d'une navigation depuis l'Application web (TODO-6.8).
+- Cas : D-150 donne à l'Application web toutes les fonctions de l'application mobile, conduite d'une navigation et SOS compris (RG-WEB-01, RG-WEB-02). Les règles de la conduite supposent un téléphone : position par son GPS (RG-GPS-01), positions automatiques en arrière-plan (RG-GPS-03), téléphone associé au bateau (RG-BAT-02, RG-NAV-03, RG-NAV-34), reprise par le téléphone d'une navigation que le serveur dit en cours (RG-NAV-33), fuseau du téléphone pour les heures (RG-PRM-07), photo par l'appareil photo et note vocale en AAC (RG-AND-06, RG-JRN-04). Une page Web ne garde pas la position écran éteint, et la plupart des navigateurs Internet n'enregistrent pas l'AAC.
+- Points à décider : 1) position (début, position manuelle, note, SOS, fin) : localisation du navigateur Internet avec l'accord de la personne, saisie à la main, ou aucune ; 2) positions automatiques : tant que la page reste ouverte, ou aucune ; 3) téléphone : navigation démarrée sur le Web sans téléphone, ou rattachée au téléphone associé du bateau, qui la reprend (RG-NAV-33) ; 4) bateau au démarrage et pour un SOS hors navigation : choix parmi tous les bateaux du compte ; 5) photo et note vocale : fichier choisi (JPEG, AAC `.m4a`, comme les ajouts) ou prise par l'appareil photo et le micro du navigateur Internet (autre format audio à accepter) ; 6) fuseau des heures : celui du navigateur Internet (lu par JavaScript), sinon UTC.
+- Proposition (non validée) : 1) localisation du navigateur Internet si la personne l'accepte, sinon sans position (SOS : dernière position connue, RG-SOS-10) ; 2) tant que la page reste ouverte, à la fréquence de la navigation, avec un avertissement ; 3) sans téléphone, reprise par le téléphone associé du bateau s'il s'y connecte (RG-NAV-33) ; 4) tous les bateaux du compte ; 5) fichier choisi, que le téléphone peut prendre avec son appareil photo ; 6) fuseau du navigateur Internet.
+- Appliqué en attendant dans l'Application web : pendant une navigation en cours, note, photo et note vocale par fichier choisi, fin et SOS, sans position (le SOS prend la dernière position du journal, RG-SOS-10) ; heures dans le fuseau du téléphone au début de la navigation ; SOS hors navigation : bateau choisi parmi ceux du compte, heure en UTC. Démarrage et positions depuis le Web : pas encore faits.
+
+### <a id="q-100"></a>Q-100 — Chef de bord : forme, affichage, modification
 
 - Priorité : avant la version suivante de l'application mobile (TODO-5.10).
-- Demande de l'utilisateur du 2026-11-26 : « ajouté des les appli le chef de bord par defaut c'est le navigateur de l'appli ».
-- Cas : aucune règle ne parle du chef de bord (personne responsable du bateau pendant la navigation). Restent à décider : où il se saisit (écran de démarrage, par navigation, ou paramètres généraux), sous quelle forme (nom libre, ou une personne de la liste des contacts), s'il peut être changé après la navigation, et où il apparaît (page de la navigation, export PDF, SMS SOS, e-mail SOS).
-- Proposition (non validée) : champ « Chef de bord » sur l'écran de démarrage, prérempli avec le nom du navigateur (son compte), modifiable en texte libre pour cette navigation ; modifiable ensuite comme le nom de la navigation (RG-NAV-22) ; affiché sur la page de la navigation et dans l'export PDF, et ajouté au SMS SOS et à l'e-mail SOS (« Chef de bord : <nom> »). Nouveau terme à ajouter au glossaire.
+- Cas : RG-NAV-35 (D-153) fait du chef de bord un réglage de l'écran de démarrage, prérempli avec le nom du navigateur et modifiable. Restent : sa forme (texte libre ou personne des contacts), sa modification après le démarrage, où il apparaît (page de la navigation, export PDF, SMS SOS, e-mail SOS, e-mail de début) et son champ dans l'API.
+- Proposition (non validée) : texte libre ; modifiable ensuite comme le nom de la navigation (RG-NAV-22) ; affiché sur la page de la navigation et dans l'export PDF, et ajouté au SMS SOS et à l'e-mail SOS (« Chef de bord : <nom> ») ; champ `chefDeBord` de la navigation dans l'API (texte ; absent : nom du navigateur).
 
-### <a id="q-95"></a>Q-95 — Incidents et avaries dans le journal de bord
+### <a id="q-101"></a>Q-101 — Incident ou avarie : création dans l'application mobile
 
 - Priorité : avant la version suivante de l'application mobile (TODO-5.11).
-- Demande de l'utilisateur du 2026-11-26 : « ajoute dans les appli la possibilité de loger un "Incidents - avaries" ».
-- Cas : les types d'événements du journal sont fixés par RG-JRN-02 ; un incident ou une avarie n'en fait pas partie. Restent à décider : son contenu (texte seul, ou texte avec photo ou note vocale ; gravité ?), le bouton qui le crée sur l'écran de navigation, son envoi (SMS ordinaire avec un type à cocher dans RG-SMS-02 ? e-mail ou notification push aux suiveurs ?), s'il est modifiable comme une note (RG-JRN-06) ou figé comme un SOS (RG-JRN-07), et s'il peut s'ajouter depuis l'Application web après la navigation (RG-JRN-05).
-- Proposition (non validée) : nouveau type d'événement « Incident - avarie » (texte obligatoire, photo facultative), bouton « Incident - avarie » sur l'écran de navigation ; SMS ordinaire aux destinataires SMS selon un nouveau type « Incidents - avaries » coché par défaut (RG-SMS-02, D-148) ; modifiable et supprimable comme une note (RG-JRN-06) ; mis en évidence dans le journal et sur la carte de la page de la navigation ; ajout possible depuis l'Application web après la navigation.
-
-### <a id="q-96"></a>Q-96 — Fonctions de l'application mobile dans l'Application web
-
-- Priorité : avant LOT-13 (TODO-6.8).
-- Demande de l'utilisateur du 2026-11-26 : « la web app doit avoir les meme fonction que l'app mobile plus la possible d'avoir un menu admin ».
-- Cas : l'Application web consulte et gère (cahier des charges §6) ; l'application mobile conduit la navigation (démarrage, positions par le GPS du téléphone, NOTE, Photo, Vocal, SOS par SMS et par Internet, fin : §5). Une page Web ne peut ni envoyer de SMS ni garder la position en arrière-plan, écran éteint. Le menu « Administration » des administrateurs, lui, ne dépend pas de cette question (TODO-6.9).
-- Options : A) l'Application web reprend les écrans de gestion de l'application mobile (contacts, paramètres, quota et abonnement, historique des alertes SOS, assistance, mémo sécurité en mer), sans conduite de navigation ; B) A, plus la conduite d'une navigation depuis le navigateur Internet (démarrage, position manuelle par la localisation du navigateur Internet, NOTE, Photo, Vocal, fin), sans positions automatiques écran éteint ni SMS ; C) B, plus un SOS par Internet seulement, comme sur iPhone (RG-IOS-03).
-- Proposition (non validée) : A, qui garde le téléphone comme seul outil de bord (RG-COM-01, RG-SOS-05) ; B et C demanderaient des règles nouvelles (téléphone associé, file d'attente, RG-BAT-02).
-
-### <a id="q-97"></a>Q-97 — Heures affichées sur l'Application web et dans le PDF
-
-- Priorité : avant la mise en service de l'Application web (TODO-6.1 à TODO-6.4).
-- Cas : RG-PRM-07 fixe le format des heures envoyées aux suiveurs et aux contacts SOS (heure locale du téléphone du navigateur, puis UTC), mais pas celui des heures affichées sur l'Application web (tableau de bord, page d'une navigation, journal) et dans l'export PDF. Les pages déjà faites (corbeille, espace administrateur) donnent l'heure de Paris.
-- Options : A) comme RG-PRM-07 : « 2026-11-26 14:32 (13:32 UTC) », heure locale du téléphone au début de la navigation ; B) heure de Paris ; C) heure du navigateur Internet de la personne qui consulte (demande du JavaScript).
-- Proposition (non validée) : A, la même heure que celle des SMS et des e-mails reçus par les suiveurs.
-- Appliqué en attendant dans l'Application web et le PDF (`heureWeb`, `server/web_navigations.go`).
-
-### <a id="q-98"></a>Q-98 — Heure d'un ajout complémentaire
-
-- Priorité : avant la mise en service de l'Application web (TODO-6.3).
-- Cas : RG-JRN-05 permet d'ajouter depuis l'Application web des textes, photos, notes vocales et informations à une navigation terminée, et RG-JRN-03 range le journal selon l'heure de l'événement ; aucune règle ne dit quelle heure porte un ajout, donc où il se place dans le journal.
-- Options : A) heure choisie par le navigateur entre le début et la fin de la navigation, préremplie avec la fin ; B) heure de l'ajout (toujours après la fin, en fin de journal) ; C) A, sans limite (avant le début ou après la fin, l'ajout est alors gardé mais hors des heures affichées).
-- Proposition (non validée) : A, qui permet de placer une photo ou un souvenir à son moment dans le journal.
-- Appliqué en attendant dans l'Application web (`server/web_journal.go`).
+- Cas : RG-JRN-11 (D-154) crée le type « Incident - avarie » ; l'utilisateur n'a pas retenu l'option « Bouton Incident - avarie sur l'écran de navigation », sans dire comment il se crée. Le serveur range une seule pièce jointe par événement, alors que la photo et la note vocale sont toutes deux facultatives.
+- Options : A) bouton « Incident - avarie » sur l'écran de navigation ; B) choix « Incident - avarie » dans la fenêtre de « NOTE » ; C) entrée dans un menu de l'écran de navigation. Pièce jointe : une photo ou une note vocale, ou les deux.
+- Proposition (non validée) : B, qui n'ajoute pas de bouton à l'écran de navigation ; une seule pièce jointe, photo ou note vocale (appliqué en attendant par le serveur).
 
 ## 2. Études techniques
 

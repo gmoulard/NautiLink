@@ -1666,6 +1666,7 @@ components:
             notes: {type: [boolean, 'null']}
             photos: {type: [boolean, 'null']}
             notesVocales: {type: [boolean, 'null']}
+            incidents: {type: [boolean, 'null'], description: 'Incidents et avaries (RG-JRN-11, D-154).'}
             fin: {type: [boolean, 'null']}
         photoEnMms: {type: [boolean, 'null'], description: Joindre la photo en MMS (RG-SMS-05).}
         frequenceParDefaut:
@@ -1785,8 +1786,8 @@ components:
         id: {type: string, format: uuid, description: Tiré par le téléphone (ou le Web) à la création ; clé contre les doublons.}
         type:
           type: string
-          enum: [debut, position_automatique, position_manuelle, note, photo, note_vocale, sos, fin, ajout]
-          description: 'RG-JRN-02.'
+          enum: [debut, position_automatique, position_manuelle, note, photo, note_vocale, sos, fin, ajout, incident]
+          description: 'RG-JRN-02. `incident` : incident ou avarie (RG-JRN-11), texte obligatoire, une photo (image/jpeg) ou une note vocale (audio/mp4) facultative, pendant la navigation ; jamais ajouté depuis le Web après la fin.'
         heureAcquisition: {type: string, format: date-time}
         numeroOrdre: {type: integer, description: Rang de création sur le téléphone pour cette navigation (08-architecture.md §5).}
         position: {$ref: '#/components/schemas/Position'}

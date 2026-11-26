@@ -160,6 +160,10 @@ Pendant une navigation en cours, la page se met à jour à mesure que les positi
 
 Le suiveur voit sur son tableau de bord les navigations auxquelles il a accès et les consulte en lecture seule ; il voit aussi la fiche du bateau, les autres suiveurs et les contacts SOS, et peut exporter en PDF (RG-PAR-07, RG-PAR-08). Le suivi est gratuit (RG-ECO-08).
 
+### 6.5 Fonctions de l'application mobile
+
+L'Application web a aussi toutes les fonctions de l'application mobile, conduite d'une navigation et SOS compris, par Internet seulement, sans SMS (RG-WEB-01, RG-WEB-02, [D-150](07-decisions.md#d-150)) ; un administrateur y trouve le menu « Administration » (RG-WEB-03). Conduite depuis un navigateur Internet : [Q-99](06-questions-ouvertes.md#q-99).
+
 ## 7. Espace administrateur
 
 Fonctions au lancement : RG-ADM-01 à RG-ADM-04. Profils d'administrateurs et traçabilité : [D-47](07-decisions.md#d-47).
