@@ -22,7 +22,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-10 | Android : accueil, démarrage, positions, SOS | TODO-5.1, TODO-5.2, TODO-5.3, TODO-5.5 | LOT-7, LOT-9 | [~] |
 | LOT-11 | Android : journal, fin, contacts, abonnement | TODO-5.4, TODO-5.6, TODO-5.7, TODO-5.8 | LOT-10 | [~] |
 | LOT-12 | Web : consultation des navigations | TODO-6.1, TODO-6.2, TODO-6.3, TODO-6.4 | LOT-7, LOT-9 | [~] |
-| LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7, TODO-6.8, TODO-6.9 | LOT-12 | [ ] |
+| LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7, TODO-6.8, TODO-6.9 | LOT-12 | [~] |
 | LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [~] |
 | LOT-15 | Marque et publication Android | TODO-3.15, TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5, TODO-8.6 | LOT-3, LOT-11 | [~] |
 | LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7, TODO-10.8 | LOT-11, LOT-13, LOT-15 ; demande explicite de l'utilisateur ([D-155](07-decisions.md#d-155)) | [!] |
@@ -144,8 +144,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
   - Critères d'acceptation : restauration avant 30 jours ; suppression définitive après ; suiveurs sans accès pendant ce temps ; temps toujours décompté du quota.
   - Fait (2026-11-25) (`server/corbeille.go`, sans migration) : mise à la corbeille d'une navigation terminée depuis une session Web seulement (`DELETE /v1/navigations/{id}`, rejouable sans repousser l'échéance), corbeille avec la date de suppression définitive (`GET /v1/corbeille`), restauration dans les 30 jours (`POST /v1/navigations/{id}/restauration`), suppression définitive par la tâche de chaque minute (journal, positions et fichiers en cascade, alertes SOS gardées dans l'historique du bateau) ; suiveurs sans accès et temps décompté du quota pendant le séjour ; navigation non modifiable dans la corbeille, envois du téléphone acceptés (RG-NAV-30, D-123) ; accès de périmètre navigation retirés à la suppression définitive (RG-PAR-10, D-124) ; page Web « Corbeille » (`server/web_corbeille.go`, `server/web/corbeille.html`, lien dans le menu) avec « Restaurer », et formulaire `POST <chemin>/navigations/{id}/suppression` prêt pour la page de la navigation ; essai avec PostgreSQL.
   - Reste : constat des critères sur le serveur publié (bouton « Supprimer » avec confirmation ajouté à la page de la navigation le 2026-11-26, TODO-6.2).
-- [ ] **TODO-4.9**: Demande du 2026-11-26 (boîte de réception) : paramètres d'un nouveau compte : tous les envois activés, photo jointe en MMS comprise, et fréquence par défaut de 1 heure (RG-PRM-06, [D-148](07-decisions.md#d-148)). Dépend de : TODO-4.4.
+- [~] **TODO-4.9**: Demande du 2026-11-26 (boîte de réception) : paramètres d'un nouveau compte : tous les envois activés, photo jointe en MMS comprise, et fréquence par défaut de 1 heure (RG-PRM-06, [D-148](07-decisions.md#d-148)). Dépend de : TODO-4.4.
   - Critères d'acceptation : un compte créé sur le serveur a ces valeurs (`GET /v1/parametres`), l'application mobile les affiche tant que rien n'est reçu (`app/lib/screens/compte.dart`) ; comptes existants inchangés ; essai Go et essai de l'application (TS-PRM-06).
+  - Fait (2026-11-26) : serveur : paramètres de RG-PRM-06 enregistrés avec le compte, par e-mail comme par Google ou Apple, dans la même requête (`parametresNouveauCompte`, `server/parametres.go`, `server/comptes.go`) : SMS activés, tous les types cochés (« Incidents - avaries » compris, D-154), photo jointe en MMS, fréquence de 1 heure ; comptes existants inchangés ; essai `TestParametres` (avec PostgreSQL, non exécuté sur ce poste). Reste : application mobile (valeurs affichées tant que rien n'est reçu, `app/lib/screens/compte.dart`), non touchée sur consigne de l'utilisateur (pas de construction des applications mobiles).
 
 ## 5. Étape 2 — Android
 

@@ -117,8 +117,9 @@ func (a *app) creerCompte(ctx context.Context, r *http.Request, email, mdp, nom,
 	}
 	a.limInscription.noter(ip)
 	var id string
-	err = a.b.pool.QueryRow(ctx, `INSERT INTO utilisateurs (email, mot_de_passe, nom, langue, avertissement_version, avertissement_accepte_le)
-		VALUES ($1, $2, $3, $4, $5, now()) RETURNING id`, email, hacherMotDePasse(mdp), nom, langueDe(langue, r), avertissement).Scan(&id)
+	err = a.b.pool.QueryRow(ctx, `WITH u AS (INSERT INTO utilisateurs (email, mot_de_passe, nom, langue, avertissement_version, avertissement_accepte_le)
+		VALUES ($1, $2, $3, $4, $5, now()) RETURNING id), p AS (`+parametresNouveauCompte+`)
+		SELECT id FROM u`, email, hacherMotDePasse(mdp), nom, langueDe(langue, r), avertissement).Scan(&id)
 	if estDoublon(err) {
 		return "", errEmailDejaUtilise
 	}
@@ -272,8 +273,9 @@ func (a *app) connexionExterne(ctx context.Context, r *http.Request, fournisseur
 		maint := time.Now()
 		verifie = &maint
 	}
-	err = tx.QueryRow(ctx, `INSERT INTO utilisateurs (email, email_verifie_le, nom, langue, avertissement_version, avertissement_accepte_le)
-		VALUES ($1, $2, $3, $4, $5, now()) RETURNING id`, email, verifie, nom, langueDe("", r), avertissement).Scan(&id)
+	err = tx.QueryRow(ctx, `WITH u AS (INSERT INTO utilisateurs (email, email_verifie_le, nom, langue, avertissement_version, avertissement_accepte_le)
+		VALUES ($1, $2, $3, $4, $5, now()) RETURNING id), p AS (`+parametresNouveauCompte+`)
+		SELECT id FROM u`, email, verifie, nom, langueDe("", r), avertissement).Scan(&id)
 	if estDoublon(err) {
 		return "", errEmailDejaUtilise
 	}

@@ -16,9 +16,16 @@ func TestLibelleFrequence(t *testing.T) {
 func TestParametres(t *testing.T) {
 	e := nouvelEssai(t)
 	j := e.compte("nav@exemple.org", "Navigateur")
-	// Valeurs d'un nouveau compte non décidées (Q-52) : null.
-	if _, p := e.appel("GET", "/parametres", j, nil); p["smsActifs"] != nil || p["frequenceParDefaut"] != nil || p["version"].(float64) != 0 {
-		t.Fatalf("paramètres initiaux : %v", p)
+	// Nouveau compte : SMS activés, tous les types cochés, photo en MMS,
+	// 1 heure (RG-PRM-06, D-148, TS-PRM-06).
+	_, p0 := e.appel("GET", "/parametres", j, nil)
+	if p0["smsActifs"] != true || p0["photoEnMms"] != true || p0["frequenceParDefaut"] != float64(60) || p0["version"].(float64) != 0 {
+		t.Fatalf("paramètres initiaux : %v", p0)
+	}
+	for nom, v := range p0["smsParType"].(map[string]any) {
+		if v != true {
+			t.Fatalf("type %s non coché pour un nouveau compte : %v", nom, p0)
+		}
 	}
 	if code, _ := e.appel("PATCH", "/parametres", j, map[string]any{"frequenceParDefaut": 45}); code != 422 {
 		t.Fatalf("fréquence hors liste : %d", code)
@@ -53,7 +60,14 @@ func TestParametres(t *testing.T) {
 	}
 	// Chaque compte a ses paramètres.
 	autre := e.compte("autre@exemple.org", "Autre")
-	if _, p := e.appel("GET", "/parametres", autre, nil); p["smsActifs"] != nil {
+	if _, p := e.appel("GET", "/parametres", autre, nil); p["frequenceParDefaut"] != float64(60) {
 		t.Fatal("paramètres partagés entre comptes")
+	}
+	// Compte créé avant RG-PRM-06, jamais réglé : inchangé (null).
+	if _, err := e.a.b.pool.Exec(t.Context(), "DELETE FROM parametres WHERE utilisateur_id = $1", e.id(autre)); err != nil {
+		t.Fatal(err)
+	}
+	if _, p := e.appel("GET", "/parametres", autre, nil); p["smsActifs"] != nil || p["frequenceParDefaut"] != nil {
+		t.Fatalf("compte existant : %v", p)
 	}
 }

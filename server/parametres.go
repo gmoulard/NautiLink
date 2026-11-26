@@ -11,9 +11,16 @@ import (
 )
 
 // Paramètres généraux synchronisés (TODO-4.4) : RG-PRM-01, RG-PRM-02,
-// RG-SMS-02, RG-SMS-05, RG-NAV-05, RG-SOS-14, RG-COM-04. Les valeurs d'un
-// nouveau compte ne sont pas décidées (Q-52) : un paramètre jamais réglé vaut
-// null.
+// RG-SMS-02, RG-SMS-05, RG-NAV-05, RG-SOS-14, RG-COM-04. Un nouveau compte
+// reçoit les valeurs de RG-PRM-06 (D-148, TODO-4.9) ; un compte créé avant
+// garde les siennes, null pour un paramètre jamais réglé.
+
+// parametresNouveauCompte : paramètres d'un nouveau compte (RG-PRM-06,
+// D-148, D-154) : SMS activés, tous les types cochés, photo jointe en MMS,
+// fréquence de 1 heure ; insérés avec le compte (CTE « u »).
+const parametresNouveauCompte = `INSERT INTO parametres (utilisateur_id, sms_actifs, sms_debut, sms_positions_automatiques,
+	sms_positions_manuelles, sms_notes, sms_photos, sms_notes_vocales, sms_fin, sms_incidents, photo_en_mms, frequence_par_defaut)
+	SELECT id, true, true, true, true, true, true, true, true, true, true, 60 FROM u`
 
 var frequences = []int{15, 30, 60, 120, 180, 360, 720, 1440, 2880, 14400} // RG-NAV-05
 
