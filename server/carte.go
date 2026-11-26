@@ -41,6 +41,7 @@ type carte struct {
 	Dalles           []dalleCarte
 	Trace            string // points du tracé, « x,y x,y … »
 	Points           []pointCarte
+	traceXY          [][2]float64 // le tracé en points, pour le PDF
 }
 
 // mercator : coordonnées en pixels du monde entier au zoom z.
@@ -86,6 +87,7 @@ func cadrer(trace, marques []pointCarte, largeur, hauteur float64, avecDalles bo
 	var b strings.Builder
 	for i, p := range trace {
 		p = placer(p)
+		c.traceXY = append(c.traceXY, [2]float64{p.X, p.Y})
 		if i > 0 {
 			b.WriteByte(' ')
 		}

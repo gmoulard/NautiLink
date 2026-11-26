@@ -53,6 +53,7 @@ func (a *app) routeur() http.Handler {
 	a.routesWebCorbeille(mux, c)
 	a.routesWebNavigations(mux, c)
 	a.routesWebJournal(mux, c)
+	a.routesWebPDF(mux, c)
 	a.routesQuota(mux, c+"/api/v1")
 	a.routesAchats(mux, c+"/api/v1")
 	a.routesSos(mux, c+"/api/v1")
