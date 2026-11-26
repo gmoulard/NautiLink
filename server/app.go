@@ -35,6 +35,7 @@ type app struct {
 	// Achats intégrés et notifications push (achats.go, push.go) : services
 	// externes, adresses remplacées dans les essais.
 	achats *achatsIntegres
+	stripe *stripe
 	push   *envoiPush
 }
 
@@ -53,6 +54,7 @@ func nouvelleApp(cfg config, b *base) *app {
 	}
 	a.envoyer = func(dest, sujet, texte string) error { return envoyerMail(cfg, dest, sujet, texte) }
 	a.achats = nouveauxAchats(cfg)
+	a.stripe = nouveauStripe(cfg)
 	a.push = nouvelEnvoiPush(cfg)
 	return a
 }

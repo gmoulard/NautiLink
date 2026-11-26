@@ -15,6 +15,7 @@
 </div>
 {{end}}
 {{with .D}}
+{{with .Quota}}<p><a class="lien" href="{{$.Base}}/quota">{{if .Abonnement.Actif}}Version abonné{{else}}Version gratuite : {{$.D.Disponible}} de navigation disponibles{{if .Epuise}} — quota épuisé{{end}}{{end}}</a></p>{{end}}
 <section aria-labelledby="titre-en-cours">
 <h2 id="titre-en-cours">Navigations en cours</h2>
 {{range .EnCours}}{{template "ligne-navigation" (ligne $.Base .)}}{{else}}<p class="aide">Aucune navigation en cours.</p>{{end}}

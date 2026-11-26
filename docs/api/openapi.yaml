@@ -1162,6 +1162,7 @@ paths:
     post:
       tags: [Quota et abonnement]
       summary: 'Ouvrir un paiement par carte bancaire avec Stripe (Web).'
+      description: 'Session Stripe Checkout de 15 € (achat unique de 10 ans) pour ce compte. L''abonnement s''ouvre quand Stripe confirme le paiement : au retour de la page de paiement (`<chemin>/quota/abonnement/retour?session=…`, session relue auprès de Stripe) ou par l''avis `/v1/rappels/stripe`.'
       x-regles: [RG-ECO-06, RG-ECO-07, RG-ECO-11]
       responses:
         '201':
@@ -1172,7 +1173,8 @@ paths:
                 type: object
                 properties:
                   adressePaiement: {type: string, format: uri}
-        '409': {$ref: '#/components/responses/Conflit'}
+        '502': {description: 'Stripe a refusé la session (`paiement_indisponible`).'}
+        '503': {description: 'Paiement pas encore ouvert sur ce serveur : clé absente (`achat_non_configure`).'}
   /v1/abonnement/google-play:
     post:
       tags: [Quota et abonnement]
@@ -1224,10 +1226,13 @@ paths:
     post:
       tags: [Quota et abonnement]
       summary: 'Avis de paiement envoyé par Stripe (signature vérifiée).'
+      description: 'En-tête `Stripe-Signature` (HMAC-SHA256, 5 minutes au plus). `checkout.session.completed` ou `checkout.session.async_payment_succeeded` payé de 15 € : abonnement ouvert pour le compte de `client_reference_id` ; autres événements ignorés.'
       security: []
       x-regles: [RG-ECO-07, RG-ECO-11, RG-ECO-05]
       responses:
         '204': {description: Avis traité.}
+        '422': {description: 'Signature invalide ou avis illisible.'}
+        '503': {description: 'Secret des avis absent (`achat_non_configure`).'}
 
   # -------------------------------------------------------------- Données
   /v1/compte/export.json:

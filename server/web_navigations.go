@@ -91,8 +91,10 @@ type ligneNav struct {
 
 type donneesTableau struct {
 	EnCours, Historique []ligneNav
-	Role                string // filtre de l'historique : "", navigateur ou suiveur
-	Suivant             int    // décalage de la page suivante de l'historique, 0 sans suite
+	Role                string     // filtre de l'historique : "", navigateur ou suiveur
+	Suivant             int        // décalage de la page suivante de l'historique, 0 sans suite
+	Quota               *quotaJSON // résumé du quota (RG-ECO-09)
+	Disponible          string
 }
 
 // traceDe : positions non masquées d'une navigation, dans l'ordre
@@ -196,6 +198,11 @@ func (a *app) pageTableau(w http.ResponseWriter, r *http.Request, s *session, d 
 	if err != nil {
 		return err
 	}
+	q, err := a.quota(r.Context(), s.utilisateur)
+	if err != nil {
+		return err
+	}
+	t.Quota, t.Disponible = &q, dureeTexte(q.DisponibleMinutes)
 	d.Titre, d.D = "Tableau de bord", t
 	a.rendre(w, "tableau.html", d)
 	return nil

@@ -1,0 +1,32 @@
+{{template "haut" .}}
+<h1>Quota et abonnement</h1>
+{{with .D}}
+<div class="carte">
+<h2>{{if .Q.Abonnement.Actif}}Version abonné{{else}}Version gratuite{{end}}</h2>
+{{if .Q.Abonnement.Actif}}
+<p>Votre abonnement{{if .Canal}} ({{.Canal}}){{end}} lève la limite du quota jusqu'au {{.FinAbonnement}}.</p>
+{{else}}
+<dl class="resume">
+  <dt>Consommé sur 7 jours</dt><dd>{{.Consomme}}</dd>
+  <dt>Disponible</dt><dd>{{.Disponible}} sur 24 h</dd>
+</dl>
+{{if .Q.Epuise}}<p class="erreur">Quota épuisé : vous ne pouvez pas démarrer de navigation avant le retour de minutes, sauf avec un abonnement. Le SOS reste toujours disponible.</p>{{end}}
+{{if .Cloture}}<p class="erreur">La navigation en cours sera clôturée automatiquement le {{.Cloture}}, sauf abonnement.</p>{{end}}
+{{if .Prochaines}}<h3>Prochaines minutes récupérables</h3>
+<ul>{{range .Prochaines}}<li>{{.Duree}} à partir du {{.Heure}}</li>{{end}}</ul>{{end}}
+{{end}}
+</div>
+{{if not .Q.Abonnement.Actif}}
+<div class="carte">
+<h2>Souscrire l'abonnement</h2>
+<p>15 € payés une seule fois, pour 10 ans, sans renouvellement automatique. Paiement par carte bancaire avec Stripe ; l'abonnement s'ouvre quand le paiement est confirmé.</p>
+{{if .StripeOuvert}}
+<form method="post" action="{{$.Base}}/quota/abonnement"><button type="submit">Souscrire l'abonnement</button></form>
+{{else}}
+<p class="aide">L'achat de l'abonnement n'est pas encore ouvert sur ce serveur.</p>
+{{end}}
+</div>
+{{end}}
+<p><a class="lien" href="{{.Info}}">En savoir plus sur l'abonnement</a></p>
+{{end}}
+{{template "bas" .}}
