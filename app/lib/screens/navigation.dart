@@ -711,7 +711,9 @@ class _SosDialogState extends State<SosDialog> {
           TextField(
             key: const Key('sos-problem'),
             controller: problem,
-            maxLines: 2,
+            // Champ sur 3 lignes (Q-102, proposition appliquée en attendant).
+            minLines: 3,
+            maxLines: 3,
             decoration: InputDecoration(
               labelText: l.sosProblem,
               hintText: l.sosProblemHint,

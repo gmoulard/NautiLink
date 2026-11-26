@@ -39,10 +39,10 @@ void main() {
     await attendre(tester);
   }
 
-  /// « Envoi message – Début de navigation », avec l'explication de
+  /// « Début de navigation », avec l'explication de
   /// l'autorisation d'envoi de SMS, redemandée tant qu'elle manque (RG-AND-02).
   Future<void> demarrer(WidgetTester tester) async {
-    await toucher(tester, 'Envoi message – Début de navigation');
+    await toucher(tester, 'Début de navigation');
     if (find.text('Envoi de SMS').evaluate().isNotEmpty) {
       await toucher(tester, 'OK');
     }
@@ -121,6 +121,58 @@ void main() {
   );
 
   testWidgets(
+    'remarques du 2026-11-26 : E-mail et SMS par personne, chronomètres, météo, « Envoyer position », mémo en pied de page (Q-102)',
+    (tester) async {
+      await connecter(tester);
+      // Mémo sécurité en mer sous le SOS et en pied de page de l'accueil.
+      expect(find.byKey(const Key('home-memo')), findsOneWidget);
+      await reveal(tester, find.byKey(const Key('footer-memo')));
+      expect(find.byKey(const Key('footer-memo')), findsOneWidget);
+      await tester.drag(find.byType(ListView).first, const Offset(0, 2000));
+      await attendre(tester);
+      await toucher(tester, 'Démarrer navigation');
+      await toucher(tester, 'J\'ai compris');
+      // Claire : numéro sans adresse : « SMS » coché, « E-mail » impossible.
+      expect(find.text('suiveur · contact SOS'), findsNothing);
+      final email = tester.widget<FilterChip>(
+        find.byKey(const Key('alert-email-c1')),
+      );
+      final smsChoix = tester.widget<FilterChip>(
+        find.byKey(const Key('alert-sms-c1')),
+      );
+      expect(email.selected, isFalse);
+      expect(email.onSelected, isNull);
+      expect(smsChoix.selected, isTrue);
+      // Décochée pour les SMS : pas de SMS de début pour elle.
+      await reveal(tester, find.byKey(const Key('alert-sms-c1')));
+      await tester.tap(find.byKey(const Key('alert-sms-c1')));
+      await attendre(tester);
+      await demarrer(tester);
+      await toucher(tester, 'OK');
+      expect(
+        sms.preremplis.where((p) => p.$1.contains('+33612345678')),
+        isEmpty,
+      );
+      // Écran de navigation : chronomètres réunis, météo, « Envoyer position ».
+      expect(find.text('Depuis le début'), findsOneWidget);
+      expect(find.text('Depuis le dernier envoi position'), findsOneWidget);
+      expect(find.byKey(const Key('weather-link')), findsOneWidget);
+      expect(find.text('Envoyer position'), findsOneWidget);
+      for (final b in ['NOTE', 'Photo', 'Vocal']) {
+        expect(
+          find.ancestor(
+            of: find.text(b),
+            matching: find.byWidgetPredicate((w) => w is FilledButton),
+          ),
+          findsOneWidget,
+        );
+      }
+      await reveal(tester, find.byKey(const Key('footer-memo')));
+      expect(find.byKey(const Key('footer-memo')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     'quota épuisé : démarrage refusé, heure du retour des minutes et abonnement (RG-ECO-04)',
     (tester) async {
       serveur.quotaEpuise = true;
@@ -173,7 +225,7 @@ void main() {
     'position, NOTE, Photo, Vocal : envoi et résultat de chaque circuit (TODO-5.4, RG-COM-03)',
     (tester) async {
       await naviguer(tester);
-      await toucher(tester, 'Envoyer information position');
+      await toucher(tester, 'Envoyer position');
       expect(find.text('Position envoyée'), findsWidgets);
       expect(find.text('Serveur : envoyé'), findsOneWidget);
       // RG-SMS-03 : SMS ordinaire prérempli, aux suiveurs de la navigation.
@@ -324,7 +376,7 @@ void main() {
       await toucher(tester, 'Reprendre la dernière navigation');
       expect(find.byKey(const Key('voyage-name')), findsOneWidget);
       expect(find.text('Alizé — Houat'), findsOneWidget);
-      expect(find.text('Envoyer information position'), findsOneWidget);
+      expect(find.text('Envoyer position'), findsOneWidget);
     },
   );
 
@@ -394,7 +446,9 @@ void main() {
       expect(ajout['perimetre'], 'navigation');
       expect(ajout['navigationId'], navId);
       expect(ajout['contactSos'], isTrue);
-      expect((c as Map)['personnesAlertees'], contains(ajout['id']));
+      // Q-102 : sans adresse, « E-mail » est décoché (alertes du serveur) ;
+      // « SMS » est coché.
+      expect((c as Map)['personnesAlertees'], isNot(contains(ajout['id'])));
       // SMS de début prérempli aussi pour la nouvelle personne.
       expect(sms.preremplis.last.$1, contains('+33622222222'));
     },

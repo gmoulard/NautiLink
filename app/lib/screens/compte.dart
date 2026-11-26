@@ -7,6 +7,7 @@ import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../reel/depot_reel.dart';
 import '../theme.dart';
+import 'pied.dart';
 import 'connexion.dart';
 import 'memo.dart';
 import 'warning.dart';
@@ -111,6 +112,7 @@ class ContactsScreen extends StatelessWidget {
                 .push(MaterialPageRoute(builder: (_) => const ContactScreen())),
           ),
         ],
+        const PiedDePage(),
       ],
     );
     return Scaffold(
@@ -637,6 +639,7 @@ class _ContactScreenState extends State<ContactScreen> {
               },
             ),
           ],
+          const PiedDePage(),
         ],
       ),
     );
@@ -908,6 +911,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             Text(l.pushSosAlways),
           ],
+          const PiedDePage(),
         ],
       ),
     );
@@ -1019,6 +1023,7 @@ class _SosHistoryScreenState extends State<SosHistoryScreen> {
                   ),
                 ),
               ),
+            const PiedDePage(),
           ],
         ),
       ),
@@ -1100,7 +1105,7 @@ class AssistanceScreen extends StatelessWidget {
                     appBar: AppBar(title: Text(l.assistanceWarning)),
                     body: const SingleChildScrollView(
                       padding: EdgeInsets.all(20),
-                      child: WarningText(),
+                      child: Column(children: [WarningText(), PiedDePage()]),
                     ),
                   ),
                 ),
@@ -1116,6 +1121,7 @@ class AssistanceScreen extends StatelessWidget {
               onTap: () => openSecurityMemo(context),
             ),
           ),
+          const PiedDePage(),
         ],
       ),
     );

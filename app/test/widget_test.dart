@@ -45,7 +45,7 @@ Future<void> openStart(WidgetTester tester) async {
 
 Future<void> startVoyage(WidgetTester tester) async {
   await openStart(tester);
-  await tapText(tester, 'Envoi message – Début de navigation');
+  await tapText(tester, 'Début de navigation');
   expect(find.text('Depuis le début'), findsOneWidget);
 }
 
@@ -179,7 +179,7 @@ void main() {
     expect(find.text('Yann'), findsOneWidget);
     expect(find.text('suiveur · contact SOS'), findsWidgets);
 
-    await tapText(tester, 'Envoi message – Début de navigation');
+    await tapText(tester, 'Début de navigation');
     // SOS avec problème rencontré (RG-SOS-02, RG-SOS-07).
     await tapText(tester, 'Envoyer un SOS');
     await tester.enterText(find.byKey(const Key('sos-problem')), 'Avarie de safran');
@@ -224,9 +224,9 @@ void main() {
     await tester.pumpAndSettle();
     await reveal(tester, find.textContaining('Enregistrement · 0:0'));
     expect(find.textContaining('Enregistrement · 0:0'), findsOneWidget);
-    await reveal(tester, find.text('Envoyer information position'));
+    await reveal(tester, find.text('Envoyer position'));
 
-    await tester.tap(find.text('Envoyer information position'));
+    await tester.tap(find.text('Envoyer position'));
     await tester.pumpAndSettle();
     expect(find.text('Position envoyée'), findsOneWidget);
     await tester.pump(const Duration(seconds: 59));

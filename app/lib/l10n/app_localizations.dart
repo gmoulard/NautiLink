@@ -941,7 +941,7 @@ abstract class AppLocalizations {
   /// No description provided for @sendStart.
   ///
   /// In fr, this message translates to:
-  /// **'Envoi message – Début de navigation'**
+  /// **'Début de navigation'**
   String get sendStart;
 
   /// No description provided for @addPersonText.
@@ -1061,13 +1061,13 @@ abstract class AppLocalizations {
   /// No description provided for @sinceLastSend.
   ///
   /// In fr, this message translates to:
-  /// **'Depuis le dernier envoi'**
+  /// **'Depuis le dernier envoi position'**
   String get sinceLastSend;
 
   /// No description provided for @sendPosition.
   ///
   /// In fr, this message translates to:
-  /// **'Envoyer information position'**
+  /// **'Envoyer position'**
   String get sendPosition;
 
   /// No description provided for @positionSent.
@@ -1181,7 +1181,7 @@ abstract class AppLocalizations {
   /// No description provided for @sosConfirmText.
   ///
   /// In fr, this message translates to:
-  /// **'Vos contacts SOS recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.'**
+  /// **'Contacts SOS prévenus\navec position et bateau.\nAlertez aussi : VHF 16 ou 196.'**
   String get sosConfirmText;
 
   /// No description provided for @sosProblem.
@@ -1846,7 +1846,7 @@ abstract class AppLocalizations {
   /// No description provided for @recordingHintReal.
   ///
   /// In fr, this message translates to:
-  /// **'1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription.'**
+  /// **'Votre voix est envoyée telle quelle, sans transcription.'**
   String get recordingHintReal;
 
   /// No description provided for @sosReelNoBoat.
@@ -2462,6 +2462,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{local} ({utc} UTC)'**
   String timeWithUtc(String local, String utc);
+
+  /// No description provided for @alertByEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail'**
+  String get alertByEmail;
+
+  /// No description provided for @alertBySms.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS'**
+  String get alertBySms;
+
+  /// No description provided for @weatherLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Météo marine'**
+  String get weatherLink;
+
+  /// No description provided for @voyageEndingSending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation terminée, en cours d\'envoi'**
+  String get voyageEndingSending;
+
+  /// No description provided for @homeSecurityRules.
+  ///
+  /// In fr, this message translates to:
+  /// **'Règles de sécurité en mer'**
+  String get homeSecurityRules;
 }
 
 class _AppLocalizationsDelegate

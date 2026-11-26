@@ -67,6 +67,7 @@ class NavigationLocale {
     required this.personnesABord,
     this.destination,
     this.personnesAlertees = const [],
+    this.personnesSms,
     this.parametres,
     List<EvenementLocal>? journal,
     this.derniereAutomatique,
@@ -84,6 +85,14 @@ class NavigationLocale {
   final int personnesABord;
   final String? destination;
   final List<String> personnesAlertees;
+
+  /// Personnes cochées « SMS » au démarrage (Q-102), gardées sur le
+  /// téléphone ; `null` pour une navigation d'avant ce choix : celles de
+  /// [personnesAlertees].
+  final List<String>? personnesSms;
+
+  /// La personne [id] reçoit les SMS de cette navigation (RG-NAV-25, Q-102).
+  bool recoitSms(String id) => (personnesSms ?? personnesAlertees).contains(id);
 
   /// Paramètres de cette navigation (RG-NAV-06) : réglages des SMS.
   final ParametresGeneraux? parametres;
@@ -113,6 +122,7 @@ class NavigationLocale {
     'personnesABord': personnesABord,
     'destination': destination,
     'personnesAlertees': personnesAlertees,
+    'personnesSms': ?personnesSms,
     'parametres': ?parametres?.versJson(),
     'journal': [for (final e in journal) e.versJson()],
     'derniereAutomatique': derniereAutomatique == null
@@ -143,6 +153,12 @@ class NavigationLocale {
         for (final p in (j['personnesAlertees'] as List?) ?? const [])
           if (p is String) p,
       ],
+      personnesSms: j['personnesSms'] is List
+          ? [
+              for (final p in j['personnesSms'] as List)
+                if (p is String) p,
+            ]
+          : null,
       parametres: ParametresGeneraux.depuisJson(j['parametres']),
       journal: [
         for (final e in (j['journal'] as List?) ?? const [])
@@ -475,6 +491,7 @@ class ConduiteNavigation extends ChangeNotifier {
     required int frequenceMinutes,
     required int personnesABord,
     required List<String> personnesAlertees,
+    List<String>? personnesSms,
     String? destination,
     PositionGps? destinationPosition,
     ParametresGeneraux? parametres,
@@ -537,6 +554,7 @@ class ConduiteNavigation extends ChangeNotifier {
       personnesABord: personnesABord,
       destination: dest,
       personnesAlertees: personnesAlertees,
+      personnesSms: personnesSms,
       parametres: parametres,
       journal: [
         EvenementLocal(

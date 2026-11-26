@@ -160,4 +160,11 @@ class DepotScope extends InheritedNotifier<Depot> {
 
   static Depot of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<DepotScope>()!.notifier!;
+
+  /// Vrai dans la vraie application (dépôt réel au-dessus de [context]) ;
+  /// faux dans la démonstration ou sans dépôt.
+  static bool reel(BuildContext context) {
+    final d = context.getInheritedWidgetOfExactType<DepotScope>()?.notifier;
+    return d != null && !d.demonstration;
+  }
 }

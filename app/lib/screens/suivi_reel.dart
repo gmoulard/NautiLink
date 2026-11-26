@@ -12,6 +12,7 @@ import '../l10n/app_localizations.dart';
 import '../reel/depot_reel.dart';
 import '../reel/suivi.dart';
 import '../theme.dart';
+import 'pied.dart';
 import 'dashboard.dart' show SeaMap;
 import 'navigation.dart' show fmtSeconds;
 
@@ -143,6 +144,7 @@ class _SuiviReelScreenState extends State<SuiviReelScreen> {
               Text(l.history, style: Theme.of(context).textTheme.titleMedium),
               for (final n in historique) carte(n),
             ],
+            const PiedDePage(),
           ],
         ),
       ),
@@ -198,15 +200,17 @@ class _NavigationSuivieScreenState extends State<NavigationSuivieScreen> {
         if (s.chargement) {
           return Scaffold(
             appBar: AppBar(),
-            body: const Center(child: CircularProgressIndicator()),
+            body: const PageAvecPied(child: CircularProgressIndicator()),
           );
         }
         if (d == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(l.followLoadError),
+            body: PageAvecPied(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(l.followLoadError),
+              ),
             ),
           );
         }
@@ -336,6 +340,7 @@ class _NavigationSuivieScreenState extends State<NavigationSuivieScreen> {
                 Text(l.logbook, style: Theme.of(context).textTheme.titleMedium),
                 for (final e in s.journal.reversed)
                   EvenementSuiviTile(evenement: e, suivi: s),
+                const PiedDePage(),
               ],
             ),
           ),

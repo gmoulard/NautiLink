@@ -485,7 +485,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No SOS contact checked: nobody will receive your SOS text messages.';
 
   @override
-  String get sendStart => 'Send message – Start of voyage';
+  String get sendStart => 'Start of voyage';
 
   @override
   String get addPersonText =>
@@ -548,7 +548,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sinceStart => 'Since start';
 
   @override
-  String get sinceLastSend => 'Since last send';
+  String get sinceLastSend => 'Since last position sent';
 
   @override
   String get sendPosition => 'Send position';
@@ -614,7 +614,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sosConfirmText =>
-      'Your SOS contacts will receive your position and the boat\'s details. Also alert the rescue services: VHF channel 16 or 196.';
+      'SOS contacts alerted\nwith position and boat.\nAlso call: VHF 16 or 196.';
 
   @override
   String get sosProblem => 'Problem encountered (optional)';
@@ -1031,7 +1031,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recordingHintReal =>
-      '1 minute at most, stops automatically. Your voice is sent as is, without transcription.';
+      'Your voice is sent as is, without transcription.';
 
   @override
   String get sosReelNoBoat =>
@@ -1406,4 +1406,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String timeWithUtc(String local, String utc) {
     return '$local ($utc UTC)';
   }
+
+  @override
+  String get alertByEmail => 'E-mail';
+
+  @override
+  String get alertBySms => 'SMS';
+
+  @override
+  String get weatherLink => 'Marine weather';
+
+  @override
+  String get voyageEndingSending => 'Voyage ended, sending';
+
+  @override
+  String get homeSecurityRules => 'Safety rules at sea';
 }

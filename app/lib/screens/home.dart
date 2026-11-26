@@ -9,6 +9,7 @@ import '../main.dart';
 import '../reel/achats.dart';
 import '../reel/depot_reel.dart';
 import '../theme.dart';
+import 'pied.dart';
 import 'compte.dart';
 import 'connexion.dart';
 import 'dashboard.dart';
@@ -90,6 +91,14 @@ class HomeScreen extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall,
         ),
+        // Lien vers les règles de sécurité, sous le SOS (Q-102).
+        if (!demo)
+          TextButton.icon(
+            key: const Key('home-memo'),
+            icon: const Icon(Icons.health_and_safety_outlined),
+            label: Text(l.homeSecurityRules),
+            onPressed: () => openSecurityMemo(context),
+          ),
         const SizedBox(height: 24),
         // Sponsor : le guidon de la SRT seul, sans texte (D-131).
         Center(
@@ -116,26 +125,30 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
-        // Mémo sécurité en mer intégré, lisible hors connexion (RG-SOS-22).
-        TextButton.icon(
-          icon: const Icon(Icons.health_and_safety_outlined),
-          label: Text(l.homeSecurityMemo),
-          onPressed: () => openSecurityMemo(context),
-        ),
-        // Petit lien vers le site de présentation (TODO-3.13).
-        Center(
-          child: InkWell(
-            onTap: () => launchUrl(
-              Uri.parse(siteUrl),
-              mode: LaunchMode.externalApplication,
-            ),
-            child: Text(
-              l.footerSiteLink,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(decoration: TextDecoration.underline),
+        if (demo) ...[
+          // Mémo sécurité en mer intégré, lisible hors connexion (RG-SOS-22).
+          TextButton.icon(
+            icon: const Icon(Icons.health_and_safety_outlined),
+            label: Text(l.homeSecurityMemo),
+            onPressed: () => openSecurityMemo(context),
+          ),
+          // Petit lien vers le site de présentation (TODO-3.13).
+          Center(
+            child: InkWell(
+              onTap: () => launchUrl(
+                Uri.parse(siteUrl),
+                mode: LaunchMode.externalApplication,
+              ),
+              child: Text(
+                l.footerSiteLink,
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(decoration: TextDecoration.underline),
+              ),
             ),
           ),
-        ),
+        ],
+        // Pied de page en fin de page, mémo compris (Q-102).
+        const PiedDePage(),
       ],
     );
     final actualise = depot.actualiseLe;
@@ -340,6 +353,7 @@ class SavedVoyagesScreen extends StatelessWidget {
                   },
                 ),
               ),
+            const PiedDePage(),
           ],
         ),
       ),
@@ -499,6 +513,7 @@ class QuotaScreen extends StatelessWidget {
                 mode: LaunchMode.externalApplication,
               ),
             ),
+            const PiedDePage(),
           ],
         ),
       ),

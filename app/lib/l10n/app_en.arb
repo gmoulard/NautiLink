@@ -150,7 +150,7 @@
   "addPerson": "Add a person",
   "voyageSettings": "Settings for this voyage",
   "noSosChecked": "No SOS contact checked: nobody will receive your SOS text messages.",
-  "sendStart": "Send message – Start of voyage",
+  "sendStart": "Start of voyage",
   "addPersonText": "The person joins your contacts, as follower and SOS contact by default, and will be alerted during this voyage.",
   "name": "Name",
   "phone": "Phone",
@@ -171,7 +171,7 @@
   "demoMenu": "Demo",
   "demoStationary": "Demo: simulate 2 h without moving",
   "sinceStart": "Since start",
-  "sinceLastSend": "Since last send",
+  "sinceLastSend": "Since last position sent",
   "sendPosition": "Send position",
   "positionSent": "Position sent",
   "noteButton": "NOTE",
@@ -305,7 +305,7 @@
   "nextAutoPosition": "Next automatic position: {time}",
   "sendRefused": "Sending refused",
   "micRefused": "Microphone access refused: the voice note cannot be recorded.",
-  "recordingHintReal": "1 minute at most, stops automatically. Your voice is sent as is, without transcription.",
+  "recordingHintReal": "Your voice is sent as is, without transcription.",
   "sosReelNoBoat": "No boat in your account: NautiLink cannot send the alert. Alert the rescue services: VHF channel 16 or 196.",
   "sosReelChooseBoat": "Boat in distress",
   "sosReelSearching": "Looking for the position…",
@@ -406,5 +406,10 @@
   "pushPhoto": "New photo",
   "pushLate": "Overdue position",
   "pushSosAlways": "SOS alerts are always notified.",
-  "timeWithUtc": "{local} ({utc} UTC)"
+  "timeWithUtc": "{local} ({utc} UTC)",
+  "alertByEmail": "E-mail",
+  "alertBySms": "SMS",
+  "weatherLink": "Marine weather",
+  "voyageEndingSending": "Voyage ended, sending",
+  "homeSecurityRules": "Safety rules at sea"
 }

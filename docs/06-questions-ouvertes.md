@@ -53,6 +53,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
   5. mémo sécurité en mer « sur toutes les pages comme le pied de page » (RG-SOS-22 : depuis l'accueil) ;
   6. « Enlevé la notion de limité à 1 minute » : retirer seulement la mention à l'écran, ou la limite elle-même (RG-JRN-04, D-53).
 - Proposition (non validée) : 1) deux cases « E-mail » et « SMS » par personne, cochées ; une personne décochée des deux n'est pas alertée, SOS compris (comme RG-NAV-25) ; 2) garder les deux cases sur la fiche du contact (un contact SOS doit avoir un numéro), mais ne plus les afficher dans la liste de l'écran de démarrage ; 3) libellés adoptés, le second chronomètre gardant sa règle (tout envoi le remet à zéro) ; 4) lien vers la prévision marine de Météo-France pour la position actuelle, sans relevé par NautiLink ; 5) lien « Mémo sécurité en mer » dans le pied de page de chaque écran ; 6) retirer la mention seulement, la limite d'une minute restant (taille des fichiers et des MMS).
+- Appliqué en attendant dans l'application 0.2.0 (TODO-5.12) ; lien météo : page « Météo marine » de Météo-France (<https://meteofrance.com/meteo-marine>), sans la position actuelle.
 
 ## 2. Études techniques
 

@@ -614,3 +614,6 @@ String demoWeather(Position p) {
   const seas = ['mer belle', 'mer peu agitée', 'mer agitée'];
   return '${dirs[r.nextInt(dirs.length)]} ${8 + r.nextInt(12)} nœuds · ${seas[r.nextInt(seas.length)]} · ${1008 + r.nextInt(14)} hPa';
 }
+
+/// Météo marine de Météo-France, ouverte depuis l'écran de navigation (Q-102).
+const meteoMarineUrl = 'https://meteofrance.com/meteo-marine';

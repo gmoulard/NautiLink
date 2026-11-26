@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'depot/depot.dart';
 import 'data.dart';
 import 'l10n/app_localizations.dart';
 
@@ -279,8 +280,11 @@ class DemoBanner extends StatelessWidget {
   }
 }
 
-/// Cadre de tous les écrans (`MaterialApp.builder`) : l'écran, puis le pied de
-/// page [BuildFooterLine] (D-128).
+/// Cadre de tous les écrans (`MaterialApp.builder`). Dans la démonstration
+/// (figée, D-144), le pied de page [BuildFooterLine] reste fixé en bas de
+/// l'écran (D-128) ; dans la vraie application, il est intégré à la fin de
+/// chaque page, après les boutons, avec le lien vers le mémo sécurité en mer
+/// (`PiedDePage`, Q-102).
 class AppFrame extends StatelessWidget {
   const AppFrame({super.key, required this.child});
 
@@ -288,6 +292,7 @@ class AppFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (DepotScope.reel(context)) return child;
     final theme = Theme.of(context);
     return Column(
       children: [
@@ -316,8 +321,9 @@ class AppFrame extends StatelessWidget {
   }
 }
 
-/// « Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 ·
-/// build 12 · commit 93b0f97 » ; le dépôt s'ouvre dans le navigateur.
+/// « Tous droits réservés · NautiLink · V0.0.1 · build 12 · commit 93b0f97 » ;
+/// « NautiLink » ouvre le site de présentation (D-149). La démonstration,
+/// figée (D-144), garde l'adresse du dépôt (D-128).
 class BuildFooterLine extends StatelessWidget {
   const BuildFooterLine({super.key, this.style});
 
@@ -336,17 +342,19 @@ class BuildFooterLine extends StatelessWidget {
             buildNumber,
             buildCommit.length > 7 ? buildCommit.substring(0, 7) : buildCommit,
           );
+    final reel = DepotScope.reel(context);
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text('${l.rightsReserved} · ', style: style),
         InkWell(
+          key: const Key('footer-site'),
           onTap: () => launchUrl(
-            Uri.parse(repositoryUrl),
+            Uri.parse(reel ? siteUrl : repositoryUrl),
             mode: LaunchMode.externalApplication,
           ),
-          child: Text(repositoryUrl, style: linkStyle),
+          child: Text(reel ? l.appTitle : repositoryUrl, style: linkStyle),
         ),
         Text(' · $build', style: style),
       ],

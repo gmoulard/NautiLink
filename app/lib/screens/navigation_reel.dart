@@ -18,6 +18,7 @@ import '../reel/sms.dart';
 import '../reel/sms_navigation.dart';
 import '../reel/telephone.dart';
 import '../theme.dart';
+import 'pied.dart';
 import 'connexion.dart';
 import 'dashboard.dart' show SeaMap;
 import 'home.dart';
@@ -185,7 +186,12 @@ class _StartReelScreenState extends State<StartReelScreen> {
   int bateau = 0;
   int? frequence;
   int? personnes;
+
+  /// Personnes cochées « E-mail » (alertes du serveur : e-mails et
+  /// notifications) et « SMS » (SMS du téléphone), toutes cochées au départ
+  /// (RG-NAV-25, Q-102).
   Set<String>? alertees;
+  Set<String>? alerteesSms;
   Map<String, bool>? smsParType;
   bool? smsActifs;
   bool envoi = false;
@@ -223,6 +229,14 @@ class _StartReelScreenState extends State<StartReelScreen> {
 
   List<ContactNl> _alertables(Depot d) =>
       d.contacts.where((c) => c.suiveur || c.contactSos).toList();
+
+  /// « E-mail » possible : adresse connue ou compte du suiveur (notifications).
+  static bool _emailPossible(ContactNl c) =>
+      (c.email?.trim().isNotEmpty ?? false) || c.utilisateurId != null;
+
+  /// « SMS » possible : numéro connu (RG-SMS-01, RG-SOS-05).
+  static bool _smsPossible(ContactNl c) =>
+      c.telephone?.trim().isNotEmpty ?? false;
 
   /// Paramètres de cette navigation seulement (RG-NAV-06) : copie des
   /// paramètres généraux, modifiée par « Paramètres de cette navigation ».
@@ -342,7 +356,8 @@ class _StartReelScreenState extends State<StartReelScreen> {
     final id = _depot(context).file.nouvelId();
     setState(() {
       nouvelles.add((id: id, c: c, perimetre: perimetre));
-      alertees!.add(id);
+      if (c.email?.trim().isNotEmpty ?? false) alertees!.add(id);
+      if (c.phone?.trim().isNotEmpty ?? false) alerteesSms!.add(id);
     });
   }
 
@@ -389,6 +404,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
         frequenceMinutes: frequence!,
         personnesABord: personnes!,
         personnesAlertees: alertees!.toList(),
+        personnesSms: depot.canalSms.disponible ? alerteesSms!.toList() : null,
         destination: destination.text,
         destinationPosition: destinationPoint,
         parametres: _parametres(depot),
@@ -466,10 +482,68 @@ class _StartReelScreenState extends State<StartReelScreen> {
     frequence ??= depot.parametres?.frequenceParDefaut ?? 30;
     if (!frequencies.contains(frequence)) frequence = 30;
     personnes ??= depot.session.dernierNombrePersonnes;
-    alertees ??= {for (final c in alertables) c.id};
+    final smsCircuit = depot.canalSms.disponible;
+    alertees ??= {
+      for (final c in alertables)
+        if (_emailPossible(c)) c.id,
+    };
+    alerteesSms ??= {
+      for (final c in alertables)
+        if (_smsPossible(c)) c.id,
+    };
     final aucunSos = !depot.contacts.any((c) => c.contactSos);
     final sosCoche = alertables.any(
-      (c) => c.contactSos && alertees!.contains(c.id),
+      (c) =>
+          c.contactSos &&
+          (alertees!.contains(c.id) ||
+              (smsCircuit && alerteesSms!.contains(c.id))),
+    );
+    Widget choix(
+      String id,
+      String nom, {
+      required bool email,
+      required bool sms,
+      String? note,
+    }) => ListTile(
+      key: Key('alerted-$id'),
+      contentPadding: EdgeInsets.zero,
+      title: note == null
+          ? Text(nom)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(nom),
+                Text(note, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+      subtitle: Wrap(
+        spacing: 8,
+        children: [
+          FilterChip(
+            key: Key('alert-email-$id'),
+            avatar: const Icon(Icons.alternate_email, size: 18),
+            label: Text(l.alertByEmail),
+            selected: alertees!.contains(id),
+            onSelected: email
+                ? (v) => setState(
+                    () => v ? alertees!.add(id) : alertees!.remove(id),
+                  )
+                : null,
+          ),
+          if (smsCircuit)
+            FilterChip(
+              key: Key('alert-sms-$id'),
+              avatar: const Icon(Icons.sms_outlined, size: 18),
+              label: Text(l.alertBySms),
+              selected: alerteesSms!.contains(id),
+              onSelected: sms
+                  ? (v) => setState(
+                      () => v ? alerteesSms!.add(id) : alerteesSms!.remove(id),
+                    )
+                  : null,
+            ),
+        ],
+      ),
     );
     return Scaffold(
       appBar: AppBar(title: Text(l.startVoyage)),
@@ -615,36 +689,22 @@ class _StartReelScreenState extends State<StartReelScreen> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 if (alertables.isEmpty) Text(l.noAlertablePerson),
+                // Q-102 : un sélecteur « E-mail » et un « SMS » par personne,
+                // sans distinguer suiveur et contact SOS.
                 for (final c in alertables)
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: alertees!.contains(c.id),
-                    onChanged: (v) => setState(
-                      () => v == true
-                          ? alertees!.add(c.id)
-                          : alertees!.remove(c.id),
-                    ),
-                    title: Text(c.nom),
-                    subtitle: Text(
-                      [
-                        if (c.suiveur) l.alertedRoleFollower,
-                        if (c.contactSos) l.alertedRoleSos,
-                      ].join(' · '),
-                    ),
+                  choix(
+                    c.id,
+                    c.nom,
+                    email: _emailPossible(c),
+                    sms: _smsPossible(c),
                   ),
                 for (final x in nouvelles)
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: alertees!.contains(x.id),
-                    onChanged: (v) => setState(
-                      () => v == true
-                          ? alertees!.add(x.id)
-                          : alertees!.remove(x.id),
-                    ),
-                    title: Text(x.c.name),
-                    subtitle: Text(l.addPersonPending),
+                  choix(
+                    x.id,
+                    x.c.name,
+                    email: x.c.email?.trim().isNotEmpty ?? false,
+                    sms: x.c.phone?.trim().isNotEmpty ?? false,
+                    note: l.addPersonPending,
                   ),
                 Align(
                   alignment: Alignment.centerLeft,
@@ -731,6 +791,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
                         )
                       : Text(l.sendStart),
                 ),
+                const PiedDePage(),
               ],
             ),
           ),
@@ -758,6 +819,10 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
   Timer? ticker;
   bool envoi = false;
   bool propositionOuverte = false;
+
+  /// Fin confirmée, envoi en cours : l'écran dit « Navigation terminée, en
+  /// cours d'envoi » au lieu de « Aucune navigation en cours » (Q-102).
+  bool finEnCours = false;
 
   /// RG-NAV-24 : « Terminer la navigation » ou « Continuer » après 2 heures
   /// sans éloignement de plus de 20 mètres.
@@ -868,12 +933,18 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
             ),
           );
     if (ok != true || !mounted) return;
-    setState(() => envoi = true);
+    setState(() {
+      envoi = true;
+      finEnCours = true;
+    });
     final avant = depot.conduite.enCours;
     final r = await depot.terminer();
     if (!mounted) return;
     if (r == null) {
-      setState(() => envoi = false);
+      setState(() {
+        envoi = false;
+        finEnCours = false;
+      });
       return;
     }
     final (id, etat) = r;
@@ -1034,7 +1105,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
       Row(
         children: [
           Expanded(
-            child: OutlinedButton.icon(
+            child: FilledButton.icon(
               icon: const Icon(Icons.edit_note),
               label: Text(l.noteButton),
               onPressed: envoi
@@ -1048,7 +1119,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: OutlinedButton.icon(
+            child: FilledButton.icon(
               icon: const Icon(Icons.photo_camera_outlined),
               label: Text(l.photoButton),
               onPressed: envoi || medias == null
@@ -1073,7 +1144,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: OutlinedButton.icon(
+            child: FilledButton.icon(
               icon: const Icon(Icons.mic_none),
               label: Text(l.voiceButton),
               onPressed: envoi || medias == null
@@ -1140,7 +1211,22 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
         if (n == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: Center(child: Text(l.noVoyageInProgress)),
+            body: PageAvecPied(
+              child: finEnCours
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: 16),
+                        Text(
+                          l.voyageEndingSending,
+                          key: const Key('voyage-ending'),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )
+                  : Text(l.noVoyageInProgress),
+            ),
           );
         }
         final maintenant = depot.conduite.maintenant;
@@ -1181,28 +1267,13 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                             title: Text(l.voyageRefused(refus)),
                           ),
                         ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Chrono(
-                              label: l.sinceStart,
-                              value: fmtClock(maintenant.difference(n.debut)),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          // RG-NAV-10 : remis à zéro par tout envoi reçu.
-                          Expanded(
-                            child: Chrono(
-                              key: const Key('since-last-send'),
-                              label: l.sinceLastSend,
-                              value: fmtClock(
-                                maintenant.difference(
-                                  n.dernierEnvoi ?? n.debut,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      // RG-NAV-10, Q-102 : les deux chronomètres dans la même
+                      // zone ; le second remis à zéro par tout envoi reçu.
+                      Chronos(
+                        depuisDebut: maintenant.difference(n.debut),
+                        depuisDernierEnvoi: maintenant.difference(
+                          n.dernierEnvoi ?? n.debut,
+                        ),
                       ),
                       if (refus == null &&
                           depot.conduite.prochaineAutomatique != null) ...[
@@ -1241,7 +1312,18 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      // Q-102 : lien vers la météo marine.
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          key: const Key('weather-link'),
+                          icon: const Icon(Icons.cloud_outlined),
+                          label: Text(l.weatherLink),
+                          onPressed: () =>
+                              ouvrirLien(Uri.parse(meteoMarineUrl)),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       ..._boutons(depot, l),
                       const SizedBox(height: 24),
                       SosButton(onPressed: () => confirmSosReel(context)),
@@ -1267,6 +1349,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                               ? () => _actionsEvenement(depot, n, e)
                               : null,
                         ),
+                      const PiedDePage(),
                     ],
                   ),
                 ),
@@ -1275,6 +1358,59 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Les deux chronomètres de l'écran de navigation dans une même zone
+/// (RG-NAV-10, Q-102) : en grand, « Depuis le début » ; dessous, plus petit,
+/// « Depuis le dernier envoi position ».
+class Chronos extends StatelessWidget {
+  const Chronos({
+    super.key,
+    required this.depuisDebut,
+    required this.depuisDernierEnvoi,
+  });
+
+  final Duration depuisDebut;
+  final Duration depuisDernierEnvoi;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final petit = Theme.of(context).textTheme.bodySmall;
+    const chiffres = [FontFeature.tabularFigures()];
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Text(l.sinceStart, style: petit),
+            Text(
+              fmtClock(depuisDebut),
+              key: const Key('since-start'),
+              style: const TextStyle(
+                fontFamily: kMonoFont,
+                fontSize: 34,
+                fontWeight: FontWeight.w600,
+                fontFeatures: chiffres,
+              ),
+            ),
+            const Divider(height: 16),
+            Text(l.sinceLastSend, style: petit),
+            Text(
+              fmtClock(depuisDernierEnvoi),
+              key: const Key('since-last-send'),
+              style: const TextStyle(
+                fontFamily: kMonoFont,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                fontFeatures: chiffres,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1623,6 +1759,7 @@ class _SosReelScreenState extends State<SosReelScreen> {
             onPressed: () => Navigator.of(context).pop(),
             child: Text(l.back),
           ),
+          const PiedDePage(),
         ],
       ),
     );
@@ -1630,7 +1767,9 @@ class _SosReelScreenState extends State<SosReelScreen> {
 }
 
 /// Note vocale en cours d'enregistrement : 1 minute au plus, arrêt
-/// automatique (RG-JRN-04). Rend le fichier et la durée en secondes.
+/// automatique (RG-JRN-04), sans mention de la limite à l'écran (Q-102,
+/// proposition appliquée en attendant). Rend le fichier et la durée en
+/// secondes.
 class _EnregistrementVocal extends StatefulWidget {
   const _EnregistrementVocal({required this.medias});
   final Medias medias;
@@ -1865,6 +2004,7 @@ class _DestinationCarteScreenState extends State<DestinationCarteScreen> {
                 ),
               ),
             ),
+          const PiedDePage(),
         ],
       ),
     );
