@@ -96,7 +96,7 @@ Choix graphiques, validés avec le redessin ([D-117](07-decisions.md#d-117)) :
 - Le turquoise (connexion, partage) est réservé aux actions.
 - Le rouge est réservé au SOS et aux alertes ; jamais décoratif.
 
-Couleurs du thème sombre : §14 ([D-97](07-decisions.md#d-97)). L'orange est réservé au repère GPS du logo ([D-98](07-decisions.md#d-98)).
+Couleurs du thème sombre : §14 ([D-97](07-decisions.md#d-97)). Valeurs en vigueur depuis le 2026-11-26 : §15 ([D-157](07-decisions.md#d-157)). L'orange est réservé au repère GPS du logo ([D-98](07-decisions.md#d-98)).
 
 ## 7. Typographie
 
@@ -145,7 +145,9 @@ NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/), [D-6
 - Couleurs du guidon : bleu `#1E3296`, jaune `#F8D818`, rouge des ancres. Elles servent au bandeau sponsor ; leur usage comme base de toute l'identité NautiLink est la proposition 11 de la [planche de designs](../site/designs/index.html), à choisir ([TODO-3.9](TODO.md)).
 - Le guidon reste la propriété de la SRT : ne pas le modifier ni le recolorer.
 
-## 14. Design du site : « Radar de pluie »
+## 14. Design du site : « Radar de pluie » (remplacé)
+
+Remplacé le 2026-11-26 par l'identité graphique du §15 ([D-157](07-decisions.md#d-157)) ; gardé ici pour l'historique et pour la démonstration V0 figée (D-144).
 
 Choisi le 2026-11-24 ([D-69](07-decisions.md#d-69)) parmi les [variantes météo](../site/designs/meteo.html) (n° 8). Appliqué au site de présentation (`site/style.css`, bloc « Radar de pluie ») et à l'application ([D-70](07-decisions.md#d-70) : `app/lib/theme.dart`, polices dans `app/assets/fonts/` sous licence OFL). Maquettes : [`site/designs/app.html`](../site/designs/app.html).
 
@@ -175,4 +177,26 @@ Thème sombre, validé le 2026-11-25 ([D-97](07-decisions.md#d-97)) :
 | Bandeau bêta | `#F2C14E`, inchangé |
 
 Bandeau du sponsor SRT : sur le fond de l'application, en thème clair comme en sombre (filet jaune `#F8D818` au-dessus ; texte bleu SRT `#1E3296` en clair, texte `#E3EEF7` en sombre). Sous la mention du sponsor, un petit lien souligné « Site de NautiLink » vers le site de présentation (TODO-3.13).
+
+## 15. Identité graphique du 2026-11-26
+
+Choisie le 2026-11-26 ([D-157](07-decisions.md#d-157)) d'après l'étude [Nautilinkimages261126.png](etudes/Nautilinkimages261126.png) (source : `Nautilinkimages261126.pptx`). Elle vaut pour tous les supports : site de présentation (`site/style.css`, bloc « Identité graphique du 2026-11-26 »), Application web et espace administrateur (`server/web/static/style.css`), application mobile (`app/lib/theme.dart`, à appliquer : TODO-3.20, sur demande explicite de construction).
+
+| Rôle | Thème clair | Thème sombre (D-97) |
+|------|-------------|---------------------|
+| Titres, texte, marque | bleu marine `#0B2A55` | `#E3EEF7` |
+| Texte secondaire | `#4A6380` | `#9BB4C9` |
+| Fond de page | dégradé ciel `#DDEFFB` vers `#F4FAFE` | `#0F2438` vers `#08172A` |
+| Cartes, champs | blanc, coins arrondis (16 à 18 px), ombre douce | `#15314D` |
+| Filets | `#D6E6F2` | `#24476A` |
+| Boutons d'action | turquoise `#17A2B0`, texte blanc, en pilule | `#2BC0C6`, texte `#08172A` |
+| Liens | bleu `#1565C0` | `#5AAEE6` |
+| SOS | rouge `#D94343` | `#E35D5D` |
+| Avertissement bêta | texte rouge `#B3261E` sur rose `#FDE8E8`, précédé de ⚠ | `#FFB4AB` sur `#3A1518` |
+
+- **Typographie** : Inter partout ; titres en Inter ExtraBold (800), resserrés ; signature « Your sea, your safety, your story. » en Inter italique.
+- **En-tête** : logo en carré arrondi devant « NautiLink » en gras, signature à côté ; barre blanche translucide, fixée en haut.
+- **Décor** : bandeau d'accueil en ciel et mer, vagues (dessins SVG) sous le bandeau et au-dessus du pied de page ; pas de photo pour l'instant (les images de l'étude sont des maquettes).
+- **Mise en page** : cartes blanches arrondies et ombrées ; rangée d'icônes des fonctions (sécurité, partage, journal, SOS, sans Internet, photos) ; bandeau d'avertissement bêta rouge avec la mention du sponsor.
+- Le turquoise reste réservé aux actions, le rouge au SOS et aux alertes (§6).
 
