@@ -1223,21 +1223,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		return nil
 	}))
 	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/suiveurs/{utilisateurId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
-		n, err := a.navigationModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"))
-		if err != nil {
-			return err
-		}
-		suiveur := r.PathValue("utilisateurId")
-		if !estUUID(suiveur) {
-			return errIntrouvable()
-		}
-		// Retrait de cette navigation seulement, effet immédiat (RG-PAR-06).
-		if _, err := a.b.pool.Exec(r.Context(), `INSERT INTO retraits_navigation (navigation_id, suiveur_id)
-			SELECT $1, $2 WHERE EXISTS (SELECT 1 FROM utilisateurs WHERE id = $2) ON CONFLICT DO NOTHING`, n.id, suiveur); err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), "DELETE FROM acces WHERE navigateur_id = $1 AND suiveur_id = $2 AND navigation_id = $3",
-			n.navigateur, suiveur, n.id); err != nil {
+		if err := a.retirerDeLaNavigation(r.Context(), s.utilisateur, r.PathValue("navigationId"), r.PathValue("utilisateurId")); err != nil {
 			return err
 		}
 		w.WriteHeader(http.StatusNoContent)
@@ -1263,6 +1249,25 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		ecrireJSON(w, http.StatusOK, map[string]any{"resultats": a.synchroniser(r.Context(), r, s, corps.Elements)})
 		return nil
 	}))
+}
+
+// retirerDeLaNavigation : retrait d'un suiveur de cette navigation seulement,
+// effet immédiat (RG-PAR-06) ; API et page de la navigation sur le Web.
+func (a *app) retirerDeLaNavigation(ctx context.Context, utilisateur, navID, suiveur string) error {
+	n, err := a.navigationModifiable(ctx, utilisateur, navID)
+	if err != nil {
+		return err
+	}
+	if !estUUID(suiveur) {
+		return errIntrouvable()
+	}
+	if _, err := a.b.pool.Exec(ctx, `INSERT INTO retraits_navigation (navigation_id, suiveur_id)
+		SELECT $1, $2 WHERE EXISTS (SELECT 1 FROM utilisateurs WHERE id = $2) ON CONFLICT DO NOTHING`, n.id, suiveur); err != nil {
+		return err
+	}
+	_, err = a.b.pool.Exec(ctx, "DELETE FROM acces WHERE navigateur_id = $1 AND suiveur_id = $2 AND navigation_id = $3",
+		n.navigateur, suiveur, n.id)
+	return err
 }
 
 func lireCorps(r *http.Request) (json.RawMessage, error) {

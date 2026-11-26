@@ -86,6 +86,8 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 | `<chemin>/contacts`, `<chemin>/contacts/<id>` | Contacts, lien d'invitation, mes suiveurs, navigateurs suivis |
 | `<chemin>/parametres` | Paramètres généraux : SMS envoyés aux suiveurs, fréquence des positions |
 | `<chemin>/invitation?jeton=…` | Lien d'invitation : connexion ou création d'un compte, puis acceptation |
+| `<chemin>/navigations/<id>` | Page d'une navigation (TODO-6.2) : informations, carte, alertes SOS, journal, bateau, suiveurs ; `…/direct` : partie relue toutes les 30 secondes pendant la navigation ; `…/suiveurs/<id>/retrait`, `…/suppression` (navigateur) |
+| `<chemin>/corbeille` | Corbeille : navigations supprimées, « Restaurer » (TODO-4.8) |
 | `<chemin>/api/v1/…` | API ([`openapi.yaml`](../docs/api/openapi.yaml)) |
 | `<chemin>/admin/` | Espace administrateur : `connexion`, `utilisateurs`, `bateaux`, `annonces`, `journal` (TODO-7.1) |
 | `<chemin>/api/sante` | État en JSON : `etat`, `version`, `build`, `commit`, `base` (`ok`, `absente`, `erreur`) |

@@ -100,7 +100,7 @@ type donneesTableau struct {
 // d'acquisition (RG-JRN-03, RG-NAV-22).
 func (a *app) traceDe(ctx context.Context, n navigationJSON) ([]pointCarte, error) {
 	lignes, err := a.b.pool.Query(ctx, `SELECT heure_acquisition, latitude, longitude FROM evenements
-		WHERE navigation_id = $1 AND latitude IS NOT NULL AND supprime_le IS NULL AND type <> 'sos'
+		WHERE navigation_id = $1 AND latitude IS NOT NULL AND supprime_le IS NULL
 		ORDER BY heure_acquisition, numero_ordre NULLS LAST`, n.ID)
 	if err != nil {
 		return nil, err

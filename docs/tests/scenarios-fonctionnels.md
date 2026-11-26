@@ -118,6 +118,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-NAV-30** ([RG-NAV-27](../02-regles-metier.md#rg-nav-27)) — Étant donné un navigateur qui démarre sa première navigation, quand l'écran de démarrage s'ouvre, alors le nombre de personnes à bord vaut 1 ; s'il saisit 3, alors 3 figure dans le SMS SOS et sur la page de la navigation, et la navigation suivante propose 3.
 - **TS-NAV-31** ([RG-NAV-28](../02-regles-metier.md#rg-nav-28)) — Étant donné une navigation démarrée puis terminée, quand le navigateur ouvre sa page sur l'Application web, alors la météo (vent, état de la mer, pression) relevée par le serveur au point de départ au début et au point d'arrivée à la fin est affichée.
 - **TS-NAV-32** ([RG-NAV-29](../02-regles-metier.md#rg-nav-29)) — Étant donné la page d'une navigation sur l'Application web, quand la carte s'affiche, alors elle montre le fond OpenStreetMap et le balisage d'OpenSeaMap, avec leurs mentions de source.
+- **TS-NAV-33** ([RG-NAV-31](../02-regles-metier.md#rg-nav-31)) — Étant donné une navigation terminée et un SOS déclenché après sa fin, quand on ouvre sa page sur l'Application web, alors le SOS est un point d'alerte sur la carte et figure dans le journal, et la distance, le lieu de départ et le lieu d'arrivée ne changent pas.
 
 ## 7. Journal de bord (RG-JRN)
 

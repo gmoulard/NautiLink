@@ -51,6 +51,7 @@ func (a *app) routeur() http.Handler {
 	a.routesNavigations(mux, c+"/api/v1")
 	a.routesCorbeille(mux, c+"/api/v1")
 	a.routesWebCorbeille(mux, c)
+	a.routesWebNavigations(mux, c)
 	a.routesQuota(mux, c+"/api/v1")
 	a.routesAchats(mux, c+"/api/v1")
 	a.routesSos(mux, c+"/api/v1")
@@ -79,7 +80,7 @@ func entetes(h http.Handler) http.Handler {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "same-origin")
 		w.Header().Set("X-Frame-Options", "DENY")
-		w.Header().Set("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'; form-action 'self'; base-uri 'none'")
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; img-src 'self' data: "+sourcesCarte+"; frame-ancestors 'none'; form-action 'self'; base-uri 'none'")
 		h.ServeHTTP(w, r)
 	})
 }

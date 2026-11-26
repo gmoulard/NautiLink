@@ -112,3 +112,7 @@ func cadrer(trace, marques []pointCarte, largeur, hauteur float64, avecDalles bo
 }
 
 func arrondi(v float64) float64 { return math.Round(v*10) / 10 }
+
+// sourcesCarte : serveurs des dalles, permis par la politique de sécurité du
+// contenu (routes.go).
+const sourcesCarte = "https://tile.openstreetmap.org https://tiles.openseamap.org"

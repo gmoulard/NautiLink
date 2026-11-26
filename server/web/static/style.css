@@ -95,3 +95,27 @@ svg.carte .point.depart { fill: #13A6AD; }
 svg.carte .point.arrivee, svg.carte .point.derniere { fill: #0E2A47; }
 svg.carte .point.evenement { fill: #F2C14E; }
 svg.carte .point.sos { fill: #D94343; }
+
+/* Page d'une navigation (TODO-6.2). */
+.etat { font-weight: 600; margin: 0 0 8px; }
+.etat.en_cours { color: var(--ok); }
+.etat.corbeille { color: var(--sos); }
+.deux { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; align-items: start; }
+.legende .pastille { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; }
+.pastille.depart { background: #13A6AD; }
+.pastille.arrivee, .pastille.derniere { background: #0E2A47; outline: 1px solid var(--texte2); }
+.pastille.evenement { background: #F2C14E; }
+.pastille.sos { background: #D94343; }
+.source a { color: var(--texte2); }
+.alertes { border: 2px solid var(--sos); }
+.alertes ul { margin: 0; padding-left: 20px; }
+ol.journal { list-style: none; margin: 0; padding: 0; }
+ol.journal li.evenement { border-left: 3px solid var(--filet); padding: 4px 0 8px 12px; margin-bottom: 8px; }
+ol.journal li.sos { border-left-color: var(--sos); }
+ol.journal li.debut, ol.journal li.fin { border-left-color: var(--action); }
+ol.journal .entete { margin: 0; }
+ol.journal .texte { margin: 4px 0; white-space: pre-line; }
+img.photo { max-width: 100%; max-height: 360px; border-radius: 8px; }
+audio { width: 100%; max-width: 420px; }
+ul.personnes { margin: 0 0 12px; padding-left: 20px; }
+ul.personnes li { margin-bottom: 4px; }
