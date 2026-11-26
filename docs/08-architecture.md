@@ -18,7 +18,7 @@ flowchart LR
     A[Application Flutter<br/>Android<br/>stockage local]
     I[Application Flutter<br/>iPhone<br/>stockage local]
   end
-  W[Navigateur Internet<br/>plateforme Web,<br/>espace administrateur]
+  W[Navigateur Internet<br/>Application web,<br/>espace administrateur]
   subgraph PI[Raspberry Pi sous pi-appliance - bêta]
     T[Traefik<br/>HTTPS]
     S[Serveur NautiLink<br/>Go, image Docker]
@@ -45,7 +45,7 @@ flowchart LR
 |-------|-------|-----------|
 | Applications mobiles | Flutter, un seul code pour Android et iPhone, dans `app/` : le prototype évolue en vraie application ; un mode « démonstration » choisi à la construction donne la démonstration Web et l'APK de démonstration du site. | [D-58](07-decisions.md#d-58), [D-127](07-decisions.md#d-127) |
 | Application iPhone | Même code Flutter ; publication quand le compte développeur Apple sera ouvert. | [D-60](07-decisions.md#d-60) |
-| Serveur | Serveur maison, pas de service tout fait ; écrit en Go ; un seul exemplaire qui porte l'API, la plateforme Web et l'espace administrateur sous un chemin réservé. Squelette dans [`server/`](../server/README.md) (TODO-3.7). | [D-59](07-decisions.md#d-59), [D-62](07-decisions.md#d-62) |
+| Serveur | Serveur maison, pas de service tout fait ; écrit en Go ; un seul exemplaire qui porte l'API, l'Application web et l'espace administrateur sous un chemin réservé. Squelette dans [`server/`](../server/README.md) (TODO-3.7). | [D-59](07-decisions.md#d-59), [D-62](07-decisions.md#d-62) |
 | Hébergement pendant la bêta | Raspberry Pi 4 de `vdl.moulard.org` sous pi-appliance, installé par « Docker Compose libre » ; adresse publique `https://nautilink.moulard.org`, redirigée par Traefik vers `https://vdl.moulard.org/nautilink/`. | [D-62](07-decisions.md#d-62) |
 | Hébergement après la bêta | Passage chez un hébergeur avant l'ouverture au grand public ; hébergeur non choisi (§3.2). | [D-62](07-decisions.md#d-62) |
 | Base de données | PostgreSQL propre au service pendant la bêta : service `base` de [`compose.yaml`](../server/compose.yaml), volume `nautilink-base`, sur un réseau interne partagé avec le seul serveur, sans port publié ; mot de passe « nautilink » par défaut, remplaçable dans le `.env` du service. | [D-62](07-decisions.md#d-62), [D-130](07-decisions.md#d-130) |
@@ -54,9 +54,9 @@ flowchart LR
 | Notifications push | Envoyées par le serveur : APNs pour l'iPhone, Firebase Cloud Messaging pour Android. Pour le suiveur sur iPhone : SOS, début, fin, nouvelle photo, position en retard ; contenu sur Android non décidé (§3.3). | [D-44](07-decisions.md#d-44), [D-86](07-decisions.md#d-86), RG-IOS-06 |
 | Stockage des photos et notes vocales | Dans PostgreSQL (§3.1). | [D-86](07-decisions.md#d-86) |
 | Photos | 20 par navigation au plus, environ 1 Mo chacune, envoyées au serveur ; le SMS peut donner un lien vers la photo hébergée. | [D-40](07-decisions.md#d-40), [D-49](07-decisions.md#d-49), RG-JRN-08, RG-SMS-05 |
-| Notes vocales | AAC `.m4a`, 1 minute au plus, enregistrement seul, conservé sur le serveur ; le SMS donne un lien d'écoute sur la plateforme Web. | [D-53](07-decisions.md#d-53), [D-71](07-decisions.md#d-71), RG-JRN-04, RG-SMS-06 |
+| Notes vocales | AAC `.m4a`, 1 minute au plus, enregistrement seul, conservé sur le serveur ; le SMS donne un lien d'écoute sur l'Application web. | [D-53](07-decisions.md#d-53), [D-71](07-decisions.md#d-71), RG-JRN-04, RG-SMS-06 |
 | Conservation et sauvegarde | Sauvegarde quotidienne gardée 30 jours, moyen à décider pendant la bêta (§3.4, [Q-85](06-questions-ouvertes.md#q-85)) ; journaux techniques 1 an, d'administration 3 ans ; export JSON et GPX. | [D-46](07-decisions.md#d-46), [D-86](07-decisions.md#d-86), RG-DON-02 |
-| Carte de la plateforme Web | Fond OpenStreetMap et balisage OpenSeaMap. | [D-79](07-decisions.md#d-79), RG-NAV-29 |
+| Carte de l'Application web | Fond OpenStreetMap et balisage OpenSeaMap. | [D-79](07-decisions.md#d-79), RG-NAV-29 |
 
 Risque accepté pendant la bêta : une coupure du Pi ou de la box arrête tout le circuit Internet, e-mails SOS compris ; les SMS partent quand même depuis Android ([D-62](07-decisions.md#d-62), RG-COM-01).
 
@@ -104,7 +104,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 - **Un seul point d'entrée** : `https://vdl.moulard.org/nautilink/api`, chemins versionnés `/v1/…` ; le point de santé `/api/sante` du squelette est gardé.
 - **Formats** : JSON en UTF-8, heures RFC 3339 avec décalage horaire, positions en degrés décimaux WGS 84, durées en minutes, distances en mètres ; photos en JPEG et notes vocales en AAC (`audio/mp4`), déposées à part (`PUT /v1/fichiers/{evenementId}`).
 - **Identifiants tirés par le téléphone** pour ce qu'il crée (navigation, événement, alerte SOS, contact ajouté hors connexion) : tout envoi peut être rejoué sans doublon (§5).
-- **Sessions** : jeton porteur pour les applications mobiles, cookie pour la plateforme Web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; expiration après 90 jours sans usage, jamais sur le téléphone associé pendant une navigation en cours ; la déconnexion ne vide pas la file d'attente (RG-CPT-08, [D-100](07-decisions.md#d-100)). Sur le téléphone, les jetons d'accès et de renouvellement sont gardés dans les préférences de l'application, sans chiffrement matériel ; le jeton d'accès est présenté en `Authorization: Bearer`, `POST /v1/sessions/renouvellement` en donne une nouvelle paire (RG-CPT-12, [D-116](07-decisions.md#d-116)).
+- **Sessions** : jeton porteur pour les applications mobiles, cookie pour l'Application web, cookie distinct pour l'espace administrateur (RG-ADM-01) ; expiration après 90 jours sans usage, jamais sur le téléphone associé pendant une navigation en cours ; la déconnexion ne vide pas la file d'attente (RG-CPT-08, [D-100](07-decisions.md#d-100)). Sur le téléphone, les jetons d'accès et de renouvellement sont gardés dans les préférences de l'application, sans chiffrement matériel ; le jeton d'accès est présenté en `Authorization: Bearer`, `POST /v1/sessions/renouvellement` en donne une nouvelle paire (RG-CPT-12, [D-116](07-decisions.md#d-116)).
 - **Comptes** (réalisé, TODO-4.1) : mots de passe hachés par argon2id (19 Mio, 2 passes : réglage minimal de l'OWASP, tenable sur le Pi) ; jetons de session, de renouvellement et des liens envoyés par e-mail tirés au hasard (256 bits), seule leur empreinte SHA-256 est gardée en base ; protection contre les essais répétés (5 mots de passe faux par compte ou 20 par adresse IP en 15 minutes, 10 créations de compte par adresse IP et par heure, 5 e-mails de vérification par compte et par heure) ; formulaires Web refusés s'ils viennent d'un autre site (cookie `SameSite=Lax` et contrôle de l'origine) ; connexion Google et Apple par vérification du jeton d'identité (OpenID Connect) avec les clés publiques du fournisseur, désactivée sans identifiant client configuré. Le schéma de la base est créé et mis à jour au démarrage du serveur (migrations numérotées, jamais modifiées une fois publiées).
 - **Synchronisation** :
   - téléphone → serveur : file d'attente (§5) ;

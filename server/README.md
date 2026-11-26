@@ -1,6 +1,6 @@
 # Serveur NautiLink
 
-Serveur central de NautiLink : API, plateforme Web et espace administrateur, en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance ([D-62](../docs/07-decisions.md#d-62)). L'API suit [`docs/api/openapi.yaml`](../docs/api/openapi.yaml).
+Serveur central de NautiLink : API, Application web et espace administrateur, en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance ([D-62](../docs/07-decisions.md#d-62)). L'API suit [`docs/api/openapi.yaml`](../docs/api/openapi.yaml).
 
 Réalisé :
 
@@ -8,7 +8,7 @@ Réalisé :
 - bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
 - contacts, invitations et accès des suiveurs (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
-- plateforme Web minimale (pages servies par le serveur, en français, sans JavaScript) : inscription, connexion, déconnexion, « Mon compte », « Bateaux », « Contacts », « Paramètres », page d'invitation ;
+- Application web minimale (pages servies par le serveur, en français, sans JavaScript) : inscription, connexion, déconnexion, « Mon compte », « Bateaux », « Contacts », « Paramètres », page d'invitation ;
 - espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte, utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
 
 ## Lancer en local
@@ -77,7 +77,7 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 
 | Adresse | Contenu |
 |---------|---------|
-| `<chemin>/` | Accueil de la plateforme Web (tableau de bord une fois connecté) |
+| `<chemin>/` | Accueil de l'Application web (tableau de bord une fois connecté) |
 | `<chemin>/inscription`, `<chemin>/connexion`, `<chemin>/deconnexion` | Création de compte, connexion, déconnexion |
 | `<chemin>/verification?jeton=…` | Lien de vérification de l'adresse e-mail |
 | `<chemin>/mot-de-passe-oublie`, `<chemin>/mot-de-passe?jeton=…` | « Mot de passe oublié ? » et lien reçu par e-mail pour choisir un nouveau mot de passe |

@@ -6,7 +6,7 @@ Gestion des versions des trois composants de NautiLink et matrice de compatibili
 
 | Composant | Contenu | Version dans | Construit par |
 |-----------|---------|--------------|---------------|
-| **Serveur** | API, plateforme Web, espace administrateur (`server/`) | [`server/VERSION`](../server/VERSION) | workflow « Serveur » (`.github/workflows/serveur.yml`) |
+| **Serveur** | API, Application web, espace administrateur (`server/`) | [`server/VERSION`](../server/VERSION) | workflow « Serveur » (`.github/workflows/serveur.yml`) |
 | **Application** | Application Flutter : Android (APK), iPhone (IPA), démonstration Web (`app/`) | `version:` de [`app/pubspec.yaml`](../app/pubspec.yaml), partie avant « + » | workflow « Site GitHub Pages » (`.github/workflows/pages.yml`) |
 | **Site** | Site de présentation (`site/`) | [`site/VERSION`](../site/VERSION) | workflow « Site GitHub Pages » |
 
@@ -25,9 +25,13 @@ Les trois composants partent de la version **0.0.1** (2026-11-25).
 
 ## 2. Affichage
 
-Pied de page de toutes les pages du site, de la plateforme Web, de l'espace administrateur et de tous les écrans de l'application (Android, iPhone, démonstration Web) :
+Pied de page de toutes les pages du site et de l'espace administrateur (et de la démonstration V0, figée : D-144) :
 
 > Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 · build 12 · commit 93b0f97
+
+Pied de page de l'Application web et de tous les écrans de l'application mobile (Android, iPhone) : l'adresse du dépôt est remplacée par le lien « NautiLink » vers le site de présentation <https://gmoulard.github.io/NautiLink/> ([D-149](07-decisions.md#d-149) ; à appliquer : TODO-3.19) :
+
+> Tous droits réservés · [NautiLink](https://gmoulard.github.io/NautiLink/) · V0.0.1 · build 13 · commit 7ace1f5
 
 - **Licence** : tous droits réservés ([`LICENSE`](../LICENSE)).
 - **Site** : version de `site/VERSION`, build et commit de l'exécution qui a reconstruit le site. La page « Télécharger » donne en plus la version, le build et le commit de l'APK et de l'IPA publiés (`downloads/COMMITS.txt` : `fichier commit version build`).

@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: API NautiLink
   version: 0.1.0
-  summary: 'API HTTPS entre les applications mobiles, la plateforme Web, l''espace administrateur et le serveur NautiLink.'
+  summary: 'API HTTPS entre les applications mobiles, l''Application web, l''espace administrateur et le serveur NautiLink.'
   description: |
     Description de l'API du serveur NautiLink (TODO-3.2). **Validée** : voir
     [D-115](../07-decisions.md#d-115). Les règles métier font foi
@@ -694,7 +694,7 @@ paths:
     get:
       tags: [Paramètres]
       summary: 'Paramètres généraux du navigateur.'
-      description: 'Récupérés par l''application mobile au lancement ; la dernière version reçue sert hors connexion. Valeurs d''un nouveau compte : SMS activés, tous les types, pas de MMS de photo, 30 minutes (RG-PRM-06).'
+      description: 'Récupérés par l''application mobile au lancement ; la dernière version reçue sert hors connexion. Valeurs d''un nouveau compte : SMS activés, tous les types, photo jointe en MMS, 1 heure (RG-PRM-06, D-148).'
       x-regles: [RG-PRM-01, RG-PRM-02, RG-PRM-06, RG-SMS-02, RG-NAV-05]
       responses:
         '200':
@@ -835,8 +835,8 @@ paths:
       summary: 'Terminer la navigation (« Terminer la navigation » confirmé).'
       description: |
         Porte l'événement de fin, avec son heure réelle même s'il arrive tard. Clôture la navigation
-        même si un SMS a échoué. Rejouable. Rend l'adresse de la page de la navigation sur la
-        plateforme Web, que l'application ouvre. Le serveur relève la météo d'arrivée et envoie les
+        même si un SMS a échoué. Rejouable. Rend l'adresse de la page de la navigation sur
+        l'Application web, que l'application ouvre. Le serveur relève la météo d'arrivée et envoie les
         notifications push de fin. Après une clôture automatique, une fin acquise après l'heure de
         clôture est refusée (`navigation_cloturee`, RG-ECO-12).
       x-regles: [RG-NAV-13, RG-NAV-14, RG-NAV-28, RG-NAV-16, RG-IOS-06, RG-AND-08, RG-ECO-12]
@@ -1024,7 +1024,7 @@ paths:
     get:
       tags: [Journal de bord]
       summary: 'Lire une photo ou écouter une note vocale (navigateur et suiveurs ayant accès).'
-      description: 'Réservé aux comptes ayant accès. Le lien des SMS de photo et de note vocale mène à la page de la navigation sur la plateforme Web, après connexion ; aucun accès sans compte (RG-SMS-09).'
+      description: 'Réservé aux comptes ayant accès. Le lien des SMS de photo et de note vocale mène à la page de la navigation sur l''Application web, après connexion ; aucun accès sans compte (RG-SMS-09).'
       x-regles: [RG-JRN-04, RG-JRN-09, RG-PAR-01, RG-PAR-07, RG-SMS-05, RG-SMS-06, RG-SMS-09]
       responses:
         '200':
@@ -1360,7 +1360,7 @@ components:
       type: apiKey
       in: cookie
       name: nautilink_session
-      description: 'Session de la plateforme Web (cookie HttpOnly, Secure, SameSite=Lax).'
+      description: 'Session de l''Application web (cookie HttpOnly, Secure, SameSite=Lax).'
     cookieAdmin:
       type: apiKey
       in: cookie

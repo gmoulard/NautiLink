@@ -11,6 +11,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Bateau** | Navire décrit par une fiche bateau, rattaché à un seul propriétaire. |
 | **Fiche bateau** | Description du bateau : nom, type, longueur, immatriculation, port d'attache, photo, caractéristiques techniques ([RG-BAT-01](02-regles-metier.md#rg-bat-01)). |
 | **Application mobile** | L'application Android ou l'application iPhone. Elles ont les mêmes fonctions, sauf le circuit SMS qui n'existe que sur Android ([RG-IOS-02](02-regles-metier.md#rg-ios-02)). |
+| **Application web** | L'application NautiLink ouverte dans un navigateur Internet : tableau de bord, pages des navigations, gestion du compte. Anciennement « plateforme Web » ([D-147](07-decisions.md#d-147)). |
 | **Téléphone associé** | Téléphone Android ou iPhone enregistré pour un bateau. Un bateau a au plus un téléphone associé ; un téléphone peut être associé à plusieurs bateaux du même compte. |
 | **Navigation** | Période entre le démarrage et la fin d'une sortie en mer, effectuée avec un bateau et un téléphone associé. États : *en cours*, *terminée*, *dans la corbeille*. |
 | **Position** | Coordonnées GPS horodatées à l'instant de leur acquisition par le téléphone. |

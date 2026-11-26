@@ -4,7 +4,7 @@
 
 **Site : <https://gmoulard.github.io/NautiLink/>**
 
-NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS), une application iPhone équivalente sans SMS, et une plateforme Web pour suivre, consulter et gérer les navigations avec ses proches.
+NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS), une application iPhone équivalente sans SMS, et une Application web pour suivre, consulter et gérer les navigations avec ses proches.
 
 NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/)).
 

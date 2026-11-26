@@ -6,7 +6,7 @@ Ce document décrit les parcours pas à pas. Il applique les règles de [02-regl
 
 1. Le navigateur invite une personne par e-mail ou par téléphone et choisit le périmètre : cette navigation ou toutes ses navigations (RG-PAR-02, RG-PAR-03).
 2. La personne reçoit l'invitation par e-mail (envoyé par le serveur) ou par SMS (envoyé par le téléphone du navigateur). Une invitation par téléphone lancée depuis le Web affiche le lien, que le navigateur transmet lui-même (RG-PAR-04).
-3. Elle ouvre le lien et arrive sur la plateforme Web.
+3. Elle ouvre le lien et arrive sur l'Application web.
 4. Elle se connecte ou crée son compte (e-mail, Google ou Apple) (RG-CPT-02).
 5. Elle devient suiveur avec le périmètre choisi par le navigateur (RG-PAR-05).
 6. Elle voit la navigation partagée sur son tableau de bord.
@@ -77,7 +77,7 @@ Accueil → « Reprendre la dernière navigation » → écran de la navigation 
 
 ### 3.7 Consulter ses navigations
 
-Accueil → « Navigations enregistrées » → liste du serveur → sélection → ouverture de la page de la navigation sur la plateforme Web.
+Accueil → « Navigations enregistrées » → liste du serveur → sélection → ouverture de la page de la navigation sur l'Application web.
 
 ### 3.8 Sur iPhone
 
