@@ -6,4 +6,4 @@
 - par defaut la frequence d'envoir est a 1h
 - la web app doit avoir les meme fonction que l'app mobile plus la possible d'avoir un menu admin
 - Dans les app le pied de page : "Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 · build 13 · commit 7ace1f5" le  https://github.com/gmoulard/NautiLink doit etre remplacer par un liens "NautiLink" qui pointe vers :[NautiLink](https://gmoulard.github.io/NautiLink/)
-
+- 
