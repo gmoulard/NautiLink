@@ -100,7 +100,7 @@ Si le quota est épuisé sans abonnement, le démarrage est refusé avec l'expli
 ### 5.4 Écran de navigation en cours
 
 - deux chronomètres : « Depuis le début », « Depuis le dernier envoi position » (RG-NAV-10) ;
-- lien « Météo marine » vers la prévision marine de Météo-France (RG-NAV-37) ;
+- lien « Météo marine » vers la prévision marine de Météo-France du lieu le plus proche (RG-NAV-37) ;
 - **Envoyer position** : position manuelle, SMS si prévu, envoi au serveur, résultat affiché (RG-COM-03, RG-SMS-04) ;
 - **NOTE** : note écrite, ou « Incident - avarie » (RG-JRN-11) ;
 - **Photo** : prise ou sélection d'une photo (RG-SMS-05) ;

@@ -12,7 +12,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : avant la version réelle.
 - Décidé (D-88) : la météo du début et de la fin d'une navigation (RG-NAV-28) vient de l'API de Météo-France.
-- Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
+- Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, pression ; état de la mer retiré par D-168) : données obtenues le 2026-11-27 (étude § 9.1).
 - Fait (2026-11-26) : compte ouvert, API souscrites (AROME, ARPEGE, vagues et surcote, Environnement) et identifiant d'application OAuth2 créé, son secret gardé hors du dépôt ; prochaines étapes : [étude](etudes/meteofrance-connexion.md) § 10, code : TODO-4.10.
 - Prévu (2026-11-25) : le porteur du projet ouvre le compte sur le portail API de Météo-France ; la météo est intégrée avant la sortie de la version réelle. Mode d'emploi et points à vérifier : [meteofrance-connexion.md](etudes/meteofrance-connexion.md).
 
