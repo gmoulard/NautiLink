@@ -1,6 +1,6 @@
 # NautiLink — Versions et compatibilité
 
-Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-128](07-decisions.md#d-128)). Mise à jour : 2026-11-25.
+Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-128](07-decisions.md#d-128)). Mise à jour : 2026-11-26.
 
 ## 1. Composants et numéro de version
 
@@ -20,6 +20,8 @@ Les trois composants partent de la version **0.0.1** (2026-11-25).
 - **Build** : numéro d'exécution du workflow qui a construit le livrable (`github.run_number`), propre à chaque workflow. Deux constructions de la même version se distinguent par leur build et leur commit.
 - **Commit** : SHA du commit construit, affiché sur 7 caractères avec un lien vers GitHub.
 
+- **Démonstration V0** ([D-144](07-decisions.md#d-144)) : terminée, figée au commit `8ac9c1a`, en version 0.0.1 ; le workflow « Site GitHub Pages » la reconstruit toujours depuis ce commit (`DEMO_V0_COMMIT`), quel que soit l'état de `app/`. Sa version ne change plus ; la version de `app/pubspec.yaml` est celle de la vraie application.
+
 ## 2. Affichage
 
 Pied de page de toutes les pages du site, de la plateforme Web, de l'espace administrateur et de tous les écrans de l'application (Android, iPhone, démonstration Web) :
@@ -37,6 +39,7 @@ Une ligne par combinaison publiée ; la plus récente en haut. L'API est décrit
 
 | Date | Serveur | API | Application | Site | Compatibilité |
 |------|---------|-----|-------------|------|---------------|
+| 2026-11-26 | 0.0.1 | 0.1.0 (proposition) | 0.1.0 (vraie application) ; démonstration 0.0.1 figée | 0.0.2 | Vraie application complète (SMS, vue suiveur, notifications push, achats, connexion Google et Apple), branchée sur le serveur : routes de navigation, contacts, SOS et synchronisation du serveur 0.0.1 ; notifications push, achats intégrés et reprise d'un téléphone par un autre compte demandent le serveur du même commit (pas encore de nouvelle version publiée du serveur). Démonstration V0 terminée, figée au commit `8ac9c1a` en version 0.0.1 et toujours publiée par le site (D-144). Le site 0.0.2 présente les deux. |
 | 2026-11-25 | 0.0.1 | 0.1.0 (proposition) | 0.0.1 | 0.0.1 | Point de départ. L'application 0.0.1 est le prototype de démonstration sur données d'exemple : elle n'appelle pas le serveur, toute version du serveur convient. Le site 0.0.1 publie l'application 0.0.1 (APK, IPA, démonstration Web). |
 
 Quand l'application appellera le serveur, la colonne « Compatibilité » donnera la version minimale du serveur exigée par chaque version de l'application, et inversement la plus ancienne application que le serveur accepte encore.

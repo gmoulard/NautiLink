@@ -52,6 +52,8 @@ Sans ces réglages : boutons Google et Apple désactivés, aucune notification p
 
 ## Ce que montre la démonstration
 
+La démonstration V0 est terminée ([D-144](../docs/07-decisions.md#d-144)) : le site la publie toujours telle qu'au commit `8ac9c1a` (version 0.0.1), reconstruite depuis ce commit par le workflow « Site GitHub Pages ». Le mode démonstration reste dans le code, mais ce qui est publié ne suit plus `app/`.
+
 - avertissement bêta à accepter (RG-CPT-06) et rappel avant la première navigation (RG-NAV-23) ;
 - accueil mobile : « Démarrer navigation », « Reprendre la dernière navigation », « Navigations enregistrées », bouton SOS ;
 - démarrage : bateau, destination facultative, nombre de personnes à bord, personnes alertées (cochées, ajout d'un contact), fréquence de 15 minutes à 10 jours, paramètres de la navigation ;

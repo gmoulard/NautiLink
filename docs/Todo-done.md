@@ -44,6 +44,7 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 
 ## 3. Préparation du développement
 
+- [x] **TODO-3.6**: Prototype de démonstration en Flutter, données d'exemple, sans serveur (`app/`, D-57, D-58) : démonstration V0 terminée (2026-11-26, D-144), figée au commit `8ac9c1a` en version 0.0.1 et toujours publiée sur le site (démonstration Web, APK, IPA).
 - [x] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web (2026-11-25, D-115 ; [`api/openapi.yaml`](api/openapi.yaml)).
 - [x] **TODO-3.1**: Architecture technique : [08-architecture.md](08-architecture.md) validé avec ses propositions (2026-11-25, D-86, D-96).
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Télécharger NautiLink</title>
-<meta name="description" content="Installer les applications de démonstration NautiLink sur Android et iPhone, sans passer par les stores.">
+<meta name="description" content="Installer NautiLink et la démonstration V0 sur Android et iPhone, sans passer par les stores.">
 <link rel="icon" href="assets/logo-nautilink.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,8 +15,8 @@
 
 <div class="betabar" role="note">
   <div class="wrap">
-    <b>Démonstration</b>
-    <span>Données d'exemple, aucun serveur : rien n'est réellement envoyé. NautiLink est en version bêta.</span>
+    <b>Version bêta</b>
+    <span>NautiLink n'est pas un équipement de sécurité. La démonstration V0 utilise des données d'exemple : rien n'y est réellement envoyé.</span>
     <a href="avertissement.html">Lire l'avertissement</a>
   </div>
 </div>
@@ -28,7 +28,7 @@
       <a href="index.html">Accueil</a>
       <a href="#android">Android</a>
       <a href="#iphone">iPhone</a>
-      <a href="app/">Démonstration Web</a>
+      <a href="#demo">Démonstration V0</a>
       <a href="securite.html">Sécurité en mer</a>
     </nav>
   </div>
@@ -39,11 +39,11 @@
     <div class="wrap narrow legal">
       <span class="kicker">Télécharger</span>
       <h1>Installer NautiLink</h1>
-      <p>NautiLink n'est pas encore publiée sur Google Play ni sur l'App Store. Vous l'installez directement depuis ce site. Les applications sont reconstruites à chaque mise à jour du projet.</p>
+      <p>NautiLink n'est pas encore publiée sur Google Play ni sur l'App Store. Vous l'installez directement depuis ce site.</p>
       <p>Deux applications sont proposées :</p>
       <ul>
-        <li><b>NautiLink</b>, la vraie application : votre compte sur le serveur de NautiLink, vos bateaux, vos navigations ;</li>
-        <li><b>NautiLink démo</b>, l'application de démonstration : des données d'exemple pour découvrir tous les écrans, sans compte ; rien n'est réellement envoyé.</li>
+        <li><b>NautiLink</b>, la vraie application : votre compte sur le serveur de NautiLink, vos bateaux, vos navigations ; reconstruite à chaque mise à jour du projet ;</li>
+        <li><b>NautiLink démo</b>, la démonstration V0 : des données d'exemple pour découvrir tous les écrans, sans compte ; rien n'est réellement envoyé. Elle est terminée et ne change plus.</li>
       </ul>
       <p class="note">NautiLink est en version bêta et n'est pas un équipement de sécurité. N'en dépendez pas en mer : en cas de détresse, canal 16 de la VHF ou 196.</p>
     </div>
@@ -54,7 +54,16 @@
       <span class="kicker">Vraie application</span>
       <h2>NautiLink</h2>
       <p>Créez votre compte dans l'application ou sur <a href="https://vdl.moulard.org/nautilink/">la plateforme Web</a>, puis connectez-vous sur le téléphone : il est associé à vos bateaux.</p>
-      <p class="note">Version 0.0.1 : création du compte, connexion, accueil et mémo sécurité en mer. Le démarrage d'une navigation, l'envoi des positions et le SOS arrivent dans les prochaines versions ; d'ici là, l'application de démonstration les montre.</p>
+      <p>Ce que fait cette version :</p>
+      <ul>
+        <li>compte, connexion, association du téléphone à vos bateaux ;</li>
+        <li>démarrage d'une navigation (destination en texte ou sur une carte, personnes à bord, personnes alertées, « Ajouter une personne »), positions automatiques écran éteint, position, NOTE, Photo, Vocal, fin de navigation ;</li>
+        <li>SMS par la carte SIM sur Android : SMS SOS et positions automatiques envoyés automatiquement, autres SMS préremplis, MMS de photo ;</li>
+        <li>alerte SOS : e-mails envoyés par le serveur, SMS SOS sur Android ; sur iPhone, par Internet seulement ;</li>
+        <li>contacts, invitations, paramètres, langue, historique des alertes SOS ;</li>
+        <li>navigations suivies : tableau de bord et page de la navigation avec la carte, le journal, les photos et les notes vocales.</li>
+      </ul>
+      <p class="note">Pas encore ouverts : connexion par Google et Apple, notifications push, achat de l'abonnement. Hors connexion, les envois sont gardés sur le téléphone et partent au retour du réseau.</p>
       <a class="button" href="downloads/nautilink.apk">Télécharger NautiLink pour Android</a>
       <p class="muted commit">Version V@VERSION_APK_PROD@, build @BUILD_APK_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK_PROD@">@COMMIT_APK_PROD_COURT@</a>.</p>
       <a class="button" href="downloads/nautilink-ios-non-signe.ipa">Télécharger NautiLink pour iPhone (IPA non signé)</a>
@@ -63,14 +72,24 @@
     </div>
   </section>
 
+  <section id="demo">
+    <div class="wrap narrow legal">
+      <span class="kicker">Démonstration V0</span>
+      <h2>La démonstration V0, terminée</h2>
+      <p>La démonstration V0 montre tous les écrans de NautiLink avec des données d'exemple : le navigateur à bord et le suiveur sur la plateforme Web. Elle est terminée : elle reste disponible ici sans changer, construite toujours à partir du même commit.</p>
+      <a class="button" href="app/">Ouvrir la démonstration Web V0</a>
+      <p class="muted">Sur téléphone : <a href="#android">APK Android</a> et <a href="#iphone">iPhone</a> ci-dessous.</p>
+    </div>
+  </section>
+
   <section id="android">
     <div class="wrap narrow legal">
       <span class="kicker">Android</span>
-      <h2>Installer l'APK de démonstration</h2>
-      <a class="button" href="downloads/nautilink-demo.apk">Télécharger l'APK de démonstration</a>
+      <h2>Installer l'APK de démonstration V0</h2>
+      <a class="button" href="downloads/nautilink-demo.apk">Télécharger l'APK de démonstration V0</a>
       <p class="muted commit">Version V@VERSION_APK@, build @BUILD_APK@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK@">@COMMIT_APK_COURT@</a>.</p>
       <ol class="steps">
-        <li>Ouvrez cette page sur votre téléphone Android et touchez « Télécharger l'APK de démonstration ».</li>
+        <li>Ouvrez cette page sur votre téléphone Android et touchez le bouton de téléchargement (vraie application ou démonstration V0).</li>
         <li>Ouvrez le fichier téléchargé. Android demande d'autoriser votre navigateur à installer des applications : touchez « Paramètres », activez « Autoriser cette source », puis revenez.</li>
         <li>Touchez « Installer ». Google Play Protect peut prévenir que l'application n'est pas connue, car elle n'est pas publiée sur Google Play : choisissez d'installer quand même si vous faites confiance à ce site.</li>
         <li>Ouvrez NautiLink et acceptez l'avertissement.</li>
@@ -82,7 +101,7 @@
   <section id="iphone">
     <div class="wrap narrow legal">
       <span class="kicker">iPhone</span>
-      <h2>Démonstration : deux façons, sans l'App Store</h2>
+      <h2>Démonstration V0 : deux façons, sans l'App Store</h2>
 
       <h3>1. Sur l'écran d'accueil (le plus simple)</h3>
       <p>La démonstration Web s'ouvre comme une application, sans compte ni installation.</p>
@@ -94,7 +113,7 @@
 
       <h3>2. Application iPhone non signée (pour les curieux)</h3>
       <p>Apple n'autorise l'installation hors App Store qu'avec une signature. Le fichier proposé ici n'est pas signé : vous le signez vous-même avec votre identifiant Apple, grâce à un outil d'installation sur ordinateur comme AltStore ou Sideloadly.</p>
-      <a class="button" href="downloads/nautilink-demo-ios-non-signe.ipa">Télécharger l'IPA de démonstration non signé</a>
+      <a class="button" href="downloads/nautilink-demo-ios-non-signe.ipa">Télécharger l'IPA de démonstration V0 non signé</a>
       <p class="muted commit">Version V@VERSION_IPA@, build @BUILD_IPA@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA@">@COMMIT_IPA_COURT@</a>.</p>
       <ol class="steps">
         <li>Sur votre ordinateur, installez <a href="https://altstore.io/" target="_blank" rel="noopener">AltStore</a> ou <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a> en suivant leurs instructions.</li>

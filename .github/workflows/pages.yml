@@ -6,6 +6,10 @@ name: Site GitHub Pages
 #   site/downloads/nautilink-ios-non-signe.ipa iPhone, vraie application, non signé (AltStore, Sideloadly)
 #   site/downloads/nautilink-demo.apk          Android, démonstration, signature de débogage
 #   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, démonstration, non signé
+# La démonstration V0 est terminée et figée (D-144) : démonstration Web, APK et
+# IPA de démonstration sont toujours construits depuis le commit DEMO_V0_COMMIT,
+# en version DEMO_V0_VERSION, quel que soit l'état de app/ ; la vraie
+# application suit le code courant.
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
 #   site/downloads/COMMITS.txt                 « fichier commit version build » de chaque application
 # Aucune publication dans les stores (D-61).
@@ -59,6 +63,9 @@ env:
   # Vraie application (NAUTILINK_MODE=reel, D-129).
   APK_PROD: nautilink.apk
   IPA_PROD: nautilink-ios-non-signe.ipa
+  # Démonstration V0, figée (D-144).
+  DEMO_V0_COMMIT: 8ac9c1af4f8b6be957ca8854770db6304e039a9a
+  DEMO_V0_VERSION: "0.0.1"
 
 jobs:
   choix:
@@ -112,6 +119,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Démonstration V0 figée (D-144)
+        run: git worktree add demo-v0 "$DEMO_V0_COMMIT"
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -122,16 +133,21 @@ jobs:
         env:
           DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
         run: |
-          ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
-          flutter pub get
-          ipa() {  # ipa <fichier> <mode>
-            flutter build ios --release --no-codesign $DEFINES --dart-define=NAUTILINK_MODE=$2
+          ipa() {  # ipa <fichier> <mode> <définitions>
+            flutter build ios --release --no-codesign $3 --dart-define=NAUTILINK_MODE=$2
             rm -rf ipa && mkdir -p ipa/Payload
             cp -R build/ios/iphoneos/Runner.app ipa/Payload/
             (cd ipa && zip -qr "../$1" Payload)
           }
-          ipa "$IPA_PROD" reel
-          ipa "$IPA" demo
+          ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
+          flutter pub get
+          ipa "$IPA_PROD" reel "$DEFINES"
+          # Démonstration V0 depuis son commit figé (D-144).
+          cd ../demo-v0/app
+          ./outils/copier-memo.sh
+          flutter pub get
+          ipa "$IPA" demo "--build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=$DEMO_V0_VERSION --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=$DEMO_V0_COMMIT"
+          cp "$IPA" ../../app/
       - uses: actions/upload-artifact@v4
         with:
           name: ipa
@@ -153,8 +169,16 @@ jobs:
       BUILD: ${{ github.run_number }}
       APP_VERSION: ${{ needs.choix.outputs.app_version }}
       DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
+      DEFINES_DEMO: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ env.DEMO_V0_VERSION }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ env.DEMO_V0_COMMIT }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Démonstration V0 figée (D-144)
+        if: needs.choix.outputs.flutter == 'true'
+        run: |
+          git worktree add demo-v0 "$DEMO_V0_COMMIT"
+          (cd demo-v0/app && ./outils/copier-memo.sh)
       - uses: actions/setup-java@v4
         if: needs.choix.outputs.android == 'true'
         with:
@@ -174,18 +198,22 @@ jobs:
           flutter pub get
           flutter analyze
           flutter test
-      - name: Démonstration Web
+      - name: Démonstration Web (V0 figée, D-144)
         if: needs.choix.outputs.website == 'true'
-        working-directory: app
-        run: flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES
+        working-directory: demo-v0/app
+        run: |
+          flutter pub get
+          flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES_DEMO
       - name: APK Android (vraie application et démonstration)
         if: needs.choix.outputs.android == 'true'
         working-directory: app
         run: |
           flutter build apk --release $DEFINES --dart-define=NAUTILINK_MODE=reel
           cp build/app/outputs/flutter-apk/app-release.apk "$APK_PROD"
-          flutter build apk --release $DEFINES --dart-define=NAUTILINK_MODE=demo
-          cp build/app/outputs/flutter-apk/app-release.apk "$APK"
+          # Démonstration V0 depuis son commit figé (D-144).
+          (cd ../demo-v0/app && flutter pub get \
+            && flutter build apk --release $DEFINES_DEMO --dart-define=NAUTILINK_MODE=demo \
+            && cp build/app/outputs/flutter-apk/app-release.apk "../../app/$APK")
       - uses: actions/download-artifact@v4
         if: needs.choix.outputs.iphone == 'true'
         with:
@@ -224,7 +252,7 @@ jobs:
           mkdir -p source
           if [ "$WEBSITE" = true ]; then
             cp -r site source/site
-            cp -r app/build/web source/web
+            cp -r demo-v0/app/build/web source/web
             echo "$COMMIT" > source/SITE_COMMIT
             tr -d '[:space:]' < site/VERSION > source/SITE_VERSION
             echo "$BUILD" > source/SITE_BUILD
@@ -252,10 +280,15 @@ jobs:
               echo "::warning::$1 absent du site publié : lien de téléchargement cassé, relancer avec la case cochée"
             fi
           }
+          # Commit et version de chaque fichier : la démonstration vient du commit figé (D-144).
+          ligne() {  # ligne <fichier>
+            if [ "$1" = "$APK" ] || [ "$1" = "$IPA" ]; then echo "$1 $DEMO_V0_COMMIT $DEMO_V0_VERSION $BUILD"
+            else echo "$1 $COMMIT $APP_VERSION $BUILD"; fi
+          }
           for f in "$APK_PROD" "$APK"; do
             if [ "$ANDROID" = true ]; then
               cp "app/$f" _site/downloads/
-              echo "$f $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
+              ligne "$f" >> _site/downloads/COMMITS.txt
             else
               reprendre "$f"
             fi
@@ -263,7 +296,7 @@ jobs:
           for f in "$IPA_PROD" "$IPA"; do
             if [ "$IPHONE" = true ]; then
               cp "ipa/$f" _site/downloads/
-              echo "$f $COMMIT $APP_VERSION $BUILD" >> _site/downloads/COMMITS.txt
+              ligne "$f" >> _site/downloads/COMMITS.txt
             else
               reprendre "$f"
             fi
