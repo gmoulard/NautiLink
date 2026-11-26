@@ -172,6 +172,8 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 - [~] **TODO-5.8**: Quota et abonnement Google Play (RG-ECO-07, RG-ECO-09). Dépend de : TODO-4.6, TODO-1.13, TODO-1.14.
   - Critères d'acceptation : abonnement souscrit sur Google Play reconnu sur le Web.
   - Fait (2026-11-26) : application : « Souscrire l'abonnement » par achat unique Google Play (`in_app_purchase`, produit `NAUTILINK_PRODUIT`), prix du magasin affiché, achat vérifié par le serveur avant d'ouvrir l'abonnement, achat payé hors connexion repris au lancement suivant (`app/lib/reel/achats.dart`, essais `app/test/achats_test.dart`) ; serveur : `POST /v1/abonnement/google-play` (Google Play Developer API par un compte de service, achat acquitté, refusé s'il sert déjà à un autre compte ; `server/achats.go`, essai avec un faux Google). Reste : produit à créer dans la Google Play Console, compte de service (`NAUTILINK_GOOGLE_PLAY_COMPTE`), essai d'un vrai achat ; abonnement Web par Stripe (TODO-6.7).
+- [ ] **TODO-5.9**: Demande du 2026-11-26 : envoyer les heures en UTC et en heure locale dans ce qui part vers les suiveurs et les contacts SOS (SMS, MMS, e-mails, notifications push ; aujourd'hui : heure locale du téléphone dans les SMS, UTC seule dans l'e-mail SOS, RG-SOS-17). Dépend de : décision sur le format, les messages concernés et le fuseau de l'heure locale (celui du téléphone du navigateur ?), à poser en question puis à écrire dans les règles métier.
+  - Critères d'acceptation : chaque heure envoyée apparaît en UTC et en heure locale, au format décidé, dans les SMS (SOS compris), les e-mails et les notifications push ; essais de l'application et du serveur.
 
 ## 6. Étape 3 — Web
 
