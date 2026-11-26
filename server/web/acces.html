@@ -1,0 +1,62 @@
+{{/* Écrans d'accès (connexion, création du compte, mot de passe oublié) :
+   apparence de l'écran de connexion de l'étude Nautilinkimages261126 (D-157,
+   docs/05-identite-marque.md §15) : ciel et mer avec voilier, logo, nom et
+   signature, vague ; décor en SVG dans la page, sans image d'Internet. */}}
+{{define "acces-haut"}}
+<section class="acces" aria-labelledby="titre-acces">
+<div class="acces-ciel">
+  <svg class="acces-decor" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="acces-ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ciel-haut"/><stop offset="1" class="ciel-bas"/></linearGradient>
+      <linearGradient id="acces-mer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="mer-haut"/><stop offset="1" class="mer-bas"/></linearGradient>
+    </defs>
+    <rect width="400" height="200" fill="url(#acces-ciel)"/>
+    <path class="nuage" d="M40 52 q14 -14 30 -4 q10 -12 26 -2 q16 0 14 12 h-74 q-6 -4 4 -6z"/>
+    <path class="ile" d="M250 128 C275 112 318 110 352 120 C372 124 390 126 400 128 V136 H250Z"/>
+    <rect y="132" width="400" height="68" fill="url(#acces-mer)"/>
+    <path class="reflet" d="M20 150 h60 M150 160 h90 M300 152 h70 M60 176 h80 M250 182 h100"/>
+    <g class="voilier">
+      <path class="coque" d="M268 140 h70 l-10 12 h-52z"/>
+      <path class="mat" d="M300 84 V140"/>
+      <path class="voile" d="M302 88 L330 134 H302Z"/>
+      <path class="voile foc" d="M298 96 L276 134 H298Z"/>
+    </g>
+    <path class="vague-1" d="M0 178 C70 160 140 196 210 178 S340 160 400 176 V200 H0Z"/>
+    <path class="vague-2" d="M0 188 C90 172 170 204 260 186 S360 176 400 186 V200 H0Z"/>
+  </svg>
+  <div class="acces-marque">
+    <img src="{{.Base}}/static/logo-nautilink.png" alt="" width="72" height="72">
+    <div><p class="acces-nom">NautiLink</p><p class="acces-signature">Your sea, your safety, your story.</p></div>
+  </div>
+</div>
+<div class="acces-corps">
+{{end}}
+
+{{define "acces-bas"}}
+</div>
+<svg class="acces-vagues" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+  <path class="vague-1" d="M0 16 C70 0 140 32 210 16 S340 0 400 14 V40 H0Z"/>
+  <path class="vague-2" d="M0 26 C90 12 170 40 260 24 S360 16 400 24 V40 H0Z"/>
+</svg>
+</section>
+<script src="{{.Base}}/static/acces.js"></script>
+{{end}}
+
+{{define "champ-email"}}
+<label class="masque" for="email">Adresse e-mail</label>
+<div class="champ-icone">
+  <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 6.5h17v11h-17z M3.5 7l8.5 6.5 8.5-6.5"/></svg>
+  <input id="email" name="email" type="email" autocomplete="email" required placeholder="Adresse e-mail" value="{{.F.email}}">
+</div>
+{{end}}
+
+{{define "champ-mot-de-passe"}}
+<label class="masque" for="motdepasse">Mot de passe</label>
+<div class="champ-icone">
+  <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 10.5h12v9H6z M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>
+  <input id="motdepasse" name="motdepasse" type="password" autocomplete="{{.}}" required placeholder="Mot de passe"{{if eq . "new-password"}} minlength="8"{{end}}>
+  <button class="oeil" type="button" data-cible="motdepasse" aria-label="Afficher le mot de passe" aria-pressed="false" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+  </button>
+</div>
+{{end}}

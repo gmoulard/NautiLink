@@ -151,3 +151,49 @@ input[type=datetime-local], input[type=file] { width: 100%; min-height: 44px; pa
 details.modifier { margin-top: 6px; }
 details.modifier summary { color: var(--action); font-weight: 600; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; }
 details.modifier form { margin-bottom: 8px; }
+
+/* Écrans d'accès (connexion, création du compte, mot de passe oublié) :
+   écran de connexion de l'étude Nautilinkimages261126 (D-157, §15) ;
+   largeur d'un téléphone d'abord, carte centrée sur un grand écran. */
+.acces { max-width: 440px; margin: 0 auto 8px; background: var(--surface); border-radius: 24px; box-shadow: var(--ombre); overflow: hidden; }
+.acces-ciel { position: relative; min-height: 210px; }
+.acces-decor { display: block; width: 100%; height: 210px; }
+.acces-decor .ciel-haut { stop-color: #CFE8FA; }
+.acces-decor .ciel-bas { stop-color: #F4FAFE; }
+.acces-decor .mer-haut { stop-color: #2F7FC8; }
+.acces-decor .mer-bas { stop-color: #0B4F94; }
+.acces-decor .nuage { fill: #FFFFFF; opacity: .85; }
+.acces-decor .ile { fill: #7FA6C9; }
+.acces-decor .reflet { stroke: #FFFFFF; stroke-opacity: .45; stroke-width: 2; stroke-linecap: round; fill: none; }
+.acces-decor .coque { fill: #0B2A55; }
+.acces-decor .mat { stroke: #0B2A55; stroke-width: 2; }
+.acces-decor .voile { fill: #FFFFFF; stroke: #C9D8E6; stroke-width: 1; }
+.acces-decor .vague-1, .acces-vagues .vague-1 { fill: #17A2B0; fill-opacity: .55; }
+.acces-decor .vague-2 { fill: var(--surface); }
+.acces-vagues .vague-2 { fill: #1565C0; fill-opacity: .45; }
+.acces-marque { position: absolute; top: 18px; left: 18px; right: 18px; display: flex; gap: 12px; align-items: center; }
+.acces-marque img { width: 72px; height: 72px; border-radius: 16px; box-shadow: var(--ombre); flex: none; }
+.acces-nom { margin: 0; font-weight: 800; font-size: 2rem; letter-spacing: -.02em; color: #0B2A55; line-height: 1.1; }
+.acces-signature { margin: 2px 0 0; font-style: italic; font-size: .9rem; color: #0B2A55; }
+.acces-corps { padding: 4px 20px 12px; }
+.acces h1 { text-align: center; margin: 0 0 4px; }
+.acces-sous-titre { text-align: center; color: var(--texte2); margin: 0 0 16px; }
+.acces-lien, .acces-pied { text-align: center; margin: 12px 0 0; }
+.acces-pied { border-top: 1px solid var(--filet); padding-top: 12px; color: var(--texte2); }
+.acces-vagues { display: block; width: 100%; height: 40px; }
+.champ-icone { position: relative; margin-top: 12px; }
+.champ-icone .icone { position: absolute; left: 14px; top: 50%; width: 20px; height: 20px; transform: translateY(-50%);
+  fill: none; stroke: var(--texte2); stroke-width: 1.6; stroke-linejoin: round; pointer-events: none; }
+.champ-icone input { padding-left: 44px; min-height: 48px; }
+.champ-icone input[type=password], .champ-icone input#motdepasse { padding-right: 52px; }
+button.oeil { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); margin: 0; width: 44px; min-height: 44px; padding: 0;
+  background: transparent; box-shadow: none; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; }
+button.oeil[hidden] { display: none; }
+button.oeil svg { width: 22px; height: 22px; fill: none; stroke: var(--texte2); stroke-width: 1.6; }
+button.oeil[aria-pressed=true] svg { stroke: var(--action); }
+button.pleine { display: block; width: 100%; min-height: 48px; font-size: 1.05rem; }
+@media (prefers-color-scheme: dark) {
+  .acces-decor .ciel-haut { stop-color: #1B3F63; }
+  .acces-decor .ciel-bas { stop-color: #15314D; }
+  .acces-nom, .acces-signature { color: #E3EEF7; }
+}
