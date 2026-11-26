@@ -173,13 +173,13 @@ void main() {
       ),
     );
     // Type désactivé pour les suiveurs : le navigateur reçoit quand même le
-    // SMS, pour la trace (RG-SMS-08, D-158).
+    // SMS, pour la trace (RG-SMS-08, D-159).
     final r = await sms.ordinaire(off, 'note', note: 'x');
     expect(r.$1, IssueSms.prerempli);
     expect(canal.preremplis.last.$1, ['+33600000000']);
   });
 
-  test('trace : sans suiveur, SMS au navigateur seul, positions automatiques comprises (D-158)', () async {
+  test('trace : sans suiveur, SMS au navigateur seul, positions automatiques comprises (D-159)', () async {
     canal.autorisee = true;
     final sansSuiveur = NavigationLocale(
       id: 'nav2',
@@ -370,7 +370,7 @@ void main() {
     expect(t, contains("Tirant d'eau : 1.8 m."));
   });
 
-  test('avec la permission : SMS ordinaire envoyé automatiquement, avec la copie (D-157, RG-SMS-03)', () async {
+  test('avec la permission : SMS ordinaire envoyé automatiquement, avec la copie (D-158, RG-SMS-03)', () async {
     canal.autorisee = true;
     final (i, nombre) = await sms.ordinaire(
       navigation(),
@@ -385,7 +385,7 @@ void main() {
     expect(canal.envoyes.first.$3, contains('Note : Cap au 270'));
   });
 
-  test('photo avec la permission : SMS automatique avec le lien, MMS prérempli en plus si prévu (RG-SMS-05, D-157)', () async {
+  test('photo avec la permission : SMS automatique avec le lien, MMS prérempli en plus si prévu (RG-SMS-05, D-158)', () async {
     canal.autorisee = true;
     final mms = navigation(
       parametres: const ParametresGeneraux(
@@ -409,7 +409,7 @@ void main() {
     expect(canal.preremplis.single.$3, '/tmp/p.jpg');
   });
 
-  test('invitation par SMS : automatique avec la permission, sinon préremplie (RG-PAR-11, D-157)', () async {
+  test('invitation par SMS : automatique avec la permission, sinon préremplie (RG-PAR-11, D-158)', () async {
     var r = await sms.invitation(
       'i1',
       '+33655555555',
@@ -429,7 +429,7 @@ void main() {
     expect(canal.envoyes.map((s) => s.$2), ['+33655555555', '+33600000000']);
   });
 
-  test('SMS ordinaire automatique en échec : 3 essais puis « Réessayer » (RG-SMS-07, D-157)', () {
+  test('SMS ordinaire automatique en échec : 3 essais puis « Réessayer » (RG-SMS-07, D-158)', () {
     fakeAsync((f) {
       monter();
       canal

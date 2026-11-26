@@ -127,7 +127,7 @@ func (a *app) routesWebAdmin(mux *http.ServeMux, c string) {
 
 	mux.HandleFunc("GET "+ca+"/connexion", a.webAdmin(false, func(w http.ResponseWriter, r *http.Request, s *sessionAdmin, d *donneesAdmin) error {
 		d.Titre = "Connexion à l'espace administrateur"
-		d.F["rester"] = "oui" // « Rester connecté » coché par défaut (D-159)
+		d.F["rester"] = "oui" // « Rester connecté » coché par défaut (D-160)
 		a.rendreAdmin(w, "admin-connexion.html", d)
 		return nil
 	}))

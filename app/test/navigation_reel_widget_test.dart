@@ -500,7 +500,7 @@ void main() {
   );
 
   testWidgets(
-    'autorisation SMS accordée : SMS de début et de position envoyés automatiquement (D-157)',
+    'autorisation SMS accordée : SMS de début et de position envoyés automatiquement (D-158)',
     (tester) async {
       sms.autorisee = true;
       await naviguer(tester);

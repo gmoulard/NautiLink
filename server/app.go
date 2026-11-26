@@ -185,13 +185,13 @@ type session struct {
 	utilisateur string
 	support     string // "mobile" ou "web"
 	parCookie   bool
-	persistante bool // Application web : « Rester connecté » coché (D-159)
+	persistante bool // Application web : « Rester connecté » coché (D-160)
 }
 
 const (
 	nomCookie         = "nautilink_session"
 	dureeSansUsage    = 90 * 24 * time.Hour // applications mobiles, RG-CPT-08
-	dureeSansUsageWeb = time.Hour           // Application web, RG-CPT-08, D-159
+	dureeSansUsageWeb = time.Hour           // Application web, RG-CPT-08, D-160
 )
 
 // jetonDe : jeton porteur (applications mobiles) ou cookie (plateforme Web).
@@ -208,7 +208,7 @@ func jetonDe(r *http.Request) (string, bool) {
 // sessionDe : session de la requête, ou nil. Une session des applications
 // mobiles expire après 90 jours sans usage, jamais sur le téléphone associé
 // pendant une navigation en cours ; une session de l'Application web expire
-// après 1 heure sans usage (RG-CPT-08, D-159). Chaque usage repousse
+// après 1 heure sans usage (RG-CPT-08, D-160). Chaque usage repousse
 // l'expiration.
 func (a *app) sessionDe(ctx context.Context, r *http.Request) (*session, error) {
 	jeton, parCookie := jetonDe(r)
@@ -253,7 +253,7 @@ func (a *app) navigationEnCoursSurAppareil(ctx context.Context, appareil string)
 
 // ouvrirSession : crée une session et rend le jeton d'accès et celui de
 // renouvellement (ce dernier pour les applications mobiles seulement).
-// persistante : « Rester connecté » coché sur l'Application web (D-159).
+// persistante : « Rester connecté » coché sur l'Application web (D-160).
 func (a *app) ouvrirSession(ctx context.Context, utilisateur, support string, persistante bool) (acces, renouvellement string, err error) {
 	acces = nouveauJeton()
 	var empRenouv []byte
@@ -279,7 +279,7 @@ func nouvelleSessionJSON(acces, renouvellement string) sessionJSON {
 // poserCookie : cookie de l'Application web, prolongé à chaque page.
 // « Rester connecté » coché : cookie persistant d'une heure, qui survit à la
 // fermeture du navigateur Internet ; décoché : cookie de session, sans date
-// d'expiration (RG-CPT-08, D-159).
+// d'expiration (RG-CPT-08, D-160).
 func (a *app) poserCookie(w http.ResponseWriter, jeton string, persistante bool) {
 	http.SetCookie(w, &http.Cookie{Name: nomCookie, Value: jeton, Path: a.cfg.Chemin + "/",
 		MaxAge: maxAgeCookie(persistante, dureeSansUsageWeb), HttpOnly: true, Secure: true, SameSite: http.SameSiteLaxMode})

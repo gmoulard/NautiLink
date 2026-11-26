@@ -147,7 +147,7 @@ footer .commit { font-size: .8rem; opacity: .8; }
   radial-gradient(ellipse 420px 280px at 66% 40%, var(--radar-green), transparent 72%),
   radial-gradient(ellipse 160px 110px at 92% 82%, var(--radar-yellow), transparent 70%),
   radial-gradient(ellipse 260px 170px at 90% 84%, var(--radar-green), transparent 72%); }
-.hero .wrap { position: relative; }
+.hero .wrap { position: relative; z-index: 1; }
 .hero h1 { font-family: var(--font-display); }
 .hero h1 .link { color: var(--accent); }
 .sig { color: var(--accent); font-family: var(--font-mono); font-size: .9rem; letter-spacing: .02em; }
@@ -161,3 +161,63 @@ a.pill:hover { border-color: var(--accent); color: var(--accent); }
 .big { color: var(--accent); font-family: var(--font-display); }
 .role.nav { background: var(--ink); }
 @media (prefers-color-scheme: dark) { .role.nav { background: #0E2A43; } .pill { background: rgba(14,42,67,.6); } .button { color: #08172A; } }
+
+/* ===== Identité graphique du 2026-11-26 (D-157, docs/05-identite-marque.md §15) =====
+   Étude docs/etudes/Nautilinkimages261126.png : ciel et mer, bandeau de mer avec
+   vagues, cartes blanches arrondies, boutons turquoise, titres bleu marine,
+   avertissement bêta rouge sur fond rose. Remplace le « Radar de pluie » (D-69). */
+:root {
+  --ink: #0B2A55; --fg: #0B2A55; --navy: #0B2A55; --muted: #4A6380; --line: #D6E6F2;
+  --accent: #1565C0; --teal: #17A2B0; --aqua: #7EDDE4; --sky: #DDEFFB; --bg: #F4FAFE; --surface: #FFFFFF;
+  --beta-fond: #FDE8E8; --beta-texte: #B3261E; --ombre: 0 8px 24px rgba(11,42,85,.09);
+  --font-display: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #E3EEF7; --fg: #E3EEF7; --navy: #0E2A43; --muted: #9BB4C9; --line: #24476A; --accent: #5AAEE6;
+    --teal: #2BC0C6; --sky: #0F2438; --bg: #08172A; --surface: #15314D; --beta-fond: #3A1518; --beta-texte: #FFB4AB;
+    --ombre: 0 8px 24px rgba(0,0,0,.35); }
+}
+body { background: linear-gradient(180deg, var(--sky) 0, var(--bg) 520px) no-repeat, var(--bg); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 800; letter-spacing: -.015em; color: var(--ink); }
+a { color: var(--accent); }
+.betabar { background: var(--beta-fond); color: var(--beta-texte); font-weight: 600; }
+.betabar b, .betabar a { color: var(--beta-texte); }
+.betabar b::before { content: "⚠ "; }
+.topnav { background: rgba(255,255,255,.85); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); box-shadow: var(--ombre); position: sticky; top: 0; z-index: 20; }
+.brand { color: var(--ink); font-weight: 800; font-size: 1.5rem; }
+.brand img { width: 48px; height: 48px; border-radius: 12px; box-shadow: var(--ombre); }
+.brand .link { color: var(--ink); }
+.topnav nav a { color: var(--ink); font-weight: 600; }
+.topnav nav a:hover { color: var(--accent); }
+/* Bandeau de mer : ciel, mer et vagues en dégradés, sans photo. */
+.hero { background:
+  linear-gradient(180deg, #2F86C8 0, #1565C0 60%, #0B4F94 100%) bottom / 100% 150px no-repeat,
+  linear-gradient(180deg, #CFE8F8 0, #EAF5FC 100%); color: var(--ink); padding-block: 3rem 11rem; }
+.hero::before { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath d='M0 40 C200 10 400 70 600 40 S1000 10 1200 40 V80 H0Z' fill='%23F4FAFE'/%3E%3Cpath d='M0 55 C250 30 450 80 700 52 S1050 36 1200 56 V80 H0Z' fill='%2317A2B0' fill-opacity='.25'/%3E%3C/svg%3E") bottom / 100% 70px no-repeat; }
+.hero h1 { color: var(--ink); text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+.hero h1 .link { color: var(--teal); text-shadow: none; }
+.sig { font-family: var(--font-display); font-style: italic; font-weight: 500; color: var(--ink); font-size: 1.05rem; }
+.hero p.lede { color: var(--muted); }
+.pill { background: #FFFFFF; border-color: var(--line); color: var(--ink); font-weight: 600; }
+a.pill:hover { color: var(--accent); }
+.hero .logo { border-radius: 32px; box-shadow: 0 20px 50px rgba(11,42,85,.35); }
+.button { background: var(--teal); color: #FFFFFF; font-weight: 700; box-shadow: 0 6px 16px rgba(23,162,176,.3); }
+.button.ghost { background: #FFFFFF; border: 0; color: var(--ink); box-shadow: var(--ombre); }
+.kicker { color: var(--teal); font-family: var(--font-display); font-weight: 700; }
+.big { color: var(--teal); }
+.feature, .role.follow, .free li, .legal .note { border-color: var(--line); border-radius: 18px; box-shadow: var(--ombre); }
+.role.nav { background: linear-gradient(160deg, #1565C0, #0B2A55); color: #FFFFFF; border-radius: 18px; }
+.role.nav h3 { color: #FFFFFF; }
+.safety { background: var(--beta-fond); border: 0; border-radius: 18px; color: var(--beta-texte); }
+.safety h2, .safety h3 { color: var(--beta-texte); }
+main section + section { border-top: 0; }
+footer { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath d='M0 30 C200 0 400 60 600 30 S1000 0 1200 30 V60 H0Z' fill='%2317A2B0' fill-opacity='.2'/%3E%3Cpath d='M0 42 C250 18 450 66 700 40 S1050 24 1200 44 V60 H0Z' fill='%231565C0' fill-opacity='.18'/%3E%3C/svg%3E") top / 100% 48px no-repeat, var(--sky); color: var(--muted); }
+footer .wrap { padding-top: 3.5rem; }
+footer a { color: var(--accent); }
+@media (prefers-color-scheme: dark) {
+  .topnav { background: rgba(15,36,56,.9); }
+  .hero { background: linear-gradient(180deg, #0E4E86 0, #0B3A66 60%, #08172A 100%) bottom / 100% 150px no-repeat, linear-gradient(180deg, #0F2438 0, #12304C 100%); }
+  .hero h1, .sig { color: #E3EEF7; text-shadow: none; }
+  .button { color: #08172A; }
+  .button.ghost { background: var(--surface); color: var(--ink); }
+}

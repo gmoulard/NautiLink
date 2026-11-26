@@ -1365,12 +1365,12 @@ components:
       type: apiKey
       in: cookie
       name: nautilink_session
-      description: 'Session de l''Application web (cookie HttpOnly, Secure, SameSite=Lax), ouverte par le formulaire de la page « Se connecter » ; expire après 1 heure sans usage ; cookie persistant si « Rester connecté » est coché, cookie de session sinon (RG-CPT-08, D-159).'
+      description: 'Session de l''Application web (cookie HttpOnly, Secure, SameSite=Lax), ouverte par le formulaire de la page « Se connecter » ; expire après 1 heure sans usage ; cookie persistant si « Rester connecté » est coché, cookie de session sinon (RG-CPT-08, D-160).'
     cookieAdmin:
       type: apiKey
       in: cookie
       name: nautilink_admin
-      description: 'Session de l''espace administrateur, distincte de celle des utilisateurs ; expire après 1 heure sans usage ; cookie persistant si « Rester connecté » est coché, cookie de session sinon (RG-ADM-07, D-159).'
+      description: 'Session de l''espace administrateur, distincte de celle des utilisateurs ; expire après 1 heure sans usage ; cookie persistant si « Rester connecté » est coché, cookie de session sinon (RG-ADM-07, D-160).'
 
   parameters:
     NavigationId:
