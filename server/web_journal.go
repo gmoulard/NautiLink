@@ -204,6 +204,9 @@ func init() {
 func (a *app) routesWebJournal(mux *http.ServeMux, c string) {
 	// echec : erreur de saisie réaffichée sur la page, autre erreur remontée.
 	echec := func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage, err error) error {
+		// Le code de l'erreur est gardé : 403 pour un élément non modifiable
+		// (RG-JRN-07), 422 pour une saisie refusée, 409 pour un conflit.
+		statut := enErreurAPI(err).statut
 		if d.Erreur, err = messageErreur(err); err != nil {
 			return err
 		}
@@ -213,7 +216,7 @@ func (a *app) routesWebJournal(mux *http.ServeMux, c string) {
 		}
 		d.Titre, d.D = nav.N.Nom, nav
 		origineSeulement(w)
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.WriteHeader(statut)
 		a.rendre(w, "navigation.html", d)
 		return nil
 	}
