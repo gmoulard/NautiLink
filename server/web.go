@@ -51,6 +51,7 @@ type donneesPage struct {
 	Avertissement          string
 	VersionAvertissement   string
 	Connecte, EmailVerifie bool
+	Admin                  bool // menu « Administration » (RG-WEB-03)
 	Nom                    string
 	Message, Erreur        string
 	Retour                 string
@@ -107,6 +108,9 @@ func (a *app) web(connecte bool, p pageWeb) http.HandlerFunc {
 					return
 				}
 				d.Connecte, d.Nom, d.EmailVerifie = true, p.Nom, p.EmailVerifie
+				// Administrateur (RG-ADM-07) : lien vers l'espace administrateur,
+				// qui garde sa propre connexion (RG-WEB-03, RG-ADM-01).
+				d.Admin = p.EmailVerifie && a.estAdmin(p.Email)
 			}
 		}
 		if connecte && s == nil {

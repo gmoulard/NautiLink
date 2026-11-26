@@ -8,7 +8,7 @@ Réalisé :
 - bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
 - contacts, invitations et accès des suiveurs (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
-- Application web (pages servies par le serveur, en français, sans JavaScript sauf la mise à jour en direct de la page d'une navigation) : inscription, connexion, déconnexion, tableau de bord (TODO-6.1), « Mon compte », « Bateaux », « Contacts », « Paramètres », « Corbeille », page d'invitation ;
+- Application web (pages servies par le serveur, en français, sans JavaScript sauf la mise à jour en direct de la page d'une navigation) : inscription, connexion, déconnexion, tableau de bord (TODO-6.1), « Mon compte », « Bateaux », « Contacts », « Paramètres », « Alertes SOS », « Corbeille », « Assistance » (TODO-6.5), page d'invitation, menu « Administration » pour les administrateurs (TODO-6.9, RG-WEB-03) ;
 - espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte, utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
 
 ## Lancer en local

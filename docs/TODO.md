@@ -226,8 +226,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
   - Critères d'acceptation : abonnement souscrit sur le Web reconnu sur Android.
 - [ ] **TODO-6.8**: Demande du 2026-11-26 (boîte de réception) : l'Application web a les mêmes fonctions que l'application mobile, conduite d'une navigation et SOS par Internet compris (RG-WEB-01, RG-WEB-02, D-150). Dépend de : TODO-6.5 ; conduite depuis un navigateur Internet : [Q-99](06-questions-ouvertes.md#q-99).
   - Critères d'acceptation : chaque fonction retenue par la décision disponible dans l'Application web, avec ses essais Go.
-- [ ] **TODO-6.9**: Demande du 2026-11-26 (boîte de réception) : menu « Administration » dans l'Application web, visible des seuls administrateurs (RG-ADM-01, RG-ADM-07), qui ouvre l'espace administrateur (session et cookie propres, inchangés). Dépend de : TODO-7.1.
+- [~] **TODO-6.9**: Demande du 2026-11-26 (boîte de réception) : menu « Administration » dans l'Application web, visible des seuls administrateurs (RG-ADM-01, RG-ADM-07), qui ouvre l'espace administrateur (session et cookie propres, inchangés). Dépend de : TODO-7.1.
   - Critères d'acceptation : lien présent pour un compte de `NAUTILINK_ADMINS`, absent pour les autres ; l'espace administrateur demande toujours sa propre connexion ; essai Go.
+  - Fait (2026-11-26) : lien « Administration » dans le menu de l'Application web pour un compte dont l'adresse confirmée figure dans `NAUTILINK_ADMINS`, relu à chaque page (RG-ADM-07, RG-WEB-03, D-150), vers `<chemin>/admin/`, qui garde sa connexion, son cookie et sa session (`server/web.go`, `server/web/cadre.html`) ; essais Go : rendu, et avec PostgreSQL (non exécuté sur ce poste) administrateur, adresse non confirmée, autre compte, espace administrateur sans sa connexion (`server/web_menu_admin_test.go`). Reste : essai dans un vrai navigateur Internet.
 
 ## 7. Étape 4 — Administration
 

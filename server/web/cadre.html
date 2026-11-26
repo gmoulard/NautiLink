@@ -23,6 +23,7 @@
       <a href="{{.Base}}/corbeille">Corbeille</a>
       <a href="{{.Base}}/compte">Mon compte</a>
       <a href="{{.Base}}/assistance">Assistance</a>
+      {{if .Admin}}<a href="{{.Base}}/admin/">Administration</a>{{end}}
       <form class="enligne" method="post" action="{{.Base}}/deconnexion"><button class="secondaire" type="submit">Se déconnecter</button></form>
     {{else}}
       <a href="{{.Base}}/connexion">Se connecter</a>
