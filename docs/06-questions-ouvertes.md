@@ -22,12 +22,6 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : une première ligne « NautiLink <bateau> — <type d'envoi> à <heure>. », l'heure selon RG-PRM-07 (types : « début de navigation », « position », « note », « photo », « note vocale », « fin de navigation ») ; puis, selon le type : « Destination : <destination>. » au début ; « Position <latitude>, <longitude> : <lien Google Maps> » ou « GPS NON DISPONIBLE » pour le début, les positions et la fin ; « Note : <texte> » ; « Photo : <lien> » ou « Note vocale : <lien> » vers l'élément dans la page de la navigation ; « Suivre la navigation : <lien de la page> » au début. Dans la langue du navigateur (RG-PRM-04). Le second SMS SOS commence par « SOS <bateau> (suite). ».
 - Appliqué en attendant dans l'application (`app/lib/reel/sms_navigation.dart`, textes `sms…` de `app/lib/l10n/`).
 
-### <a id="q-103"></a>Q-103 — Météo marine pour la position actuelle
-
-- Priorité : plus tard.
-- Cas : D-166 retient un lien vers la prévision marine de Météo-France « pour la position actuelle » (RG-NAV-37). La page « Météo marine » (<https://meteofrance.com/meteo-marine>, vérifiée le 2026-11-26) présente les zones côtières et du large, sans recevoir de position ; aucune adresse de Météo-France ouverte sur une latitude et une longitude n'a été vérifiée.
-- Proposition (non validée) : garder la page « Météo marine » générale ; ou, si Météo-France publie une adresse par coordonnées, l'ouvrir sur la dernière position connue.
-
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie
