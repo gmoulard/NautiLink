@@ -65,3 +65,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Canaux natifs (MainActivity.kt) : autorisations, FileProvider, notifications.
+    implementation("androidx.core:core-ktx:1.16.0")
+}

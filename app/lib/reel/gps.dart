@@ -123,6 +123,19 @@ class GpsTelephone implements SourcePosition {
               setOngoing: true,
             ),
           );
+        } else if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
+          // RG-IOS-08 : autorisation « Pendant l'utilisation », navigation
+          // démarrée à l'écran puis poursuivie en arrière-plan (mode
+          // `location` de Info.plist), indicateur bleu affiché ; pause
+          // automatique désactivée, sinon un bateau au mouillage perdrait
+          // ses positions (étude localisation iPhone § 2.3).
+          reglages = AppleSettings(
+            accuracy: LocationAccuracy.high,
+            activityType: ActivityType.otherNavigation,
+            pauseLocationUpdatesAutomatically: false,
+            allowBackgroundLocationUpdates: true,
+            showBackgroundLocationIndicator: true,
+          );
         } else {
           reglages = const LocationSettings(accuracy: LocationAccuracy.high);
         }

@@ -117,6 +117,12 @@ class BateauNl {
     this.appareilAssocieId,
     this.longueurMetres,
     this.immatriculation,
+    this.portAttache,
+    this.moteur,
+    this.autonomie,
+    this.capaciteCarburantLitres,
+    this.vitesseNoeuds,
+    this.tirantEauMetres,
   });
   final String id;
   final String nom;
@@ -127,6 +133,14 @@ class BateauNl {
   final double? longueurMetres;
   final String? immatriculation;
 
+  /// Repris dans le second SMS SOS (RG-SOS-08).
+  final String? portAttache;
+  final String? moteur;
+  final String? autonomie;
+  final double? capaciteCarburantLitres;
+  final double? vitesseNoeuds;
+  final double? tirantEauMetres;
+
   static BateauNl? depuisJson(Object? j) {
     if (j is! Map || j['id'] is! String) return null;
     return BateauNl(
@@ -136,6 +150,13 @@ class BateauNl {
       appareilAssocieId: j['appareilAssocieId'] as String?,
       longueurMetres: (j['longueurMetres'] as num?)?.toDouble(),
       immatriculation: j['immatriculation'] as String?,
+      portAttache: j['portAttache'] as String?,
+      moteur: j['moteur'] as String?,
+      autonomie: j['autonomie'] as String?,
+      capaciteCarburantLitres: (j['capaciteCarburantLitres'] as num?)
+          ?.toDouble(),
+      vitesseNoeuds: (j['vitesseNoeuds'] as num?)?.toDouble(),
+      tirantEauMetres: (j['tirantEauMetres'] as num?)?.toDouble(),
     );
   }
 
@@ -146,6 +167,12 @@ class BateauNl {
     'appareilAssocieId': appareilAssocieId,
     'longueurMetres': ?longueurMetres,
     'immatriculation': ?immatriculation,
+    'portAttache': ?portAttache,
+    'moteur': ?moteur,
+    'autonomie': ?autonomie,
+    'capaciteCarburantLitres': ?capaciteCarburantLitres,
+    'vitesseNoeuds': ?vitesseNoeuds,
+    'tirantEauMetres': ?tirantEauMetres,
   };
 }
 
@@ -163,6 +190,7 @@ class ContactNl {
     this.etatInvitation = 'aucune',
     this.utilisateurId,
     this.enAttente = false,
+    this.recevoirSms = true,
   });
   final String id;
   final String nom;
@@ -185,6 +213,9 @@ class ContactNl {
   /// (RG-COM-06, D-136).
   final bool enAttente;
 
+  /// Faux quand le suiveur a refusé les SMS dans son profil (RG-SMS-01).
+  final bool recevoirSms;
+
   static ContactNl? depuisJson(Object? j) {
     if (j is! Map || j['id'] is! String) return null;
     return ContactNl(
@@ -199,6 +230,7 @@ class ContactNl {
       etatInvitation: (j['etatInvitation'] as String?) ?? 'aucune',
       utilisateurId: j['utilisateurId'] as String?,
       enAttente: j['enAttente'] == true,
+      recevoirSms: j['recevoirSms'] != false,
     );
   }
 
@@ -214,6 +246,7 @@ class ContactNl {
     'etatInvitation': etatInvitation,
     'utilisateurId': utilisateurId,
     if (enAttente) 'enAttente': true,
+    if (!recevoirSms) 'recevoirSms': false,
   };
 }
 
@@ -481,6 +514,8 @@ class ProfilNl {
     required this.nom,
     required this.emailVerifie,
     this.telephone,
+    this.langue,
+    this.id,
   });
   final String email;
   final String nom;
@@ -489,6 +524,12 @@ class ProfilNl {
   /// Numéro du navigateur, pour la copie des SMS (RG-SMS-08).
   final String? telephone;
 
+  /// Langue des messages envoyés (RG-PRM-04) : `fr` ou `en`.
+  final String? langue;
+
+  /// Identifiant du compte (navigations suivies, RG-AND-09).
+  final String? id;
+
   static ProfilNl? depuisJson(Object? j) {
     if (j is! Map) return null;
     return ProfilNl(
@@ -496,6 +537,8 @@ class ProfilNl {
       nom: (j['nom'] as String?) ?? '',
       emailVerifie: j['emailVerifie'] == true,
       telephone: j['telephone'] as String?,
+      langue: j['langue'] as String?,
+      id: j['id'] as String?,
     );
   }
 }

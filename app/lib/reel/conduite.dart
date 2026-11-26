@@ -66,6 +66,7 @@ class NavigationLocale {
     required this.personnesABord,
     this.destination,
     this.personnesAlertees = const [],
+    this.parametres,
     List<EvenementLocal>? journal,
     this.derniereAutomatique,
     this.dernierEnvoi,
@@ -81,6 +82,9 @@ class NavigationLocale {
   final int personnesABord;
   final String? destination;
   final List<String> personnesAlertees;
+
+  /// Paramètres de cette navigation (RG-NAV-06) : réglages des SMS.
+  final ParametresGeneraux? parametres;
   final List<EvenementLocal> journal;
 
   /// Heure de la dernière position automatique enregistrée (RG-GPS-03).
@@ -103,6 +107,7 @@ class NavigationLocale {
     'personnesABord': personnesABord,
     'destination': destination,
     'personnesAlertees': personnesAlertees,
+    'parametres': ?parametres?.versJson(),
     'journal': [for (final e in journal) e.versJson()],
     'derniereAutomatique': derniereAutomatique == null
         ? null
@@ -131,6 +136,7 @@ class NavigationLocale {
         for (final p in (j['personnesAlertees'] as List?) ?? const [])
           if (p is String) p,
       ],
+      parametres: ParametresGeneraux.depuisJson(j['parametres']),
       journal: [
         for (final e in (j['journal'] as List?) ?? const [])
           ?EvenementLocal.depuisJson(e),
@@ -210,6 +216,14 @@ class ConduiteNavigation extends ChangeNotifier {
   final FileAttente file;
   final BaseLocale base;
   final SourcePosition positions;
+
+  /// Appelée après chaque position automatique enregistrée : SMS de
+  /// position automatique (RG-SMS-03).
+  void Function(NavigationLocale, EvenementLocal)? surPositionAutomatique;
+
+  /// Appelée à chaque changement de la navigation en cours (notification
+  /// après un redémarrage, RG-NAV-12).
+  void Function(bool enCours)? surEnCours;
   final Future<String> Function() appareilId;
 
   /// `android` ou `ios` (schéma `Evenement`).
@@ -248,6 +262,9 @@ class ConduiteNavigation extends ChangeNotifier {
   /// Navigation en cours sur ce téléphone, s'il y en a une.
   NavigationLocale? get enCours => _nav;
 
+  /// Position de la dernière fin de navigation (SMS de fin, RG-SMS-03).
+  PositionGps? derniereFin;
+
   DateTime get maintenant => _maintenant();
 
   void _notifier() {
@@ -257,6 +274,7 @@ class ConduiteNavigation extends ChangeNotifier {
   Future<void> _garder() async {
     final n = _nav;
     await base.ecrireCopie(_cle, n?.versJson(), maintenant);
+    surEnCours?.call(n != null);
   }
 
   /// Relit la navigation en cours gardée sur le téléphone (ouverture de
@@ -328,6 +346,7 @@ class ConduiteNavigation extends ChangeNotifier {
       n.derniereAutomatique = maintenant;
       _derniereRecue = null;
       await enregistrer('position_automatique', position: p, gps: true);
+      if (n.journal.isNotEmpty) surPositionAutomatique?.call(n, n.journal.last);
     } finally {
       _acquisition = false;
     }
@@ -449,6 +468,7 @@ class ConduiteNavigation extends ChangeNotifier {
       personnesABord: personnesABord,
       destination: dest,
       personnesAlertees: personnesAlertees,
+      parametres: parametres,
       journal: [
         EvenementLocal(
           id: debutEnvoye['id'] as String,
@@ -543,6 +563,7 @@ class ConduiteNavigation extends ChangeNotifier {
     final heure = maintenant;
     _arreterAutomatiques();
     final p = await positions.positionActuelle(demander: true);
+    derniereFin = p;
     await file.fin(n.id, {
       'heureAcquisition': heureRfc3339(heure),
       'position': ?p?.versJson(),
@@ -622,9 +643,10 @@ class ConduiteNavigation extends ChangeNotifier {
     String? bateauId,
     String? probleme,
     int? personnesABord,
+    String? id,
   }) async {
     final n = _nav;
-    final id = file.nouvelId();
+    id ??= file.nouvelId();
     final heure = maintenant;
     final p = probleme?.trim();
     final alerte = <String, Object?>{

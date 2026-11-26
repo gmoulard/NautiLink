@@ -15,6 +15,13 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Reste à vérifier : conditions d'accès (clé, quotas, usage par un serveur) et présence des données demandées par RG-NAV-28 (vent, état de la mer, pression).
 - Prévu (2026-11-25) : le porteur du projet ouvre le compte sur le portail API de Météo-France ; la météo est intégrée avant la sortie de la version réelle. Mode d'emploi et points à vérifier : [meteofrance-connexion.md](etudes/meteofrance-connexion.md).
 
+### <a id="q-93"></a>Q-93 — Texte des SMS ordinaires
+
+- Priorité : avant la version Android réelle (TODO-5.4).
+- Cas : les règles disent quand partent les SMS ordinaires (début, positions, notes, photos, notes vocales, fin : RG-SMS-01 à RG-SMS-03), ce qu'ils disent sans GPS (RG-SMS-04), et le lien d'une photo ou d'une note vocale (RG-SMS-05, RG-SMS-06, RG-SMS-09), mais pas leur texte. Le contenu des SMS SOS, lui, est fixé (RG-SOS-07, RG-SOS-08).
+- Proposition (non validée) : une première ligne « NautiLink <bateau> — <type d'envoi> à <heure>. » (types : « début de navigation », « position », « note », « photo », « note vocale », « fin de navigation ») ; puis, selon le type : « Destination : <destination>. » au début ; « Position <latitude>, <longitude> : <lien Google Maps> » ou « GPS NON DISPONIBLE » pour le début, les positions et la fin ; « Note : <texte> » ; « Photo : <lien> » ou « Note vocale : <lien> » vers l'élément dans la page de la navigation ; « Suivre la navigation : <lien de la page> » au début. Dans la langue du navigateur (RG-PRM-04). Le second SMS SOS commence par « SOS <bateau> (suite). ».
+- Appliqué en attendant dans l'application (`app/lib/reel/sms_navigation.dart`, textes `sms…` de `app/lib/l10n/`).
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

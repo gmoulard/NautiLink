@@ -11,7 +11,10 @@ import 'conduite.dart';
 import 'file_attente.dart';
 import 'gps.dart';
 import 'medias.dart';
+import 'sms.dart';
+import 'sms_navigation.dart';
 import 'stockage_session.dart';
+import 'telephone.dart';
 
 /// Dépôt de la vraie application (D-127) : données relues sur le serveur,
 /// gardées dans la base locale pour l'usage hors connexion (RG-COM-06),
@@ -29,7 +32,11 @@ class DepotReel extends Depot {
     DateTime Function()? horloge,
     Duration? pasVerification = const Duration(minutes: 1),
     this.medias,
-  }) : positions = positions ?? const PositionsIndisponibles() {
+    CanalSms? canalSms,
+    this.telephone,
+    this.pageNavigation = _pageParDefaut,
+  }) : positions = positions ?? const PositionsIndisponibles(),
+       canalSms = canalSms ?? const SmsIndisponible() {
     this.file =
         file ??
         FileAttente(base: base, api: api, appareilId: session.appareilId);
@@ -43,6 +50,23 @@ class DepotReel extends Depot {
       maintenant: horloge,
       pasVerification: pasVerification,
     )..addListener(_notifier);
+    envoisSms = EnvoisSms(canal: this.canalSms, nouvelId: this.file.nouvelId)
+      ..addListener(_notifier);
+    sms = SmsNavigation(
+      canal: this.canalSms,
+      envois: envoisSms,
+      profil: () => profil,
+      contacts: () => contacts,
+      bateaux: () => bateaux,
+      langue: () => profil?.langue ?? 'fr',
+      pageNavigation: pageNavigation,
+      statutsSos: this.file.statutsSms,
+    );
+    // SMS de position automatique (RG-SMS-03) ; navigation en cours retenue
+    // pour la notification après un redémarrage (RG-NAV-12).
+    conduite.surPositionAutomatique = (n, e) =>
+        unawaited(sms.positionAutomatique(n, e, defaut: parametres));
+    conduite.surEnCours = (v) => unawaited(session.marquerNavigationEnCours(v));
     // Photo ou note vocale déposée : sa copie locale n'est plus utile.
     _fichiersDeposes = this.file.reussis
         .where((e) => e.operation == 'fichier')
@@ -66,7 +90,18 @@ class DepotReel extends Depot {
       plateforme: plateformeDuTelephone(),
       positions: kIsWeb ? null : GpsTelephone(),
       medias: kIsWeb ? null : MediasTelephone(),
+      canalSms: plateformeDuTelephone() == 'android' ? SmsAndroid() : null,
+      telephone: plateformeDuTelephone() == 'android'
+          ? const TelephoneAndroid()
+          : null,
     );
+  }
+
+  static String _pageParDefaut(String id) {
+    final b = kApiUrl.endsWith('/api')
+        ? kApiUrl.substring(0, kApiUrl.length - 4)
+        : kApiUrl;
+    return '$b/navigations/$id';
   }
 
   /// `android` ou `ios` (schéma `Appareil`) ; vide sur le Web, qui n'est pas un téléphone.
@@ -86,6 +121,17 @@ class DepotReel extends Depot {
 
   /// Appareil photo et micro (TODO-5.4) ; vide sur le Web.
   final Medias? medias;
+
+  /// SMS par la carte SIM (Android) ; indisponibles sur iPhone (RG-IOS-02).
+  final CanalSms canalSms;
+  late final EnvoisSms envoisSms;
+  late final SmsNavigation sms;
+
+  /// Réglages du téléphone Android (batterie, notifications) ; vide ailleurs.
+  final TelephoneAndroid? telephone;
+
+  /// Adresse de la page d'une navigation sur la plateforme Web.
+  final String Function(String navigationId) pageNavigation;
   StreamSubscription<EnvoiReussi>? _fichiersDeposes;
 
   /// Navigation en cours sur ce téléphone : démarrage, journal, envois (TODO-5.2 à TODO-5.6).
@@ -578,6 +624,7 @@ class DepotReel extends Depot {
   void dispose() {
     _ferme = true;
     conduite.dispose();
+    envoisSms.dispose();
     _fichiersDeposes?.cancel();
     file.fermer();
     super.dispose();

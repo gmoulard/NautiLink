@@ -11,6 +11,9 @@ import '../reel/depot_reel.dart';
 import '../reel/file_attente.dart';
 import '../reel/gps.dart';
 import '../reel/medias.dart';
+import '../reel/sms.dart';
+import '../reel/sms_navigation.dart';
+import '../reel/telephone.dart';
 import '../theme.dart';
 import 'connexion.dart';
 import 'home.dart';
@@ -23,12 +26,11 @@ import 'navigation.dart';
 DepotReel _depot(BuildContext context) => DepotScope.of(context) as DepotReel;
 
 /// Résultat de chaque circuit d'un envoi, affiché dans la fenêtre « OK »
-/// (RG-COM-03). Le circuit SMS n'est pas encore réalisé (TODO-5.4) ; il
-/// n'existe pas sur iPhone (RG-IOS-02).
+/// (RG-COM-03) : serveur, puis SMS (Android seulement, RG-IOS-02).
 List<String> lignesResultat(
   AppLocalizations l,
   EtatEnvoi etat, {
-  bool sms = true,
+  (IssueSms, int)? sms,
 }) => [
   if (etat.refuse)
     l.voyageRefused(
@@ -36,8 +38,84 @@ List<String> lignesResultat(
     )
   else
     etat.recu ? l.serverSent : l.serverQueued,
-  if (sms && DepotReel.plateformeDuTelephone() != 'ios') l.smsNotYet,
+  if (sms != null) ?ligneSms(l, sms.$1, nombre: sms.$2),
 ];
+
+/// Explication puis demande de l'autorisation d'envoi de SMS, au démarrage
+/// d'une navigation et non au premier SOS (RG-AND-02, étude des
+/// autorisations § 4), quand un contact SOS a un numéro ou que des SMS de
+/// positions automatiques sont prévus.
+Future<void> demanderSms(
+  BuildContext context,
+  DepotReel depot, {
+  required bool positionsAutomatiques,
+}) async {
+  final canal = depot.canalSms;
+  if (!canal.disponible || await canal.autorise()) return;
+  final utile =
+      positionsAutomatiques ||
+      depot.contacts.any(
+        (c) => c.contactSos && (c.telephone?.isNotEmpty ?? false),
+      );
+  if (!utile || !context.mounted) return;
+  final l = AppLocalizations.of(context);
+  await showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      icon: const Icon(Icons.sms_outlined, color: NlColors.teal, size: 36),
+      title: Text(l.smsPermissionTitle),
+      content: Text(l.smsPermissionExplain),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.ok)),
+      ],
+    ),
+  );
+  await canal.demander();
+}
+
+/// Au premier démarrage d'une navigation sur Android : explication, réglages
+/// de la marque du téléphone, puis demande d'exclusion de l'optimisation de
+/// la batterie (RG-GPS-05) ; autorisation des notifications (Android 13 et
+/// plus), sans laquelle la notification de la navigation n'apparaît pas.
+Future<void> proposerBatterie(BuildContext context, DepotReel depot) async {
+  final tel = depot.telephone;
+  if (tel == null) return;
+  try {
+    if (!await tel.notificationsAutorisees()) await tel.demanderNotifications();
+    if (depot.session.batterieProposee || await tel.batterieExclue()) return;
+    final marque = marqueBatterie(await tel.fabricant());
+    if (!context.mounted) return;
+    final l = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.battery_alert, color: NlColors.teal, size: 36),
+        title: Text(l.batteryTitle),
+        content: Text(
+          '${l.batteryExplain}\n\n${switch (marque) {
+            'samsung' => l.batterySamsung,
+            'xiaomi' => l.batteryXiaomi,
+            _ => l.batteryOther,
+          }}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l.later),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l.batteryOpen),
+          ),
+        ],
+      ),
+    );
+    await depot.session.proposerBatterie();
+    if (ok == true) await tel.demanderExclusionBatterie();
+  } catch (e) {
+    debugPrint('Batterie : $e');
+  }
+}
 
 // ---------------------------------------------------------------- démarrage
 
@@ -107,6 +185,21 @@ class _StartReelScreenState extends State<StartReelScreen> {
   bool? smsActifs;
   bool envoi = false;
   final destination = TextEditingController();
+
+  /// Permission d'envoi de SMS (D-91 : sans elle, l'écran de démarrage dit
+  /// que les positions automatiques partent au serveur seulement).
+  bool? smsAutorise;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final canal = _depot(context).canalSms;
+      if (!canal.disponible) return;
+      final ok = await canal.autorise();
+      if (mounted) setState(() => smsAutorise = ok);
+    });
+  }
 
   @override
   void dispose() {
@@ -211,6 +304,17 @@ class _StartReelScreenState extends State<StartReelScreen> {
     setState(() => envoi = true);
     try {
       await _expliquerPosition();
+      if (!mounted) return;
+      final p = _parametres(depot);
+      await demanderSms(
+        context,
+        depot,
+        positionsAutomatiques:
+            (p?.smsActifs ?? true) &&
+            p?.smsParType['positionsAutomatiques'] != false,
+      );
+      if (!mounted) return;
+      await proposerBatterie(context, depot);
       final n = await depot.demarrer(
         bateau: widget.bateaux[bateau],
         frequenceMinutes: frequence!,
@@ -221,11 +325,20 @@ class _StartReelScreenState extends State<StartReelScreen> {
       );
       if (!mounted) return;
       final etat = await depot.file.etat('demarrage:${n.id}');
+      // SMS de début, prérempli (RG-NAV-08, RG-SMS-03).
+      final sms = depot.canalSms.disponible
+          ? await depot.sms.prerempli(
+              n,
+              'debut',
+              defaut: depot.parametres,
+              position: n.journal.firstOrNull?.position,
+            )
+          : null;
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => NavigationReelScreen(
-            resultat: (l.voyageStarted, lignesResultat(l, etat)),
+            resultat: (l.voyageStarted, lignesResultat(l, etat, sms: sms)),
           ),
         ),
       );
@@ -420,6 +533,51 @@ class _StartReelScreenState extends State<StartReelScreen> {
                     onPressed: () => _reglages(depot),
                   ),
                 ),
+                // RG-IOS-02, RG-IOS-04 : sur iPhone, SOS par Internet seulement ;
+                // contacts SOS sans e-mail, qui ne seront pas prévenus.
+                if (depot.plateforme == 'ios') ...[
+                  Card(
+                    color: const Color(0xFFFBE9E9),
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.phone_iphone,
+                        color: NlColors.alert,
+                      ),
+                      title: Text(
+                        l.iosStartWarning,
+                        key: const Key('ios-start-warning'),
+                      ),
+                      subtitle: () {
+                        final sansEmail = [
+                          for (final c in depot.contacts)
+                            if (c.contactSos &&
+                                (c.email?.trim().isEmpty ?? true))
+                              c.nom,
+                        ];
+                        return sansEmail.isEmpty
+                            ? null
+                            : Text(
+                                l.iosStartNoEmail(sansEmail.join(', ')),
+                                key: const Key('ios-no-email'),
+                              );
+                      }(),
+                    ),
+                  ),
+                ],
+                // D-91 : sans permission d'envoi de SMS, positions au serveur seulement.
+                if (smsAutorise == false &&
+                    (_parametres(depot)?.smsActifs ?? true) &&
+                    _parametres(depot)?.smsParType['positionsAutomatiques'] !=
+                        false)
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.sms_failed_outlined),
+                      title: Text(
+                        l.smsAutoOffNotice,
+                        key: const Key('sms-auto-off'),
+                      ),
+                    ),
+                  ),
                 // RG-SOS-14, RG-NAV-25 : avertissement sans contact SOS.
                 if (aucunSos || !sosCoche)
                   Card(
@@ -470,14 +628,39 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
   Timer? ticker;
   bool envoi = false;
 
-  /// Envoi par le navigateur, puis résultat de chaque circuit (RG-COM-03).
-  Future<void> _envoyer(String titre, Future<EtatEnvoi?> Function() f) async {
+  /// Envoi par le navigateur, puis SMS prérempli de ce [type] (RG-SMS-03),
+  /// puis résultat de chaque circuit (RG-COM-03).
+  Future<void> _envoyer(
+    String titre,
+    String type,
+    Future<EtatEnvoi?> Function() f, {
+    String? Function()? photo,
+  }) async {
     if (envoi) return;
     final l = AppLocalizations.of(context);
+    final depot = _depot(context);
     setState(() => envoi = true);
     EtatEnvoi? etat;
+    (IssueSms, int)? sms;
     try {
       etat = await f();
+      final n = depot.conduite.enCours;
+      if (etat != null &&
+          !etat.refuse &&
+          n != null &&
+          n.journal.isNotEmpty &&
+          depot.canalSms.disponible) {
+        final e = n.journal.last;
+        sms = await depot.sms.prerempli(
+          n,
+          type,
+          defaut: depot.parametres,
+          position: e.position,
+          note: e.texte,
+          evenementId: e.id,
+          photo: photo?.call(),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -490,7 +673,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     await showSendResult(
       context,
       etat.refuse ? l.sendRefused : titre,
-      lignesResultat(l, etat),
+      lignesResultat(l, etat, sms: sms),
     );
   }
 
@@ -517,6 +700,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     );
     if (ok != true || !mounted) return;
     setState(() => envoi = true);
+    final avant = depot.conduite.enCours;
     final r = await depot.terminer();
     if (!mounted) return;
     if (r == null) {
@@ -524,9 +708,19 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
       return;
     }
     final (id, etat) = r;
+    // SMS de fin, prérempli (RG-NAV-13, RG-SMS-03), avec la position de fin.
+    final sms = avant != null && depot.canalSms.disponible && !etat.refuse
+        ? await depot.sms.prerempli(
+            avant,
+            'fin',
+            defaut: depot.parametres,
+            position: depot.conduite.derniereFin,
+          )
+        : null;
+    if (!mounted) return;
     final nav = Navigator.of(context);
     await showSendResult(context, l.voyageFinished, [
-      ...lignesResultat(l, etat),
+      ...lignesResultat(l, etat, sms: sms),
       if (!etat.recu && !etat.refuse) l.pageOffline,
     ]);
     if (etat.recu) {
@@ -576,7 +770,11 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
         label: Text(l.sendPosition),
         onPressed: envoi
             ? null
-            : () => _envoyer(l.positionSent, c.positionManuelle),
+            : () => _envoyer(
+                l.positionSent,
+                'position_manuelle',
+                c.positionManuelle,
+              ),
       ),
       const SizedBox(height: 12),
       Row(
@@ -587,7 +785,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
               label: Text(l.noteButton),
               onPressed: envoi
                   ? null
-                  : () => _envoyer(l.noteSent, () async {
+                  : () => _envoyer(l.noteSent, 'note', () async {
                       final t = await _texte(l.noteTitle, l.noteHint);
                       if (t == null || t.isEmpty) return null;
                       return c.note(t);
@@ -601,12 +799,22 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
               label: Text(l.photoButton),
               onPressed: envoi || medias == null
                   ? null
-                  : () => _envoyer(l.photoSent, () async {
-                      final id = depot.file.nouvelId();
-                      final f = await medias.photo(id);
-                      if (f == null) return null;
-                      return c.photo(id, f.chemin, f.tailleOctets);
-                    }),
+                  : () {
+                      String? chemin;
+                      _envoyer(l.photoSent, 'photo', () async {
+                        final id = depot.file.nouvelId();
+                        final f = await medias.photo(id);
+                        if (f == null) return null;
+                        // Copie pour le MMS : la photo du téléphone est
+                        // effacée après son dépôt sur le serveur.
+                        final p = c.enCours?.parametres ?? depot.parametres;
+                        if (depot.canalSms.disponible &&
+                            p?.photoEnMms == true) {
+                          chemin = await depot.sms.copierPhoto(f.chemin);
+                        }
+                        return c.photo(id, f.chemin, f.tailleOctets);
+                      }, photo: () => chemin);
+                    },
             ),
           ),
           const SizedBox(width: 8),
@@ -616,7 +824,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
               label: Text(l.voiceButton),
               onPressed: envoi || medias == null
                   ? null
-                  : () => _envoyer(l.voiceSent, () async {
+                  : () => _envoyer(l.voiceSent, 'note_vocale', () async {
                       final id = depot.file.nouvelId();
                       if (!await medias.commencerVocal(id)) {
                         if (mounted) {
@@ -752,6 +960,32 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                           key: const Key('next-auto-position'),
                         ),
                       ],
+                      // RG-SMS-07 : SMS de position automatique en échec après 3 essais.
+                      ListenableBuilder(
+                        listenable: depot.envoisSms,
+                        builder: (context, _) => Column(
+                          children: [
+                            for (final s in depot.envoisSms.echecsPosition)
+                              Card(
+                                color: const Color(0xFFFBE9E9),
+                                child: ListTile(
+                                  leading: const Icon(
+                                    Icons.sms_failed_outlined,
+                                    color: NlColors.alert,
+                                  ),
+                                  title: Text(
+                                    l.smsAutoFailed(s.destinataire.numero),
+                                  ),
+                                  trailing: TextButton(
+                                    onPressed: () =>
+                                        depot.envoisSms.reessayer(s),
+                                    child: Text(l.retry),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       ..._boutons(depot, l),
                       const SizedBox(height: 24),
@@ -867,27 +1101,14 @@ class SosReelScreen extends StatefulWidget {
 
 class _SosReelScreenState extends State<SosReelScreen> {
   (PositionGps?, NaturePosition)? position;
-  bool? smsOuvert;
-  bool aucunContact = false;
+  (IssueSms, int)? sms;
+  String? alerteId;
   AlerteEnvoyee? alerte;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _lancer());
-  }
-
-  /// Contacts SOS prévenus par SMS : ceux cochés au démarrage (RG-NAV-25),
-  /// tous hors navigation ; seulement avec un numéro (RG-SOS-05).
-  List<ContactNl> _contactsSos(DepotReel d) {
-    final n = d.conduite.enCours;
-    return [
-      for (final c in d.contacts)
-        if (c.contactSos &&
-            (c.telephone?.isNotEmpty ?? false) &&
-            (n == null || n.personnesAlertees.contains(c.id)))
-          c,
-    ];
   }
 
   /// Premier SMS SOS (RG-SOS-07, RG-SOS-09 à RG-SOS-11), dans la langue de
@@ -902,14 +1123,14 @@ class _SosReelScreenState extends State<SosReelScreen> {
     final longueur = b?.longueurMetres == null
         ? '—'
         : '${b!.longueurMetres!.toStringAsFixed(1)} m';
-    final personnes = n?.personnesABord;
+    final personnes = n?.personnesABord ?? d.session.dernierNombrePersonnes;
     final p = position?.$1;
     final coord = p == null
         ? ''
         : '${p.latitude.toStringAsFixed(5)}, ${p.longitude.toStringAsFixed(5)}';
     return [
       l.sosSmsBoat(nom, type, longueur, b?.immatriculation ?? '—'),
-      if (personnes != null) l.sosSmsPersons(personnes),
+      l.sosSmsPersons(personnes),
       if (widget.probleme.isNotEmpty) l.sosSmsProblem(widget.probleme),
       switch (position?.$2) {
         NaturePosition.actuelle => l.sosSmsPosition(
@@ -922,48 +1143,79 @@ class _SosReelScreenState extends State<SosReelScreen> {
         ),
         _ => l.sosReelSmsNoPosition,
       },
-      if (p != null)
-        'https://maps.google.com/?q=${p.latitude.toStringAsFixed(5)},${p.longitude.toStringAsFixed(5)}',
+      if (p != null) lienCarte(p),
     ].join('\n');
+  }
+
+  /// Second SMS SOS (RG-SOS-08).
+  String _secondSms(DepotReel d) {
+    final n = d.conduite.enCours;
+    final b =
+        widget.bateau ??
+        d.bateaux.where((x) => x.id == n?.bateauId).firstOrNull;
+    return d.sms.secondSos(b, b?.nom ?? n?.bateauNom ?? '');
   }
 
   Future<void> _lancer() async {
     final d = _depot(context);
     final l = AppLocalizations.of(context);
-    // 1. Position (RG-SOS-09 à RG-SOS-11).
+    // 1. Position (RG-SOS-09 à RG-SOS-11, RG-SOS-23).
     final pos = await d.conduite.positionSos();
     if (!mounted) return;
-    setState(() => position = pos);
-    // 2. Alerte au serveur, partie sans attendre la suite (RG-SOS-04).
+    final id = d.file.nouvelId();
+    setState(() {
+      position = pos;
+      alerteId = id;
+    });
+    // 2. SMS aux contacts SOS (Android, RG-SOS-05 à RG-SOS-08, RG-SOS-16),
+    // 3. alerte au serveur, sans qu'une étape attende l'autre (RG-SOS-04).
     final envoi = d.conduite.envoyerSos(
+      id: id,
       position: pos.$1,
       nature: pos.$2,
       bateauId: widget.bateau?.id,
       probleme: widget.probleme,
       personnesABord: d.session.dernierNombrePersonnes,
     );
-    // 3. SMS SOS prérempli dans l'application SMS (Android, RG-AND-04).
-    if (DepotReel.plateformeDuTelephone() != 'ios') {
-      final contacts = _contactsSos(d);
-      if (contacts.isEmpty) {
-        setState(() => aucunContact = true);
-      } else {
-        final numeros = contacts.map((c) => c.telephone!).join(',');
-        var ok = false;
-        try {
-          ok = await ouvrirLien(
-            Uri.parse(
-              'sms:$numeros?body=${Uri.encodeComponent(_texteSms(l, d))}',
-            ),
-          );
-        } catch (e) {
-          debugPrint('SMS SOS : $e');
-        }
-        if (mounted) setState(() => smsOuvert = ok);
-      }
+    if (d.canalSms.disponible) {
+      final r = await d.sms.sos(
+        alerteId: id,
+        navigation: d.conduite.enCours,
+        premier: _texteSms(l, d),
+        second: _secondSms(d),
+      );
+      if (mounted) setState(() => sms = r);
     }
     final a = await envoi;
     if (mounted) setState(() => alerte = a);
+  }
+
+  /// Ligne d'un SMS SOS envoyé automatiquement, avec son état (RG-SOS-12).
+  Widget _ligneSms(AppLocalizations l, SmsSuivi s) {
+    final (icone, etat, couleur) = switch (s.etat) {
+      EtatSms.enAttente => (Icons.schedule, l.sosSmsPending, null),
+      EtatSms.acceptePourEnvoi => (
+        Icons.sms_outlined,
+        l.sosSmsAccepted(s.destinataire.numero),
+        null,
+      ),
+      EtatSms.livraisonConfirmee => (
+        Icons.mark_chat_read_outlined,
+        l.sosSmsDelivered,
+        null,
+      ),
+      EtatSms.echec => (
+        Icons.sms_failed_outlined,
+        l.sosSmsFailed,
+        NlColors.alert,
+      ),
+    };
+    return ListTile(
+      dense: true,
+      leading: Icon(icone, color: couleur ?? NlColors.teal),
+      title: Text(s.destinataire.numero),
+      subtitle: Text('${s.rang == 2 ? '2/2' : '1/2'} · $etat'),
+    );
   }
 
   @override
@@ -1021,28 +1273,76 @@ class _SosReelScreenState extends State<SosReelScreen> {
               null,
               couleur: p.$2 == NaturePosition.actuelle ? null : NlColors.alert,
             ),
-          if (aucunContact)
-            ligne(
-              Icons.sms_failed_outlined,
-              l.sosReelSmsNoContact,
-              null,
-              couleur: NlColors.alert,
-            )
-          else if (smsOuvert == true)
-            ligne(Icons.sms_outlined, l.sosReelSmsOpened, null)
-          else if (smsOuvert == false)
-            ligne(
-              Icons.sms_failed_outlined,
-              l.sosReelSmsFailed,
-              null,
-              couleur: NlColors.alert,
-            ),
+          ...switch (sms?.$1) {
+            IssueSms.sansDestinataire => [
+              ligne(
+                Icons.sms_failed_outlined,
+                l.sosReelSmsNoContact,
+                null,
+                couleur: NlColors.alert,
+              ),
+            ],
+            IssueSms.prerempli => [
+              ligne(Icons.sms_outlined, l.sosReelSmsOpened, null),
+            ],
+            IssueSms.echec => [
+              ligne(
+                Icons.sms_failed_outlined,
+                l.sosReelSmsFailed,
+                null,
+                couleur: NlColors.alert,
+              ),
+            ],
+            IssueSms.automatique => [
+              ListenableBuilder(
+                listenable: _depot(context).envoisSms,
+                builder: (context, _) {
+                  final envois = _depot(context).envoisSms;
+                  final g = 'sos:$alerteId';
+                  final liste = envois.groupe(g);
+                  return Column(
+                    children: [
+                      ligne(
+                        Icons.sms_outlined,
+                        l.sosSmsAutoSent(sms!.$2),
+                        null,
+                      ),
+                      for (final s in liste) _ligneSms(l, s),
+                      if (envois.sosRetentes(g)) ...[
+                        ligne(
+                          Icons.autorenew,
+                          l.sosSmsRetrying,
+                          null,
+                          couleur: NlColors.alert,
+                        ),
+                        OutlinedButton(
+                          key: const Key('sos-stop-retry'),
+                          onPressed: () => envois.arreterSos(g),
+                          child: Text(l.sosSmsStopRetry),
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              ),
+            ],
+            _ => const <Widget>[],
+          },
           if (a == null)
             ligne(Icons.cloud_upload_outlined, l.sosReelSending, null)
           else if (a.etat.refuse)
             ligne(
               Icons.cloud_off,
               l.voyageRefused(a.etat.refus!.message),
+              null,
+              couleur: NlColors.alert,
+            )
+          else if (!a.etat.recu && _depot(context).plateforme == 'ios')
+            // RG-IOS-03 : sans Internet, l'alerte ne part pas de l'iPhone ;
+            // elle part dès le retour de la connexion.
+            ligne(
+              Icons.cloud_off,
+              l.iosSosOffline,
               null,
               couleur: NlColors.alert,
             )

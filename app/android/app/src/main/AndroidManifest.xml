@@ -16,6 +16,21 @@
          ouvre l'appareil photo du téléphone, sans autorisation CAMERA
          (RG-AND-06). -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- SMS SOS et SMS de positions automatiques envoyés automatiquement
+         (RG-SOS-16, RG-SMS-03, n° 5), demandée au démarrage d'une navigation
+         après une explication ; soumise à l'exception « urgence » de Google
+         Play (D-48, D-82). Les autres SMS s'ouvrent préremplis. -->
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <!-- Notification de la navigation en cours et du service de localisation
+         (Android 13 et plus). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Exclusion de l'optimisation de la batterie (RG-GPS-05, D-52). -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <!-- Notification après un redémarrage pendant une navigation (RG-NAV-12, D-51). -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Le téléphone n'a pas besoin d'être un téléphone pour l'application :
+         sans carte SIM, les SMS sont simplement indisponibles. -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false"/>
     <application
         android:label="${appLabel}"
         android:name="${applicationName}"
@@ -42,6 +57,23 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".RedemarrageRecepteur"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fichiers"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/fichiers"/>
+        </provider>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -70,6 +102,11 @@
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="sms"/>
+        </intent>
+        <!-- MMS prérempli avec la photo (RG-SMS-05). -->
+        <intent>
+            <action android:name="android.intent.action.SEND"/>
+            <data android:mimeType="image/jpeg"/>
         </intent>
         <!-- Ouvrir la page d'information sur l'abonnement (RG-ECO-10). -->
         <intent>

@@ -27,8 +27,11 @@ type contactJSON struct {
 	UtilisateurID  *string   `json:"utilisateurId"`
 	EtatInvitation string    `json:"etatInvitation"`
 	ModifieLe      time.Time `json:"modifieLe"`
-	navigateur     string
-	supprime       bool
+	// RecevoirSms : faux quand le suiveur a refusé les SMS dans son profil
+	// (« Recevoir les SMS », RG-SMS-01) ; vrai sans compte rattaché.
+	RecevoirSms bool `json:"recevoirSms"`
+	navigateur  string
+	supprime    bool
 }
 
 type personneJSON struct {
@@ -62,12 +65,13 @@ type accesJSON struct {
 
 const colonnesContact = `c.id, c.navigateur_id, c.nom, c.telephone, c.email, c.suiveur, c.contact_sos, c.perimetre,
 	c.navigation_id, c.version, c.utilisateur_id, c.modifie_le, c.supprime_le IS NOT NULL,
-	coalesce((SELECT i.etat FROM invitations i WHERE i.contact_id = c.id ORDER BY i.creee_le DESC LIMIT 1), 'aucune')`
+	coalesce((SELECT i.etat FROM invitations i WHERE i.contact_id = c.id ORDER BY i.creee_le DESC LIMIT 1), 'aucune'),
+	coalesce((SELECT u.telephone IS NULL OR u.recevoir_sms FROM utilisateurs u WHERE u.id = c.utilisateur_id), true)`
 
 func lireContact(l pgx.Row) (contactJSON, error) {
 	var c contactJSON
 	err := l.Scan(&c.ID, &c.navigateur, &c.Nom, &c.Telephone, &c.Email, &c.Suiveur, &c.ContactSos, &c.Perimetre,
-		&c.NavigationID, &c.Version, &c.UtilisateurID, &c.ModifieLe, &c.supprime, &c.EtatInvitation)
+		&c.NavigationID, &c.Version, &c.UtilisateurID, &c.ModifieLe, &c.supprime, &c.EtatInvitation, &c.RecevoirSms)
 	return c, err
 }
 

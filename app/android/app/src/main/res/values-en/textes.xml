@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="canal_navigation">Voyage in progress</string>
+    <string name="redemarrage_titre">Voyage in progress</string>
+    <string name="redemarrage_texte">Your phone restarted during your voyage: open NautiLink to resume automatic positions.</string>
+</resources>

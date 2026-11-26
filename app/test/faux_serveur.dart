@@ -9,6 +9,7 @@ import 'package:nautilink/reel/base_locale.dart';
 import 'package:nautilink/reel/depot_reel.dart';
 import 'package:nautilink/reel/file_attente.dart';
 import 'package:nautilink/reel/medias.dart';
+import 'package:nautilink/reel/sms.dart';
 import 'package:nautilink/reel/stockage_session.dart';
 
 http.Response reponse(int statut, [Object? corps]) => http.Response.bytes(
@@ -32,6 +33,9 @@ class FauxServeurNautiLink {
   String avertissement = '2026-11-24';
   bool avertissementChange = false;
   bool emailVerifie = true;
+
+  /// Numéro du profil du navigateur, pour la copie des SMS (RG-SMS-08).
+  String? telephoneNavigateur;
   int jetons = 0;
 
   /// Navigation « Alizé — Houat » en cours sur le serveur.
@@ -214,6 +218,8 @@ class FauxServeurNautiLink {
           'email': 'marin@example.org',
           'nom': 'Marin',
           'emailVerifie': emailVerifie,
+          'telephone': ?telephoneNavigateur,
+          'langue': 'fr',
         });
       case ('POST', '/v1/compte/verification/envoi'):
         return reponse(204);
@@ -309,6 +315,8 @@ class FauxServeurNautiLink {
     SourcePosition? positions,
     DateTime Function()? horloge,
     Medias? medias,
+    CanalSms? sms,
+    String plateforme = 'android',
   }) {
     final api = ClientApi(
       base: 'https://essai.example/nautilink/api',
@@ -319,12 +327,13 @@ class FauxServeurNautiLink {
       api: api,
       session: session,
       base: base,
-      plateforme: 'android',
+      plateforme: plateforme,
       nomAppareil: 'Essai',
       positions: positions,
       horloge: horloge,
       pasVerification: null,
       medias: medias,
+      canalSms: sms,
       file: FileAttente(
         base: base,
         api: api,
@@ -393,4 +402,51 @@ class FauxMedias implements Medias {
 
   @override
   Future<void> oublier(String evenementId) async => oublies.add(evenementId);
+}
+
+/// SMS d'essai : permission [autorisee] ; les SMS envoyés automatiquement
+/// sont gardés dans [envoyes] et reçoivent l'état [reponse] ; les SMS
+/// préremplis dans [preremplis].
+class FauxSms implements CanalSms {
+  FauxSms({this.autorisee = false});
+  bool autorisee;
+  int demandes = 0;
+  EtatSms? reponse = EtatSms.acceptePourEnvoi;
+  bool ouvre = true;
+  final envoyes = <(String id, String numero, String texte)>[];
+  final preremplis = <(List<String> numeros, String texte, String? image)>[];
+  final _flux = StreamController<StatutRecu>.broadcast();
+
+  @override
+  bool get disponible => true;
+  @override
+  Future<bool> autorise() async => autorisee;
+  @override
+  Future<bool> demander() async {
+    demandes++;
+    return autorisee;
+  }
+
+  @override
+  Future<void> envoyer(String id, String numero, String texte) async {
+    envoyes.add((id, numero, texte));
+    final r = reponse;
+    if (r != null) scheduleMicrotask(() => _flux.add(StatutRecu(id, r)));
+  }
+
+  /// État reçu plus tard (accusé de réception).
+  void etat(String id, EtatSms e) => _flux.add(StatutRecu(id, e));
+
+  @override
+  Stream<StatutRecu> get statuts => _flux.stream;
+
+  @override
+  Future<bool> ouvrirPrerempli(
+    List<String> numeros,
+    String texte, {
+    String? image,
+  }) async {
+    preremplis.add((numeros, texte, image));
+    return ouvre;
+  }
 }

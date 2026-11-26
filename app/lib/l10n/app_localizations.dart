@@ -1932,6 +1932,260 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Navigation terminée'**
   String get voyageFinished;
+
+  /// No description provided for @smsHeader.
+  ///
+  /// In fr, this message translates to:
+  /// **'NautiLink {boat} — {kind} à {time}.'**
+  String smsHeader(String boat, String kind, String time);
+
+  /// No description provided for @smsKindStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'début de navigation'**
+  String get smsKindStart;
+
+  /// No description provided for @smsKindPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'position'**
+  String get smsKindPosition;
+
+  /// No description provided for @smsKindNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'note'**
+  String get smsKindNote;
+
+  /// No description provided for @smsKindPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'photo'**
+  String get smsKindPhoto;
+
+  /// No description provided for @smsKindVoice.
+  ///
+  /// In fr, this message translates to:
+  /// **'note vocale'**
+  String get smsKindVoice;
+
+  /// No description provided for @smsKindEnd.
+  ///
+  /// In fr, this message translates to:
+  /// **'fin de navigation'**
+  String get smsKindEnd;
+
+  /// No description provided for @smsDestination.
+  ///
+  /// In fr, this message translates to:
+  /// **'Destination : {destination}.'**
+  String smsDestination(String destination);
+
+  /// No description provided for @smsPositionLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Position {position} : {link}'**
+  String smsPositionLine(String position, String link);
+
+  /// No description provided for @smsGpsUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'GPS NON DISPONIBLE'**
+  String get smsGpsUnavailable;
+
+  /// No description provided for @smsNoteLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note : {text}'**
+  String smsNoteLine(String text);
+
+  /// No description provided for @smsPhotoLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo : {link}'**
+  String smsPhotoLine(String link);
+
+  /// No description provided for @smsVoiceLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note vocale : {link}'**
+  String smsVoiceLine(String link);
+
+  /// No description provided for @smsFollowLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivre la navigation : {link}'**
+  String smsFollowLine(String link);
+
+  /// No description provided for @sosSmsSecond.
+  ///
+  /// In fr, this message translates to:
+  /// **'SOS {name} (suite). Port d\'attache : {port}. Moteur : {engine}. Autonomie : {range}. Carburant : {fuel}. Vitesse : {speed}. Tirant d\'eau : {draft}.'**
+  String sosSmsSecond(
+    String name,
+    String port,
+    String engine,
+    String range,
+    String fuel,
+    String speed,
+    String draft,
+  );
+
+  /// No description provided for @smsResultAuto.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS : envoyé automatiquement à {count, plural, =1{1 destinataire} other{{count} destinataires}}'**
+  String smsResultAuto(int count);
+
+  /// No description provided for @smsResultPrefilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS : prérempli dans l\'application SMS, appuyez sur « Envoyer »'**
+  String get smsResultPrefilled;
+
+  /// No description provided for @smsResultMms.
+  ///
+  /// In fr, this message translates to:
+  /// **'MMS : prérempli avec la photo dans l\'application SMS'**
+  String get smsResultMms;
+
+  /// No description provided for @smsResultMmsFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'MMS impossible : SMS avec le lien vers la photo prérempli à la place'**
+  String get smsResultMmsFailed;
+
+  /// No description provided for @smsResultOff.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS : désactivés pour ce type d\'envoi'**
+  String get smsResultOff;
+
+  /// No description provided for @smsResultNoRecipient.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS : aucun suiveur avec un numéro de téléphone'**
+  String get smsResultNoRecipient;
+
+  /// No description provided for @smsResultNoPermission.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS : pas d\'autorisation d\'envoi, position envoyée au serveur seulement'**
+  String get smsResultNoPermission;
+
+  /// No description provided for @smsResultFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS : l\'application SMS n\'a pas pu s\'ouvrir'**
+  String get smsResultFailed;
+
+  /// No description provided for @smsPermissionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoi de SMS'**
+  String get smsPermissionTitle;
+
+  /// No description provided for @smsPermissionExplain.
+  ///
+  /// In fr, this message translates to:
+  /// **'NautiLink envoie lui-même les SMS SOS à vos contacts SOS, et les SMS de positions automatiques à vos suiveurs, même écran éteint. Autorisez l\'envoi de SMS à l\'écran suivant. Sans cette autorisation, le SMS SOS s\'ouvrira prérempli et les positions automatiques partiront au serveur seulement.'**
+  String get smsPermissionExplain;
+
+  /// No description provided for @smsAutoOffNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans autorisation d\'envoi de SMS, les positions automatiques partiront au serveur seulement, sans SMS.'**
+  String get smsAutoOffNotice;
+
+  /// No description provided for @smsAutoFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS de position automatique non envoyé à {phone}'**
+  String smsAutoFailed(String phone);
+
+  /// No description provided for @retry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get retry;
+
+  /// No description provided for @sosSmsAutoSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS SOS envoyés automatiquement : {count}'**
+  String sosSmsAutoSent(int count);
+
+  /// No description provided for @sosSmsRetrying.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS SOS en échec : nouvel essai chaque minute'**
+  String get sosSmsRetrying;
+
+  /// No description provided for @sosSmsStopRetry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter les nouveaux essais des SMS'**
+  String get sosSmsStopRetry;
+
+  /// No description provided for @batteryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Positions écran éteint'**
+  String get batteryTitle;
+
+  /// No description provided for @batteryExplain.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour que les positions automatiques continuent écran éteint, autorisez NautiLink à ignorer l\'optimisation de la batterie à l\'écran suivant, et laissez les notifications de NautiLink activées.'**
+  String get batteryExplain;
+
+  /// No description provided for @batterySamsung.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur Samsung : Paramètres > Batterie > Limites d\'utilisation en arrière-plan, mettez NautiLink dans les applications « jamais en veille ».'**
+  String get batterySamsung;
+
+  /// No description provided for @batteryXiaomi.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur Xiaomi : activez le « Démarrage automatique » de NautiLink, réglez son économiseur de batterie sur « Aucune restriction » et verrouillez-la dans les applications récentes.'**
+  String get batteryXiaomi;
+
+  /// No description provided for @batteryOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Si votre téléphone a ses propres réglages d\'économie de batterie, autorisez NautiLink à fonctionner en arrière-plan.'**
+  String get batteryOther;
+
+  /// No description provided for @batteryOpen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir le réglage'**
+  String get batteryOpen;
+
+  /// No description provided for @later.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get later;
+
+  /// No description provided for @iosStartWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur iPhone, le SOS passe uniquement par Internet, sans SMS : alerte au serveur, e-mails et notifications. Aucun SMS ne part de l\'iPhone ; les réglages SMS sont sans effet pour cette navigation.'**
+  String get iosStartWarning;
+
+  /// No description provided for @iosStartNoEmail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacts SOS sans e-mail, qui ne seront pas prévenus : {names}'**
+  String iosStartNoEmail(String names);
+
+  /// No description provided for @iosSosOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans Internet, l\'alerte SOS ne peut pas partir de l\'iPhone. Elle partira automatiquement dès le retour de la connexion. Alertez les secours maintenant : canal 16 de la VHF ou 196.'**
+  String get iosSosOffline;
 }
 
 class _AppLocalizationsDelegate

@@ -14,8 +14,10 @@ void main() {
   late FauxServeurNautiLink serveur;
   late FauxGps gps;
   late FauxMedias medias;
+  late FauxSms sms;
 
   setUp(() {
+    sms = FauxSms();
     SharedPreferences.setMockInitialValues({});
     serveur = FauxServeurNautiLink()..navigationEnCours = false;
     gps = FauxGps(positionEssai());
@@ -36,7 +38,19 @@ void main() {
     await attendre(tester);
   }
 
-  Future<void> connecter(WidgetTester tester) async {
+  /// « Envoi message – Début de navigation », avec l'explication de
+  /// l'autorisation d'envoi de SMS, redemandée tant qu'elle manque (RG-AND-02).
+  Future<void> demarrer(WidgetTester tester) async {
+    await toucher(tester, 'Envoi message – Début de navigation');
+    if (find.text('Envoi de SMS').evaluate().isNotEmpty) {
+      await toucher(tester, 'OK');
+    }
+  }
+
+  Future<void> connecter(
+    WidgetTester tester, {
+    String plateforme = 'android',
+  }) async {
     setPhone(tester);
     final session = await tester.runAsync(StockageSession.ouvrir);
     await tester.pumpWidget(
@@ -46,6 +60,9 @@ void main() {
           BaseMemoire(),
           positions: gps,
           medias: medias,
+          // Pas de SMS sur iPhone (RG-IOS-02).
+          sms: plateforme == 'ios' ? null : sms,
+          plateforme: plateforme,
         ),
       ),
     );
@@ -88,7 +105,7 @@ void main() {
       await attendre(tester);
       expect(find.text('2'), findsOneWidget);
 
-      await toucher(tester, 'Envoi message – Début de navigation');
+      await demarrer(tester);
       // RG-COM-03 : résultat de chaque circuit.
       expect(find.text('Navigation démarrée'), findsOneWidget);
       expect(find.text('Serveur : envoyé'), findsOneWidget);
@@ -109,7 +126,7 @@ void main() {
       await connecter(tester);
       await toucher(tester, 'Démarrer navigation');
       await toucher(tester, 'J\'ai compris');
-      await toucher(tester, 'Envoi message – Début de navigation');
+      await demarrer(tester);
       expect(find.text('Démarrage refusé'), findsOneWidget);
       expect(
         find.textContaining('Quota de navigation gratuite épuisé'),
@@ -130,7 +147,7 @@ void main() {
     await connecter(tester);
     await toucher(tester, 'Démarrer navigation');
     await toucher(tester, 'J\'ai compris');
-    await toucher(tester, 'Envoi message – Début de navigation');
+    await demarrer(tester);
     expect(
       find.text('Vérifiez d\'abord votre adresse e-mail.'),
       findsOneWidget,
@@ -141,7 +158,7 @@ void main() {
     await connecter(tester);
     await toucher(tester, 'Démarrer navigation');
     await toucher(tester, 'J\'ai compris');
-    await toucher(tester, 'Envoi message – Début de navigation');
+    await demarrer(tester);
     await toucher(tester, 'OK');
     serveur.elements.clear();
   }
@@ -158,12 +175,15 @@ void main() {
       await toucher(tester, 'Envoyer information position');
       expect(find.text('Position envoyée'), findsWidgets);
       expect(find.text('Serveur : envoyé'), findsOneWidget);
+      // RG-SMS-03 : SMS ordinaire prérempli, aux suiveurs de la navigation.
       expect(
         find.text(
-          'SMS : pas encore envoyés par cette version de l\'application',
+          'SMS : prérempli dans l\'application SMS, appuyez sur « Envoyer »',
         ),
         findsOneWidget,
       );
+      expect(sms.preremplis.last.$1, ['+33612345678']);
+      expect(sms.preremplis.last.$2, contains('Position 47.38000, -2.95000'));
       await toucher(tester, 'OK');
 
       await toucher(tester, 'NOTE');
@@ -172,6 +192,7 @@ void main() {
       expect(find.text('Note envoyée'), findsOneWidget);
       await toucher(tester, 'OK');
       expect(find.text('Cap au 270'), findsOneWidget); // journal
+      expect(sms.preremplis.last.$2, contains('Note : Cap au 270'));
 
       await toucher(tester, 'Photo');
       expect(find.text('Photo envoyée'), findsOneWidget);
@@ -183,6 +204,8 @@ void main() {
       await toucher(tester, 'Arrêter et envoyer');
       expect(find.text('Note vocale envoyée'), findsOneWidget);
       await toucher(tester, 'OK');
+      // RG-SMS-06 : « Note vocale » et lien vers la page de la navigation.
+      expect(sms.preremplis.last.$2, contains('Note vocale : https://'));
 
       expect(evenements().map((e) => e['type']), [
         'position_manuelle',
@@ -209,12 +232,6 @@ void main() {
   testWidgets(
     'SOS depuis l\'accueil : confirmation, SMS SOS prérempli, alerte au serveur (TODO-5.5, RG-SOS-15, RG-AND-04)',
     (tester) async {
-      final liens = <Uri>[];
-      ouvrirLien = (u) async {
-        liens.add(u);
-        return true;
-      };
-      addTearDown(() => ouvrirLien = (_) async => false);
       await connecter(tester);
       await toucher(tester, 'Envoyer un SOS');
       expect(find.text('Envoyer un SOS ?'), findsOneWidget);
@@ -241,11 +258,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      final sms = liens.single;
-      expect(sms.scheme, 'sms');
-      expect(sms.path, '+33612345678');
-      final texte = Uri.decodeComponent(sms.query.substring('body='.length));
+      final (numeros, texte, _) = sms.preremplis.single;
+      expect(numeros, ['+33612345678']);
       expect(texte, contains('SOS Alizé'));
+      expect(texte, contains('(suite)')); // second SMS (RG-SOS-08)
       expect(texte, contains('Problème : Avarie moteur.'));
       expect(texte, contains('https://maps.google.com/?q=47.38000,-2.95000'));
       final alerte = serveur.alertesRecues.values.single as Map;
@@ -308,6 +324,39 @@ void main() {
       expect(find.byKey(const Key('voyage-name')), findsOneWidget);
       expect(find.text('Alizé — Houat'), findsOneWidget);
       expect(find.text('Envoyer information position'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'iPhone : avertissement au démarrage, aucun SMS, SOS sans Internet (RG-IOS-02 à RG-IOS-04)',
+    (tester) async {
+      await connecter(tester, plateforme: 'ios');
+      await toucher(tester, 'Démarrer navigation');
+      await toucher(tester, 'J\'ai compris');
+      await reveal(tester, find.byKey(const Key('ios-start-warning')));
+      expect(find.byKey(const Key('ios-start-warning')), findsOneWidget);
+      // Claire est contact SOS sans e-mail : elle ne sera pas prévenue.
+      expect(
+        find.text(
+          'Contacts SOS sans e-mail, qui ne seront pas prévenus : Claire',
+        ),
+        findsOneWidget,
+      );
+      await demarrer(tester);
+      expect(find.text('Envoi de SMS'), findsNothing);
+      expect(find.textContaining('SMS'), findsNothing);
+      await toucher(tester, 'OK');
+
+      serveur.coupe = true;
+      await toucher(tester, 'Envoyer un SOS');
+      await toucher(tester, 'Confirmer le SOS');
+      await attendre(tester);
+      expect(
+        find.textContaining('Sans Internet, l\'alerte SOS ne peut pas partir'),
+        findsOneWidget,
+      );
+      expect(sms.preremplis, isEmpty);
+      expect(sms.envoyes, isEmpty);
     },
   );
 }

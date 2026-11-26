@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification après un redémarrage pendant une navigation (RG-NAV-12, D-51). -->
+    <string name="canal_navigation">Navigation en cours</string>
+    <string name="redemarrage_titre">Navigation en cours</string>
+    <string name="redemarrage_texte">Le téléphone a redémarré pendant votre navigation : ouvrez NautiLink pour reprendre les positions automatiques.</string>
+</resources>

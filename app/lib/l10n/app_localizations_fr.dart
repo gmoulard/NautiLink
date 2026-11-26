@@ -1090,4 +1090,179 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get voyageFinished => 'Navigation terminée';
+
+  @override
+  String smsHeader(String boat, String kind, String time) {
+    return 'NautiLink $boat — $kind à $time.';
+  }
+
+  @override
+  String get smsKindStart => 'début de navigation';
+
+  @override
+  String get smsKindPosition => 'position';
+
+  @override
+  String get smsKindNote => 'note';
+
+  @override
+  String get smsKindPhoto => 'photo';
+
+  @override
+  String get smsKindVoice => 'note vocale';
+
+  @override
+  String get smsKindEnd => 'fin de navigation';
+
+  @override
+  String smsDestination(String destination) {
+    return 'Destination : $destination.';
+  }
+
+  @override
+  String smsPositionLine(String position, String link) {
+    return 'Position $position : $link';
+  }
+
+  @override
+  String get smsGpsUnavailable => 'GPS NON DISPONIBLE';
+
+  @override
+  String smsNoteLine(String text) {
+    return 'Note : $text';
+  }
+
+  @override
+  String smsPhotoLine(String link) {
+    return 'Photo : $link';
+  }
+
+  @override
+  String smsVoiceLine(String link) {
+    return 'Note vocale : $link';
+  }
+
+  @override
+  String smsFollowLine(String link) {
+    return 'Suivre la navigation : $link';
+  }
+
+  @override
+  String sosSmsSecond(
+    String name,
+    String port,
+    String engine,
+    String range,
+    String fuel,
+    String speed,
+    String draft,
+  ) {
+    return 'SOS $name (suite). Port d\'attache : $port. Moteur : $engine. Autonomie : $range. Carburant : $fuel. Vitesse : $speed. Tirant d\'eau : $draft.';
+  }
+
+  @override
+  String smsResultAuto(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count destinataires',
+      one: '1 destinataire',
+    );
+    return 'SMS : envoyé automatiquement à $_temp0';
+  }
+
+  @override
+  String get smsResultPrefilled =>
+      'SMS : prérempli dans l\'application SMS, appuyez sur « Envoyer »';
+
+  @override
+  String get smsResultMms =>
+      'MMS : prérempli avec la photo dans l\'application SMS';
+
+  @override
+  String get smsResultMmsFailed =>
+      'MMS impossible : SMS avec le lien vers la photo prérempli à la place';
+
+  @override
+  String get smsResultOff => 'SMS : désactivés pour ce type d\'envoi';
+
+  @override
+  String get smsResultNoRecipient =>
+      'SMS : aucun suiveur avec un numéro de téléphone';
+
+  @override
+  String get smsResultNoPermission =>
+      'SMS : pas d\'autorisation d\'envoi, position envoyée au serveur seulement';
+
+  @override
+  String get smsResultFailed =>
+      'SMS : l\'application SMS n\'a pas pu s\'ouvrir';
+
+  @override
+  String get smsPermissionTitle => 'Envoi de SMS';
+
+  @override
+  String get smsPermissionExplain =>
+      'NautiLink envoie lui-même les SMS SOS à vos contacts SOS, et les SMS de positions automatiques à vos suiveurs, même écran éteint. Autorisez l\'envoi de SMS à l\'écran suivant. Sans cette autorisation, le SMS SOS s\'ouvrira prérempli et les positions automatiques partiront au serveur seulement.';
+
+  @override
+  String get smsAutoOffNotice =>
+      'Sans autorisation d\'envoi de SMS, les positions automatiques partiront au serveur seulement, sans SMS.';
+
+  @override
+  String smsAutoFailed(String phone) {
+    return 'SMS de position automatique non envoyé à $phone';
+  }
+
+  @override
+  String get retry => 'Réessayer';
+
+  @override
+  String sosSmsAutoSent(int count) {
+    return 'SMS SOS envoyés automatiquement : $count';
+  }
+
+  @override
+  String get sosSmsRetrying => 'SMS SOS en échec : nouvel essai chaque minute';
+
+  @override
+  String get sosSmsStopRetry => 'Arrêter les nouveaux essais des SMS';
+
+  @override
+  String get batteryTitle => 'Positions écran éteint';
+
+  @override
+  String get batteryExplain =>
+      'Pour que les positions automatiques continuent écran éteint, autorisez NautiLink à ignorer l\'optimisation de la batterie à l\'écran suivant, et laissez les notifications de NautiLink activées.';
+
+  @override
+  String get batterySamsung =>
+      'Sur Samsung : Paramètres > Batterie > Limites d\'utilisation en arrière-plan, mettez NautiLink dans les applications « jamais en veille ».';
+
+  @override
+  String get batteryXiaomi =>
+      'Sur Xiaomi : activez le « Démarrage automatique » de NautiLink, réglez son économiseur de batterie sur « Aucune restriction » et verrouillez-la dans les applications récentes.';
+
+  @override
+  String get batteryOther =>
+      'Si votre téléphone a ses propres réglages d\'économie de batterie, autorisez NautiLink à fonctionner en arrière-plan.';
+
+  @override
+  String get batteryOpen => 'Ouvrir le réglage';
+
+  @override
+  String get later => 'Plus tard';
+
+  @override
+  String get iosStartWarning =>
+      'Sur iPhone, le SOS passe uniquement par Internet, sans SMS : alerte au serveur, e-mails et notifications. Aucun SMS ne part de l\'iPhone ; les réglages SMS sont sans effet pour cette navigation.';
+
+  @override
+  String iosStartNoEmail(String names) {
+    return 'Contacts SOS sans e-mail, qui ne seront pas prévenus : $names';
+  }
+
+  @override
+  String get iosSosOffline =>
+      'Sans Internet, l\'alerte SOS ne peut pas partir de l\'iPhone. Elle partira automatiquement dès le retour de la connexion. Alertez les secours maintenant : canal 16 de la VHF ou 196.';
 }

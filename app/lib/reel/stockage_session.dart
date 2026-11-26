@@ -56,6 +56,26 @@ class StockageSession {
   int get dernierNombrePersonnes => _p.getInt(_personnes) ?? 1;
   Future<void> retenirNombrePersonnes(int n) => _p.setInt(_personnes, n);
 
+  /// Navigation en cours sur ce téléphone, lue après un redémarrage par
+  /// `RedemarrageRecepteur.kt` (« flutter.navigation_en_cours », RG-NAV-12).
+  static const _navigationEnCours = 'navigation_en_cours';
+  bool get navigationEnCours => _p.getBool(_navigationEnCours) ?? false;
+  Future<void> marquerNavigationEnCours(bool v) async {
+    if (navigationEnCours != v) await _p.setBool(_navigationEnCours, v);
+  }
+
+  /// Exclusion de l'optimisation de la batterie déjà proposée, au premier
+  /// démarrage d'une navigation (RG-GPS-05).
+  static const _batterie = 'nautilink.batterieProposee';
+  bool get batterieProposee => _p.getBool(_batterie) ?? false;
+  Future<void> proposerBatterie() => _p.setBool(_batterie, true);
+
+  /// Langue choisie dans les paramètres ; vide : langue du téléphone (RG-PRM-03).
+  static const _langue = 'nautilink.langue';
+  String? get langue => _p.getString(_langue);
+  Future<void> choisirLangue(String? l) =>
+      l == null ? _p.remove(_langue) : _p.setString(_langue, l);
+
   /// Identifiant du téléphone (`PUT /v1/appareils/{id}`), tiré au hasard à
   /// la première ouverture puis gardé.
   Future<String> appareilId() async {

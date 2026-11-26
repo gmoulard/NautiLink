@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Photo jointe au MMS prérempli (RG-SMS-05) : fichiers de l'application. -->
+<paths>
+    <files-path name="fichiers" path="." />
+    <cache-path name="cache" path="." />
+    <external-files-path name="externes" path="." />
+    <external-cache-path name="cache-externe" path="." />
+</paths>

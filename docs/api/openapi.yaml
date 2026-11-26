@@ -1589,6 +1589,7 @@ components:
             utilisateurId: {type: [string, 'null'], format: uuid, description: 'Compte du suiveur, une fois l''invitation acceptée.'}
             etatInvitation: {type: string, enum: [aucune, envoyee, acceptee, annulee]}
             modifieLe: {type: string, format: date-time}
+            recevoirSms: {type: boolean, description: 'Faux quand le suiveur a refusé les SMS dans son profil (« Recevoir les SMS », RG-SMS-01) ; vrai sans compte rattaché.'}
 
     ListeContacts:
       type: object

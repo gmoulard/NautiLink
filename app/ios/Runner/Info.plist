@@ -71,6 +71,14 @@
 	<string>NautiLink ajoute vos photos au journal de bord de la navigation.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>NautiLink enregistre vos notes vocales pour le journal de bord de la navigation.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<!-- Positions automatiques en arrière-plan pendant une navigation
+		     démarrée à l'écran (RG-IOS-08, D-54). -->
+		<string>location</string>
+		<!-- Notifications push du suiveur (RG-IOS-06). -->
+		<string>remote-notification</string>
+	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>NautiLink enregistre la position du bateau pendant la navigation et l'envoie avec le SOS.</string>
 </dict>
