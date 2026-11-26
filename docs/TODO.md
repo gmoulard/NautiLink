@@ -25,7 +25,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7, TODO-6.8, TODO-6.9 | LOT-12 | [ ] |
 | LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [~] |
 | LOT-15 | Marque et publication Android | TODO-3.15, TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5, TODO-8.6 | LOT-3, LOT-11 | [~] |
-| LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7 | LOT-11, LOT-13, LOT-15 | [ ] |
+| LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7, TODO-10.8 | LOT-11, LOT-13, LOT-15 ; demande explicite de l'utilisateur ([D-155](07-decisions.md#d-155)) | [!] |
 | LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3 | LOT-13, LOT-14 | [ ] |
 | LOT-18 | Demandes du 2026-11-26 : nom, pied de page, paramètres, chef de bord, incidents | TODO-3.17, TODO-3.19, TODO-4.9, TODO-5.10, TODO-5.11 | LOT-11 | [ ] |
 
@@ -265,6 +265,8 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 Construite après l'application Android et le Web (D-33).
 
+**Bloqué ([D-155](07-decisions.md#d-155))** : plus de construction de l'IPA tant que l'utilisateur ne demande pas explicitement l'iPhone. Les actions ci-dessous ne sont pas reprises d'ici là ; le code reste commun avec Android (D-58) et l'IPA déjà publiée reste sur le site.
+
 - [~] **TODO-10.2**: Étude : localisation en arrière-plan sur iPhone, batterie, règles de l'App Store ([Q-09](06-questions-ouvertes.md#q-09), RG-IOS-09). Dépend de : aucune.
   - Critères d'acceptation : prototype qui enregistre une position toutes les 15 minutes pendant 8 heures, écran verrouillé, sur deux modèles d'iPhone ; autorisations et règles de l'App Store citées.
   - Fait : [étude documentaire](etudes/localisation-arriere-plan-iphone.md) (mode d'arrière-plan, autorisations, pause automatique, règles 2.4.2, 2.5.4, 5.1.1 et 5.1.5 de l'App Store citées, reprise). Reste : prototype de 8 heures sur deux modèles d'iPhone ; risque de la règle 5.1.5 (services d'urgence) pour le SOS à traiter.
@@ -282,5 +284,7 @@ Construite après l'application Android et le Web (D-33).
 - [~] **TODO-10.6**: Abonnement par achat intégré de l'App Store (RG-IOS-07). Dépend de : TODO-4.6, TODO-1.14.
   - Critères d'acceptation : abonnement souscrit sur l'iPhone reconnu sur Android et le Web.
   - Fait (2026-11-26) : achat unique de l'App Store par StoreKit 2 (`in_app_purchase`), transaction signée vérifiée par le serveur auprès de l'App Store Server API (`POST /v1/abonnement/app-store`), reconnue sur tous les supports (RG-ECO-07). Reste : produit dans App Store Connect, clé de l'App Store Server API (`NAUTILINK_APP_STORE_*`), essai sur un vrai iPhone.
-- [ ] **TODO-10.7**: Publication sur l'App Store. Dépend de : TODO-10.3 à TODO-10.6, TODO-8.3.
+- [!] **TODO-10.7**: Publication sur l'App Store. Dépend de : TODO-10.3 à TODO-10.6, TODO-8.3 ; demande explicite de l'utilisateur ([D-155](07-decisions.md#d-155)).
   - Critères d'acceptation : application acceptée par Apple avec la localisation en arrière-plan.
+- [!] **TODO-10.8**: Reprendre la construction de l'IPA iPhone (`nautilink-ios-non-signe.ipa`) par le workflow « Site GitHub Pages », suspendue le 2026-11-26 ([D-155](07-decisions.md#d-155)). Dépend de : demande explicite de l'utilisateur.
+  - Critères d'acceptation : IPA reconstruite à chaque changement de `app/` sur `main`, case « iphone » cochée par défaut ; version, build et commit à jour sur la page « Télécharger ».

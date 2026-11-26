@@ -20,6 +20,7 @@ Les trois composants partent de la version **0.0.1** (2026-11-25).
 - **Build** : numéro d'exécution du workflow qui a construit le livrable (`github.run_number`), propre à chaque workflow. Deux constructions de la même version se distinguent par leur build et leur commit.
 - **Commit** : SHA du commit construit, affiché sur 7 caractères avec un lien vers GitHub.
 
+- **iPhone suspendu** ([D-155](07-decisions.md#d-155)) : l'IPA n'est plus reconstruite ; celle publiée sur le site garde la version, le build et le commit de sa dernière construction.
 - **Production pendant la bêta** ([D-145](07-decisions.md#d-145)) : la dernière construction de la vraie application publiée sur le site (version de `app/pubspec.yaml`, build du workflow).
 - **Démonstration V0** ([D-144](07-decisions.md#d-144)) : terminée, figée au commit `8ac9c1a`, en version 0.0.1 ; le workflow « Site GitHub Pages » la reconstruit toujours depuis ce commit (`DEMO_V0_COMMIT`), quel que soit l'état de `app/`. Sa version ne change plus ; la version de `app/pubspec.yaml` est celle de la vraie application.
 
