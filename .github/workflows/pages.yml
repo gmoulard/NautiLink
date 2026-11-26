@@ -169,7 +169,9 @@ jobs:
       BUILD: ${{ github.run_number }}
       APP_VERSION: ${{ needs.choix.outputs.app_version }}
       DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
-      DEFINES_DEMO: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ env.DEMO_V0_VERSION }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ env.DEMO_V0_COMMIT }}
+      # NE PAS lire le contexte « env » ici : le contexte env n'existe pas dans l'env d'un job (fichier refusé) ;
+      # version et commit de la démonstration sont ajoutés dans les étapes (DEMO_V0_VERSION, DEMO_V0_COMMIT).
+      DEFINES_DEMO: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -203,7 +205,7 @@ jobs:
         working-directory: demo-v0/app
         run: |
           flutter pub get
-          flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES_DEMO
+          flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES_DEMO --dart-define=NAUTILINK_VERSION=$DEMO_V0_VERSION --dart-define=NAUTILINK_COMMIT=$DEMO_V0_COMMIT
       - name: APK Android (vraie application et démonstration)
         if: needs.choix.outputs.android == 'true'
         working-directory: app
@@ -212,7 +214,7 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk "$APK_PROD"
           # Démonstration V0 depuis son commit figé (D-144).
           (cd ../demo-v0/app && flutter pub get \
-            && flutter build apk --release $DEFINES_DEMO --dart-define=NAUTILINK_MODE=demo \
+            && flutter build apk --release $DEFINES_DEMO --dart-define=NAUTILINK_VERSION=$DEMO_V0_VERSION --dart-define=NAUTILINK_COMMIT=$DEMO_V0_COMMIT --dart-define=NAUTILINK_MODE=demo \
             && cp build/app/outputs/flutter-apk/app-release.apk "../../app/$APK")
       - uses: actions/download-artifact@v4
         if: needs.choix.outputs.iphone == 'true'
