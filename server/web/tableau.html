@@ -5,7 +5,7 @@
   <form class="enligne" method="post" action="{{$.Base}}/annonces/{{.ID}}/fermeture"><button class="secondaire" type="submit">Fermer</button></form>
 </div>
 {{end}}
-<h1>Tableau de bord</h1>
+<h1 class="masque">Log de nav</h1>
 <p>Bonjour {{.Nom}}.</p>
 <p><a class="bouton sos" href="{{.Base}}/sos">Envoyer un SOS</a></p>
 {{if not .EmailVerifie}}
@@ -16,36 +16,36 @@
 {{end}}
 {{with .D}}
 {{with .Quota}}<p><a class="lien" href="{{$.Base}}/quota">{{if .Abonnement.Actif}}Version abonné{{else}}Version gratuite : {{$.D.Disponible}} de navigation disponibles{{if .Epuise}} — quota épuisé{{end}}{{end}}</a></p>{{end}}
-<section aria-labelledby="titre-en-cours">
-<h2 id="titre-en-cours">Navigations en cours</h2>
-{{range .EnCours}}{{template "ligne-navigation" (ligne $.Base .)}}{{else}}<p class="aide">Aucune navigation en cours.</p>{{end}}
-</section>
-<section aria-labelledby="titre-historique">
-<h2 id="titre-historique">Historique</h2>
 <p class="filtres">Afficher :
   <a class="lien{{if eq .Role ""}} actif{{end}}" href="{{$.Base}}/"{{if eq .Role ""}} aria-current="page"{{end}}>Toutes</a> ·
   <a class="lien{{if eq .Role "navigateur"}} actif{{end}}" href="{{$.Base}}/?role=navigateur"{{if eq .Role "navigateur"}} aria-current="page"{{end}}>Comme navigateur</a> ·
   <a class="lien{{if eq .Role "suiveur"}} actif{{end}}" href="{{$.Base}}/?role=suiveur"{{if eq .Role "suiveur"}} aria-current="page"{{end}}>Comme suiveur</a></p>
-{{range .Historique}}{{template "ligne-navigation" (ligne $.Base .)}}{{else}}<p class="aide">Aucune navigation terminée.</p>{{end}}
-{{if .Suivant}}<p><a class="lien" href="{{$.Base}}/?curseur={{.Suivant}}{{if .Role}}&amp;role={{.Role}}{{end}}">Navigations plus anciennes</a></p>{{end}}
+{{range $i, $g := .Bateaux}}
+<section class="log" aria-labelledby="log-{{$i}}">
+<h2 id="log-{{$i}}">Log de nav de {{$g.Nom}}</h2>
+<ul class="log">
+{{range $g.Lignes}}{{template "ligne-navigation" (ligne $.Base .)}}{{end}}
+</ul>
 </section>
+{{else}}<p class="aide">Aucune navigation.</p>{{end}}
+{{if .Suivant}}<p><a class="lien" href="{{$.Base}}/?curseur={{.Suivant}}{{if .Role}}&amp;role={{.Role}}{{end}}">Navigations plus anciennes</a></p>{{end}}
 {{end}}
 {{template "bas" .}}
 
 {{define "ligne-navigation"}}{{with .L}}
-<article class="navigation">
-  <h3><a class="lien" href="{{$.Base}}/navigations/{{.N.ID}}">{{.N.Nom}}</a></h3>
-  <p class="aide">{{if eq .N.Role "suiveur"}}Vous suivez cette navigation{{else}}Votre navigation{{end}} · {{.N.Bateau.Nom}}</p>
-  <dl class="resume">
-    <dt>Départ</dt><dd>{{.Depart}}{{if .LieuDepart}}, {{.LieuDepart}}{{end}}</dd>
-    {{if .N.Fin}}<dt>Arrivée</dt><dd>{{.Fin}}{{if .LieuArrivee}}, {{.LieuArrivee}}{{end}}</dd>{{end}}
-    <dt>Durée</dt><dd>{{.Duree}}</dd>
-    <dt>Distance</dt><dd>{{.Distance}}</dd>
-  </dl>
-  <details class="apercu"><summary>Aperçu</summary></details>
-  <div class="bulle">
+<li class="navigation{{if eq .N.Etat "en_cours"}} en-cours{{end}}">
+  <a class="titre-log" href="{{$.Base}}/navigations/{{.N.ID}}">{{.Titre}}</a>{{if eq .N.Etat "en_cours"}} <span class="etiquette">En cours</span>{{end}}{{if eq .N.Role "suiveur"}} <span class="aide">· suivie</span>{{end}}
+  <div class="bulle" role="tooltip">
+    <p><b>{{.N.Nom}}</b></p>
+    <p class="aide">{{if eq .N.Role "suiveur"}}Vous suivez cette navigation{{else}}Votre navigation{{end}} · {{.N.Bateau.Nom}}</p>
+    <dl class="resume">
+      <dt>Départ</dt><dd>{{.Depart}}{{if .LieuDepart}}, {{.LieuDepart}}{{end}}</dd>
+      {{if .N.Fin}}<dt>Arrivée</dt><dd>{{.Fin}}{{if .LieuArrivee}}, {{.LieuArrivee}}{{end}}</dd>{{end}}
+      <dt>Durée</dt><dd>{{.Duree}}</dd>
+      <dt>Distance</dt><dd>{{.Distance}}</dd>
+    </dl>
     {{if .Apercu}}{{template "carte" .Apercu}}{{else}}<p class="aide">Aucune position reçue.</p>{{end}}
     {{if .Derniere}}<p>{{if eq .N.Etat "en_cours"}}Dernière position{{else}}Dernière position reçue{{end}} : {{.Derniere}}, {{.HeureD}}</p>{{end}}
   </div>
-</article>
+</li>
 {{end}}{{end}}

@@ -107,37 +107,70 @@ func navEssai(nom, etat, role string) navigationJSON {
 	return n
 }
 
-// TestRenduTableau : en cours en haut, puis l'historique, filtres, aperçu
-// (cahier des charges 6.1).
+// TestTitreLog : une ligne du log de nav (D-156) : « 26-nov-26 14:00-18:00
+// 7 milles vers Toulon ».
+func TestTitreLog(t *testing.T) {
+	dec := 60
+	debut := time.Date(2026, 11, 26, 13, 0, 0, 0, time.UTC)
+	fin := debut.Add(4 * time.Hour)
+	n := navigationJSON{Debut: debut, Fin: &fin, DistanceMetres: 7 * 1852, decalage: &dec, destinationTexte: "Toulon darse vieille"}
+	if got := titreLog(n); got != "26-nov-26 14:00-18:00 7 milles vers Toulon darse vieille" {
+		t.Errorf("titre : %q", got)
+	}
+	arrivee := "Port-Tudy"
+	n.destinationTexte, n.LieuArrivee = "", &lieuJSON{Nom: &arrivee}
+	if got := titreLog(n); got != "26-nov-26 14:00-18:00 7 milles vers Port-Tudy" {
+		t.Errorf("sans destination : %q", got)
+	}
+	n.Fin, n.decalage, n.DistanceMetres = nil, nil, 700
+	if got := titreLog(n); got != "26-nov-26 13:00-en cours UTC 0,4 mille" {
+		t.Errorf("en cours, fuseau inconnu : %q", got)
+	}
+	if millesTexte(1852) != "1 mille" || millesTexte(2.6*1852) != "3 milles" {
+		t.Error("millesTexte")
+	}
+}
+
+// TestRenduTableau : log de nav par bateau sous le filtre, une ligne par
+// navigation, en cours d'abord, fenêtre au survol avec le détail et l'aperçu
+// (cahier des charges 6.1, D-156).
 func TestRenduTableau(t *testing.T) {
-	ligne := func(n navigationJSON) ligneNav {
-		l := ligneNav{N: n, Depart: heureWeb(n.Debut, nil), Duree: dureeTexte(n.DureeMinutes), Distance: distanceTexte(n.DistanceMetres)}
+	ligne := func(n navigationJSON, bateau string) ligneNav {
+		n.Bateau = resumeBateau{ID: bateau, Nom: bateau}
+		l := ligneNav{Titre: titreLog(n), N: n, Depart: heureWeb(n.Debut, nil), Duree: dureeTexte(n.DureeMinutes), Distance: distanceTexte(n.DistanceMetres)}
 		l.Apercu = cadrer([]pointCarte{{Latitude: 47.7, Longitude: -4}, {Latitude: 47.6, Longitude: -3.9}}, nil, 320, 200, false)
 		return l
 	}
+	enCours := []ligneNav{ligne(navEssai("Alizé — Glénan", "en_cours", "navigateur"), "Alizé")}
+	hist := []ligneNav{ligne(navEssai("Mistral — Groix", "terminee", "suiveur"), "Mistral"), ligne(navEssai("Alizé — Houat", "terminee", "navigateur"), "Alizé")}
 	d := &donneesPage{Base: "/nautilink", Connecte: true, EmailVerifie: true, Nom: "Paul", D: donneesTableau{
-		EnCours:    []ligneNav{ligne(navEssai("Alizé — Glénan", "en_cours", "navigateur"))},
-		Historique: []ligneNav{ligne(navEssai("Mistral — Groix", "terminee", "suiveur"))},
-		Role:       "suiveur", Suivant: 50}}
+		EnCours: enCours, Historique: hist, Bateaux: parBateau(enCours, hist), Role: "suiveur", Suivant: 50}}
 	page := rendu(t, "tableau.html", d)
-	enCours, hist := strings.Index(page, "Alizé — Glénan"), strings.Index(page, "Mistral — Groix")
-	if enCours < 0 || hist < 0 || enCours > hist || strings.Index(page, "Navigations en cours") > enCours {
-		t.Fatalf("ordre des sections : %d %d", enCours, hist)
+	filtre, alize, mistral := strings.Index(page, "Afficher :"), strings.Index(page, "Log de nav de Alizé"), strings.Index(page, "Log de nav de Mistral")
+	glenan, houat := strings.Index(page, "Alizé — Glénan"), strings.Index(page, "Alizé — Houat")
+	if filtre < 0 || alize < filtre || mistral < alize || glenan > houat || houat > mistral {
+		t.Fatalf("ordre : filtre %d, Alizé %d, Mistral %d, en cours %d, terminée %d", filtre, alize, mistral, glenan, houat)
 	}
-	for _, attendu := range []string{"Bonjour Paul", "Tableau de bord", "Comme navigateur", "Comme suiveur",
+	for _, attendu := range []string{"Bonjour Paul", "Comme navigateur", "Comme suiveur",
 		`href="/nautilink/?role=suiveur" aria-current="page"`, "Vous suivez cette navigation", "Votre navigation",
-		"2 h 05", "9,3 km (5,0 milles)", "2026-11-20 09:00 UTC", "Aperçu", `class="bulle"`, "<polyline",
+		"20-nov-26 09:00-11:05 UTC 5 milles", "20-nov-26 09:00-en cours UTC", "En cours",
+		"2 h 05", "9,3 km (5,0 milles)", "2026-11-20 09:00 UTC", `class="bulle"`, "<polyline",
 		`href="/nautilink/navigations/11111111-0000-4000-8000-000000000001"`, "?curseur=50&amp;role=suiveur"} {
 		if !strings.Contains(page, attendu) {
-			t.Errorf("%q absent du tableau de bord", attendu)
+			t.Errorf("%q absent du log de nav", attendu)
 		}
 	}
-	if strings.Contains(page, "openstreetmap") {
-		t.Error("l'aperçu ne charge pas de dalles")
+	for _, absent := range []string{"<h1>Tableau de bord</h1>", "Aperçu</summary>", "openstreetmap"} {
+		if strings.Contains(page, absent) {
+			t.Errorf("%q présent dans le log de nav", absent)
+		}
 	}
 	vide := rendu(t, "tableau.html", &donneesPage{Base: "/nautilink", Connecte: true, D: donneesTableau{}})
-	if !strings.Contains(vide, "Aucune navigation en cours.") || !strings.Contains(vide, "Aucune navigation terminée.") {
-		t.Error("tableau de bord vide")
+	if !strings.Contains(vide, "Aucune navigation.") {
+		t.Error("log de nav vide")
+	}
+	if !strings.Contains(page, `src="/nautilink/static/logo-nautilink.png"`) {
+		t.Error("logo absent devant le titre")
 	}
 }
 
@@ -159,7 +192,7 @@ func TestTableauDeBordWeb(t *testing.T) {
 		t.Fatalf("connexion : %d %q", rec.Code, rec.Header().Get("Location"))
 	}
 	page := web.envoyer("GET", "/nautilink/", nil).Body.String()
-	if !strings.Contains(page, "Tableau de bord") || !strings.Contains(page, "/navigations/"+enCours) || !strings.Contains(page, "/navigations/"+terminee) {
+	if !strings.Contains(page, "Log de nav de Alizé") || !strings.Contains(page, "/navigations/"+enCours) || !strings.Contains(page, "/navigations/"+terminee) {
 		t.Fatalf("tableau de bord du suiveur : %s", page)
 	}
 	if strings.Index(page, enCours) > strings.Index(page, terminee) {
