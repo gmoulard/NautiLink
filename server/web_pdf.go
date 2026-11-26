@@ -54,6 +54,7 @@ func exportPDF(d donneesNavigation, evts []evenementJSON, photos map[string][]by
 	if n.Navigateur != nil {
 		ligne("Navigateur", n.Navigateur.Nom)
 	}
+	ligne("Chef de bord", n.ChefDeBord)
 	ligne("Bateau", n.Bateau.Nom)
 	ligne("Début", d.L.Depart)
 	ligne("Fin", d.L.Fin)

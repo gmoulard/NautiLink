@@ -157,10 +157,14 @@ func (a *app) modificationDe(ctx context.Context, utilisateur string, n navLigne
 
 // champsModifies : seulement ce que le navigateur a changé (RG-COM-04) ; une
 // heure laissée telle quelle garde ses secondes.
-func champsModifies(r *http.Request, n navLigne) (champs, error) {
+func champsModifies(r *http.Request, n navLigne, chefAffiche string) (champs, error) {
 	c := champs{}
 	if nom := strings.TrimSpace(r.FormValue("nom")); r.Form.Has("nom") && nom != n.nom {
 		c["nom"] = enJSON(nom)
+	}
+	// Chef de bord (RG-NAV-36) : comparé au nom affiché dans le champ.
+	if chef := strings.TrimSpace(r.FormValue("chefDeBord")); r.Form.Has("chefDeBord") && chef != chefAffiche {
+		c["chefDeBord"] = enJSON(chef)
 	}
 	if n.enCours() {
 		return c, nil
@@ -228,7 +232,7 @@ func (a *app) routesWebJournal(mux *http.ServeMux, c string) {
 		if err := r.ParseForm(); err != nil {
 			return errInvalide("Formulaire illisible.")
 		}
-		ch, err := champsModifies(r, n)
+		ch, err := champsModifies(r, n, chefDeBord(n, d.Nom))
 		if err == nil && len(ch) > 0 {
 			_, err = a.modifierNavigation(r.Context(), s.utilisateur, id, ch)
 		}

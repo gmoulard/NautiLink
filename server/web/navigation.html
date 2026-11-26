@@ -37,6 +37,9 @@
 <form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/modification">
   <label for="nom">Nom</label>
   <input id="nom" name="nom" type="text" required maxlength="200" value="{{.Nom}}">
+  <label for="chefDeBord">Chef de bord</label>
+  <input id="chefDeBord" name="chefDeBord" type="text" maxlength="200" value="{{$.D.N.ChefDeBord}}" aria-describedby="aide-chef">
+  <p class="aide" id="aide-chef">Laissé vide : vous-même.</p>
   {{if .Terminee}}
   <label for="destination">Destination</label>
   <input id="destination" name="destination" type="text" maxlength="200" value="{{.Destination}}">
@@ -123,6 +126,7 @@
 <p class="etat {{.N.Etat}}">{{if .EnCours}}Navigation en cours{{else if .Corbeille}}Dans la corbeille{{else}}Navigation terminée{{end}}{{if .N.ClotureAutomatiqueLe}} — clôturée automatiquement, quota épuisé{{end}}</p>
 <dl class="resume">
   <dt>Navigateur</dt><dd>{{.N.Navigateur.Nom}}</dd>
+  {{if .N.ChefDeBord}}<dt>Chef de bord</dt><dd>{{.N.ChefDeBord}}</dd>{{end}}
   <dt>Bateau</dt><dd>{{.N.Bateau.Nom}}</dd>
   <dt>Début</dt><dd>{{.L.Depart}}</dd>
   {{if .N.Fin}}<dt>Fin</dt><dd>{{.L.Fin}}</dd>{{end}}

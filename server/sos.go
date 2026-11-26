@@ -371,6 +371,7 @@ type donneesSos struct {
 	decalage                  *int
 	bateau                    bateauJSON
 	nomNavigation             string
+	chef                      string // chef de bord, pendant une navigation (RG-NAV-36)
 }
 
 // destinatairesSos : suiveurs de la navigation, ou de périmètre navigateur
@@ -439,7 +440,7 @@ func (a *app) emailsSos(ctx context.Context, adresse, id string) error {
 		if err != nil {
 			return err
 		}
-		alertees, d.nomNavigation = n.alertees, n.nom
+		alertees, d.nomNavigation, d.chef = n.alertees, n.nom, chefDeBord(n, d.navigateur)
 	}
 	dests, err := a.destinatairesSos(ctx, navigateur, al.NavigationID, alertees)
 	if err != nil {
@@ -568,6 +569,7 @@ func texteSos(d donneesSos, adresse string) (string, string) {
 	if al.PersonnesABord != nil {
 		ligne("Personnes à bord", "People on board", fmt.Sprint(*al.PersonnesABord))
 	}
+	ligne("Chef de bord", "Skipper", d.chef) // RG-NAV-36 ; vide hors navigation
 	if al.ProblemeRencontre != nil {
 		ligne("Problème rencontré", "Problem", *al.ProblemeRencontre)
 	}

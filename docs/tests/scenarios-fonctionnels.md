@@ -120,6 +120,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-NAV-32** ([RG-NAV-29](../02-regles-metier.md#rg-nav-29)) — Étant donné la page d'une navigation sur l'Application web, quand la carte s'affiche, alors elle montre le fond OpenStreetMap et le balisage d'OpenSeaMap, avec leurs mentions de source.
 - **TS-NAV-33** ([RG-NAV-31](../02-regles-metier.md#rg-nav-31)) — Étant donné une navigation terminée et un SOS déclenché après sa fin, quand on ouvre sa page sur l'Application web, alors le SOS est un point d'alerte sur la carte et figure dans le journal, et la distance, le lieu de départ et le lieu d'arrivée ne changent pas.
 - **TS-NAV-34** ([RG-NAV-35](../02-regles-metier.md#rg-nav-35)) — Étant donné un navigateur nommé « Léa Marin », quand il ouvre l'écran de démarrage, alors le chef de bord est prérempli avec « Léa Marin » ; quand il le remplace par « Paul Marin » et démarre, alors la navigation a « Paul Marin » pour chef de bord.
+- **TS-NAV-35** ([RG-NAV-36](../02-regles-metier.md#rg-nav-36)) — Étant donné une navigation en cours dont le chef de bord est « Léa Marin », quand le navigateur le change en « Jean » sur la page de la navigation, puis déclenche un SOS, alors la page et l'export PDF affichent « Chef de bord : Jean » et l'e-mail SOS contient « Chef de bord : Jean » ; effacé, le chef de bord redevient le nom du navigateur.
 
 ## 7. Journal de bord (RG-JRN)
 

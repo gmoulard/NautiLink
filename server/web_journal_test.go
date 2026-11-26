@@ -100,22 +100,22 @@ func TestChampsModifies(t *testing.T) {
 	}
 	inchange := url.Values{"nom": {"Alizé — Glénan"}, "destination": {"Glénan"}, "bateauId": {"b1"},
 		"debut": {"2026-11-20T08:00"}, "fin": {"2026-11-20T11:00"}}
-	if c, err := champsModifies(formulaire(inchange), n); err != nil || len(c) != 0 {
+	if c, err := champsModifies(formulaire(inchange), n, ""); err != nil || len(c) != 0 {
 		t.Fatalf("rien de changé : %v %v", c, err)
 	}
 	change := url.Values{"nom": {"Sortie aux Glénan"}, "destination": {""}, "bateauId": {"b2"},
 		"debut": {"2026-11-20T08:00"}, "fin": {"2026-11-20T12:15"}}
-	c, err := champsModifies(formulaire(change), n)
+	c, err := champsModifies(formulaire(change), n, "")
 	if err != nil || string(c["nom"]) != `"Sortie aux Glénan"` || string(c["destination"]) != "null" || string(c["bateauId"]) != `"b2"` ||
 		c.a("debut") || string(c["fin"]) != `"2026-11-20T12:15:00Z"` {
 		t.Fatalf("changements : %v %v", c, err)
 	}
-	if _, err := champsModifies(formulaire(url.Values{"fin": {"demain"}}), n); err == nil {
+	if _, err := champsModifies(formulaire(url.Values{"fin": {"demain"}}), n, ""); err == nil {
 		t.Fatal("heure illisible acceptée")
 	}
 	enCours := n
 	enCours.fin, enCours.finEnr = nil, nil
-	if c, _ := champsModifies(formulaire(change), enCours); len(c) != 1 || !c.a("nom") {
+	if c, _ := champsModifies(formulaire(change), enCours, ""); len(c) != 1 || !c.a("nom") {
 		t.Fatalf("en cours, le nom seul : %v", c)
 	}
 }
