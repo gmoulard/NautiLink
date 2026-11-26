@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 import 'package:flutter/foundation.dart';
 
 import '../config.dart';
@@ -35,6 +37,7 @@ class DepotReel extends Depot {
     CanalSms? canalSms,
     this.telephone,
     this.pageNavigation = _pageParDefaut,
+    Stream<bool>? reseau,
   }) : positions = positions ?? const PositionsIndisponibles(),
        canalSms = canalSms ?? const SmsIndisponible() {
     this.file =
@@ -67,6 +70,12 @@ class DepotReel extends Depot {
     conduite.surPositionAutomatique = (n, e) =>
         unawaited(sms.positionAutomatique(n, e, defaut: parametres));
     conduite.surEnCours = (v) => unawaited(session.marquerNavigationEnCours(v));
+    // Retour du réseau : relance de la file et relecture (D-135, RG-COM-07).
+    _reseau = reseau?.listen((connecte) {
+      if (!connecte || _etat != EtatSession.connecte) return;
+      unawaited(this.file.relancer());
+      unawaited(actualiser());
+    });
     // Photo ou note vocale déposée : sa copie locale n'est plus utile.
     _fichiersDeposes = this.file.reussis
         .where((e) => e.operation == 'fichier')
@@ -94,6 +103,11 @@ class DepotReel extends Depot {
       telephone: plateformeDuTelephone() == 'android'
           ? const TelephoneAndroid()
           : null,
+      reseau: kIsWeb
+          ? null
+          : Connectivity().onConnectivityChanged.map(
+              (r) => r.any((x) => x != ConnectivityResult.none),
+            ),
     );
   }
 
@@ -133,6 +147,10 @@ class DepotReel extends Depot {
   /// Adresse de la page d'une navigation sur la plateforme Web.
   final String Function(String navigationId) pageNavigation;
   StreamSubscription<EnvoiReussi>? _fichiersDeposes;
+  StreamSubscription<bool>? _reseau;
+
+  /// Annonces de l'administrateur, en bandeau de l'accueil (RG-ADM-06).
+  List<({String id, String texte})> annonces = const [];
 
   /// Navigation en cours sur ce téléphone : démarrage, journal, envois (TODO-5.2 à TODO-5.6).
   late final ConduiteNavigation conduite;
@@ -258,6 +276,12 @@ class DepotReel extends Depot {
       AlerteSosResume.depuisJson,
     );
     _actualiseLe = (await base.lireCopie('actualise'))?.recueLe;
+    final a = (await base.lireCopie('annonces'))?.valeur;
+    annonces = [
+      for (final x in a is List ? a : const [])
+        if (x is Map && x['id'] is String && x['texte'] is String)
+          (id: x['id'] as String, texte: x['texte'] as String),
+    ];
   }
 
   @override
@@ -325,6 +349,15 @@ class DepotReel extends Depot {
         if (l is List) alertes.addAll(l);
       }
       await base.ecrireCopie('alertes', alertes, maintenant);
+      try {
+        await base.ecrireCopie(
+          'annonces',
+          await api.appel('GET', '/v1/annonces'),
+          maintenant,
+        );
+      } on ErreurApi catch (e) {
+        debugPrint('Annonces : $e');
+      }
       await base.ecrireCopie('actualise', null, maintenant);
       _horsConnexion = false;
     } on HorsConnexion {
@@ -405,6 +438,67 @@ class DepotReel extends Depot {
     return r;
   }
 
+  /// Langue choisie dans les paramètres ; vide : langue du téléphone (RG-PRM-03).
+  String? get langueChoisie => session.langue;
+
+  /// Change la langue de l'application ; le compte la garde pour les SMS,
+  /// les e-mails et le journal envoyés (RG-PRM-04).
+  Future<void> choisirLangue(
+    String? langue, {
+    required String effective,
+  }) async {
+    await session.choisirLangue(langue);
+    _notifier();
+    try {
+      await api.appel('PATCH', '/v1/compte', json: {'langue': effective});
+      await actualiser();
+    } catch (e) {
+      debugPrint('Langue du compte : $e');
+    }
+  }
+
+  /// Modifie le texte d'une note, d'une photo ou d'une note vocale de la
+  /// navigation en cours, ou le supprime (RG-JRN-06), directement sur le
+  /// serveur : l'élément doit y être arrivé. Lève [HorsConnexion] sans
+  /// Internet, [ErreurApi] sur un refus.
+  Future<void> changerEvenement(
+    String evenementId, {
+    String? texte,
+    bool supprimer = false,
+  }) async {
+    final n = conduite.enCours;
+    if (n == null) return;
+    await file.relancer();
+    final chemin = '/v1/navigations/${n.id}/evenements/$evenementId';
+    if (supprimer) {
+      await api.appel('DELETE', chemin);
+    } else {
+      await api.appel('PATCH', chemin, json: {'texte': texte});
+    }
+    await conduite.remplacerEvenement(
+      evenementId,
+      texte: texte,
+      supprime: supprimer,
+    );
+  }
+
+  /// Fermeture d'une annonce par l'utilisateur (RG-ADM-06).
+  Future<void> fermerAnnonce(String id) async {
+    annonces = [
+      for (final a in annonces)
+        if (a.id != id) a,
+    ];
+    _notifier();
+    try {
+      await api.appel('POST', '/v1/annonces/$id/fermeture');
+      await base.ecrireCopie('annonces', [
+        for (final a in annonces) {'id': a.id, 'texte': a.texte},
+      ], DateTime.now());
+    } catch (e) {
+      debugPrint('Fermeture de l\'annonce : $e');
+    }
+  }
+
   // ------------------------------------------------------------ navigation
 
   /// Bateaux proposés au démarrage et au SOS depuis l'accueil : ceux du
@@ -425,6 +519,7 @@ class DepotReel extends Depot {
     required int personnesABord,
     required List<String> personnesAlertees,
     String? destination,
+    PositionGps? destinationPosition,
     ParametresGeneraux? parametres,
   }) async {
     final appareil = await session.appareilId();
@@ -447,6 +542,7 @@ class DepotReel extends Depot {
       personnesABord: personnesABord,
       personnesAlertees: personnesAlertees,
       destination: destination,
+      destinationPosition: destinationPosition,
       parametres: parametres,
       quota: quota,
     );
@@ -626,6 +722,7 @@ class DepotReel extends Depot {
     conduite.dispose();
     envoisSms.dispose();
     _fichiersDeposes?.cancel();
+    _reseau?.cancel();
     file.fermer();
     super.dispose();
   }

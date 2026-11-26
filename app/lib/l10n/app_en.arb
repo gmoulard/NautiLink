@@ -380,5 +380,19 @@
   "boatEngine": "Engine",
   "boatDraft": "Draught",
   "scopeThisVoyage": "This voyage only",
-  "addPersonPending": "New contact, saved at start"
+  "addPersonPending": "New contact, saved at start",
+  "settingsLanguage": "Language",
+  "languagePhone": "Phone language",
+  "languageFrench": "Français (French)",
+  "languageEnglish": "English",
+  "destinationOnMap": "Choose on the map",
+  "destinationMapHint": "Tap the map to place the destination.",
+  "destinationPoint": "Chosen point: {position}",
+  "destinationRemovePoint": "Remove the point",
+  "validate": "Confirm",
+  "eventEdit": "Edit",
+  "eventDelete": "Delete",
+  "eventDeleteConfirm": "Delete this logbook entry?",
+  "eventChangeOffline": "Cannot change without Internet: try again when the connection is back.",
+  "eventFullLog": "View in the full logbook"
 }

@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart' show LatLng;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
+import '../reel/api.dart';
 import '../reel/conduite.dart';
 import '../reel/depot_reel.dart';
 import '../reel/file_attente.dart';
@@ -16,8 +19,10 @@ import '../reel/sms_navigation.dart';
 import '../reel/telephone.dart';
 import '../theme.dart';
 import 'connexion.dart';
+import 'dashboard.dart' show SeaMap;
 import 'home.dart';
 import 'navigation.dart';
+import 'suivi_reel.dart';
 
 /// Écrans de la navigation de la vraie application (D-127) : mêmes écrans que
 /// la démonstration (`navigation.dart`), branchés sur le serveur par
@@ -191,6 +196,9 @@ class _StartReelScreenState extends State<StartReelScreen> {
   /// (RG-PAR-02) ; « Cette navigation seulement » vise la navigation qui
   /// démarre.
   final nouvelles = <({String id, Contact c, String perimetre})>[];
+
+  /// Destination choisie sur une carte (RG-NAV-04).
+  PositionGps? destinationPoint;
 
   /// Permission d'envoi de SMS (D-91 : sans elle, l'écran de démarrage dit
   /// que les positions automatiques partent au serveur seulement).
@@ -382,6 +390,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
         personnesABord: personnes!,
         personnesAlertees: alertees!.toList(),
         destination: destination.text,
+        destinationPosition: destinationPoint,
         parametres: _parametres(depot),
       );
       if (!mounted) return;
@@ -507,6 +516,43 @@ class _StartReelScreenState extends State<StartReelScreen> {
                     border: const OutlineInputBorder(),
                   ),
                 ),
+                // RG-NAV-04 : ou un point choisi sur une carte.
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    key: const Key('start-destination-map'),
+                    icon: const Icon(Icons.map_outlined),
+                    label: Text(l.destinationOnMap),
+                    onPressed: () async {
+                      final p = await Navigator.of(context).push<PositionGps>(
+                        MaterialPageRoute(
+                          builder: (_) => DestinationCarteScreen(
+                            initiale:
+                                destinationPoint ??
+                                depot.positions.derniereConnue,
+                          ),
+                        ),
+                      );
+                      if (p != null && mounted) {
+                        setState(() => destinationPoint = p);
+                      }
+                    },
+                  ),
+                ),
+                if (destinationPoint != null)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.place, color: NlColors.teal),
+                    title: Text(
+                      l.destinationPoint(coordonnees(destinationPoint!)),
+                      key: const Key('destination-point'),
+                    ),
+                    trailing: IconButton(
+                      tooltip: l.destinationRemovePoint,
+                      icon: const Icon(Icons.close),
+                      onPressed: () => setState(() => destinationPoint = null),
+                    ),
+                  ),
                 const SizedBox(height: 16),
                 // RG-NAV-27 : nombre de personnes à bord, repris dans le SOS.
                 InputDecorator(
@@ -856,8 +902,93 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     if (nav.mounted) nav.pop();
   }
 
-  Future<String?> _texte(String titre, String aide) {
-    final c = TextEditingController();
+  /// Note, photo ou note vocale du journal (RG-JRN-06) : modifier le texte,
+  /// supprimer, ou voir la photo et écouter la note vocale dans le journal
+  /// complet de la navigation.
+  Future<void> _actionsEvenement(
+    DepotReel depot,
+    NavigationLocale n,
+    EvenementLocal e,
+  ) async {
+    final l = AppLocalizations.of(context);
+    final choix = await showModalBottomSheet<String>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: Text(l.eventEdit),
+              onTap: () => Navigator.pop(ctx, 'modifier'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: NlColors.alert),
+              title: Text(l.eventDelete),
+              onTap: () => Navigator.pop(ctx, 'supprimer'),
+            ),
+            if (e.type != 'note')
+              ListTile(
+                leading: const Icon(Icons.menu_book),
+                title: Text(l.eventFullLog),
+                onTap: () => Navigator.pop(ctx, 'journal'),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (choix == null || !mounted) return;
+    if (choix == 'journal') {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => NavigationSuivieScreen(navigationId: n.id),
+        ),
+      );
+      return;
+    }
+    String? texte;
+    if (choix == 'modifier') {
+      texte = await _texte(l.eventEdit, l.noteHint, initial: e.texte);
+      if (texte == null) return;
+    } else {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l.eventDeleteConfirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l.eventDelete),
+            ),
+          ],
+        ),
+      );
+      if (ok != true) return;
+    }
+    try {
+      await depot.changerEvenement(
+        e.id,
+        texte: texte,
+        supprimer: choix == 'supprimer',
+      );
+    } catch (err) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            err is HorsConnexion ? l.eventChangeOffline : messageErreur(l, err),
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<String?> _texte(String titre, String aide, {String? initial}) {
+    final c = TextEditingController(text: initial);
     final l = AppLocalizations.of(context);
     return showDialog<String>(
       context: context,
@@ -1125,7 +1256,17 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       for (final e in n.journal.reversed)
-                        EvenementTile(evenement: e),
+                        EvenementTile(
+                          evenement: e,
+                          onTap:
+                              const {
+                                'note',
+                                'photo',
+                                'note_vocale',
+                              }.contains(e.type)
+                              ? () => _actionsEvenement(depot, n, e)
+                              : null,
+                        ),
                     ],
                   ),
                 ),
@@ -1569,8 +1710,11 @@ class _EnregistrementVocalState extends State<_EnregistrementVocal> {
 /// Ligne du journal tenu sur le téléphone ; les noms de lieux viennent du
 /// serveur (RG-JRN-10) et se lisent sur la page Web de la navigation.
 class EvenementTile extends StatelessWidget {
-  const EvenementTile({super.key, required this.evenement});
+  const EvenementTile({super.key, required this.evenement, this.onTap});
   final EvenementLocal evenement;
+
+  /// Note, photo, note vocale : actions du journal (RG-JRN-06).
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -1606,6 +1750,8 @@ class EvenementTile extends StatelessWidget {
     final sos = e.type == 'sos';
     return ListTile(
       contentPadding: EdgeInsets.zero,
+      onTap: onTap,
+      trailing: onTap == null ? null : const Icon(Icons.more_vert),
       leading: Icon(icone, color: sos ? NlColors.alert : NlColors.teal),
       title: Text(
         '${fmtTime(e.heure)} · $titre',
@@ -1615,6 +1761,112 @@ class EvenementTile extends StatelessWidget {
         ),
       ),
       subtitle: details.isEmpty ? null : Text(details.join('\n')),
+    );
+  }
+}
+
+/// Destination choisie sur une carte (RG-NAV-04) : un toucher place le point,
+/// « Valider » le rend.
+class DestinationCarteScreen extends StatefulWidget {
+  const DestinationCarteScreen({super.key, this.initiale});
+  final PositionGps? initiale;
+
+  @override
+  State<DestinationCarteScreen> createState() => _DestinationCarteScreenState();
+}
+
+class _DestinationCarteScreenState extends State<DestinationCarteScreen> {
+  LatLng? point;
+
+  @override
+  void initState() {
+    super.initState();
+    final p = widget.initiale;
+    if (p != null) point = LatLng(p.latitude, p.longitude);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final p = point;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l.destinationOnMap),
+        actions: [
+          TextButton(
+            key: const Key('destination-validate'),
+            onPressed: p == null
+                ? null
+                : () => Navigator.of(context).pop(
+                    PositionGps(
+                      latitude: p.latitude,
+                      longitude: p.longitude,
+                      heureAcquisition: DateTime.now(),
+                    ),
+                  ),
+            child: Text(l.validate),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(l.destinationMapHint),
+          ),
+          Expanded(
+            child: FlutterMap(
+              key: const Key('destination-map'),
+              options: MapOptions(
+                // Sans position connue : les côtes françaises.
+                initialCenter: p ?? const LatLng(47.0, -2.5),
+                initialZoom: p == null ? 6 : 11,
+                backgroundColor: const Color(0xFFDCEFF8),
+                onTap: (_, q) => setState(() => point = q),
+              ),
+              children: [
+                if (SeaMap.tilesEnabled) ...[
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'fr.nautilink.nautilink',
+                  ),
+                  TileLayer(
+                    urlTemplate:
+                        'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'fr.nautilink.nautilink',
+                  ),
+                ],
+                if (p != null)
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: p,
+                        width: 40,
+                        height: 40,
+                        alignment: Alignment.topCenter,
+                        child: const Icon(
+                          Icons.place,
+                          color: NlColors.alert,
+                          size: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+          if (p != null)
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                l.destinationPoint(
+                  '${p.latitude.toStringAsFixed(5)}, ${p.longitude.toStringAsFixed(5)}',
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

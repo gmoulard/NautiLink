@@ -1328,4 +1328,50 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get addPersonPending => 'Nouveau contact, enregistré au démarrage';
+
+  @override
+  String get settingsLanguage => 'Langue';
+
+  @override
+  String get languagePhone => 'Langue du téléphone';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageEnglish => 'English (anglais)';
+
+  @override
+  String get destinationOnMap => 'Choisir sur la carte';
+
+  @override
+  String get destinationMapHint =>
+      'Touchez la carte pour placer la destination.';
+
+  @override
+  String destinationPoint(String position) {
+    return 'Point choisi : $position';
+  }
+
+  @override
+  String get destinationRemovePoint => 'Retirer le point';
+
+  @override
+  String get validate => 'Valider';
+
+  @override
+  String get eventEdit => 'Modifier';
+
+  @override
+  String get eventDelete => 'Supprimer';
+
+  @override
+  String get eventDeleteConfirm => 'Supprimer cet élément du journal ?';
+
+  @override
+  String get eventChangeOffline =>
+      'Modification impossible sans Internet : réessayez au retour de la connexion.';
+
+  @override
+  String get eventFullLog => 'Voir dans le journal complet';
 }

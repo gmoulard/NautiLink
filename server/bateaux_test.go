@@ -91,9 +91,6 @@ func TestBateaux(t *testing.T) {
 		t.Fatalf("appareil : %d %v", code, ap)
 	}
 	e.appel("PUT", "/appareils/"+appareil2, j, map[string]any{"plateforme": "ios"})
-	if code, _ := e.appel("PUT", "/appareils/"+appareil1, autre, map[string]any{"plateforme": "android"}); code != 403 {
-		t.Fatalf("téléphone d'un autre compte : %d", code)
-	}
 	var appareilSession *string
 	_ = e.a.b.pool.QueryRow(t.Context(), "SELECT appareil_id::text FROM sessions WHERE jeton_acces = $1", empreinte(j)).Scan(&appareilSession)
 	if appareilSession == nil || *appareilSession != appareil2 {
@@ -119,6 +116,31 @@ func TestBateaux(t *testing.T) {
 	}
 	if ok, _ := e.a.peutDemarrer(t.Context(), e.id(autre), id1); ok {
 		t.Fatal("un autre compte peut démarrer")
+	}
+
+	// RG-BAT-04 : le téléphone du bateau 1 se connecte à un autre compte ; il
+	// passe à ce compte, quitte le bateau du premier, qui est prévenu par e-mail.
+	avant := len(e.courrier.recus)
+	if code, ap := e.appel("PUT", "/appareils/"+appareil2, autre, map[string]any{"plateforme": "ios", "nom": "iPhone de Paul"}); code != 200 || ap["id"] != appareil2 {
+		t.Fatalf("téléphone repris par un autre compte : %d %v", code, ap)
+	}
+	if _, b := e.appel("GET", "/bateaux/"+id1, j, nil); b["appareilAssocieId"] != nil {
+		t.Fatalf("téléphone resté associé au bateau du premier compte : %v", b)
+	}
+	if _, b := e.appel("GET", "/bateaux/"+id2, j, nil); b["appareilAssocieId"] != appareil1 {
+		t.Fatalf("autre téléphone touché : %v", b)
+	}
+	recus := e.courrier.recus[avant:]
+	if len(recus) != 1 || !strings.Contains(recus[0].Texte, "Alizé") {
+		t.Fatalf("e-mail au premier propriétaire : %+v", recus)
+	}
+	if code, _ := e.appel("PUT", "/bateaux/"+id1+"/telephone", j, map[string]string{"appareilId": appareil2}); code != 403 {
+		t.Fatalf("téléphone repris encore associable par le premier compte : %d", code)
+	}
+	// Une nouvelle connexion du même compte ne renvoie pas d'e-mail.
+	e.appel("PUT", "/appareils/"+appareil2, autre, map[string]any{"plateforme": "ios"})
+	if len(e.courrier.recus) != avant+1 {
+		t.Fatal("e-mail renvoyé")
 	}
 }
 

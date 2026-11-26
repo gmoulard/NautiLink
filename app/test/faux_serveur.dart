@@ -34,6 +34,10 @@ class FauxServeurNautiLink {
   bool avertissementChange = false;
   bool emailVerifie = true;
 
+  /// Annonces de l'administrateur (RG-ADM-06) et celles fermées.
+  final annonces = <Map<String, Object?>>[];
+  final annoncesFermees = <String>{};
+
   /// Contacts ajoutés par `POST /v1/contacts`.
   final contactsAjoutes = <Map>[];
 
@@ -249,6 +253,19 @@ class FauxServeurNautiLink {
         ],
       });
     }
+    if (r.method == 'POST' &&
+        chemin.startsWith('/v1/annonces/') &&
+        chemin.endsWith('/fermeture')) {
+      annoncesFermees.add(chemin.split('/')[3]);
+      return reponse(204);
+    }
+    // RG-JRN-06 : modification et suppression d'un élément du journal.
+    if ((r.method == 'PATCH' || r.method == 'DELETE') &&
+        chemin.contains('/evenements/')) {
+      return r.method == 'DELETE'
+          ? reponse(204)
+          : reponse(200, {...?c as Map?});
+    }
     if (r.method == 'GET' && chemin.startsWith('/v1/fichiers/')) {
       // Image d'essai : PNG de 1 × 1 pixel.
       return http.Response.bytes(const [
@@ -423,6 +440,11 @@ class FauxServeurNautiLink {
                 associations['b2'] ?? '00000000-0000-4000-8000-000000000000',
           },
         ]);
+      case ('GET', '/v1/annonces'):
+        return reponse(200, [
+          for (final a in annonces)
+            if (!annoncesFermees.contains(a['id'])) a,
+        ]);
       case ('POST', '/v1/contacts'):
         contactsAjoutes.add(c as Map);
         return reponse(201, {...c, 'version': 1, 'etatInvitation': 'aucune'});
@@ -480,6 +502,7 @@ class FauxServeurNautiLink {
     Medias? medias,
     CanalSms? sms,
     String plateforme = 'android',
+    Stream<bool>? reseau,
   }) {
     final api = ClientApi(
       base: 'https://essai.example/nautilink/api',
@@ -497,6 +520,7 @@ class FauxServeurNautiLink {
       pasVerification: null,
       medias: medias,
       canalSms: sms,
+      reseau: reseau,
       file: FileAttente(
         base: base,
         api: api,

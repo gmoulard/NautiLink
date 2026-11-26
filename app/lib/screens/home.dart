@@ -130,9 +130,8 @@ class HomeScreen extends StatelessWidget {
             ),
             child: Text(
               l.footerSiteLink,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                decoration: TextDecoration.underline,
-              ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(decoration: TextDecoration.underline),
             ),
           ),
         ),
@@ -194,6 +193,26 @@ class HomeScreen extends StatelessWidget {
                     )
                   : null,
             ),
+          // RG-ADM-06 : annonces de l'administrateur, jusqu'à leur fermeture.
+          if (depot is DepotReel)
+            for (final a in depot.annonces)
+              Material(
+                color: NlColors.teal,
+                child: ListTile(
+                  key: Key('annonce-${a.id}'),
+                  dense: true,
+                  leading: const Icon(Icons.campaign, color: NlColors.white),
+                  title: Text(
+                    a.texte,
+                    style: const TextStyle(color: NlColors.white),
+                  ),
+                  trailing: IconButton(
+                    tooltip: l.close,
+                    icon: const Icon(Icons.close, color: NlColors.white),
+                    onPressed: () => depot.fermerAnnonce(a.id),
+                  ),
+                ),
+              ),
           Expanded(
             child: RadarBackground(
               child: demo

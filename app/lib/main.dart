@@ -17,7 +17,12 @@ import 'theme.dart';
 Future<void> main() async {
   if (kMode == ModeApplication.reel) {
     WidgetsFlutterBinding.ensureInitialized();
-    runApp(NautiLinkApp(depot: await DepotReel.creer()));
+    runApp(
+      NautiLinkApp(
+        depot: await DepotReel.creer(),
+        langueDuTelephone: !bool.hasEnvironment('NAUTILINK_LANG'),
+      ),
+    );
   } else {
     runApp(const NautiLinkApp());
   }
@@ -44,8 +49,14 @@ class NautiLinkApp extends StatefulWidget {
     super.key,
     this.locale = const Locale(kDefaultLanguage),
     this.depot,
+    this.langueDuTelephone = false,
   });
   final Locale locale;
+
+  /// Vraie application : langue du téléphone par défaut, ou celle choisie
+  /// dans les paramètres (RG-PRM-03) ; français si le téléphone est dans une
+  /// autre langue.
+  final bool langueDuTelephone;
 
   /// Dépôt de données ; par défaut celui du mode choisi à la construction (D-127).
   final Depot? depot;
@@ -64,11 +75,23 @@ class _NautiLinkAppState extends State<NautiLinkApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     depot.ouvrir();
+    if (widget.langueDuTelephone) depot.addListener(_langueChangee);
+  }
+
+  String? _langue;
+
+  /// Langue changée dans les paramètres : l'application se redessine (RG-PRM-03).
+  void _langueChangee() {
+    final d = depot;
+    if (d is DepotReel && d.langueChoisie != _langue && mounted) {
+      setState(() => _langue = d.langueChoisie);
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    depot.removeListener(_langueChangee);
     super.dispose();
   }
 
@@ -82,6 +105,14 @@ class _NautiLinkAppState extends State<NautiLinkApp>
     }
   }
 
+  /// Vide : langue du téléphone, résolue par [MaterialApp.localeResolutionCallback].
+  Locale? _locale() {
+    final d = depot;
+    if (!widget.langueDuTelephone || d is! DepotReel) return widget.locale;
+    final l = d.langueChoisie;
+    return l == null ? null : Locale(l);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScope(
@@ -90,7 +121,11 @@ class _NautiLinkAppState extends State<NautiLinkApp>
         depot: depot,
         child: MaterialApp(
           onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-          locale: widget.locale,
+          locale: _locale(),
+          localeResolutionCallback: (l, supportees) =>
+              supportees.any((s) => s.languageCode == l?.languageCode)
+              ? Locale(l!.languageCode)
+              : const Locale('fr'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           debugShowCheckedModeBanner: false,

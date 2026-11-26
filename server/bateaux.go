@@ -77,8 +77,9 @@ func estUUID(s string) bool {
 // ------------------------------------------------------------------ appareils
 
 // enregistrerAppareil : téléphone de l'utilisateur, identifiant tiré par
-// l'application. Un téléphone enregistré par un autre compte est refusé tant
-// que le cas n'est pas décidé (Q-50).
+// l'application. Un téléphone enregistré par un autre compte passe au compte
+// qui s'y connecte : il est retiré des bateaux du premier compte, dont le
+// propriétaire est prévenu par e-mail (RG-BAT-04, D-107).
 func (a *app) enregistrerAppareil(ctx context.Context, s *session, id string, c champs) (appareilJSON, error) {
 	var ap appareilJSON
 	if !estUUID(id) {
@@ -96,6 +97,9 @@ func (a *app) enregistrerAppareil(ctx context.Context, s *session, id string, c 
 	}
 	if len(ap.Nom) > 100 || len(ap.VersionApplication) > 50 || (ap.JetonPush != nil && len(*ap.JetonPush) > 4096) {
 		return ap, errInvalide("Champ trop long.")
+	}
+	if err := a.reprendreAppareil(ctx, s.utilisateur, id); err != nil {
+		return ap, err
 	}
 	var proprietaire string
 	err := a.b.pool.QueryRow(ctx, `INSERT INTO appareils (id, utilisateur_id, plateforme, nom, jeton_push, version_application)
@@ -117,6 +121,58 @@ func (a *app) enregistrerAppareil(ctx context.Context, s *session, id string, c 
 		_, err = a.b.pool.Exec(ctx, "UPDATE sessions SET appareil_id = $2 WHERE id = $1", s.id, id)
 	}
 	return ap, err
+}
+
+// reprendreAppareil : téléphone enregistré par un autre compte, repris par
+// [utilisateur] (RG-BAT-04, D-107) : retiré des bateaux du premier compte,
+// rattaché au nouveau, et le premier propriétaire est prévenu par e-mail.
+func (a *app) reprendreAppareil(ctx context.Context, utilisateur, id string) error {
+	tx, err := a.b.pool.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = tx.Rollback(ctx) }()
+	var ancien, nomAppareil string
+	err = tx.QueryRow(ctx, "SELECT utilisateur_id, nom FROM appareils WHERE id = $1 FOR UPDATE", id).Scan(&ancien, &nomAppareil)
+	if errors.Is(err, pgx.ErrNoRows) || (err == nil && ancien == utilisateur) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	lignes, err := tx.Query(ctx, `UPDATE bateaux SET appareil_associe_id = NULL
+		WHERE appareil_associe_id = $1 AND proprietaire_id = $2 RETURNING nom`, id, ancien)
+	if err != nil {
+		return err
+	}
+	bateaux, err := pgx.CollectRows(lignes, pgx.RowTo[string])
+	if err != nil {
+		return err
+	}
+	if _, err := tx.Exec(ctx, "UPDATE appareils SET utilisateur_id = $2, mis_a_jour_le = now() WHERE id = $1", id, utilisateur); err != nil {
+		return err
+	}
+	var email, langue string
+	if err := tx.QueryRow(ctx, "SELECT email, langue FROM utilisateurs WHERE id = $1", ancien).Scan(&email, &langue); err != nil {
+		return err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return err
+	}
+	telephone := nomAppareil
+	if telephone == "" {
+		telephone = enLangue(langue, "votre téléphone", "your phone")
+	}
+	liste := strings.Join(bateaux, ", ")
+	if liste == "" {
+		liste = enLangue(langue, "aucun", "none")
+	}
+	a.courriel(email,
+		enLangue(langue, "NautiLink : téléphone connecté à un autre compte", "NautiLink: phone signed in to another account"),
+		enLangue(langue,
+			"Bonjour,\n\nLe téléphone « "+telephone+" » vient d'être connecté à un autre compte NautiLink. Il n'est plus associé à vos bateaux : "+liste+".\nPour démarrer une navigation, associez un téléphone à votre bateau dans « Bateaux » sur la plateforme Web, ou connectez-vous depuis l'application.\n\nNautiLink — Version bêta\n",
+			"Hello,\n\nThe phone “"+telephone+"” has just been signed in to another NautiLink account. It is no longer associated with your boats: "+liste+".\nTo start a trip, associate a phone with your boat in “Boats” on the web platform, or sign in from the app.\n\nNautiLink — Beta version\n"))
+	return nil
 }
 
 func (a *app) appareils(ctx context.Context, utilisateur string) ([]appareilJSON, error) {

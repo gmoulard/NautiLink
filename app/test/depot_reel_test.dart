@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nautilink/depot/depot.dart';
 import 'package:nautilink/reel/api.dart';
@@ -81,6 +83,43 @@ void main() {
     await d2.actualiser();
     expect(d2.horsConnexion, isFalse);
   });
+
+  test(
+    'annonces de l\'administrateur gardées puis fermées (RG-ADM-06)',
+    () async {
+      serveur.annonces.add({'id': 'an1', 'texte': 'Maintenance dimanche'});
+      final d = serveur.depot(session, base);
+      await d.ouvrir();
+      await d.connexion('marin@example.org', 'secret123');
+      expect(d.annonces.single.texte, 'Maintenance dimanche');
+      await d.fermerAnnonce('an1');
+      expect(d.annonces, isEmpty);
+      expect(serveur.annoncesFermees, {'an1'});
+      await d.actualiser();
+      expect(d.annonces, isEmpty);
+    },
+  );
+
+  test(
+    'retour du réseau : file relancée et accueil relu (RG-COM-07, D-135)',
+    () async {
+      final reseau = StreamController<bool>();
+      final d = serveur.depot(session, base, reseau: reseau.stream);
+      await d.ouvrir();
+      await d.connexion('marin@example.org', 'secret123');
+      final avant = serveur.appels.where((a) => a == 'GET /v1/quota').length;
+      reseau.add(false);
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      expect(serveur.appels.where((a) => a == 'GET /v1/quota').length, avant);
+      reseau.add(true);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(
+        serveur.appels.where((a) => a == 'GET /v1/quota').length,
+        avant + 1,
+      );
+      await reseau.close();
+    },
+  );
 
   test('connexion impossible sans Internet', () async {
     serveur.coupe = true;

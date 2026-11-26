@@ -432,5 +432,20 @@
   "boatEngine": "Moteur",
   "boatDraft": "Tirant d'eau",
   "scopeThisVoyage": "Cette navigation seulement",
-  "addPersonPending": "Nouveau contact, enregistré au démarrage"
+  "addPersonPending": "Nouveau contact, enregistré au démarrage",
+  "settingsLanguage": "Langue",
+  "languagePhone": "Langue du téléphone",
+  "languageFrench": "Français",
+  "languageEnglish": "English (anglais)",
+  "destinationOnMap": "Choisir sur la carte",
+  "destinationMapHint": "Touchez la carte pour placer la destination.",
+  "destinationPoint": "Point choisi : {position}",
+  "@destinationPoint": {"placeholders": {"position": {"type": "String"}}},
+  "destinationRemovePoint": "Retirer le point",
+  "validate": "Valider",
+  "eventEdit": "Modifier",
+  "eventDelete": "Supprimer",
+  "eventDeleteConfirm": "Supprimer cet élément du journal ?",
+  "eventChangeOffline": "Modification impossible sans Internet : réessayez au retour de la connexion.",
+  "eventFullLog": "Voir dans le journal complet"
 }

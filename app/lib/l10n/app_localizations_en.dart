@@ -1319,4 +1319,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addPersonPending => 'New contact, saved at start';
+
+  @override
+  String get settingsLanguage => 'Language';
+
+  @override
+  String get languagePhone => 'Phone language';
+
+  @override
+  String get languageFrench => 'Français (French)';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get destinationOnMap => 'Choose on the map';
+
+  @override
+  String get destinationMapHint => 'Tap the map to place the destination.';
+
+  @override
+  String destinationPoint(String position) {
+    return 'Chosen point: $position';
+  }
+
+  @override
+  String get destinationRemovePoint => 'Remove the point';
+
+  @override
+  String get validate => 'Confirm';
+
+  @override
+  String get eventEdit => 'Edit';
+
+  @override
+  String get eventDelete => 'Delete';
+
+  @override
+  String get eventDeleteConfirm => 'Delete this logbook entry?';
+
+  @override
+  String get eventChangeOffline =>
+      'Cannot change without Internet: try again when the connection is back.';
+
+  @override
+  String get eventFullLog => 'View in the full logbook';
 }

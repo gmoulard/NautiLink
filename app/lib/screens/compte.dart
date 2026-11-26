@@ -806,6 +806,36 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
+          // RG-PRM-03 : langue du téléphone par défaut, ou choisie.
+          if (depot is DepotReel) ...[
+            DropdownButtonFormField<String>(
+              key: const Key('settings-language'),
+              isExpanded: true,
+              initialValue: depot.langueChoisie ?? '',
+              decoration: InputDecoration(
+                labelText: l.settingsLanguage,
+                border: const OutlineInputBorder(),
+              ),
+              items: [
+                DropdownMenuItem(value: '', child: Text(l.languagePhone)),
+                DropdownMenuItem(value: 'fr', child: Text(l.languageFrench)),
+                DropdownMenuItem(value: 'en', child: Text(l.languageEnglish)),
+              ],
+              onChanged: (v) {
+                final choix = v == null || v.isEmpty ? null : v;
+                final telephone = WidgetsBinding
+                    .instance
+                    .platformDispatcher
+                    .locale
+                    .languageCode;
+                depot.choisirLangue(
+                  choix,
+                  effective: choix ?? (telephone == 'en' ? 'en' : 'fr'),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
           DropdownButtonFormField<int>(
             key: ValueKey('frequence-$frequence'),
             isExpanded: true,

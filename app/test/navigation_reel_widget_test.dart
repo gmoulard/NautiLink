@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nautilink/main.dart';
+import 'package:nautilink/screens/dashboard.dart' show SeaMap;
 import 'package:nautilink/screens/navigation_reel.dart';
 import 'package:nautilink/reel/base_locale.dart';
 import 'package:nautilink/reel/stockage_session.dart';
@@ -396,6 +397,51 @@ void main() {
       expect((c as Map)['personnesAlertees'], contains(ajout['id']));
       // SMS de début prérempli aussi pour la nouvelle personne.
       expect(sms.preremplis.last.$1, contains('+33622222222'));
+    },
+  );
+
+  testWidgets('destination choisie sur une carte (RG-NAV-04)', (tester) async {
+    SeaMap.tilesEnabled = false;
+    await connecter(tester);
+    await toucher(tester, 'Démarrer navigation');
+    await toucher(tester, 'J\'ai compris');
+    await tester.tap(find.byKey(const Key('start-destination-map')));
+    await attendre(tester);
+    await tester.tap(find.byKey(const Key('destination-map')));
+    await attendre(tester);
+    await tester.tap(find.byKey(const Key('destination-validate')));
+    await attendre(tester);
+    expect(find.byKey(const Key('destination-point')), findsOneWidget);
+    await demarrer(tester);
+    final c = serveur.elements.firstWhere((e) => e.$1 == 'demarrage').$3 as Map;
+    final d = c['destination'] as Map;
+    expect(d.containsKey('texte'), isFalse);
+    expect((d['position'] as Map)['latitude'], isA<double>());
+    expect((d['position'] as Map)['heureAcquisition'], isA<String>());
+  });
+
+  testWidgets(
+    'note du journal modifiée puis supprimée depuis le téléphone (RG-JRN-06)',
+    (tester) async {
+      await naviguer(tester);
+      await toucher(tester, 'NOTE');
+      await tester.enterText(find.byKey(const Key('note-text')), 'Cap au 270');
+      await toucher(tester, 'Valider l\'envoi');
+      await toucher(tester, 'OK');
+      await toucher(tester, 'Cap au 270');
+      await toucher(tester, 'Modifier');
+      await tester.enterText(find.byKey(const Key('note-text')), 'Cap au 280');
+      await toucher(tester, 'Valider l\'envoi');
+      expect(find.text('Cap au 280'), findsOneWidget);
+      final patch = serveur.appels.lastWhere((a) => a.startsWith('PATCH'));
+      expect(patch, contains('/evenements/'));
+      expect(serveur.corps[patch], {'texte': 'Cap au 280'});
+      await toucher(tester, 'Cap au 280');
+      await toucher(tester, 'Supprimer');
+      await tester.tap(find.text('Supprimer').last);
+      await attendre(tester);
+      expect(find.text('Cap au 280'), findsNothing);
+      expect(serveur.appels.last, startsWith('DELETE'));
     },
   );
 }

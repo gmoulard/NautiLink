@@ -2306,6 +2306,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Nouveau contact, enregistré au démarrage'**
   String get addPersonPending;
+
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get settingsLanguage;
+
+  /// No description provided for @languagePhone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue du téléphone'**
+  String get languagePhone;
+
+  /// No description provided for @languageFrench.
+  ///
+  /// In fr, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In fr, this message translates to:
+  /// **'English (anglais)'**
+  String get languageEnglish;
+
+  /// No description provided for @destinationOnMap.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir sur la carte'**
+  String get destinationOnMap;
+
+  /// No description provided for @destinationMapHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touchez la carte pour placer la destination.'**
+  String get destinationMapHint;
+
+  /// No description provided for @destinationPoint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Point choisi : {position}'**
+  String destinationPoint(String position);
+
+  /// No description provided for @destinationRemovePoint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le point'**
+  String get destinationRemovePoint;
+
+  /// No description provided for @validate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get validate;
+
+  /// No description provided for @eventEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get eventEdit;
+
+  /// No description provided for @eventDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get eventDelete;
+
+  /// No description provided for @eventDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cet élément du journal ?'**
+  String get eventDeleteConfirm;
+
+  /// No description provided for @eventChangeOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modification impossible sans Internet : réessayez au retour de la connexion.'**
+  String get eventChangeOffline;
+
+  /// No description provided for @eventFullLog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir dans le journal complet'**
+  String get eventFullLog;
 }
 
 class _AppLocalizationsDelegate

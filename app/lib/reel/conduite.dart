@@ -476,6 +476,7 @@ class ConduiteNavigation extends ChangeNotifier {
     required int personnesABord,
     required List<String> personnesAlertees,
     String? destination,
+    PositionGps? destinationPosition,
     ParametresGeneraux? parametres,
     EtatQuota? quota,
   }) async {
@@ -492,7 +493,12 @@ class ConduiteNavigation extends ChangeNotifier {
     final contenu = <String, Object?>{
       'bateauId': bateau.id,
       'appareilId': await appareilId(),
-      if (dest != null && dest.isNotEmpty) 'destination': {'texte': dest},
+      // RG-NAV-04 : destination en texte, ou point choisi sur une carte.
+      if ((dest != null && dest.isNotEmpty) || destinationPosition != null)
+        'destination': {
+          if (dest != null && dest.isNotEmpty) 'texte': dest,
+          'position': ?destinationPosition?.versJson(),
+        },
       'frequenceMinutes': frequenceMinutes,
       'parametres': ?parametres?.versJson(),
       'personnesABord': personnesABord,
@@ -772,6 +778,34 @@ class ConduiteNavigation extends ChangeNotifier {
     if (refus == null) return;
     n.refus = refus.message.isEmpty ? refus.code : refus.message;
     _arreterAutomatiques();
+    await _garder();
+    _notifier();
+  }
+
+  /// Élément du journal modifié (texte) ou supprimé sur le serveur
+  /// (RG-JRN-06) : le journal du téléphone suit.
+  Future<void> remplacerEvenement(
+    String id, {
+    String? texte,
+    bool supprime = false,
+  }) async {
+    final n = _nav;
+    if (n == null) return;
+    final i = n.journal.indexWhere((e) => e.id == id);
+    if (i < 0) return;
+    if (supprime) {
+      n.journal.removeAt(i);
+    } else {
+      final e = n.journal[i];
+      n.journal[i] = EvenementLocal(
+        id: e.id,
+        type: e.type,
+        heure: e.heure,
+        position: e.position,
+        texte: texte,
+        dureeSecondes: e.dureeSecondes,
+      );
+    }
     await _garder();
     _notifier();
   }
