@@ -149,6 +149,16 @@ class SmsNavigation {
         DestinataireSms(c.telephone!.trim(), contactId: c.id),
   ];
 
+  /// Destinataires d'un SMS de navigation : les suiveurs si les paramètres
+  /// le prévoient (RG-SMS-01, RG-SMS-02), et toujours le navigateur, pour la
+  /// trace, même sans suiveur et même si ce type de SMS est désactivé
+  /// (RG-SMS-08, D-147).
+  List<DestinataireSms> destinataires(
+    NavigationLocale n,
+    String type,
+    ParametresGeneraux? defaut,
+  ) => [if (prevu(n, type, defaut)) ...suiveurs(n), ?_copie];
+
   /// Contacts SOS prévenus par SMS : ceux cochés au démarrage (RG-NAV-25),
   /// tous hors navigation ; seulement avec un numéro (RG-SOS-05).
   List<DestinataireSms> contactsSos(NavigationLocale? n) => [
@@ -243,12 +253,14 @@ class SmsNavigation {
     String? photo,
   }) async {
     if (!disponible) return (IssueSms.aucun, 0);
-    if (!prevu(n, type, defaut)) return (IssueSms.desactive, 0);
-    final d = suiveurs(n);
-    if (d.isEmpty) return (IssueSms.sansDestinataire, 0);
-    final numeros = [
-      for (final x in [...d, ?_copie]) x.numero,
-    ];
+    final dests = destinataires(n, type, defaut);
+    if (dests.isEmpty) {
+      return (
+        prevu(n, type, defaut) ? IssueSms.sansDestinataire : IssueSms.desactive,
+        0,
+      );
+    }
+    final numeros = [for (final x in dests) x.numero];
     final t = texte(
       n,
       type,
@@ -263,11 +275,7 @@ class SmsNavigation {
     // D-146 : avec la permission, le SMS part automatiquement (3 essais puis
     // « Réessayer », RG-SMS-07) ; la photo, avec son lien (RG-SMS-05).
     if (await canal.autorise()) {
-      await envois.envoyer(
-        'sms:$type:${evenementId ?? n.id}',
-        [...d, ?_copie],
-        [t],
-      );
+      await envois.envoyer('sms:$type:${evenementId ?? n.id}', dests, [t]);
       if (mms) {
         try {
           if (await canal.ouvrirPrerempli(numeros, t, image: photo)) {
@@ -333,15 +341,16 @@ class SmsNavigation {
     ParametresGeneraux? defaut,
   }) async {
     if (!disponible) return IssueSms.aucun;
-    if (!prevu(n, 'position_automatique', defaut)) return IssueSms.desactive;
-    final d = suiveurs(n);
-    if (d.isEmpty) return IssueSms.sansDestinataire;
+    final dests = destinataires(n, 'position_automatique', defaut);
+    if (dests.isEmpty) {
+      return prevu(n, 'position_automatique', defaut)
+          ? IssueSms.sansDestinataire
+          : IssueSms.desactive;
+    }
     if (!await canal.autorise()) return IssueSms.sansPermission;
-    await envois.envoyer(
-      'position:${e.id}',
-      [...d, ?_copie],
-      [texte(n, 'position_automatique', position: e.position, heure: e.heure)],
-    );
+    await envois.envoyer('position:${e.id}', dests, [
+      texte(n, 'position_automatique', position: e.position, heure: e.heure),
+    ]);
     return IssueSms.automatique;
   }
 

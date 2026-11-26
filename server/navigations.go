@@ -671,6 +671,7 @@ func (a *app) terminer(ctx context.Context, utilisateur, id string, e evenementJ
 		return navigationJSON{}, err
 	}
 	a.notifierNavigation(ctx, id, "fin") // RG-IOS-06
+	a.recapitulatifNavigation(ctx, id)   // RG-NOT-06
 	if n, err = a.navigation(ctx, a.b.pool, id); err != nil {
 		return navigationJSON{}, err
 	}
@@ -791,6 +792,9 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 	}
 	if estPhoto(e) {
 		a.notifierNavigation(ctx, navID, "photo") // RG-IOS-06
+	}
+	if e.Type != "ajout" {
+		a.traceEvenement(ctx, navID, e) // RG-NOT-06
 	}
 	r, err := lireEvenement(a.b.pool.QueryRow(ctx, "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", e.ID), n)
 	return http.StatusCreated, r, err

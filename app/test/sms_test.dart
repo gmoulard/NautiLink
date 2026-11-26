@@ -125,10 +125,38 @@ void main() {
         frequenceParDefaut: 60,
       ),
     );
-    expect(
-      (await sms.ordinaire(off, 'note', note: 'x')).$1,
-      IssueSms.desactive,
+    // Type désactivé pour les suiveurs : le navigateur reçoit quand même le
+    // SMS, pour la trace (RG-SMS-08, D-147).
+    final r = await sms.ordinaire(off, 'note', note: 'x');
+    expect(r.$1, IssueSms.prerempli);
+    expect(canal.preremplis.last.$1, ['+33600000000']);
+  });
+
+  test('trace : sans suiveur, SMS au navigateur seul, positions automatiques comprises (D-147)', () async {
+    canal.autorisee = true;
+    final sansSuiveur = NavigationLocale(
+      id: 'nav2',
+      nom: 'Solo',
+      bateauId: 'b1',
+      bateauNom: 'Alizé',
+      debut: DateTime(2026, 11, 26, 9),
+      frequenceMinutes: 60,
+      personnesABord: 1,
+      parametres: const ParametresGeneraux(
+        smsActifs: false,
+        smsParType: {},
+        photoEnMms: false,
+        frequenceParDefaut: 60,
+      ),
     );
+    final e = EvenementLocal(
+      id: 'e1',
+      type: 'position_automatique',
+      heure: DateTime(2026, 11, 26, 10),
+    );
+    expect(await sms.positionAutomatique(sansSuiveur, e), IssueSms.automatique);
+    expect((await sms.ordinaire(sansSuiveur, 'fin')).$1, IssueSms.automatique);
+    expect(canal.envoyes.map((s) => s.$2), ['+33600000000', '+33600000000']);
   });
 
   test('photo : MMS prévu, sinon SMS avec le lien (RG-SMS-05, D-49)', () async {
