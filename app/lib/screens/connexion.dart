@@ -6,6 +6,7 @@ import '../reel/api.dart';
 import '../reel/depot_reel.dart';
 import '../reel/identites.dart';
 import '../theme.dart';
+import 'pied.dart';
 import 'warning.dart';
 
 /// Message affiché pour une erreur d'appel au serveur : sans Internet, la
@@ -269,13 +270,16 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                               ),
                         child: Text(l.createAccount),
                       ),
+                      // Sponsor intégré à la page, après les boutons (Q-102).
+                      const SizedBox(height: 24),
+                      const SponsorFooter(),
+                      const PiedDePage(),
                     ],
                   ),
                 ),
               ),
             ),
           ),
-          const SponsorFooter(),
         ],
       ),
     );
@@ -411,6 +415,7 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
                       onPressed: _accepte && !_occupe ? _creer : null,
                       child: Text(l.createAccountButton),
                     ),
+                    const PiedDePage(),
                   ],
                 ),
               ),
@@ -460,6 +465,7 @@ class _AccepterAvertissementScreenState
             onPressed: _accepte ? () => Navigator.of(context).pop(true) : null,
             child: Text(l.continueLabel),
           ),
+          const PiedDePage(),
         ],
       ),
     );
@@ -543,6 +549,7 @@ class _MotDePasseOublieScreenState extends State<MotDePasseOublieScreen> {
             onPressed: _occupe ? null : _envoyer,
             child: Text(l.forgotSend),
           ),
+          const PiedDePage(),
         ],
       ),
     );

@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import 'conduite.dart';
@@ -21,7 +23,7 @@ enum IssueSms {
   /// Aucun suiveur de la navigation avec un numéro (RG-SMS-01).
   sansDestinataire,
 
-  /// Envoyé automatiquement, avec la permission d'envoi de SMS (RG-SMS-03, D-146).
+  /// Envoyé automatiquement, avec la permission d'envoi de SMS (RG-SMS-03, D-156).
   automatique,
 
   /// Envoyé automatiquement avec le lien, et MMS prérempli avec la photo
@@ -67,9 +69,25 @@ String coordonnees(PositionGps p) =>
 String lienCarte(PositionGps p) =>
     'https://maps.google.com/?q=${p.latitude.toStringAsFixed(5)},${p.longitude.toStringAsFixed(5)}';
 
-String _hhmm(DateTime t) {
-  final l = t.toLocal();
-  return '${l.hour.toString().padLeft(2, '0')}:${l.minute.toString().padLeft(2, '0')}';
+/// Heure d'un SMS ou d'un MMS (RG-PRM-07, D-146) : heure locale du
+/// téléphone, puis UTC entre parenthèses, « 14:32 (13:32 UTC) » ; avec
+/// [avecDate], la date locale en tête et la date UTC dans la parenthèse quand
+/// elle diffère. [decalage] : celui du téléphone, sauf dans les essais.
+String heureEnvoyee(
+  AppLocalizations l,
+  DateTime t, {
+  bool avecDate = false,
+  Duration? decalage,
+}) {
+  final u = t.toUtc();
+  final local = u.add(decalage ?? t.toLocal().timeZoneOffset);
+  String jour(DateTime x) => DateFormat.yMMMd(l.localeName).format(x);
+  final memeJour =
+      local.year == u.year && local.month == u.month && local.day == u.day;
+  return l.timeWithUtc(
+    avecDate ? l.dateTime(jour(local), fmtTime(local)) : fmtTime(local),
+    avecDate && !memeJour ? l.dateTime(jour(u), fmtTime(u)) : fmtTime(u),
+  );
 }
 
 /// SMS d'une navigation, sur Android (RG-SMS-01 à RG-SMS-09, RG-SOS-05 à
@@ -139,33 +157,35 @@ class SmsNavigation {
   }
 
   /// Suiveurs de la navigation avec un numéro, qui reçoivent les SMS
-  /// (RG-SMS-01), sans ceux décochés au démarrage (RG-NAV-25).
+  /// (RG-SMS-01), sans ceux dont « SMS » est décoché au démarrage
+  /// (RG-NAV-25, Q-102).
   List<DestinataireSms> suiveurs(NavigationLocale n) => [
     for (final c in contacts())
       if (c.suiveur &&
           c.recevoirSms &&
           (c.telephone?.trim().isNotEmpty ?? false) &&
-          n.personnesAlertees.contains(c.id))
+          n.recoitSms(c.id))
         DestinataireSms(c.telephone!.trim(), contactId: c.id),
   ];
 
   /// Destinataires d'un SMS de navigation : les suiveurs si les paramètres
   /// le prévoient (RG-SMS-01, RG-SMS-02), et toujours le navigateur, pour la
   /// trace, même sans suiveur et même si ce type de SMS est désactivé
-  /// (RG-SMS-08, D-147).
+  /// (RG-SMS-08, D-157).
   List<DestinataireSms> destinataires(
     NavigationLocale n,
     String type,
     ParametresGeneraux? defaut,
   ) => [if (prevu(n, type, defaut)) ...suiveurs(n), ?_copie];
 
-  /// Contacts SOS prévenus par SMS : ceux cochés au démarrage (RG-NAV-25),
+  /// Contacts SOS prévenus par SMS : ceux cochés « SMS » au démarrage
+  /// (RG-NAV-25, Q-102),
   /// tous hors navigation ; seulement avec un numéro (RG-SOS-05).
   List<DestinataireSms> contactsSos(NavigationLocale? n) => [
     for (final c in contacts())
       if (c.contactSos &&
           (c.telephone?.trim().isNotEmpty ?? false) &&
-          (n == null || n.personnesAlertees.contains(c.id)))
+          (n == null || n.recoitSms(c.id)))
         DestinataireSms(c.telephone!.trim(), contactId: c.id),
   ];
 
@@ -225,7 +245,7 @@ class SmsNavigation {
       'fin',
     }.contains(type);
     return [
-      l.smsHeader(n.bateauNom, kind, _hhmm(heure ?? DateTime.now())),
+      l.smsHeader(n.bateauNom, kind, heureEnvoyee(l, heure ?? DateTime.now())),
       if (type == 'debut' && (n.destination?.isNotEmpty ?? false))
         l.smsDestination(n.destination!),
       if (avecPosition)
@@ -240,7 +260,7 @@ class SmsNavigation {
   }
 
   /// SMS ordinaire envoyé automatiquement avec la permission d'envoi de SMS
-  /// (D-146), sinon ouvert prérempli (RG-SMS-03) : début, position manuelle,
+  /// (D-156), sinon ouvert prérempli (RG-SMS-03) : début, position manuelle,
   /// note, photo (MMS si prévu, RG-SMS-05), note vocale, fin ; adressé aux
   /// suiveurs de la navigation et au navigateur (copie, RG-SMS-08).
   Future<(IssueSms, int)> ordinaire(
@@ -272,7 +292,7 @@ class SmsNavigation {
         type == 'photo' &&
         photo != null &&
         (n.parametres ?? defaut)?.photoEnMms == true;
-    // D-146 : avec la permission, le SMS part automatiquement (3 essais puis
+    // D-156 : avec la permission, le SMS part automatiquement (3 essais puis
     // « Réessayer », RG-SMS-07) ; la photo, avec son lien (RG-SMS-05).
     if (await canal.autorise()) {
       await envois.envoyer('sms:$type:${evenementId ?? n.id}', dests, [t]);
@@ -307,7 +327,7 @@ class SmsNavigation {
   }
 
   /// Invitation par SMS (RG-PAR-11) : envoyée automatiquement à l'invité et
-  /// en copie au navigateur avec la permission d'envoi de SMS (D-146) ; sinon
+  /// en copie au navigateur avec la permission d'envoi de SMS (D-156) ; sinon
   /// préremplie. Rend l'issue et le nombre de destinataires.
   Future<(IssueSms, int)> invitation(
     String invitationId,

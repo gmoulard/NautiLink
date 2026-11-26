@@ -24,6 +24,7 @@ type smsParTypeJSON struct {
 	Notes                 *bool `json:"notes"`
 	Photos                *bool `json:"photos"`
 	NotesVocales          *bool `json:"notesVocales"`
+	Incidents             *bool `json:"incidents"` // RG-JRN-11, D-154
 	Fin                   *bool `json:"fin"`
 }
 
@@ -40,17 +41,17 @@ func (p *parametresJSON) types() map[string]**bool {
 	t := &p.SmsParType
 	return map[string]**bool{"debut": &t.Debut, "positionsAutomatiques": &t.PositionsAutomatiques,
 		"positionsManuelles": &t.PositionsManuelles, "notes": &t.Notes, "photos": &t.Photos,
-		"notesVocales": &t.NotesVocales, "fin": &t.Fin}
+		"notesVocales": &t.NotesVocales, "incidents": &t.Incidents, "fin": &t.Fin}
 }
 
 func (a *app) parametres(ctx context.Context, utilisateur string) (parametresJSON, error) {
 	var p parametresJSON
 	t := &p.SmsParType
 	err := a.b.pool.QueryRow(ctx, `SELECT version, sms_actifs, sms_debut, sms_positions_automatiques, sms_positions_manuelles,
-		sms_notes, sms_photos, sms_notes_vocales, sms_fin, photo_en_mms, frequence_par_defaut, modifie_le
+		sms_notes, sms_photos, sms_notes_vocales, sms_fin, photo_en_mms, frequence_par_defaut, modifie_le, sms_incidents
 		FROM parametres WHERE utilisateur_id = $1`, utilisateur).Scan(&p.Version, &p.SmsActifs, &t.Debut,
 		&t.PositionsAutomatiques, &t.PositionsManuelles, &t.Notes, &t.Photos, &t.NotesVocales, &t.Fin,
-		&p.PhotoEnMms, &p.FrequenceParDefaut, &p.ModifieLe)
+		&p.PhotoEnMms, &p.FrequenceParDefaut, &p.ModifieLe, &t.Incidents)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return parametresJSON{}, nil
 	}
@@ -108,9 +109,9 @@ func (a *app) modifierParametres(ctx context.Context, utilisateur string, c cham
 	t := &p.SmsParType
 	if _, err := tx.Exec(ctx, `UPDATE parametres SET sms_actifs = $2, sms_debut = $3, sms_positions_automatiques = $4,
 		sms_positions_manuelles = $5, sms_notes = $6, sms_photos = $7, sms_notes_vocales = $8, sms_fin = $9,
-		photo_en_mms = $10, frequence_par_defaut = $11, version = version + 1, modifie_le = now()
+		photo_en_mms = $10, frequence_par_defaut = $11, sms_incidents = $12, version = version + 1, modifie_le = now()
 		WHERE utilisateur_id = $1`, utilisateur, p.SmsActifs, t.Debut, t.PositionsAutomatiques, t.PositionsManuelles,
-		t.Notes, t.Photos, t.NotesVocales, t.Fin, p.PhotoEnMms, p.FrequenceParDefaut); err != nil {
+		t.Notes, t.Photos, t.NotesVocales, t.Fin, p.PhotoEnMms, p.FrequenceParDefaut, t.Incidents); err != nil {
 		return p, err
 	}
 	if err := tx.Commit(ctx); err != nil {

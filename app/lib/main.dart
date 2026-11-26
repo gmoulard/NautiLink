@@ -12,6 +12,7 @@ import 'reel/depot_reel.dart';
 import 'screens/connexion.dart';
 import 'screens/dashboard.dart';
 import 'screens/home.dart';
+import 'screens/pied.dart';
 import 'screens/suivi_reel.dart';
 import 'screens/warning.dart';
 import 'theme.dart';
@@ -181,7 +182,7 @@ class _Root extends StatelessWidget {
       // ouverte hors connexion, sur les données locales (RG-COM-06).
       return switch (depot.etatSession) {
         EtatSession.chargement => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
+          body: PageAvecPied(child: CircularProgressIndicator()),
         ),
         EtatSession.deconnecte => const ConnexionScreen(),
         EtatSession.connecte => const HomeScreen(),

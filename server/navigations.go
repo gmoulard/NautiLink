@@ -145,6 +145,15 @@ func validerEvenement(e *evenementJSON, types ...string) error {
 		if e.Fichier != nil && e.Fichier.TypeMedia != "image/jpeg" && e.Fichier.TypeMedia != "audio/mp4" {
 			return errInvalide("Fichier image/jpeg ou audio/mp4.")
 		}
+	case "incident":
+		// Incident ou avarie (RG-JRN-11, D-154) : texte obligatoire, une
+		// photo ou une note vocale facultative (une pièce jointe, Q-101).
+		if e.Texte == nil {
+			return errInvalide("Décrivez l'incident ou l'avarie.")
+		}
+		if e.Fichier != nil && e.Fichier.TypeMedia != "image/jpeg" && e.Fichier.TypeMedia != "audio/mp4" {
+			return errInvalide("Fichier image/jpeg ou audio/mp4.")
+		}
 	default:
 		e.Fichier = nil
 	}
@@ -173,17 +182,18 @@ type navLigne struct {
 	meteoDepart, meteoArrivee             []byte
 	epuise, cloture, supprimee            *time.Time
 	empreinte                             []byte
+	decalage                              *int
 }
 
 const colonnesNav = `id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes, parametres,
 	personnes_a_bord, personnes_alertees::text[], debut_enregistre, fin_enregistree, debut, fin, meteo_depart, meteo_arrivee,
-	epuise_le, cloture_automatique_le, supprimee_le, empreinte, version`
+	epuise_le, cloture_automatique_le, supprimee_le, empreinte, version, decalage_minutes`
 
 func lireNav(l pgx.Row) (navLigne, error) {
 	var n navLigne
 	err := l.Scan(&n.id, &n.navigateur, &n.bateau, &n.appareil, &n.nom, &n.destination, &n.frequence, &n.parametres,
 		&n.personnes, &n.alertees, &n.debutEnr, &n.finEnr, &n.debut, &n.fin, &n.meteoDepart, &n.meteoArrivee,
-		&n.epuise, &n.cloture, &n.supprimee, &n.empreinte, &n.version)
+		&n.epuise, &n.cloture, &n.supprimee, &n.empreinte, &n.version, &n.decalage)
 	return n, err
 }
 
@@ -303,6 +313,7 @@ type navigationJSON struct {
 	Suiveurs                  []personneJSON   `json:"suiveurs,omitempty"`
 	ContactsSos               []personneJSON   `json:"contactsSos,omitempty"`
 	AdressePage               string           `json:"adressePage,omitempty"`
+	decalage                  *int             // fuseau du téléphone au début (RG-PRM-07), pour l'affichage Web
 }
 
 const dureeCorbeille = 30 * 24 * time.Hour // RG-NAV-20
@@ -321,7 +332,7 @@ func distance(p, q positionJSON) float64 {
 // d'arrivée (première et dernière position non masquées), durée, distance
 // (somme des distances entre positions successives, D-35).
 func (a *app) resumer(ctx context.Context, n navLigne, role string) (navigationJSON, error) {
-	r := navigationJSON{ID: n.id, Nom: n.nom, Role: role, Debut: n.debut, Fin: n.fin}
+	r := navigationJSON{ID: n.id, Nom: n.nom, Role: role, Debut: n.debut, Fin: n.fin, decalage: n.decalage}
 	switch {
 	case n.supprimee != nil:
 		r.Etat = "corbeille"
@@ -554,10 +565,10 @@ func (a *app) demarrer(ctx context.Context, utilisateur, id string, d demarrageJ
 	}
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `INSERT INTO navigations (id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes,
-		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12)`,
+		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte, decalage_minutes)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13)`,
 		id, utilisateur, d.BateauID, d.AppareilID, nom, d.Destination, d.FrequenceMinutes, jsonOuNul(d.Parametres),
-		d.PersonnesABord, d.PersonnesAlertees, d.Debut.HeureAcquisition, emp)
+		d.PersonnesABord, d.PersonnesAlertees, d.Debut.HeureAcquisition, emp, decalageHoraire(d.Debut.HeureAcquisition))
 	if estDoublon(err) {
 		return 0, navigationJSON{}, &erreurAPI{http.StatusConflict, "navigation_en_cours",
 			"Une navigation est déjà en cours sur ce bateau ou sur ce téléphone.", 0}
@@ -670,8 +681,8 @@ func (a *app) terminer(ctx context.Context, utilisateur, id string, e evenementJ
 	if err := tx.Commit(ctx); err != nil {
 		return navigationJSON{}, err
 	}
-	a.notifierNavigation(ctx, id, "fin") // RG-IOS-06
-	a.recapitulatifNavigation(ctx, id)   // RG-NOT-06
+	a.notifierNavigation(ctx, id, "fin", e.HeureAcquisition) // RG-IOS-06
+	a.recapitulatifNavigation(ctx, id)                       // RG-NOT-06
 	if n, err = a.navigation(ctx, a.b.pool, id); err != nil {
 		return navigationJSON{}, err
 	}
@@ -703,8 +714,9 @@ func lireEvenement(l pgx.Row, n navLigne) (evenementJSON, error) {
 		e.Fichier = &fichierJSON{TypeMedia: *ft, TailleOctets: taille, DureeSecondes: duree, Recu: recu}
 	}
 	// Un SOS n'est jamais masqué du journal, même hors de la plage affichée
-	// ou déclenché après la fin (RG-SOS-19, D-120).
-	e.Masque = e.Type != "sos" && n.masque(e.HeureAcquisition)
+	// ou déclenché après la fin (RG-SOS-19, D-120) ; un ajout non plus : il
+	// porte l'heure à laquelle il est fait, après la fin (RG-JRN-05, D-152).
+	e.Masque = e.Type != "sos" && e.Type != "ajout" && n.masque(e.HeureAcquisition)
 	return e, err
 }
 
@@ -741,7 +753,7 @@ func (a *app) journalDeBord(ctx context.Context, n navLigne, depuis int64) (evts
 // envoyerEvenement : PUT /v1/navigations/{id}/evenements/{evenementId} ;
 // idempotent (08-architecture.md §5). Rend 201 (enregistré) ou 200 (déjà reçu).
 func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e evenementJSON) (int, evenementJSON, error) {
-	if err := validerEvenement(&e, "position_automatique", "position_manuelle", "note", "photo", "note_vocale", "ajout"); err != nil {
+	if err := validerEvenement(&e, "position_automatique", "position_manuelle", "note", "photo", "note_vocale", "ajout", "incident"); err != nil {
 		return 0, e, err
 	}
 	n, err := a.navigationDuNavigateur(ctx, utilisateur, navID)
@@ -790,8 +802,8 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 	if err := tx.Commit(ctx); err != nil {
 		return 0, e, err
 	}
-	if estPhoto(e) {
-		a.notifierNavigation(ctx, navID, "photo") // RG-IOS-06
+	if estPhoto(e) && e.Type != "incident" { // incident : sans notification push (RG-JRN-11)
+		a.notifierNavigation(ctx, navID, "photo", e.HeureAcquisition) // RG-IOS-06
 	}
 	if e.Type != "ajout" {
 		a.traceEvenement(ctx, navID, e) // RG-NOT-06
@@ -800,25 +812,26 @@ func (a *app) envoyerEvenement(ctx context.Context, utilisateur, navID string, e
 	return http.StatusCreated, r, err
 }
 
-// evenementModifiable : notes, photos, notes vocales et ajouts, quelle que
-// soit leur origine (RG-JRN-06) ; jamais début, fin, positions ni SOS (RG-JRN-07).
-func (a *app) evenementModifiable(ctx context.Context, utilisateur, navID, id string) (navLigne, error) {
+// evenementModifiable : notes, photos, notes vocales, incidents et avaries,
+// et ajouts, quelle que soit leur origine (RG-JRN-06, RG-JRN-11) ; jamais
+// début, fin, positions ni SOS (RG-JRN-07). Rend aussi le type.
+func (a *app) evenementModifiable(ctx context.Context, utilisateur, navID, id string) (navLigne, string, error) {
 	n, err := a.navigationModifiable(ctx, utilisateur, navID)
 	if err != nil {
-		return n, err
+		return n, "", err
 	}
 	if !estUUID(id) {
-		return n, errIntrouvable()
+		return n, "", errIntrouvable()
 	}
 	var typ string
 	if err := a.b.pool.QueryRow(ctx, "SELECT type FROM evenements WHERE id = $1 AND navigation_id = $2 AND supprime_le IS NULL",
 		id, navID).Scan(&typ); err != nil {
-		return n, err
+		return n, "", err
 	}
-	if !slices.Contains([]string{"note", "photo", "note_vocale", "ajout"}, typ) {
-		return n, errInterdit("evenement_non_modifiable", "Le début, la fin, les positions et les alertes SOS ne se modifient pas.")
+	if !slices.Contains([]string{"note", "photo", "note_vocale", "ajout", "incident"}, typ) {
+		return n, "", errInterdit("evenement_non_modifiable", "Le début, la fin, les positions et les alertes SOS ne se modifient pas.")
 	}
-	return n, nil
+	return n, typ, nil
 }
 
 // ------------------------------------------------------------------ liste
@@ -1145,16 +1158,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		if err := lireJSON(r, &c); err != nil {
 			return err
 		}
-		id := r.PathValue("evenementId")
-		n, err := a.evenementModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"), id)
-		if err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), `UPDATE evenements SET texte = $2, modification = nextval('modifications')
-			WHERE id = $1`, id, texteOuNul(c.Texte)); err != nil {
-			return err
-		}
-		e, err := lireEvenement(a.b.pool.QueryRow(r.Context(), "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", id), n)
+		e, err := a.modifierTexteEvenement(r.Context(), s.utilisateur, r.PathValue("navigationId"), r.PathValue("evenementId"), c.Texte)
 		if err != nil {
 			return err
 		}
@@ -1162,15 +1166,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		return nil
 	}))
 	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/evenements/{evenementId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
-		id := r.PathValue("evenementId")
-		if _, err := a.evenementModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"), id); err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), `UPDATE evenements SET supprime_le = now(), texte = NULL,
-			modification = nextval('modifications') WHERE id = $1`, id); err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), "DELETE FROM fichiers WHERE evenement_id = $1", id); err != nil {
+		if err := a.supprimerEvenement(r.Context(), s.utilisateur, r.PathValue("navigationId"), r.PathValue("evenementId")); err != nil {
 			return err
 		}
 		w.WriteHeader(http.StatusNoContent)
@@ -1225,21 +1221,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		return nil
 	}))
 	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/suiveurs/{utilisateurId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
-		n, err := a.navigationModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"))
-		if err != nil {
-			return err
-		}
-		suiveur := r.PathValue("utilisateurId")
-		if !estUUID(suiveur) {
-			return errIntrouvable()
-		}
-		// Retrait de cette navigation seulement, effet immédiat (RG-PAR-06).
-		if _, err := a.b.pool.Exec(r.Context(), `INSERT INTO retraits_navigation (navigation_id, suiveur_id)
-			SELECT $1, $2 WHERE EXISTS (SELECT 1 FROM utilisateurs WHERE id = $2) ON CONFLICT DO NOTHING`, n.id, suiveur); err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), "DELETE FROM acces WHERE navigateur_id = $1 AND suiveur_id = $2 AND navigation_id = $3",
-			n.navigateur, suiveur, n.id); err != nil {
+		if err := a.retirerDeLaNavigation(r.Context(), s.utilisateur, r.PathValue("navigationId"), r.PathValue("utilisateurId")); err != nil {
 			return err
 		}
 		w.WriteHeader(http.StatusNoContent)
@@ -1265,6 +1247,56 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		ecrireJSON(w, http.StatusOK, map[string]any{"resultats": a.synchroniser(r.Context(), r, s, corps.Elements)})
 		return nil
 	}))
+}
+
+// modifierTexteEvenement : texte d'une note, d'une photo, d'une note vocale
+// ou d'un ajout (RG-JRN-06), depuis l'API ou la page de la navigation.
+func (a *app) modifierTexteEvenement(ctx context.Context, utilisateur, navID, id string, texte *string) (evenementJSON, error) {
+	n, typ, err := a.evenementModifiable(ctx, utilisateur, navID, id)
+	if err != nil {
+		return evenementJSON{}, err
+	}
+	if typ == "incident" && texteOuNul(texte) == nil { // texte obligatoire (RG-JRN-11)
+		return evenementJSON{}, errInvalide("Décrivez l'incident ou l'avarie.")
+	}
+	if _, err := a.b.pool.Exec(ctx, `UPDATE evenements SET texte = $2, modification = nextval('modifications')
+		WHERE id = $1`, id, texteOuNul(texte)); err != nil {
+		return evenementJSON{}, err
+	}
+	return lireEvenement(a.b.pool.QueryRow(ctx, "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", id), n)
+}
+
+// supprimerEvenement : note, photo, note vocale ou ajout, avec son fichier
+// (RG-JRN-06) ; jamais début, fin, positions ni SOS (RG-JRN-07).
+func (a *app) supprimerEvenement(ctx context.Context, utilisateur, navID, id string) error {
+	if _, _, err := a.evenementModifiable(ctx, utilisateur, navID, id); err != nil {
+		return err
+	}
+	if _, err := a.b.pool.Exec(ctx, `UPDATE evenements SET supprime_le = now(), texte = NULL,
+		modification = nextval('modifications') WHERE id = $1`, id); err != nil {
+		return err
+	}
+	_, err := a.b.pool.Exec(ctx, "DELETE FROM fichiers WHERE evenement_id = $1", id)
+	return err
+}
+
+// retirerDeLaNavigation : retrait d'un suiveur de cette navigation seulement,
+// effet immédiat (RG-PAR-06) ; API et page de la navigation sur le Web.
+func (a *app) retirerDeLaNavigation(ctx context.Context, utilisateur, navID, suiveur string) error {
+	n, err := a.navigationModifiable(ctx, utilisateur, navID)
+	if err != nil {
+		return err
+	}
+	if !estUUID(suiveur) {
+		return errIntrouvable()
+	}
+	if _, err := a.b.pool.Exec(ctx, `INSERT INTO retraits_navigation (navigation_id, suiveur_id)
+		SELECT $1, $2 WHERE EXISTS (SELECT 1 FROM utilisateurs WHERE id = $2) ON CONFLICT DO NOTHING`, n.id, suiveur); err != nil {
+		return err
+	}
+	_, err = a.b.pool.Exec(ctx, "DELETE FROM acces WHERE navigateur_id = $1 AND suiveur_id = $2 AND navigation_id = $3",
+		n.navigateur, suiveur, n.id)
+	return err
 }
 
 func lireCorps(r *http.Request) (json.RawMessage, error) {
@@ -1305,5 +1337,5 @@ func (a *app) apresDemarrage(ctx context.Context, n navLigne) {
 	if err := a.emailsDebut(ctx, n); err != nil {
 		log.Printf("navigation %s : e-mails de début : %v", n.id, err)
 	}
-	a.notifierNavigation(ctx, n.id, "debut")
+	a.notifierNavigation(ctx, n.id, "debut", n.debutEnr)
 }

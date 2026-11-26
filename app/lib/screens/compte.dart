@@ -8,6 +8,7 @@ import '../l10n/app_localizations.dart';
 import '../reel/depot_reel.dart';
 import '../reel/sms_navigation.dart';
 import '../theme.dart';
+import 'pied.dart';
 import 'connexion.dart';
 import 'memo.dart';
 import 'warning.dart';
@@ -112,6 +113,7 @@ class ContactsScreen extends StatelessWidget {
                 .push(MaterialPageRoute(builder: (_) => const ContactScreen())),
           ),
         ],
+        const PiedDePage(),
       ],
     );
     return Scaffold(
@@ -529,7 +531,7 @@ class _ContactScreenState extends State<ContactScreen> {
   }
 
   /// Invitation par téléphone : SMS envoyé automatiquement sur Android avec
-  /// la permission d'envoi de SMS, sinon prérempli (D-146), avec la copie au
+  /// la permission d'envoi de SMS, sinon prérempli (D-156), avec la copie au
   /// navigateur (RG-SMS-08) ; lien affiché sur iPhone (RG-PAR-04, RG-IOS-02,
   /// D-137).
   Future<void> _envoyerSms(ContactNl c, InvitationNl i) async {
@@ -644,6 +646,7 @@ class _ContactScreenState extends State<ContactScreen> {
               },
             ),
           ],
+          const PiedDePage(),
         ],
       ),
     );
@@ -915,6 +918,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             Text(l.pushSosAlways),
           ],
+          const PiedDePage(),
         ],
       ),
     );
@@ -1026,6 +1030,7 @@ class _SosHistoryScreenState extends State<SosHistoryScreen> {
                   ),
                 ),
               ),
+            const PiedDePage(),
           ],
         ),
       ),
@@ -1107,7 +1112,7 @@ class AssistanceScreen extends StatelessWidget {
                     appBar: AppBar(title: Text(l.assistanceWarning)),
                     body: const SingleChildScrollView(
                       padding: EdgeInsets.all(20),
-                      child: WarningText(),
+                      child: Column(children: [WarningText(), PiedDePage()]),
                     ),
                   ),
                 ),
@@ -1123,6 +1128,7 @@ class AssistanceScreen extends StatelessWidget {
               onTap: () => openSecurityMemo(context),
             ),
           ),
+          const PiedDePage(),
         ],
       ),
     );

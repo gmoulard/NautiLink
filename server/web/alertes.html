@@ -1,0 +1,25 @@
+{{template "haut" .}}
+<h1>Alertes SOS</h1>
+<div class="carte">
+<p class="aide">Vos alertes SOS et celles des navigations que vous suivez, de la plus récente à la plus ancienne. Heures en heure locale du téléphone au déclenchement, puis UTC.</p>
+{{if .D}}
+<ol class="historique-sos">
+{{range .D}}
+<li class="alerte-sos">
+  <p class="entete"><strong>SOS</strong> · {{.Heure}} · {{.Bateau}}{{if not .Mienne}} · alerte de {{.Navigateur}}{{end}}</p>
+  <dl class="resume">
+    <dt>Navigation</dt><dd>{{if .A.NavigationID}}<a class="lien" href="{{$.Base}}/navigations/{{deref .A.NavigationID}}">Voir la navigation</a>{{else}}hors navigation (depuis l'accueil){{end}}</dd>
+    <dt>Position transmise</dt><dd>{{if .Position}}{{.Position}} · {{end}}{{.Nature}}</dd>
+    {{if .A.ProblemeRencontre}}<dt>Problème rencontré</dt><dd>{{deref .A.ProblemeRencontre}}</dd>{{end}}
+    {{if .A.PersonnesABord}}<dt>Personnes à bord</dt><dd>{{.A.PersonnesABord}}</dd>{{end}}
+    <dt>SMS</dt><dd>{{if .Sms}}<ul>{{range .Sms}}<li>{{.Telephone}}{{if .Second}} (second SMS){{end}} : {{.Statut}}</li>{{end}}</ul>{{else}}aucun SMS envoyé par le téléphone{{end}}</dd>
+    <dt>E-mails envoyés</dt><dd>{{if .A.EmailsEnvoyesA}}{{range $i, $e := .A.EmailsEnvoyesA}}{{if $i}}, {{end}}{{$e}}{{end}}{{else}}aucun{{end}}</dd>
+  </dl>
+</li>
+{{end}}
+</ol>
+{{else}}
+<p>Aucune alerte SOS.</p>
+{{end}}
+</div>
+{{template "bas" .}}

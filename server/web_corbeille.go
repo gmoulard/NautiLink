@@ -14,12 +14,10 @@ import (
 var moisFrancais = [...]string{"janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
 	"septembre", "octobre", "novembre", "décembre"}
 
-// dateFrancaise : « 25 décembre 2026 », heure de Paris (comme l'espace
-// administrateur).
-func dateFrancaise(t time.Time) string {
-	if paris, err := time.LoadLocation("Europe/Paris"); err == nil {
-		t = t.In(paris)
-	}
+// dateFrancaise : « 25 décembre 2026 », dans le fuseau du téléphone au
+// début de la navigation (RG-PRM-07, D-151), UTC sans décalage connu.
+func dateFrancaise(t time.Time, decalage *int) string {
+	t = t.In(zoneDe(decalage))
 	jour := strconv.Itoa(t.Day())
 	if t.Day() == 1 {
 		jour = "1er"
@@ -46,7 +44,7 @@ func (a *app) routesWebCorbeille(mux *http.ServeMux, c string) {
 		}
 		lignes := []ligneCorbeille{}
 		for _, n := range l {
-			lignes = append(lignes, ligneCorbeille{N: n, Debut: dateFrancaise(n.Debut), Definitive: dateFrancaise(*n.SupprimeeDefinitivementLe)})
+			lignes = append(lignes, ligneCorbeille{N: n, Debut: heureWeb(n.Debut, n.decalage), Definitive: dateFrancaise(*n.SupprimeeDefinitivementLe, n.decalage)})
 		}
 		d.Titre, d.D = "Corbeille", lignes
 		a.rendre(w, "corbeille.html", d)

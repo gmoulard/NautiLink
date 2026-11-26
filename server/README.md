@@ -1,6 +1,6 @@
 # Serveur NautiLink
 
-Serveur central de NautiLink : API, plateforme Web et espace administrateur, en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance ([D-62](../docs/07-decisions.md#d-62)). L'API suit [`docs/api/openapi.yaml`](../docs/api/openapi.yaml).
+Serveur central de NautiLink : API, Application web et espace administrateur, en Go, hébergé pendant la bêta sur un Raspberry Pi sous pi-appliance ([D-62](../docs/07-decisions.md#d-62)). L'API suit [`docs/api/openapi.yaml`](../docs/api/openapi.yaml).
 
 Réalisé :
 
@@ -8,7 +8,7 @@ Réalisé :
 - bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
 - contacts, invitations et accès des suiveurs (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
-- plateforme Web minimale (pages servies par le serveur, en français, sans JavaScript) : inscription, connexion, déconnexion, « Mon compte », « Bateaux », « Contacts », « Paramètres », page d'invitation ;
+- Application web (pages servies par le serveur, en français, sans JavaScript sauf la mise à jour en direct de la page d'une navigation) : inscription, connexion (case « Rester connecté », 1 heure sans usage, RG-CPT-08), déconnexion, tableau de bord (TODO-6.1), « Mon compte », « Bateaux », « Contacts », « Paramètres », « Alertes SOS », « Corbeille », « Assistance » (TODO-6.5), page d'invitation, menu « Administration » pour les administrateurs (TODO-6.9, RG-WEB-03), conduite d'une navigation en cours (note, photo, note vocale, fin) et « Envoyer un SOS » par Internet (TODO-6.8, RG-WEB-01, RG-WEB-02) ;
 - espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte (1 heure sans usage, case « Rester connecté »), utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
 
 ## Lancer en local
@@ -77,7 +77,7 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 
 | Adresse | Contenu |
 |---------|---------|
-| `<chemin>/` | Accueil de la plateforme Web (tableau de bord une fois connecté) |
+| `<chemin>/` | Accueil de l'Application web ; une fois connecté, tableau de bord (TODO-6.1) : navigations en cours, historique filtrable (`?role=navigateur` ou `suiveur`, `?curseur=` pour les plus anciennes), aperçu |
 | `<chemin>/inscription`, `<chemin>/connexion`, `<chemin>/deconnexion` | Création de compte, connexion, déconnexion |
 | `<chemin>/verification?jeton=…` | Lien de vérification de l'adresse e-mail |
 | `<chemin>/mot-de-passe-oublie`, `<chemin>/mot-de-passe?jeton=…` | « Mot de passe oublié ? » et lien reçu par e-mail pour choisir un nouveau mot de passe |
@@ -86,6 +86,10 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 | `<chemin>/contacts`, `<chemin>/contacts/<id>` | Contacts, lien d'invitation, mes suiveurs, navigateurs suivis |
 | `<chemin>/parametres` | Paramètres généraux : SMS envoyés aux suiveurs, fréquence des positions |
 | `<chemin>/invitation?jeton=…` | Lien d'invitation : connexion ou création d'un compte, puis acceptation |
+| `<chemin>/navigations/<id>` | Page d'une navigation (TODO-6.2) : informations, carte, alertes SOS, journal, bateau, suiveurs ; `…/direct` : partie relue toutes les 30 secondes pendant la navigation ; `…/suiveurs/<id>/retrait`, `…/suppression` (navigateur) |
+| `<chemin>/navigations/<id>/modification`, `…/evenements/<id>`, `…/evenements/<id>/suppression`, `…/ajouts` | Formulaires du navigateur (TODO-6.3) : nom, destination, bateau, heures ; texte et suppression des notes, photos, notes vocales et ajouts ; ajout complémentaire (texte, photo, note vocale) |
+| `<chemin>/navigations/<id>/pdf` | Export PDF de la navigation, pour le navigateur et ses suiveurs (TODO-6.4) |
+| `<chemin>/corbeille` | Corbeille : navigations supprimées, « Restaurer » (TODO-4.8) |
 | `<chemin>/api/v1/…` | API ([`openapi.yaml`](../docs/api/openapi.yaml)) |
 | `<chemin>/admin/` | Espace administrateur : `connexion`, `utilisateurs`, `bateaux`, `annonces`, `journal` (TODO-7.1) |
 | `<chemin>/api/sante` | État en JSON : `etat`, `version`, `build`, `commit`, `base` (`ok`, `absente`, `erreur`) |

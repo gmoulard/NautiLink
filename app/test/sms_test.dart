@@ -1,6 +1,10 @@
 import 'package:fake_async/fake_async.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:nautilink/data.dart';
 import 'package:nautilink/depot/depot.dart';
+import 'package:nautilink/l10n/app_localizations.dart';
 import 'package:nautilink/reel/conduite.dart';
 import 'package:nautilink/reel/sms.dart';
 import 'package:nautilink/reel/sms_navigation.dart';
@@ -82,6 +86,49 @@ void main() {
     expect(sms.contactsSos(null).length, 4);
   });
 
+  test('heures envoyées : heure locale puis UTC (RG-PRM-07, D-146)', () async {
+    await initializeDateFormatting('fr');
+    await initializeDateFormatting('en');
+    final fr = lookupAppLocalizations(const Locale('fr'));
+    final en = lookupAppLocalizations(const Locale('en'));
+    const hiver = Duration(hours: 1);
+    final t = DateTime.utc(2026, 11, 26, 13, 32);
+    expect(heureEnvoyee(fr, t, decalage: hiver), '14:32 (13:32 UTC)');
+    expect(heureEnvoyee(en, t, decalage: hiver), '14:32 (13:32 UTC)');
+    expect(
+      heureEnvoyee(fr, t, decalage: hiver, avecDate: true),
+      '26 nov. 2026, 14:32 (13:32 UTC)',
+    );
+    // Jour local différent du jour UTC : date UTC dans la parenthèse.
+    expect(
+      heureEnvoyee(
+        fr,
+        DateTime.utc(2026, 11, 26, 23, 30),
+        decalage: hiver,
+        avecDate: true,
+      ),
+      '27 nov. 2026, 00:30 (26 nov. 2026, 23:30 UTC)',
+    );
+    expect(
+      heureEnvoyee(
+        fr,
+        DateTime.utc(2026, 7, 1, 2, 5),
+        decalage: const Duration(hours: -4),
+      ),
+      '22:05 (02:05 UTC)',
+    );
+    // Sans décalage donné : celui du téléphone.
+    final ici = DateTime(2026, 11, 26, 9, 15);
+    expect(
+      heureEnvoyee(fr, ici),
+      '09:15 (${fmtTime(ici.toUtc())} UTC)',
+    );
+    expect(
+      sms.texte(navigation(), 'position_manuelle', heure: ici),
+      startsWith('NautiLink Alizé — position à 09:15 (${fmtTime(ici.toUtc())} UTC).'),
+    );
+  });
+
   test('texte : position ou « GPS NON DISPONIBLE », liens (RG-SMS-04, RG-SMS-06, RG-SMS-09)', () {
     final p = PositionGps(
       latitude: 47.38,
@@ -126,13 +173,13 @@ void main() {
       ),
     );
     // Type désactivé pour les suiveurs : le navigateur reçoit quand même le
-    // SMS, pour la trace (RG-SMS-08, D-147).
+    // SMS, pour la trace (RG-SMS-08, D-157).
     final r = await sms.ordinaire(off, 'note', note: 'x');
     expect(r.$1, IssueSms.prerempli);
     expect(canal.preremplis.last.$1, ['+33600000000']);
   });
 
-  test('trace : sans suiveur, SMS au navigateur seul, positions automatiques comprises (D-147)', () async {
+  test('trace : sans suiveur, SMS au navigateur seul, positions automatiques comprises (D-157)', () async {
     canal.autorisee = true;
     final sansSuiveur = NavigationLocale(
       id: 'nav2',
@@ -323,7 +370,7 @@ void main() {
     expect(t, contains("Tirant d'eau : 1.8 m."));
   });
 
-  test('avec la permission : SMS ordinaire envoyé automatiquement, avec la copie (D-146, RG-SMS-03)', () async {
+  test('avec la permission : SMS ordinaire envoyé automatiquement, avec la copie (D-156, RG-SMS-03)', () async {
     canal.autorisee = true;
     final (i, nombre) = await sms.ordinaire(
       navigation(),
@@ -338,7 +385,7 @@ void main() {
     expect(canal.envoyes.first.$3, contains('Note : Cap au 270'));
   });
 
-  test('photo avec la permission : SMS automatique avec le lien, MMS prérempli en plus si prévu (RG-SMS-05, D-146)', () async {
+  test('photo avec la permission : SMS automatique avec le lien, MMS prérempli en plus si prévu (RG-SMS-05, D-156)', () async {
     canal.autorisee = true;
     final mms = navigation(
       parametres: const ParametresGeneraux(
@@ -362,7 +409,7 @@ void main() {
     expect(canal.preremplis.single.$3, '/tmp/p.jpg');
   });
 
-  test('invitation par SMS : automatique avec la permission, sinon préremplie (RG-PAR-11, D-146)', () async {
+  test('invitation par SMS : automatique avec la permission, sinon préremplie (RG-PAR-11, D-156)', () async {
     var r = await sms.invitation(
       'i1',
       '+33655555555',
@@ -382,7 +429,7 @@ void main() {
     expect(canal.envoyes.map((s) => s.$2), ['+33655555555', '+33600000000']);
   });
 
-  test('SMS ordinaire automatique en échec : 3 essais puis « Réessayer » (RG-SMS-07, D-146)', () {
+  test('SMS ordinaire automatique en échec : 3 essais puis « Réessayer » (RG-SMS-07, D-156)', () {
     fakeAsync((f) {
       monter();
       canal

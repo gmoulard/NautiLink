@@ -15,12 +15,15 @@
     <span class="signature">Your sea, your safety, your story.</span>
     <nav aria-label="Menu principal">
     {{if .Connecte}}
-      <a href="{{.Base}}/">Accueil</a>
+      <a href="{{.Base}}/">Tableau de bord</a>
       <a href="{{.Base}}/bateaux">Bateaux</a>
       <a href="{{.Base}}/contacts">Contacts</a>
       <a href="{{.Base}}/parametres">Paramètres</a>
+      <a href="{{.Base}}/alertes-sos">Alertes SOS</a>
       <a href="{{.Base}}/corbeille">Corbeille</a>
       <a href="{{.Base}}/compte">Mon compte</a>
+      <a href="{{.Base}}/assistance">Assistance</a>
+      {{if .Admin}}<a href="{{.Base}}/admin/">Administration</a>{{end}}
       <form class="enligne" method="post" action="{{.Base}}/deconnexion"><button class="secondaire" type="submit">Se déconnecter</button></form>
     {{else}}
       <a href="{{.Base}}/connexion">Se connecter</a>

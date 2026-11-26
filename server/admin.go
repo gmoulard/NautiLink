@@ -23,7 +23,7 @@ import (
 
 const (
 	nomCookieAdmin      = "nautilink_admin"
-	dureeSansUsageAdmin = time.Hour // RG-ADM-07, D-148
+	dureeSansUsageAdmin = time.Hour // RG-ADM-07, D-158
 	dureeJournalAdmin   = "3 years" // RG-DON-02
 )
 
@@ -36,7 +36,7 @@ var errPasDisponible = &erreurAPI{http.StatusNotFound, "non_disponible",
 // sessionAdmin : session ouverte dans l'espace administrateur.
 type sessionAdmin struct {
 	id, utilisateur, email string
-	persistante            bool // « Rester connecté » coché (D-148)
+	persistante            bool // « Rester connecté » coché (D-158)
 }
 
 func (a *app) estAdmin(email string) bool {
@@ -58,7 +58,7 @@ func (a *app) adminValide(ctx context.Context, utilisateur string) (string, bool
 
 // connexionAdmin : e-mail et mot de passe du compte NautiLink, avec la même
 // protection contre les essais répétés ; rend le jeton de la session.
-// persistante : « Rester connecté » coché (RG-ADM-07, D-148).
+// persistante : « Rester connecté » coché (RG-ADM-07, D-158).
 func (a *app) connexionAdmin(ctx context.Context, r *http.Request, email, mdp string, persistante bool) (string, error) {
 	id, err := a.connexionEmail(ctx, r, email, mdp, "")
 	if err != nil && err != errAvertissement {
@@ -119,7 +119,7 @@ func (a *app) sessionAdminDe(ctx context.Context, r *http.Request) (*sessionAdmi
 }
 
 // poserCookieAdmin : cookie de l'espace administrateur, prolongé à chaque
-// page ; persistant si « Rester connecté » est coché, de session sinon (D-148).
+// page ; persistant si « Rester connecté » est coché, de session sinon (D-158).
 func (a *app) poserCookieAdmin(w http.ResponseWriter, jeton string, persistante bool) {
 	http.SetCookie(w, &http.Cookie{Name: nomCookieAdmin, Value: jeton, Path: a.cfg.Chemin + "/",
 		MaxAge: maxAgeCookie(persistante, dureeSansUsageAdmin), HttpOnly: true, Secure: true, SameSite: http.SameSiteStrictMode})

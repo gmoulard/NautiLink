@@ -21,6 +21,16 @@ var fonctionsPages = template.FuncMap{
 		return strings.Replace(strconv.FormatFloat(*n, 'f', -1, 64), ".", ",", 1)
 	},
 	"oui": func(b *bool) bool { return b != nil && *b },
+	// ligne : une navigation du tableau de bord et le chemin des liens.
+	"ligne": func(base string, l ligneNav) struct {
+		Base string
+		L    ligneNav
+	} {
+		return struct {
+			Base string
+			L    ligneNav
+		}{base, l}
+	},
 	"deref": func(s *string) string {
 		if s == nil {
 			return ""
@@ -29,9 +39,10 @@ var fonctionsPages = template.FuncMap{
 	},
 }
 
-// Plateforme Web minimale (pages servies par le serveur, en français, sans
-// JavaScript) : inscription, connexion, compte. Elle appelle les mêmes
-// fonctions que l'API.
+// Application web (D-147) : pages servies par le serveur, en français, sans
+// JavaScript sauf la mise à jour en direct de la page d'une navigation
+// (web_navigations.go) : inscription, connexion, compte, tableau de bord.
+// Elle appelle les mêmes fonctions que l'API.
 
 // donneesPage : données communes à toutes les pages.
 type donneesPage struct {
@@ -40,6 +51,7 @@ type donneesPage struct {
 	Avertissement          string
 	VersionAvertissement   string
 	Connecte, EmailVerifie bool
+	Admin                  bool // menu « Administration » (RG-WEB-03)
 	Nom                    string
 	Message, Erreur        string
 	Retour                 string
@@ -96,6 +108,9 @@ func (a *app) web(connecte bool, p pageWeb) http.HandlerFunc {
 					return
 				}
 				d.Connecte, d.Nom, d.EmailVerifie = true, p.Nom, p.EmailVerifie
+				// Administrateur (RG-ADM-07) : lien vers l'espace administrateur,
+				// qui garde sa propre connexion (RG-WEB-03, RG-ADM-01).
+				d.Admin = p.EmailVerifie && a.estAdmin(p.Email)
 			}
 		}
 		if connecte && s == nil {
@@ -153,10 +168,8 @@ func (a *app) routesWebComptes(mux *http.ServeMux, c string) {
 
 	mux.HandleFunc("GET "+c+"/{$}", a.web(false, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
 		if s != nil {
-			var err error
-			if d.Annonces, err = a.annonces(r.Context(), s.utilisateur); err != nil {
-				return err
-			}
+			// Connecté : tableau de bord (TODO-6.1, web_navigations.go).
+			return a.pageTableau(w, r, s, d)
 		}
 		a.rendre(w, "accueil.html", d)
 		return nil
@@ -173,7 +186,7 @@ func (a *app) routesWebComptes(mux *http.ServeMux, c string) {
 		id, err := a.creerCompte(r.Context(), r, r.FormValue("email"), r.FormValue("motdepasse"), r.FormValue("nom"), "", r.FormValue("avertissement"))
 		if err == nil {
 			var jeton string
-			// Pas de case à l'inscription : comme « Rester connecté », coché par défaut (D-148).
+			// Pas de case à l'inscription : comme « Rester connecté », coché par défaut (D-158).
 			if jeton, _, err = a.ouvrirSession(r.Context(), id, "web", true); err == nil {
 				a.poserCookie(w, jeton, true)
 				http.Redirect(w, r, ajouterOK(a.retourSur(d.Retour), "inscrit"), http.StatusSeeOther)
@@ -190,7 +203,7 @@ func (a *app) routesWebComptes(mux *http.ServeMux, c string) {
 
 	mux.HandleFunc("GET "+c+"/connexion", a.web(false, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
 		d.Titre, d.Retour = "Se connecter", r.URL.Query().Get("retour")
-		d.F["rester"] = "oui" // « Rester connecté » coché par défaut (D-148)
+		d.F["rester"] = "oui" // « Rester connecté » coché par défaut (D-158)
 		a.rendre(w, "connexion.html", d)
 		return nil
 	}))

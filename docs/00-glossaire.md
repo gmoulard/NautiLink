@@ -5,12 +5,13 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | Terme | Définition |
 |-------|------------|
 | **Utilisateur** | Personne possédant un compte NautiLink. Il n'existe qu'un seul type de compte utilisateur ([RG-CPT-01](02-regles-metier.md#rg-cpt-01)). |
-| **Navigateur** | Rôle d'un utilisateur lorsqu'il conduit une navigation avec l'un de ses bateaux, depuis l'application mobile. |
+| **Navigateur** | Rôle d'un utilisateur lorsqu'il conduit une navigation avec l'un de ses bateaux, depuis l'application mobile ou l'Application web ([RG-WEB-01](02-regles-metier.md#rg-web-01)). |
 | **Suiveur** | Rôle d'un utilisateur lorsqu'il consulte les navigations d'un autre utilisateur qui lui a donné un accès. Un même utilisateur peut être navigateur et suiveur. |
 | **Propriétaire** | Utilisateur qui a créé un bateau. Il est le seul à pouvoir naviguer avec ce bateau ([RG-CPT-05](02-regles-metier.md#rg-cpt-05)). |
 | **Bateau** | Navire décrit par une fiche bateau, rattaché à un seul propriétaire. |
 | **Fiche bateau** | Description du bateau : nom, type, longueur, immatriculation, port d'attache, photo, caractéristiques techniques ([RG-BAT-01](02-regles-metier.md#rg-bat-01)). |
 | **Application mobile** | L'application Android ou l'application iPhone. Elles ont les mêmes fonctions, sauf le circuit SMS qui n'existe que sur Android ([RG-IOS-02](02-regles-metier.md#rg-ios-02)). |
+| **Application web** | L'application NautiLink ouverte dans un navigateur Internet : tableau de bord, pages des navigations, gestion du compte et toutes les fonctions de l'application mobile, sans SMS ([RG-WEB-01](02-regles-metier.md#rg-web-01)). Anciennement « plateforme Web » ([D-147](07-decisions.md#d-147)). |
 | **Téléphone associé** | Téléphone Android ou iPhone enregistré pour un bateau. Un bateau a au plus un téléphone associé ; un téléphone peut être associé à plusieurs bateaux du même compte. |
 | **Navigation** | Période entre le démarrage et la fin d'une sortie en mer, effectuée avec un bateau et un téléphone associé. États : *en cours*, *terminée*, *dans la corbeille*. |
 | **Position** | Coordonnées GPS horodatées à l'instant de leur acquisition par le téléphone. |
@@ -18,9 +19,11 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Position manuelle** | Position acquise et transmise à la demande du navigateur (« Envoyer information position »). |
 | **Fréquence** | Intervalle entre deux positions automatiques : 15 minutes, 30 minutes, 1 heure, 2 heures, 3 heures, 6 heures, 12 heures, 1 jour, 2 jours, 10 jours ([RG-NAV-05](02-regles-metier.md#rg-nav-05)). |
 | **Journal de bord** | Liste chronologique des événements d'une navigation. |
-| **Événement** | Entrée du journal de bord : début, position, note, photo, note vocale, alerte SOS, fin, ajout complémentaire. |
+| **Événement** | Entrée du journal de bord : début, position, note, photo, note vocale, alerte SOS, incident ou avarie, fin, ajout complémentaire. |
+| **Incident - avarie** | Événement du journal de bord qui consigne un incident ou une avarie : texte, avec photo et note vocale facultatives ([RG-JRN-11](02-regles-metier.md#rg-jrn-11)). |
+| **Chef de bord** | Personne responsable du bateau pendant la navigation, choisie sur l'écran de démarrage, par défaut le navigateur ([RG-NAV-35](02-regles-metier.md#rg-nav-35)). |
 | **Note vocale** | Enregistrement de la voix, conservé sur le serveur et réécoutable, sans transcription ([D-71](07-decisions.md#d-71)). |
-| **Alerte SOS** | Alerte de détresse déclenchée depuis l'application mobile : SMS aux contacts SOS (Android seulement), enregistrement sur le serveur, e-mail aux suiveurs. |
+| **Alerte SOS** | Alerte de détresse déclenchée depuis l'application mobile ou l'Application web ([RG-WEB-02](02-regles-metier.md#rg-web-02)) : SMS aux contacts SOS (Android seulement), enregistrement sur le serveur, e-mail aux suiveurs. |
 | **Contact** | Personne de la liste unique du navigateur : nom, téléphone et/ou e-mail, cases « Suiveur » et « Contact SOS », cochées par défaut ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)). |
 | **Contact SOS** | Contact dont la case « Contact SOS » est cochée ; reçoit les SMS SOS. Il a forcément un numéro de téléphone. |
 | **Destinataire SMS** | Suiveur d'une navigation ayant renseigné un numéro de téléphone ; reçoit les SMS ordinaires de cette navigation ([RG-SMS-01](02-regles-metier.md#rg-sms-01)). |

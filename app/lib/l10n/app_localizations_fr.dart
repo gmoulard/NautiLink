@@ -489,7 +489,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucun contact SOS coché : personne ne recevra vos SMS SOS.';
 
   @override
-  String get sendStart => 'Envoi message – Début de navigation';
+  String get sendStart => 'Début de navigation';
 
   @override
   String get addPersonText =>
@@ -553,10 +553,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sinceStart => 'Depuis le début';
 
   @override
-  String get sinceLastSend => 'Depuis le dernier envoi';
+  String get sinceLastSend => 'Depuis le dernier envoi position';
 
   @override
-  String get sendPosition => 'Envoyer information position';
+  String get sendPosition => 'Envoyer position';
 
   @override
   String get positionSent => 'Position envoyée';
@@ -1038,7 +1038,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recordingHintReal =>
-      '1 minute au plus, arrêt automatique. Votre voix est envoyée telle quelle, sans transcription.';
+      'Votre voix est envoyée telle quelle, sans transcription.';
 
   @override
   String get sosReelNoBoat =>
@@ -1415,4 +1415,24 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get inviteSmsSent =>
       'Invitation envoyée par SMS, avec la copie à votre numéro.';
+
+  @override
+  String timeWithUtc(String local, String utc) {
+    return '$local ($utc UTC)';
+  }
+
+  @override
+  String get alertByEmail => 'E-mail';
+
+  @override
+  String get alertBySms => 'SMS';
+
+  @override
+  String get weatherLink => 'Météo marine';
+
+  @override
+  String get voyageEndingSending => 'Navigation terminée, en cours d\'envoi';
+
+  @override
+  String get homeSecurityRules => 'Règles de sécurité en mer';
 }

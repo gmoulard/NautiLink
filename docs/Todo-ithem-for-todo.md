@@ -1,1 +1,6 @@
- 
+- Le titre ne sont pas "Tableau de bord" mais log de nav de <nom du bateau> le selecteur (Afficher : Toutes · Comme navigateur · Comme suiveur) doit etre juste dessus le tableaux des log de nav par bateaux. 
+- dans le log de nav chaque nav ne prend qu'une ligne dont le titre est <date> <heure debut >-<herue de fin > <nbr milles> milles vers <destination>  par exemple : 26-nov-26 14:00-18:00 7 milles vers toulons darce vielle.
+- Quand on glise sur le ligne de la log de nav on une fenettre souvre avec le detail et l'appersu ouvert. quand on clique ont va comme maiintenant sur le detail de la nav.
+- devant le titre Nautilink de la webapp, il faut ajouté le logo.
+- Dans l'application android lors du Démarrer Navigation, mettre le bouton debut de navigation avec la liste des personnes alertées.
+- -refaire le look and field des applications en reprends l'étude formalisé dans l'image Nautilinkimages261126.png

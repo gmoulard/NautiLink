@@ -151,10 +151,10 @@ func (a *app) envoyerAlerte(ctx context.Context, r *http.Request, utilisateur, i
 	}
 	defer tx.Rollback(ctx)
 	_, err = tx.Exec(ctx, `INSERT INTO alertes_sos (id, navigateur_id, bateau_id, navigation_id, appareil_id, heure_declenchement,
-		latitude, longitude, precision_metres, heure_position, nature_position, probleme, personnes_a_bord, empreinte)
-		VALUES ($1, $2, $3, $4, nullif($5, '')::uuid, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+		latitude, longitude, precision_metres, heure_position, nature_position, probleme, personnes_a_bord, empreinte, decalage_minutes)
+		VALUES ($1, $2, $3, $4, nullif($5, '')::uuid, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
 		id, utilisateur, bateau, navigation, al.AppareilID, al.HeureDeclenchement, lat, lon, prec, hp,
-		al.NaturePosition, al.ProblemeRencontre, personnes, emp)
+		al.NaturePosition, al.ProblemeRencontre, personnes, emp, decalageHoraire(al.HeureDeclenchement))
 	if estDoublon(err) {
 		// Deux envois simultanés de la même alerte : le second est un renvoi.
 		tx.Rollback(ctx)
@@ -368,6 +368,7 @@ func (a *app) lancerEmailsSos(adresse, id string) {
 type donneesSos struct {
 	al                        alerteSosJSON
 	navigateur, emailNav, lng string
+	decalage                  *int
 	bateau                    bateauJSON
 	nomNavigation             string
 }
@@ -425,8 +426,8 @@ func (a *app) emailsSos(ctx context.Context, adresse, id string) error {
 	}
 	d := donneesSos{al: al}
 	var navigateur string
-	if err := a.b.pool.QueryRow(ctx, "SELECT navigateur_id, u.nom, u.email, u.langue FROM alertes_sos JOIN utilisateurs u ON u.id = navigateur_id WHERE alertes_sos.id = $1",
-		id).Scan(&navigateur, &d.navigateur, &d.emailNav, &d.lng); err != nil {
+	if err := a.b.pool.QueryRow(ctx, "SELECT navigateur_id, u.nom, u.email, u.langue, alertes_sos.decalage_minutes FROM alertes_sos JOIN utilisateurs u ON u.id = navigateur_id WHERE alertes_sos.id = $1",
+		id).Scan(&navigateur, &d.navigateur, &d.emailNav, &d.lng, &d.decalage); err != nil {
 		return err
 	}
 	if d.bateau, err = lireBateau(a.b.pool.QueryRow(ctx, "SELECT "+colonnesBateau+" FROM bateaux WHERE id = $1", al.BateauID)); err != nil {
@@ -510,7 +511,34 @@ func enLangue(lng, fr, en string) string {
 	return fr
 }
 
-func heureTexte(t time.Time) string { return t.UTC().Format("2006-01-02 15:04") + " UTC" }
+// heureEnvoyee : heure d'un message envoyé aux suiveurs et aux contacts SOS
+// (RG-PRM-07, D-146) : heure locale du téléphone du navigateur ([decalage]
+// en minutes), puis UTC entre parenthèses ; avec la date locale en tête si
+// [avecDate], et la date UTC dans la parenthèse quand elle diffère. Sans
+// décalage connu : UTC seule.
+func heureEnvoyee(t time.Time, decalage *int, avecDate bool) string {
+	u := t.UTC()
+	format := "15:04"
+	if avecDate {
+		format = "2006-01-02 15:04"
+	}
+	if decalage == nil {
+		return u.Format(format) + " UTC"
+	}
+	l := u.In(time.FixedZone("", *decalage*60))
+	utc := u.Format("15:04")
+	if avecDate && l.Format("2006-01-02") != u.Format("2006-01-02") {
+		utc = u.Format("2006-01-02 15:04")
+	}
+	return l.Format(format) + " (" + utc + " UTC)"
+}
+
+// decalageHoraire : décalage horaire, en minutes, d'une heure reçue en RFC 3339.
+func decalageHoraire(t time.Time) *int {
+	_, s := t.Zone()
+	m := s / 60
+	return &m
+}
 
 func nombreTexte(v *float64, unite string) string {
 	if v == nil {
@@ -527,7 +555,7 @@ func texteSos(d donneesSos, adresse string) (string, string) {
 	sujet := enLangue(l, "SOS — "+b.Nom+" : alerte de "+d.navigateur, "SOS — "+b.Nom+": distress alert from "+d.navigateur)
 	var s strings.Builder
 	s.WriteString(enLangue(l, "ALERTE SOS envoyée par ", "SOS ALERT sent by ") + d.navigateur +
-		enLangue(l, " depuis le bateau ", " from the boat ") + b.Nom + enLangue(l, ", le ", ", on ") + heureTexte(al.HeureDeclenchement) + ".\n\n")
+		enLangue(l, " depuis le bateau ", " from the boat ") + b.Nom + enLangue(l, ", le ", ", on ") + heureEnvoyee(al.HeureDeclenchement, d.decalage, true) + ".\n\n")
 	ligne := func(fr, en, v string) {
 		if strings.TrimSpace(v) != "" {
 			s.WriteString(enLangue(l, fr, en) + " : " + v + "\n")
@@ -554,7 +582,7 @@ func texteSos(d donneesSos, adresse string) (string, string) {
 			s.WriteString(enLangue(l, "Position :\n", "Position:\n"))
 		}
 		s.WriteString(fmt.Sprintf("%.5f, %.5f", p.Latitude, p.Longitude) + enLangue(l, " (acquise le ", " (acquired on ") +
-			heureTexte(p.HeureAcquisition) + ")\n" + fmt.Sprintf("https://www.google.com/maps?q=%.5f,%.5f", p.Latitude, p.Longitude) + "\n")
+			heureEnvoyee(p.HeureAcquisition, d.decalage, true) + ")\n" + fmt.Sprintf("https://www.google.com/maps?q=%.5f,%.5f", p.Latitude, p.Longitude) + "\n")
 	}
 	s.WriteString("\n")
 	ligne("Port d'attache", "Home port", b.PortAttache)
@@ -610,7 +638,7 @@ func (a *app) emailsDebut(ctx context.Context, n navLigne) error {
 	sujet := enLangue(l, "NautiLink : "+nom+" a démarré une navigation", "NautiLink: "+nom+" has started a trip")
 	var s strings.Builder
 	s.WriteString(enLangue(l, "Bonjour,\n\n"+nom+" a démarré la navigation « "+n.nom+" » avec le bateau "+bateau+", le ",
-		"Hello,\n\n"+nom+" has started the trip “"+n.nom+"” on the boat "+bateau+", on ") + heureTexte(n.debutEnr) + ".\n")
+		"Hello,\n\n"+nom+" has started the trip “"+n.nom+"” on the boat "+bateau+", on ") + heureEnvoyee(n.debutEnr, n.decalage, true) + ".\n")
 	if n.destination != nil && n.destination.Texte != "" {
 		s.WriteString(enLangue(l, "Destination : ", "Destination: ") + n.destination.Texte + "\n")
 	}

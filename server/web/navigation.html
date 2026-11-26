@@ -1,0 +1,185 @@
+{{template "haut" .}}
+{{with .D}}
+<h1>{{.N.Nom}}</h1>
+{{if not .Navigateur}}<p class="aide suivi">Navigation de {{.N.Navigateur.Nom}} : vous la suivez en lecture seule.</p>{{end}}
+<p><a class="bouton" href="{{$.Base}}/navigations/{{.N.ID}}/pdf" download>Exporter en PDF</a></p>
+{{if .Corbeille}}
+<div class="carte"><p>Cette navigation est dans la corbeille : elle sera supprimée définitivement le {{.Suppression}}. Vos suiveurs n'y ont plus accès. <a class="lien" href="{{$.Base}}/corbeille">Corbeille</a></p></div>
+{{end}}
+<div id="direct" data-adresse="{{$.Base}}/navigations/{{.N.ID}}/direct" data-curseur="{{.Curseur}}" data-version="{{.N.Version}}" data-etat="{{.N.Etat}}">
+{{template "navigation-direct" $}}
+</div>
+{{if .EnCours}}<p class="aide" id="maj" aria-live="polite">La page se met à jour toute seule pendant la navigation.</p>
+<noscript><p class="aide">Rechargez la page pour voir les dernières positions.</p></noscript>{{end}}
+
+{{if .Navigateur}}{{if .EnCours}}
+<section class="carte" aria-labelledby="titre-conduite">
+<h2 id="titre-conduite">Pendant la navigation</h2>
+<p><a class="bouton sos" href="{{$.Base}}/sos?navigation={{.N.ID}}">Envoyer un SOS</a></p>
+<form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/conduite" enctype="multipart/form-data">
+  <label for="conduite-texte">Note</label>
+  <textarea id="conduite-texte" name="texte" rows="3" maxlength="4000"></textarea>
+  <label for="conduite-fichier">Photo (JPEG) ou note vocale (AAC .m4a, 1 minute au plus), facultative</label>
+  <input id="conduite-fichier" name="fichier" type="file" accept="image/jpeg,audio/mp4,audio/x-m4a,.m4a">
+  <p class="aide">L'envoi entre au journal de bord à l'heure où vous le faites, sans position. Aucun SMS ne part de l'Application web.</p>
+  <button type="submit">Envoyer</button>
+</form>
+<form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/fin">
+  <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la fin de la navigation</span></label>
+  <button class="secondaire" type="submit">Terminer la navigation</button>
+</form>
+</section>
+{{end}}{{end}}
+
+{{with .Modifier}}
+<section class="carte" aria-labelledby="titre-modifier">
+<h2 id="titre-modifier">Modifier la navigation</h2>
+<form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/modification">
+  <label for="nom">Nom</label>
+  <input id="nom" name="nom" type="text" required maxlength="200" value="{{.Nom}}">
+  {{if .Terminee}}
+  <label for="destination">Destination</label>
+  <input id="destination" name="destination" type="text" maxlength="200" value="{{.Destination}}">
+  <label for="bateauId">Bateau</label>
+  <select id="bateauId" name="bateauId">
+    {{range .Bateaux}}<option value="{{.ID}}" {{if eq .ID $.D.Modifier.BateauID}}selected{{end}}>{{.Nom}}</option>{{end}}
+  </select>
+  <div class="grille">
+  <div><label for="debut">Début</label>
+  <input id="debut" name="debut" type="datetime-local" required value="{{.Debut}}"></div>
+  <div><label for="fin">Fin</label>
+  <input id="fin" name="fin" type="datetime-local" required value="{{.Fin}}"></div>
+  </div>
+  <p class="aide">Heures en {{.Zone}}. Changer les heures ne change pas votre quota ; les positions en dehors des nouvelles heures sont gardées mais n'apparaissent plus sur le tracé.</p>
+  {{else}}
+  <p class="aide">La destination, le bateau et les heures se modifient une fois la navigation terminée.</p>
+  {{end}}
+  <button type="submit">Enregistrer</button>
+</form>
+</section>
+{{if .Terminee}}
+<section class="carte" aria-labelledby="titre-ajout">
+<h2 id="titre-ajout">Ajouter au journal</h2>
+<form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/ajouts" enctype="multipart/form-data">
+  <label for="ajout-texte">Texte ou information</label>
+  <textarea id="ajout-texte" name="texte" rows="3" maxlength="4000"></textarea>
+  <label for="ajout-fichier">Photo (JPEG) ou note vocale (AAC .m4a, 1 minute au plus), facultative</label>
+  <input id="ajout-fichier" name="fichier" type="file" accept="image/jpeg,audio/mp4,audio/x-m4a,.m4a">
+  <p class="aide">{{if .PhotosRestantes}}Encore {{.PhotosRestantes}} photo{{if gt .PhotosRestantes 1}}s{{end}} possible{{if gt .PhotosRestantes 1}}s{{end}} (20 par navigation).{{else}}Cette navigation a déjà 20 photos.{{end}} 5 Mo au plus.</p>
+  <p class="aide">L'ajout prend l'heure à laquelle vous le faites et se place à la fin du journal.</p>
+  <button type="submit">Ajouter</button>
+</form>
+</section>
+{{end}}
+{{end}}
+
+<section class="carte" aria-labelledby="titre-bateau">
+<h2 id="titre-bateau">Bateau</h2>
+{{with .N.Fiche}}
+<div class="deux">
+<dl class="resume">
+  <dt>Nom</dt><dd>{{.Nom}}</dd>
+  <dt>Type</dt><dd>{{if eq .Type "voilier"}}Voilier{{else}}Bateau à moteur{{end}}</dd>
+  {{if .LongueurMetres}}<dt>Longueur</dt><dd>{{nombre .LongueurMetres}} m</dd>{{end}}
+  {{if .Immatriculation}}<dt>Immatriculation</dt><dd>{{.Immatriculation}}</dd>{{end}}
+  {{if .PortAttache}}<dt>Port d'attache</dt><dd>{{.PortAttache}}</dd>{{end}}
+  {{if .Moteur}}<dt>Moteur</dt><dd>{{.Moteur}}</dd>{{end}}
+  {{if .TirantEauMetres}}<dt>Tirant d'eau</dt><dd>{{nombre .TirantEauMetres}} m</dd>{{end}}
+</dl>
+{{if .AUnePhoto}}<p><img class="photo-bateau" src="{{$.Base}}/api/v1/bateaux/{{.ID}}/photo" alt="Photo du bateau {{.Nom}}" loading="lazy"></p>{{end}}
+</div>
+{{end}}
+</section>
+
+<section class="carte" aria-labelledby="titre-personnes">
+<h2 id="titre-personnes">Suiveurs et contacts SOS</h2>
+<h3>Suiveurs de cette navigation</h3>
+{{if .N.Suiveurs}}<ul class="personnes">
+{{range .N.Suiveurs}}<li>{{.Nom}}{{if $.D.Navigateur}}{{if not $.D.Corbeille}}
+  <form class="enligne" method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/suiveurs/{{.ID}}/retrait"><button class="secondaire" type="submit">Retirer de cette navigation</button></form>{{end}}{{end}}</li>
+{{end}}</ul>{{else}}<p class="aide">Aucun suiveur.</p>{{end}}
+<h3>Contacts SOS</h3>
+{{if .N.ContactsSos}}<ul class="personnes">{{range .N.ContactsSos}}<li>{{.Nom}}</li>{{end}}</ul>{{else}}<p class="aide">Aucun contact SOS.</p>{{end}}
+</section>
+
+{{if .Navigateur}}{{if not .EnCours}}{{if not .Corbeille}}
+<section class="carte" aria-labelledby="titre-supprimer">
+<h2 id="titre-supprimer">Supprimer la navigation</h2>
+<form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/suppression">
+  <p class="aide">La navigation passe dans la corbeille : vous pouvez la restaurer pendant 30 jours, puis elle est supprimée définitivement. Vos suiveurs n'y ont plus accès. Son temps reste décompté de votre quota.</p>
+  <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la suppression de cette navigation</span></label>
+  <button class="danger" type="submit">Supprimer</button>
+</form>
+</section>
+{{end}}{{end}}{{end}}
+<p><a class="lien" href="{{$.Base}}/">Retour au tableau de bord</a></p>
+{{if .EnCours}}<script src="{{$.Base}}/static/navigation.js"></script>{{end}}
+{{end}}
+{{template "bas" .}}
+
+{{define "navigation-direct"}}{{with .D}}
+<section class="carte" aria-labelledby="titre-infos">
+<h2 id="titre-infos">Informations</h2>
+<p class="etat {{.N.Etat}}">{{if .EnCours}}Navigation en cours{{else if .Corbeille}}Dans la corbeille{{else}}Navigation terminée{{end}}{{if .N.ClotureAutomatiqueLe}} — clôturée automatiquement, quota épuisé{{end}}</p>
+<dl class="resume">
+  <dt>Navigateur</dt><dd>{{.N.Navigateur.Nom}}</dd>
+  <dt>Bateau</dt><dd>{{.N.Bateau.Nom}}</dd>
+  <dt>Début</dt><dd>{{.L.Depart}}</dd>
+  {{if .N.Fin}}<dt>Fin</dt><dd>{{.L.Fin}}</dd>{{end}}
+  {{if .L.LieuDepart}}<dt>Lieu de départ</dt><dd>{{.L.LieuDepart}}</dd>{{end}}
+  {{if .L.LieuArrivee}}<dt>Lieu d'arrivée</dt><dd>{{.L.LieuArrivee}}</dd>{{end}}
+  {{if .Destination}}<dt>Destination</dt><dd>{{.Destination}}</dd>{{end}}
+  <dt>Durée</dt><dd>{{.L.Duree}}</dd>
+  <dt>Distance</dt><dd>{{.L.Distance}}</dd>
+  {{if .N.PersonnesABord}}<dt>Personnes à bord</dt><dd>{{.N.PersonnesABord}}</dd>{{end}}
+  <dt>Fréquence des positions</dt><dd>{{.Frequence}}</dd>
+  {{if .EnCours}}{{if .L.Derniere}}<dt>Dernière position</dt><dd>{{.L.Derniere}}, {{.L.HeureD}}</dd>{{end}}{{end}}
+</dl>
+</section>
+
+<section class="carte" aria-labelledby="titre-carte">
+<h2 id="titre-carte">Carte</h2>
+{{if .Carte}}
+{{template "carte" .Carte}}
+<p class="aide legende"><span class="pastille depart"></span> départ · <span class="pastille {{if .EnCours}}derniere{{else}}arrivee{{end}}"></span> {{if .EnCours}}dernière position{{else}}arrivée{{end}} · <span class="pastille evenement"></span> note, photo ou note vocale · <span class="pastille incident"></span> incident ou avarie · <span class="pastille sos"></span> alerte SOS. Survolez un point pour son heure.</p>
+<p class="aide source">Fond de carte © <a href="https://www.openstreetmap.org/copyright">les contributeurs d'OpenStreetMap</a> · balisage © <a href="https://www.openseamap.org">OpenSeaMap</a></p>
+{{else}}<p class="aide">Aucune position reçue pour l'instant.</p>{{end}}
+</section>
+
+{{if .Alertes}}
+<section class="carte alertes" aria-labelledby="titre-alertes">
+<h2 id="titre-alertes">Alertes SOS</h2>
+<ul>
+{{range .Alertes}}<li><strong>SOS</strong> · {{.Heure}}{{if .Lieu}} · {{.Lieu}}{{else}} · position non disponible{{end}}{{if .A.ProblemeRencontre}} · {{.A.ProblemeRencontre}}{{end}}{{if .A.PersonnesABord}} · {{.A.PersonnesABord}} à bord{{end}}{{if .HorsNavigation}} · en dehors des heures de la navigation{{end}}</li>
+{{end}}</ul>
+</section>
+{{end}}
+
+<section class="carte" aria-labelledby="titre-journal">
+<h2 id="titre-journal">Journal de bord</h2>
+{{if .Journal}}
+<ol class="journal">
+{{range .Journal}}
+<li class="evenement {{.E.Type}}" id="evenement-{{.E.ID}}">
+  <p class="entete"><strong>{{.Libelle}}</strong> · {{.Heure}}{{if .Lieu}} · {{.Lieu}}{{end}}{{if .Masque}} · <span class="aide">en dehors des heures affichées</span>{{end}}</p>
+  {{if .E.Texte}}<p class="texte">{{.E.Texte}}</p>{{end}}
+  {{if .Photo}}{{if .E.Fichier.Recu}}<p><a href="{{$.Base}}/api/v1/fichiers/{{.E.ID}}"><img class="photo" src="{{$.Base}}/api/v1/fichiers/{{.E.ID}}" alt="Photo du journal, {{.Heure}}" loading="lazy"></a></p>
+  <p class="aide">Touchez la photo pour l'afficher en grand.</p>{{else}}<p class="aide">Photo en cours d'envoi depuis le téléphone.</p>{{end}}{{end}}
+  {{if .Vocal}}{{if .E.Fichier.Recu}}<audio controls preload="none" src="{{$.Base}}/api/v1/fichiers/{{.E.ID}}">Votre navigateur ne lit pas les notes vocales.</audio>{{else}}<p class="aide">Note vocale en cours d'envoi depuis le téléphone.</p>{{end}}{{end}}
+  {{if .Modifiable}}<details class="modifier"><summary>Modifier ou supprimer</summary>
+    <form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/evenements/{{.E.ID}}">
+      <label for="texte-{{.E.ID}}">Texte</label>
+      <textarea id="texte-{{.E.ID}}" name="texte" rows="3" maxlength="4000">{{if .E.Texte}}{{.E.Texte}}{{end}}</textarea>
+      <button class="secondaire" type="submit">Enregistrer le texte</button>
+    </form>
+    <form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/evenements/{{.E.ID}}/suppression">
+      <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la suppression de cet élément{{if or .Photo .Vocal}} et de son fichier{{end}}</span></label>
+      <button class="danger" type="submit">Supprimer</button>
+    </form>
+  </details>{{end}}
+</li>
+{{end}}
+</ol>
+{{else}}<p class="aide">Le journal est vide.</p>{{end}}
+</section>
+{{end}}{{end}}

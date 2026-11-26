@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Trace au navigateur (RG-NOT-06, D-147) : un e-mail par élément reçu, et
+// Trace au navigateur (RG-NOT-06, D-157) : un e-mail par élément reçu, et
 // un récapitulatif du journal à la fin de la navigation.
 func TestTraceNavigateur(t *testing.T) {
 	e := nouvelEssai(t)

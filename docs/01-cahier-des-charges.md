@@ -12,7 +12,7 @@ Elle comprend :
 
 - **NautiLink Android** : l'application du navigateur à bord (démarrage et fin de navigation, positions, journal de bord, SOS par SMS et par Internet) ;
 - **NautiLink iPhone** : les mêmes fonctions sans aucun SMS, plus le suivi des navigations avec notifications push (§5.6) ;
-- **NautiLink Web** : la plateforme de consultation, de suivi et de gestion (navigations, journaux, bateaux, suiveurs, paramètres, abonnement) ;
+- **NautiLink Application web** : l'application de consultation, de suivi et de gestion, ouverte dans un navigateur Internet (navigations, journaux, bateaux, suiveurs, paramètres, abonnement) ([D-147](07-decisions.md#d-147)) ;
 - **le serveur NautiLink** : API HTTPS, stockage, calcul du quota, envoi des e-mails ;
 - **l'espace administrateur** : application Web distincte réservée à l'équipe NautiLink.
 
@@ -28,7 +28,7 @@ Elle comprend :
 
 ## 3. Périmètre
 
-**Inclus** : application Android, plateforme Web, application iPhone (construite après l'application Android et le Web), espace administrateur, interfaces en français et en anglais (RG-PRM-03), thème clair et thème sombre, offre gratuite et abonnement.
+**Inclus** : application Android, Application web, application iPhone (construite après l'application Android et le Web), espace administrateur, interfaces en français et en anglais (RG-PRM-03), thème clair et thème sombre, offre gratuite et abonnement.
 
 **Exclus au lancement** :
 
@@ -76,7 +76,7 @@ Trois boutons :
 
 - **Démarrer navigation** ;
 - **Reprendre la dernière navigation** : ouvre l'écran de la navigation en cours (RG-NAV-12) ;
-- **Navigations enregistrées** : liste récupérée depuis le serveur ; la sélection ouvre la page de la navigation sur la plateforme Web.
+- **Navigations enregistrées** : liste récupérée depuis le serveur ; la sélection ouvre la page de la navigation sur l'Application web.
 
 L'accueil affiche aussi le bouton rouge **Envoyer un SOS** (RG-SOS-15).
 
@@ -124,7 +124,7 @@ Chaque note, photo et note vocale est enregistrée dans le journal et transmise 
 - Rôle suiveur : tableau de bord et page de navigation comme sur le Web, avec la carte (RG-IOS-05) ; notifications push (RG-IOS-06).
 - Abonnement par achat intégré de l'App Store (RG-IOS-07).
 
-## 6. Plateforme Web
+## 6. Application web
 
 ### 6.1 Tableau de bord
 
@@ -159,6 +159,10 @@ Pendant une navigation en cours, la page se met à jour à mesure que les positi
 ### 6.4 Côté suiveur
 
 Le suiveur voit sur son tableau de bord les navigations auxquelles il a accès et les consulte en lecture seule ; il voit aussi la fiche du bateau, les autres suiveurs et les contacts SOS, et peut exporter en PDF (RG-PAR-07, RG-PAR-08). Le suivi est gratuit (RG-ECO-08).
+
+### 6.5 Fonctions de l'application mobile
+
+L'Application web a aussi toutes les fonctions de l'application mobile, conduite d'une navigation et SOS compris, par Internet seulement, sans SMS (RG-WEB-01, RG-WEB-02, [D-150](07-decisions.md#d-150)) ; un administrateur y trouve le menu « Administration » (RG-WEB-03). Conduite depuis un navigateur Internet : [Q-99](06-questions-ouvertes.md#q-99).
 
 ## 7. Espace administrateur
 

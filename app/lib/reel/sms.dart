@@ -224,7 +224,7 @@ class EnvoisSms extends ChangeNotifier {
   final _rappels = <String, void Function(List<SmsSuivi>)>{};
 
   /// SMS envoyés automatiquement, hors SOS, en échec après 3 essais
-  /// (« Réessayer », RG-SMS-07, D-146).
+  /// (« Réessayer », RG-SMS-07, D-156).
   final List<SmsSuivi> echecsPosition = [];
 
   /// SMS d'un groupe (une alerte SOS, une position) dans leur dernier état.

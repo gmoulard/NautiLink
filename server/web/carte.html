@@ -1,0 +1,7 @@
+{{define "carte"}}<svg class="carte" viewBox="0 0 {{.Largeur}} {{.Hauteur}}" role="img" aria-label="Carte du tracé de la navigation" xmlns="http://www.w3.org/2000/svg">
+<rect class="mer" x="0" y="0" width="{{.Largeur}}" height="{{.Hauteur}}"/>
+{{range .Dalles}}<image href="{{.Fond}}" x="{{.X}}" y="{{.Y}}" width="256" height="256"/>
+{{end}}{{range .Dalles}}<image href="{{.Balise}}" x="{{.X}}" y="{{.Y}}" width="256" height="256"/>
+{{end}}{{if .Trace}}<polyline class="trace" points="{{.Trace}}"/>{{end}}
+{{range .Points}}<circle class="point {{.Sorte}}" cx="{{.X}}" cy="{{.Y}}" r="{{if eq .Sorte "position"}}4{{else}}8{{end}}"><title>{{.Titre}}</title></circle>
+{{end}}</svg>{{end}}

@@ -46,6 +46,7 @@ button, .bouton {
 }
 button.secondaire { background: transparent; color: var(--action); border: 2px solid var(--action); }
 button.danger { background: transparent; color: var(--sos); border: 2px solid var(--sos); }
+.bouton.sos, button.sos { background: #D94343; color: #FFFFFF; }
 form.enligne { display: inline; }
 form.enligne button { margin-top: 0; }
 .aide { color: var(--texte2); font-size: .9rem; margin: 4px 0 0; }
@@ -54,6 +55,9 @@ th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--file
 .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 16px; }
 .photo-bateau { max-width: 100%; max-height: 260px; border-radius: 8px; }
 code.lien-invitation { word-break: break-all; }
+.historique-sos, .liens-assistance { list-style: none; padding: 0; margin: 0; }
+.alerte-sos { border-left: 4px solid var(--sos); padding: 4px 0 4px 12px; margin-bottom: 16px; }
+.liens-assistance li { margin-bottom: 12px; }
 footer { text-align: center; color: var(--texte2); font-size: .85rem; padding: 16px; }
 footer p { margin: .2rem 0; }
 footer .construction { font-size: .75rem; }
@@ -69,3 +73,63 @@ textarea, input[type=date] { width: 100%; padding: 8px 12px; font: inherit; colo
 .admin nav a { color: var(--fond); }
 dl.chiffres { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
 dl.chiffres dd { margin: 0; font-weight: 600; }
+
+/* Tableau de bord (TODO-6.1) : aperçu au survol (ordinateur) ou au toucher
+   de « Aperçu » (mobile), sans JavaScript. */
+h3 { font-size: 1.05rem; margin: 0 0 4px; }
+section { margin-bottom: 24px; }
+.filtres .actif { text-decoration: underline; }
+article.navigation { background: var(--surface); border: 1px solid var(--filet); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; }
+dl.resume { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 8px 0 0; }
+dl.resume dt { color: var(--texte2); }
+dl.resume dd { margin: 0; }
+details.apercu summary { display: inline-flex; align-items: center; min-height: 44px; color: var(--action); font-weight: 600; cursor: pointer; }
+.bulle { display: none; margin-top: 4px; }
+details.apercu[open] + .bulle { display: block; }
+@media (hover: hover) { article.navigation:hover .bulle { display: block; } }
+.bulle svg.carte { max-width: 320px; }
+
+/* Carte (RG-NAV-29) : dalles OpenStreetMap et OpenSeaMap, tracé, points. */
+svg.carte { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--filet); }
+svg.carte .mer { fill: #AAD3DF; }
+svg.carte .trace { fill: none; stroke: #0E6BA8; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+svg.carte .point { stroke: #FFFFFF; stroke-width: 2; fill: #0E6BA8; }
+svg.carte .point.position { fill: #0E6BA8; stroke-width: 1; }
+svg.carte .point.depart { fill: #13A6AD; }
+svg.carte .point.arrivee, svg.carte .point.derniere { fill: #0E2A47; }
+svg.carte .point.evenement { fill: #F2C14E; }
+svg.carte .point.sos { fill: #D94343; }
+svg.carte .point.incident { fill: #E8833A; }
+
+/* Page d'une navigation (TODO-6.2). */
+.etat { font-weight: 600; margin: 0 0 8px; }
+.etat.en_cours { color: var(--ok); }
+.etat.corbeille { color: var(--sos); }
+.deux { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; align-items: start; }
+.legende .pastille { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; }
+.pastille.depart { background: #13A6AD; }
+.pastille.arrivee, .pastille.derniere { background: #0E2A47; outline: 1px solid var(--texte2); }
+.pastille.evenement { background: #F2C14E; }
+.pastille.sos { background: #D94343; }
+.pastille.incident { background: #E8833A; }
+.source a { color: var(--texte2); }
+.alertes { border: 2px solid var(--sos); }
+.alertes ul { margin: 0; padding-left: 20px; }
+ol.journal { list-style: none; margin: 0; padding: 0; }
+ol.journal li.evenement { border-left: 3px solid var(--filet); padding: 4px 0 8px 12px; margin-bottom: 8px; }
+ol.journal li.sos { border-left-color: var(--sos); }
+ol.journal li.incident { border-left: 6px solid #E8833A; background: var(--bandeau); }
+ol.journal li.debut, ol.journal li.fin { border-left-color: var(--action); }
+ol.journal .entete { margin: 0; }
+ol.journal .texte { margin: 4px 0; white-space: pre-line; }
+img.photo { max-width: 100%; max-height: 360px; border-radius: 8px; }
+audio { width: 100%; max-width: 420px; }
+ul.personnes { margin: 0 0 12px; padding-left: 20px; }
+ul.personnes li { margin-bottom: 4px; }
+
+/* Formulaires du navigateur (TODO-6.3). */
+input[type=datetime-local], input[type=file] { width: 100%; min-height: 44px; padding: 8px 12px; font: inherit; color: var(--texte);
+  background: var(--fond); border: 1px solid var(--filet); border-radius: 8px; }
+details.modifier { margin-top: 6px; }
+details.modifier summary { color: var(--action); font-weight: 600; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; }
+details.modifier form { margin-bottom: 8px; }

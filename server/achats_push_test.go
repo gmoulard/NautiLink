@@ -175,7 +175,12 @@ func TestNotificationsPush(t *testing.T) {
 	e.appel("PATCH", "/compte", s2, map[string]any{"push": map[string]any{"photo": false}})
 
 	id := uuid(t)
-	t0 := time.Now().Add(-2 * time.Hour).Truncate(time.Second)
+	// Téléphone à UTC+1 : heure locale puis UTC dans les notifications et
+	// l'e-mail de début (RG-PRM-07).
+	plusUn := time.FixedZone("", 3600)
+	soixante := 60
+	t0 := time.Now().Add(-2 * time.Hour).Truncate(time.Second).In(plusUn)
+	n0 := e.courrier.nombre()
 	d := demarrage(bateau, tel, t0, 47.8, -3.9)
 	d["debut"].(map[string]any)["id"] = uuid(t)
 	if code, r := e.appel("PUT", "/navigations/"+id, nav, d); code != 201 {
@@ -184,8 +189,12 @@ func TestNotificationsPush(t *testing.T) {
 	if f.nombre("POST /v1/projects/nautilink-essai/messages:send") != 1 || f.nombre("POST /3/device/apns-s2") != 1 {
 		t.Fatalf("notification de début : %v", f.requetes)
 	}
-	if !strings.Contains(f.corps["POST /3/device/apns-s2"], "Yann a démarré une navigation") {
-		t.Fatalf("texte iPhone : %s", f.corps["POST /3/device/apns-s2"])
+	if c := f.corps["POST /3/device/apns-s2"]; !strings.Contains(c, "Yann a démarré une navigation") ||
+		!strings.Contains(c, heureEnvoyee(t0, &soixante, false)) {
+		t.Fatalf("texte iPhone : %s", c)
+	}
+	if txt := e.courrier.texte(n0, "s1@exemple.org", "démarré"); !strings.Contains(txt, heureEnvoyee(t0, &soixante, true)) {
+		t.Fatalf("heure de l'e-mail de début : %q", txt)
 	}
 	// Photo : seulement le suiveur Android.
 	photo := map[string]any{"id": uuid(t), "type": "photo", "heureAcquisition": heure(t0.Add(time.Minute)), "numeroOrdre": 2,
@@ -211,11 +220,11 @@ func TestNotificationsPush(t *testing.T) {
 	// SOS : toujours, jeton iPhone périmé oublié.
 	f.perime = "apns-s2"
 	al := map[string]any{"id": uuid(t), "bateauId": bateau, "navigationId": id, "appareilId": tel,
-		"heureDeclenchement": heure(time.Now()), "naturePosition": "aucune", "problemeRencontre": "Voie d'eau"}
+		"heureDeclenchement": heure(time.Now().In(plusUn)), "naturePosition": "aucune", "problemeRencontre": "Voie d'eau"}
 	if code, r := e.appel("PUT", "/alertes-sos/"+al["id"].(string), nav, al); code != 201 {
 		t.Fatalf("SOS : %d %v", code, r)
 	}
-	if !strings.Contains(f.corps["POST /v1/projects/nautilink-essai/messages:send"], "SOS — Mistral") {
+	if c := f.corps["POST /v1/projects/nautilink-essai/messages:send"]; !strings.Contains(c, "SOS — Mistral") || !strings.Contains(c, " UTC).") {
 		t.Fatalf("notification SOS : %s", f.corps["POST /v1/projects/nautilink-essai/messages:send"])
 	}
 	if e.compter("SELECT count(*) FROM appareils WHERE jeton_push = 'apns-s2'") != 0 {

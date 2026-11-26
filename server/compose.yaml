@@ -24,7 +24,8 @@ services:
     # Construction précise du serveur, :<version>-<build> (server/VERSION,
     # docs/09-versions.md, D-128) : la changer ici pour mettre à jour. « :0.0.1 »
     # ou « :latest » resteraient en cache sur le Pi (build 12 gardé après le 13).
-    image: ghcr.io/gmoulard/nautilink-serveur:0.0.1-13
+    image: ghcr.io/gmoulard/nautilink-serveur:latest
+    pull_policy: always
     restart: unless-stopped
     environment:
       NAUTILINK_ADRESSE: ":8080"

@@ -18,7 +18,7 @@ func cookieRendu(rec *httptest.ResponseRecorder, nom string) *http.Cookie {
 }
 
 // verifierCookie : cookie persistant d'une heure si persistant, cookie de
-// session (ni Max-Age ni Expires) sinon (D-148).
+// session (ni Max-Age ni Expires) sinon (D-158).
 func verifierCookie(t *testing.T, rec *httptest.ResponseRecorder, nom string, persistant bool, quand string) {
 	t.Helper()
 	c := cookieRendu(rec, nom)

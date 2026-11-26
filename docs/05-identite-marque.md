@@ -122,7 +122,7 @@ Simple, rassurant, direct, moderne, positif, axé sur la liberté et la sécurit
 >
 > Que vous naviguiez en voilier ou en bateau à moteur, NautiLink vous permet de partager votre position avec vos proches, de suivre vos navigations, de transmettre des informations importantes et de conserver un journal de bord complet.
 >
-> Grâce à ses applications Android et iPhone et à sa plateforme Web, NautiLink rapproche le navigateur de ceux qui comptent pour lui.
+> Grâce à ses applications Android et iPhone et à son Application web, NautiLink rapproche le navigateur de ceux qui comptent pour lui.
 >
 > Naviguez. Partagez. Gardez une trace.
 

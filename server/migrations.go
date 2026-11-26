@@ -320,7 +320,15 @@ var migrations = []string{
 	// 8 — notifications push : position en retard notifiée une seule fois
 	// jusqu'à la position suivante (RG-IOS-06, D-84).
 	`ALTER TABLE navigations ADD COLUMN retard_push_le timestamptz;`,
-	// 9 — D-148 : « Rester connecté » sur la plateforme Web et l'espace
+	// 9 — RG-PRM-07, D-146 : décalage horaire du téléphone, en minutes, pour
+	// l'heure locale des messages envoyés ; nul avant cette migration.
+	`ALTER TABLE navigations ADD COLUMN decalage_minutes integer;
+	ALTER TABLE alertes_sos ADD COLUMN decalage_minutes integer;`,
+	// 10 — RG-JRN-11, D-154 : type de SMS « Incidents - avaries » ; null :
+	// jamais réglé, comme les autres types (valeurs d'un nouveau compte :
+	// RG-PRM-06, TODO-4.9).
+	`ALTER TABLE parametres ADD COLUMN sms_incidents boolean;`,
+	// 11 — D-158 : « Rester connecté » sur l'Application web et l'espace
 	// administrateur : cookie persistant si coché, de session sinon. Sessions
 	// déjà ouvertes : persistantes, comme avant.
 	`ALTER TABLE sessions ADD COLUMN persistante boolean NOT NULL DEFAULT true;

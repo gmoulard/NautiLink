@@ -1,0 +1,13 @@
+{{template "haut" .}}
+<h1>Assistance</h1>
+{{with .D}}
+<div class="carte">
+<h2>Version bêta</h2>
+<ul class="liens-assistance">
+  <li><a class="lien" href="{{.Equipe}}">Écrire à l'équipe NautiLink</a><p class="aide">Page de suivi du projet NautiLink sur GitHub.</p></li>
+  <li><a class="lien" href="{{$.Avertissement}}">Avertissement bêta</a><p class="aide">Version du {{.Profil.AvertissementVersionAcceptee}}, acceptée le {{.AccepteLe}}.</p></li>
+  <li><a class="lien" href="{{.Memo}}">Mémo sécurité en mer</a><p class="aide">Canal 16 de la VHF, 196.</p></li>
+</ul>
+</div>
+{{end}}
+{{template "bas" .}}

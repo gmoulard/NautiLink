@@ -19,8 +19,41 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : avant la version Android réelle (TODO-5.4).
 - Cas : les règles disent quand partent les SMS ordinaires (début, positions, notes, photos, notes vocales, fin : RG-SMS-01 à RG-SMS-03), ce qu'ils disent sans GPS (RG-SMS-04), et le lien d'une photo ou d'une note vocale (RG-SMS-05, RG-SMS-06, RG-SMS-09), mais pas leur texte. Le contenu des SMS SOS, lui, est fixé (RG-SOS-07, RG-SOS-08).
-- Proposition (non validée) : une première ligne « NautiLink <bateau> — <type d'envoi> à <heure>. » (types : « début de navigation », « position », « note », « photo », « note vocale », « fin de navigation ») ; puis, selon le type : « Destination : <destination>. » au début ; « Position <latitude>, <longitude> : <lien Google Maps> » ou « GPS NON DISPONIBLE » pour le début, les positions et la fin ; « Note : <texte> » ; « Photo : <lien> » ou « Note vocale : <lien> » vers l'élément dans la page de la navigation ; « Suivre la navigation : <lien de la page> » au début. Dans la langue du navigateur (RG-PRM-04). Le second SMS SOS commence par « SOS <bateau> (suite). ».
+- Proposition (non validée) : une première ligne « NautiLink <bateau> — <type d'envoi> à <heure>. », l'heure selon RG-PRM-07 (types : « début de navigation », « position », « note », « photo », « note vocale », « fin de navigation ») ; puis, selon le type : « Destination : <destination>. » au début ; « Position <latitude>, <longitude> : <lien Google Maps> » ou « GPS NON DISPONIBLE » pour le début, les positions et la fin ; « Note : <texte> » ; « Photo : <lien> » ou « Note vocale : <lien> » vers l'élément dans la page de la navigation ; « Suivre la navigation : <lien de la page> » au début. Dans la langue du navigateur (RG-PRM-04). Le second SMS SOS commence par « SOS <bateau> (suite). ».
 - Appliqué en attendant dans l'application (`app/lib/reel/sms_navigation.dart`, textes `sms…` de `app/lib/l10n/`).
+
+### <a id="q-99"></a>Q-99 — Conduite d'une navigation depuis l'Application web
+
+- Priorité : avant la conduite d'une navigation depuis l'Application web (TODO-6.8).
+- Cas : D-150 donne à l'Application web toutes les fonctions de l'application mobile, conduite d'une navigation et SOS compris (RG-WEB-01, RG-WEB-02). Les règles de la conduite supposent un téléphone : position par son GPS (RG-GPS-01), positions automatiques en arrière-plan (RG-GPS-03), téléphone associé au bateau (RG-BAT-02, RG-NAV-03, RG-NAV-34), reprise par le téléphone d'une navigation que le serveur dit en cours (RG-NAV-33), fuseau du téléphone pour les heures (RG-PRM-07), photo par l'appareil photo et note vocale en AAC (RG-AND-06, RG-JRN-04). Une page Web ne garde pas la position écran éteint, et la plupart des navigateurs Internet n'enregistrent pas l'AAC.
+- Points à décider : 1) position (début, position manuelle, note, SOS, fin) : localisation du navigateur Internet avec l'accord de la personne, saisie à la main, ou aucune ; 2) positions automatiques : tant que la page reste ouverte, ou aucune ; 3) téléphone : navigation démarrée sur le Web sans téléphone, ou rattachée au téléphone associé du bateau, qui la reprend (RG-NAV-33) ; 4) bateau au démarrage et pour un SOS hors navigation : choix parmi tous les bateaux du compte ; 5) photo et note vocale : fichier choisi (JPEG, AAC `.m4a`, comme les ajouts) ou prise par l'appareil photo et le micro du navigateur Internet (autre format audio à accepter) ; 6) fuseau des heures : celui du navigateur Internet (lu par JavaScript), sinon UTC.
+- Proposition (non validée) : 1) localisation du navigateur Internet si la personne l'accepte, sinon sans position (SOS : dernière position connue, RG-SOS-10) ; 2) tant que la page reste ouverte, à la fréquence de la navigation, avec un avertissement ; 3) sans téléphone, reprise par le téléphone associé du bateau s'il s'y connecte (RG-NAV-33) ; 4) tous les bateaux du compte ; 5) fichier choisi, que le téléphone peut prendre avec son appareil photo ; 6) fuseau du navigateur Internet.
+- Appliqué en attendant dans l'Application web : pendant une navigation en cours, note, photo et note vocale par fichier choisi, fin et SOS, sans position (le SOS prend la dernière position du journal, RG-SOS-10) ; heures dans le fuseau du téléphone au début de la navigation ; SOS hors navigation : bateau choisi parmi ceux du compte, heure en UTC. Démarrage et positions depuis le Web : pas encore faits.
+
+### <a id="q-100"></a>Q-100 — Chef de bord : forme, affichage, modification
+
+- Priorité : avant la version suivante de l'application mobile (TODO-5.10).
+- Cas : RG-NAV-35 (D-153) fait du chef de bord un réglage de l'écran de démarrage, prérempli avec le nom du navigateur et modifiable. Restent : sa forme (texte libre ou personne des contacts), sa modification après le démarrage, où il apparaît (page de la navigation, export PDF, SMS SOS, e-mail SOS, e-mail de début) et son champ dans l'API.
+- Proposition (non validée) : texte libre ; modifiable ensuite comme le nom de la navigation (RG-NAV-22) ; affiché sur la page de la navigation et dans l'export PDF, et ajouté au SMS SOS et à l'e-mail SOS (« Chef de bord : <nom> ») ; champ `chefDeBord` de la navigation dans l'API (texte ; absent : nom du navigateur).
+
+### <a id="q-101"></a>Q-101 — Incident ou avarie : création dans l'application mobile
+
+- Priorité : avant la version suivante de l'application mobile (TODO-5.11).
+- Cas : RG-JRN-11 (D-154) crée le type « Incident - avarie » ; l'utilisateur n'a pas retenu l'option « Bouton Incident - avarie sur l'écran de navigation », sans dire comment il se crée. Le serveur range une seule pièce jointe par événement, alors que la photo et la note vocale sont toutes deux facultatives.
+- Options : A) bouton « Incident - avarie » sur l'écran de navigation ; B) choix « Incident - avarie » dans la fenêtre de « NOTE » ; C) entrée dans un menu de l'écran de navigation. Pièce jointe : une photo ou une note vocale, ou les deux.
+- Proposition (non validée) : B, qui n'ajoute pas de bouton à l'écran de navigation ; une seule pièce jointe, photo ou note vocale (appliqué en attendant par le serveur).
+### <a id="q-102"></a>Q-102 — Remarques de relecture de l'application Android
+
+- Priorité : avant la version suivante de l'application mobile (TODO-5.12).
+- Demande de l'utilisateur du 2026-11-26 : document de relecture de l'application Android (captures commentées, TODO-5.12). Certaines remarques changent une règle ou un libellé écrit dans les règles :
+  1. personnes alertées : un choix e-mail et un choix SMS par personne sur l'écran de démarrage, au lieu d'une seule case (RG-NAV-25) ;
+  2. « Le personnes son toujours suiveur et contact SOS il n'y a pas de difference » : contredit les deux cases « Suiveur » et « Contact SOS » de chaque contact (RG-CTC-01, RG-CTC-04, RG-CTC-05 : un contact SOS a un numéro, un suiveur une invitation acceptée) ;
+  3. libellés : « Début de navigation » au lieu de « Envoi message – Début de navigation » (RG-NAV-08), « Envoyer position » au lieu de « Envoyer information position » (glossaire), « Depuis le dernier envoi position » pour le second chronomètre (RG-NAV-10 compte tout envoi, pas seulement les positions) ;
+  4. lien vers « la page MTO » sur l'écran de navigation : la météo n'est relevée qu'au début et à la fin et affichée sur l'Application web (RG-NAV-28), son service n'est pas ouvert ([Q-39](#q-39)) ;
+  5. mémo sécurité en mer « sur toutes les pages comme le pied de page » (RG-SOS-22 : depuis l'accueil) ;
+  6. « Enlevé la notion de limité à 1 minute » : retirer seulement la mention à l'écran, ou la limite elle-même (RG-JRN-04, D-53).
+- Proposition (non validée) : 1) deux cases « E-mail » et « SMS » par personne, cochées ; une personne décochée des deux n'est pas alertée, SOS compris (comme RG-NAV-25) ; 2) garder les deux cases sur la fiche du contact (un contact SOS doit avoir un numéro), mais ne plus les afficher dans la liste de l'écran de démarrage ; 3) libellés adoptés, le second chronomètre gardant sa règle (tout envoi le remet à zéro) ; 4) lien vers la prévision marine de Météo-France pour la position actuelle, sans relevé par NautiLink ; 5) lien « Mémo sécurité en mer » dans le pied de page de chaque écran ; 6) retirer la mention seulement, la limite d'une minute restant (taille des fichiers et des MMS).
+- Appliqué en attendant dans l'application 0.2.0 (TODO-5.12) ; lien météo : page « Météo marine » de Météo-France (<https://meteofrance.com/meteo-marine>), sans la position actuelle.
 
 ## 2. Études techniques
 
@@ -36,7 +69,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : bloquant, à étudier en premier.
 - Décidé (D-48) : exception « urgence » de Google Play pour les SMS SOS ; SMS ordinaires préremplis.
 - Décidé (D-82) : les SMS de positions automatiques partent aussi automatiquement ; la demande de permission auprès de Google Play doit couvrir ce cas, avec le risque accepté d'un refus en dehors de l'exception « urgence » ; sans cette permission, positions au serveur seulement (D-91).
-- Décidé (D-146) : avec la permission, tous les SMS de l'application partent automatiquement, invitations comprises ; la demande auprès de Google Play doit couvrir cet usage, hors de la seule exception « urgence ».
+- Décidé (D-156) : avec la permission, tous les SMS de l'application partent automatiquement, invitations comprises ; la demande auprès de Google Play doit couvrir cet usage, hors de la seule exception « urgence ».
 - Reste : lire la page officielle de Google Play et vérifier que l'exception existe et couvre NautiLink. Si elle est refusée, revenir vers l'utilisateur.
 - Étude documentaire : [sms-mms-android.md](etudes/sms-mms-android.md) (voies possibles §3).
 
@@ -93,7 +126,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Priorité : plus tard.
 - Décidé (D-90) : français et anglais au lancement ; langue du téléphone par défaut, modifiable dans les paramètres ; messages envoyés aux suiveurs et aux contacts SOS dans la langue du navigateur (RG-PRM-03, RG-PRM-04).
 - Essai dans le prototype (TODO-9.2) : textes des écrans dans `app/lib/l10n/app_fr.arb` (français, langue de référence) et `app_en.arb` (anglais), code généré par `flutter gen-l10n`.
-- Décidé (D-93) : sur la plateforme Web, langue du navigateur Internet par défaut (RG-PRM-03).
+- Décidé (D-93) : sur l'Application web, langue du navigateur Internet par défaut (RG-PRM-03).
 - Reste : relecture de la traduction anglaise ; ajout d'autres langues après le lancement, sans gestion des langues dans l'espace administrateur (RG-ADM-04).
 
 ### <a id="q-28"></a>Q-28 — Versions multiples du Web

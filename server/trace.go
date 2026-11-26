@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// Trace au navigateur (RG-NOT-06, D-147) : un e-mail pour chaque élément
+// Trace au navigateur (RG-NOT-06, D-157) : un e-mail pour chaque élément
 // reçu de sa navigation, positions automatiques comprises, puis un
 // récapitulatif avec tout le journal à la fin. Ne se désactive pas ; langue
 // du navigateur (RG-PRM-04).
@@ -39,9 +39,9 @@ func nomTypeTrace(l, typ string) string {
 
 // ligneTrace : une ligne du journal, avec l'heure, la position ou « GPS non
 // disponible », le lieu et le texte.
-func ligneTrace(l, typ string, h time.Time, lat, lon *float64, lieu, texte *string) string {
+func ligneTrace(l, typ string, h time.Time, decalage *int, lat, lon *float64, lieu, texte *string) string {
 	var s strings.Builder
-	s.WriteString(heureTexte(h) + " · " + nomTypeTrace(l, typ))
+	s.WriteString(heureEnvoyee(h, decalage, true) + " · " + nomTypeTrace(l, typ)) // RG-PRM-07
 	switch {
 	case lat != nil && lon != nil:
 		fmt.Fprintf(&s, " · %.5f, %.5f (https://maps.google.com/?q=%.5f,%.5f)", *lat, *lon, *lat, *lon)
@@ -59,13 +59,14 @@ func ligneTrace(l, typ string, h time.Time, lat, lon *float64, lieu, texte *stri
 
 type infosTrace struct {
 	email, langue, nom, bateau string
+	decalage                   *int
 }
 
 func (a *app) infosTrace(ctx context.Context, navigation string) (infosTrace, error) {
 	var i infosTrace
-	err := a.b.pool.QueryRow(ctx, `SELECT u.email, u.langue, n.nom, b.nom FROM navigations n
+	err := a.b.pool.QueryRow(ctx, `SELECT u.email, u.langue, n.nom, b.nom, n.decalage_minutes FROM navigations n
 		JOIN utilisateurs u ON u.id = n.navigateur_id JOIN bateaux b ON b.id = n.bateau_id WHERE n.id = $1`, navigation).
-		Scan(&i.email, &i.langue, &i.nom, &i.bateau)
+		Scan(&i.email, &i.langue, &i.nom, &i.bateau, &i.decalage)
 	return i, err
 }
 
@@ -93,7 +94,7 @@ func (a *app) traceEvenement(ctx context.Context, navigation string, e evenement
 	l := i.langue
 	var s strings.Builder
 	s.WriteString(enLangue(l, "Trace de votre navigation « ", "Trace of your trip “") + i.nom + enLangue(l, " » (", "” (") + i.bateau + ") :\n\n")
-	s.WriteString(ligneTrace(l, e.Type, e.HeureAcquisition, lat, lon, e.Lieu, e.Texte) + "\n")
+	s.WriteString(ligneTrace(l, e.Type, e.HeureAcquisition, i.decalage, lat, lon, e.Lieu, e.Texte) + "\n")
 	if lien := a.lienNavigation(navigation); lien != "" {
 		s.WriteString("\n" + enLangue(l, "Page de la navigation : ", "Trip page: ") + lien + "\n")
 	}
@@ -126,7 +127,7 @@ func (a *app) recapitulatifNavigation(ctx context.Context, navigation string) {
 		if err := r.Scan(&typ, &h, &lat, &lon, &lieu, &texte); err != nil {
 			return "", err
 		}
-		return ligneTrace(l, typ, h, lat, lon, lieu, texte), nil
+		return ligneTrace(l, typ, h, i.decalage, lat, lon, lieu, texte), nil
 	})
 	if err != nil {
 		log.Printf("récapitulatif %s : %v", navigation, err)

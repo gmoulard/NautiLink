@@ -20,8 +20,10 @@ name: Site GitHub Pages
 #   - lancement manuel (Actions → Site GitHub Pages → Run workflow) : cases
 #     « website » (pages du site et démonstration Web), « android » et « iphone »,
 #     cochées par défaut, pour reconstruire ou non chaque livrable ;
-#   - push sur main : le site est toujours reconstruit, les applications Android
-#     et iPhone seulement si app/ ou ce fichier ont changé.
+#   - push sur main : le site est toujours reconstruit, l'application Android
+#     seulement si app/ ou ce fichier ont changé.
+# Construction iPhone suspendue (D-155) : jamais sur un push, case « iphone »
+# décochée par défaut ; l'IPA déjà publiée reste téléchargeable.
 # Un livrable non reconstruit reprend la version déjà publiée, avec son commit :
 #   - APK et IPA : téléchargés depuis le site publié ;
 #   - site et démonstration Web : artefact « site-source » de la dernière
@@ -42,9 +44,9 @@ on:
         type: boolean
         default: true
       iphone:
-        description: "Reconstruire l'IPA iPhone (macOS, plus long)"
+        description: "Reconstruire l'IPA iPhone (macOS, plus long ; suspendu, D-155)"
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: read
@@ -95,10 +97,12 @@ jobs:
             # Applications reconstruites aussi quand le mémo sécurité change : il y est intégré (RG-SOS-22).
             if [ -z "$AVANT" ] || ! git cat-file -e "$AVANT^{commit}" 2>/dev/null \
                || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|site/securite\.html$|\.github/workflows/pages\.yml$)'; then
-              android=true; iphone=true
+              android=true
             else
-              android=false; iphone=false
+              android=false
             fi
+            # iPhone suspendu jusqu'à demande explicite de l'utilisateur (D-155).
+            iphone=false
           fi
           # Flutter sur Ubuntu (tests, Web, APK) seulement si le site ou l'APK est reconstruit.
           flutter=false
@@ -169,7 +173,9 @@ jobs:
       BUILD: ${{ github.run_number }}
       APP_VERSION: ${{ needs.choix.outputs.app_version }}
       DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
-      DEFINES_DEMO: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ env.DEMO_V0_VERSION }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ env.DEMO_V0_COMMIT }}
+      # NE PAS lire le contexte « env » ici : le contexte env n'existe pas dans l'env d'un job (fichier refusé) ;
+      # version et commit de la démonstration sont ajoutés dans les étapes (DEMO_V0_VERSION, DEMO_V0_COMMIT).
+      DEFINES_DEMO: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -203,7 +209,7 @@ jobs:
         working-directory: demo-v0/app
         run: |
           flutter pub get
-          flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES_DEMO
+          flutter build web --release --base-href /${{ github.event.repository.name }}/app/ --no-web-resources-cdn $DEFINES_DEMO --dart-define=NAUTILINK_VERSION=$DEMO_V0_VERSION --dart-define=NAUTILINK_COMMIT=$DEMO_V0_COMMIT
       - name: APK Android (vraie application et démonstration)
         if: needs.choix.outputs.android == 'true'
         working-directory: app
@@ -212,7 +218,7 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk "$APK_PROD"
           # Démonstration V0 depuis son commit figé (D-144).
           (cd ../demo-v0/app && flutter pub get \
-            && flutter build apk --release $DEFINES_DEMO --dart-define=NAUTILINK_MODE=demo \
+            && flutter build apk --release $DEFINES_DEMO --dart-define=NAUTILINK_VERSION=$DEMO_V0_VERSION --dart-define=NAUTILINK_COMMIT=$DEMO_V0_COMMIT --dart-define=NAUTILINK_MODE=demo \
             && cp build/app/outputs/flutter-apk/app-release.apk "../../app/$APK")
       - uses: actions/download-artifact@v4
         if: needs.choix.outputs.iphone == 'true'

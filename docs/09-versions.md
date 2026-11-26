@@ -6,7 +6,7 @@ Gestion des versions des trois composants de NautiLink et matrice de compatibili
 
 | Composant | Contenu | Version dans | Construit par |
 |-----------|---------|--------------|---------------|
-| **Serveur** | API, plateforme Web, espace administrateur (`server/`) | [`server/VERSION`](../server/VERSION) | workflow « Serveur » (`.github/workflows/serveur.yml`) |
+| **Serveur** | API, Application web, espace administrateur (`server/`) | [`server/VERSION`](../server/VERSION) | workflow « Serveur » (`.github/workflows/serveur.yml`) |
 | **Application** | Application Flutter : Android (APK), iPhone (IPA), démonstration Web (`app/`) | `version:` de [`app/pubspec.yaml`](../app/pubspec.yaml), partie avant « + » | workflow « Site GitHub Pages » (`.github/workflows/pages.yml`) |
 | **Site** | Site de présentation (`site/`) | [`site/VERSION`](../site/VERSION) | workflow « Site GitHub Pages » |
 
@@ -20,14 +20,19 @@ Les trois composants partent de la version **0.0.1** (2026-11-25).
 - **Build** : numéro d'exécution du workflow qui a construit le livrable (`github.run_number`), propre à chaque workflow. Deux constructions de la même version se distinguent par leur build et leur commit.
 - **Commit** : SHA du commit construit, affiché sur 7 caractères avec un lien vers GitHub.
 
+- **iPhone suspendu** ([D-155](07-decisions.md#d-155)) : l'IPA n'est plus reconstruite ; celle publiée sur le site garde la version, le build et le commit de sa dernière construction.
 - **Production pendant la bêta** ([D-145](07-decisions.md#d-145)) : la dernière construction de la vraie application publiée sur le site (version de `app/pubspec.yaml`, build du workflow).
 - **Démonstration V0** ([D-144](07-decisions.md#d-144)) : terminée, figée au commit `8ac9c1a`, en version 0.0.1 ; le workflow « Site GitHub Pages » la reconstruit toujours depuis ce commit (`DEMO_V0_COMMIT`), quel que soit l'état de `app/`. Sa version ne change plus ; la version de `app/pubspec.yaml` est celle de la vraie application.
 
 ## 2. Affichage
 
-Pied de page de toutes les pages du site, de la plateforme Web, de l'espace administrateur et de tous les écrans de l'application (Android, iPhone, démonstration Web) :
+Pied de page de toutes les pages du site et de l'espace administrateur (et de la démonstration V0, figée : D-144) :
 
 > Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 · build 12 · commit 93b0f97
+
+Pied de page de l'Application web et de tous les écrans de l'application mobile (Android, iPhone) : l'adresse du dépôt est remplacée par le lien « NautiLink » vers le site de présentation <https://gmoulard.github.io/NautiLink/> ([D-149](07-decisions.md#d-149) ; fait sur l'application mobile, reste l'Application web : TODO-3.19). Sur l'application mobile, ce pied de page suit le contenu de la page, sous les boutons, avec le lien « Mémo sécurité en mer » (TODO-5.12, [Q-102](06-questions-ouvertes.md#q-102)) :
+
+> Tous droits réservés · [NautiLink](https://gmoulard.github.io/NautiLink/) · V0.0.1 · build 13 · commit 7ace1f5
 
 - **Licence** : tous droits réservés ([`LICENSE`](../LICENSE)).
 - **Site** : version de `site/VERSION`, build et commit de l'exécution qui a reconstruit le site. La page « Télécharger » donne en plus la version, le build et le commit de l'APK et de l'IPA publiés (`downloads/COMMITS.txt` : `fichier commit version build`).
@@ -40,6 +45,8 @@ Une ligne par combinaison publiée ; la plus récente en haut. L'API est décrit
 
 | Date | Serveur | API | Application | Site | Compatibilité |
 |------|---------|-----|-------------|------|---------------|
+| 2026-11-26 | 0.1.0 | 0.1.0 (proposition) | 0.3.0 (vraie application) ; démonstration 0.0.1 figée | 0.0.3 | Tous les SMS Android envoyés automatiquement avec la permission (D-156) et trace au navigateur par SMS et par e-mail (D-157) : l'application 0.3.0 demande le serveur 0.1.0 pour les e-mails de trace ; « Rester connecté » sur l'Application web et l'espace administrateur (D-158) ; serveur 0.1.0 : notifications push, achats intégrés, téléphone repris par un autre compte, migrations 7 à 11. `server/compose.yaml` suit l'étiquette `latest` (réglage de l'utilisateur). |
+| 2026-11-26 | 0.0.1 | 0.1.0 (proposition) | 0.2.0 (vraie application) ; démonstration 0.0.1 figée | 0.0.2 | Remarques de relecture de l'application Android (TODO-5.12) : écrans seulement, mêmes routes du serveur ; le sélecteur « SMS » du démarrage reste sur le téléphone. Compatible avec le serveur 0.0.1. |
 | 2026-11-26 | 0.0.1 | 0.1.0 (proposition) | 0.1.0 (vraie application) ; démonstration 0.0.1 figée | 0.0.2 | Vraie application complète (SMS, vue suiveur, notifications push, achats, connexion Google et Apple), branchée sur le serveur : routes de navigation, contacts, SOS et synchronisation du serveur 0.0.1 ; notifications push, achats intégrés et reprise d'un téléphone par un autre compte demandent le serveur du même commit (pas encore de nouvelle version publiée du serveur). Démonstration V0 terminée, figée au commit `8ac9c1a` en version 0.0.1 et toujours publiée par le site (D-144). Le site 0.0.2 présente les deux. |
 | 2026-11-25 | 0.0.1 | 0.1.0 (proposition) | 0.0.1 | 0.0.1 | Point de départ. L'application 0.0.1 est le prototype de démonstration sur données d'exemple : elle n'appelle pas le serveur, toute version du serveur convient. Le site 0.0.1 publie l'application 0.0.1 (APK, IPA, démonstration Web). |
 
