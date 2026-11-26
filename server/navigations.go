@@ -1143,16 +1143,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		if err := lireJSON(r, &c); err != nil {
 			return err
 		}
-		id := r.PathValue("evenementId")
-		n, err := a.evenementModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"), id)
-		if err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), `UPDATE evenements SET texte = $2, modification = nextval('modifications')
-			WHERE id = $1`, id, texteOuNul(c.Texte)); err != nil {
-			return err
-		}
-		e, err := lireEvenement(a.b.pool.QueryRow(r.Context(), "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", id), n)
+		e, err := a.modifierTexteEvenement(r.Context(), s.utilisateur, r.PathValue("navigationId"), r.PathValue("evenementId"), c.Texte)
 		if err != nil {
 			return err
 		}
@@ -1160,15 +1151,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		return nil
 	}))
 	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/evenements/{evenementId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
-		id := r.PathValue("evenementId")
-		if _, err := a.evenementModifiable(r.Context(), s.utilisateur, r.PathValue("navigationId"), id); err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), `UPDATE evenements SET supprime_le = now(), texte = NULL,
-			modification = nextval('modifications') WHERE id = $1`, id); err != nil {
-			return err
-		}
-		if _, err := a.b.pool.Exec(r.Context(), "DELETE FROM fichiers WHERE evenement_id = $1", id); err != nil {
+		if err := a.supprimerEvenement(r.Context(), s.utilisateur, r.PathValue("navigationId"), r.PathValue("evenementId")); err != nil {
 			return err
 		}
 		w.WriteHeader(http.StatusNoContent)
@@ -1249,6 +1232,34 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		ecrireJSON(w, http.StatusOK, map[string]any{"resultats": a.synchroniser(r.Context(), r, s, corps.Elements)})
 		return nil
 	}))
+}
+
+// modifierTexteEvenement : texte d'une note, d'une photo, d'une note vocale
+// ou d'un ajout (RG-JRN-06), depuis l'API ou la page de la navigation.
+func (a *app) modifierTexteEvenement(ctx context.Context, utilisateur, navID, id string, texte *string) (evenementJSON, error) {
+	n, err := a.evenementModifiable(ctx, utilisateur, navID, id)
+	if err != nil {
+		return evenementJSON{}, err
+	}
+	if _, err := a.b.pool.Exec(ctx, `UPDATE evenements SET texte = $2, modification = nextval('modifications')
+		WHERE id = $1`, id, texteOuNul(texte)); err != nil {
+		return evenementJSON{}, err
+	}
+	return lireEvenement(a.b.pool.QueryRow(ctx, "SELECT "+colonnesEvenement+" FROM evenements e WHERE id = $1", id), n)
+}
+
+// supprimerEvenement : note, photo, note vocale ou ajout, avec son fichier
+// (RG-JRN-06) ; jamais début, fin, positions ni SOS (RG-JRN-07).
+func (a *app) supprimerEvenement(ctx context.Context, utilisateur, navID, id string) error {
+	if _, err := a.evenementModifiable(ctx, utilisateur, navID, id); err != nil {
+		return err
+	}
+	if _, err := a.b.pool.Exec(ctx, `UPDATE evenements SET supprime_le = now(), texte = NULL,
+		modification = nextval('modifications') WHERE id = $1`, id); err != nil {
+		return err
+	}
+	_, err := a.b.pool.Exec(ctx, "DELETE FROM fichiers WHERE evenement_id = $1", id)
+	return err
 }
 
 // retirerDeLaNavigation : retrait d'un suiveur de cette navigation seulement,

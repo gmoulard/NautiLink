@@ -50,7 +50,8 @@ type donneesNavigation struct {
 	Journal            []ligneJournal
 	Alertes            []ligneAlerte
 	Curseur            int64
-	Suppression        string // date de suppression définitive, dans la corbeille
+	Suppression        string           // date de suppression définitive, dans la corbeille
+	Modifier           *modificationNav // formulaires du navigateur (TODO-6.3), hors corbeille
 }
 
 // journalPresente : lignes du journal ; modifiables : notes, photos, notes
@@ -157,6 +158,11 @@ func (a *app) donneesDeLaNavigation(ctx context.Context, utilisateur, id string)
 			la.Lieu = coordonnees(*al.Position)
 		}
 		d.Alertes = append(d.Alertes, la)
+	}
+	if d.Navigateur && !d.Corbeille {
+		if d.Modifier, err = a.modificationDe(ctx, utilisateur, n); err != nil {
+			return d, err
+		}
 	}
 	return d, nil
 }

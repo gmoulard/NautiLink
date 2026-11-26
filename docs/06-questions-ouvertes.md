@@ -52,6 +52,14 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Proposition (non validée) : A, la même heure que celle des SMS et des e-mails reçus par les suiveurs.
 - Appliqué en attendant dans l'Application web et le PDF (`heureWeb`, `server/web_navigations.go`).
 
+### <a id="q-98"></a>Q-98 — Heure d'un ajout complémentaire
+
+- Priorité : avant la mise en service de l'Application web (TODO-6.3).
+- Cas : RG-JRN-05 permet d'ajouter depuis l'Application web des textes, photos, notes vocales et informations à une navigation terminée, et RG-JRN-03 range le journal selon l'heure de l'événement ; aucune règle ne dit quelle heure porte un ajout, donc où il se place dans le journal.
+- Options : A) heure choisie par le navigateur entre le début et la fin de la navigation, préremplie avec la fin ; B) heure de l'ajout (toujours après la fin, en fin de journal) ; C) A, sans limite (avant le début ou après la fin, l'ajout est alors gardé mais hors des heures affichées).
+- Proposition (non validée) : A, qui permet de placer une photo ou un souvenir à son moment dans le journal.
+- Appliqué en attendant dans l'Application web (`server/web_journal.go`).
+
 ## 2. Études techniques
 
 ### <a id="q-09"></a>Q-09 — GPS en arrière-plan et batterie

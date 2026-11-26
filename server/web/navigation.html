@@ -10,6 +10,50 @@
 {{if .EnCours}}<p class="aide" id="maj" aria-live="polite">La page se met à jour toute seule pendant la navigation.</p>
 <noscript><p class="aide">Rechargez la page pour voir les dernières positions.</p></noscript>{{end}}
 
+{{with .Modifier}}
+<section class="carte" aria-labelledby="titre-modifier">
+<h2 id="titre-modifier">Modifier la navigation</h2>
+<form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/modification">
+  <label for="nom">Nom</label>
+  <input id="nom" name="nom" type="text" required maxlength="200" value="{{.Nom}}">
+  {{if .Terminee}}
+  <label for="destination">Destination</label>
+  <input id="destination" name="destination" type="text" maxlength="200" value="{{.Destination}}">
+  <label for="bateauId">Bateau</label>
+  <select id="bateauId" name="bateauId">
+    {{range .Bateaux}}<option value="{{.ID}}" {{if eq .ID $.D.Modifier.BateauID}}selected{{end}}>{{.Nom}}</option>{{end}}
+  </select>
+  <div class="grille">
+  <div><label for="debut">Début</label>
+  <input id="debut" name="debut" type="datetime-local" required value="{{.Debut}}"></div>
+  <div><label for="fin">Fin</label>
+  <input id="fin" name="fin" type="datetime-local" required value="{{.Fin}}"></div>
+  </div>
+  <p class="aide">Heures en {{.Zone}}. Changer les heures ne change pas votre quota ; les positions en dehors des nouvelles heures sont gardées mais n'apparaissent plus sur le tracé.</p>
+  {{else}}
+  <p class="aide">La destination, le bateau et les heures se modifient une fois la navigation terminée.</p>
+  {{end}}
+  <button type="submit">Enregistrer</button>
+</form>
+</section>
+{{if .Terminee}}
+<section class="carte" aria-labelledby="titre-ajout">
+<h2 id="titre-ajout">Ajouter au journal</h2>
+<form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/ajouts" enctype="multipart/form-data">
+  <label for="ajout-texte">Texte ou information</label>
+  <textarea id="ajout-texte" name="texte" rows="3" maxlength="4000"></textarea>
+  <label for="ajout-fichier">Photo (JPEG) ou note vocale (AAC .m4a, 1 minute au plus), facultative</label>
+  <input id="ajout-fichier" name="fichier" type="file" accept="image/jpeg,audio/mp4,audio/x-m4a,.m4a">
+  <p class="aide">{{if .PhotosRestantes}}Encore {{.PhotosRestantes}} photo{{if gt .PhotosRestantes 1}}s{{end}} possible{{if gt .PhotosRestantes 1}}s{{end}} (20 par navigation).{{else}}Cette navigation a déjà 20 photos.{{end}} 5 Mo au plus.</p>
+  <label for="ajout-heure">Heure dans le journal</label>
+  <input id="ajout-heure" name="heure" type="datetime-local" required value="{{.HeureAjout}}" min="{{.AjoutMin}}" max="{{.AjoutMax}}">
+  <p class="aide">Entre le début et la fin de la navigation, en {{.Zone}}.</p>
+  <button type="submit">Ajouter</button>
+</form>
+</section>
+{{end}}
+{{end}}
+
 <section class="carte" aria-labelledby="titre-bateau">
 <h2 id="titre-bateau">Bateau</h2>
 {{with .N.Fiche}}
@@ -103,6 +147,17 @@
   {{if .Photo}}{{if .E.Fichier.Recu}}<p><a href="{{$.Base}}/api/v1/fichiers/{{.E.ID}}"><img class="photo" src="{{$.Base}}/api/v1/fichiers/{{.E.ID}}" alt="Photo du journal, {{.Heure}}" loading="lazy"></a></p>
   <p class="aide">Touchez la photo pour l'afficher en grand.</p>{{else}}<p class="aide">Photo en cours d'envoi depuis le téléphone.</p>{{end}}{{end}}
   {{if .Vocal}}{{if .E.Fichier.Recu}}<audio controls preload="none" src="{{$.Base}}/api/v1/fichiers/{{.E.ID}}">Votre navigateur ne lit pas les notes vocales.</audio>{{else}}<p class="aide">Note vocale en cours d'envoi depuis le téléphone.</p>{{end}}{{end}}
+  {{if .Modifiable}}<details class="modifier"><summary>Modifier ou supprimer</summary>
+    <form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/evenements/{{.E.ID}}">
+      <label for="texte-{{.E.ID}}">Texte</label>
+      <textarea id="texte-{{.E.ID}}" name="texte" rows="3" maxlength="4000">{{if .E.Texte}}{{.E.Texte}}{{end}}</textarea>
+      <button class="secondaire" type="submit">Enregistrer le texte</button>
+    </form>
+    <form method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/evenements/{{.E.ID}}/suppression">
+      <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la suppression de cet élément{{if or .Photo .Vocal}} et de son fichier{{end}}</span></label>
+      <button class="danger" type="submit">Supprimer</button>
+    </form>
+  </details>{{end}}
 </li>
 {{end}}
 </ol>

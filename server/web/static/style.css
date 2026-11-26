@@ -119,3 +119,10 @@ img.photo { max-width: 100%; max-height: 360px; border-radius: 8px; }
 audio { width: 100%; max-width: 420px; }
 ul.personnes { margin: 0 0 12px; padding-left: 20px; }
 ul.personnes li { margin-bottom: 4px; }
+
+/* Formulaires du navigateur (TODO-6.3). */
+input[type=datetime-local], input[type=file] { width: 100%; min-height: 44px; padding: 8px 12px; font: inherit; color: var(--texte);
+  background: var(--fond); border: 1px solid var(--filet); border-radius: 8px; }
+details.modifier { margin-top: 6px; }
+details.modifier summary { color: var(--action); font-weight: 600; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; }
+details.modifier form { margin-bottom: 8px; }
