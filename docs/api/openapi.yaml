@@ -761,6 +761,12 @@ paths:
         téléphone et l'événement de début (heure et position d'acquisition). Rejouable : le même
         identifiant avec le même contenu rend 200 sans rien créer de plus.
 
+        L'Application web démarre aussi une navigation, par son formulaire et sans téléphone
+        (RG-WEB-06) : la navigation n'a alors pas de téléphone et apparaît en cours dans
+        `GET /v1/navigations` ; le téléphone associé du bateau la reprend (RG-NAV-33) et lui est
+        rattaché à son premier envoi d'événement (`PUT .../evenements/{evenementId}` ou synchronisation),
+        s'il n'a pas d'autre navigation en cours. Par l'API, `appareilId` reste obligatoire.
+
         Le serveur vérifie : propriétaire du bateau (`pas_proprietaire`), téléphone associé, une
         seule navigation en cours par bateau et par téléphone (`navigation_en_cours`), quota
         (`quota_epuise`, avec l'heure à laquelle des minutes redeviennent disponibles), adresse
@@ -769,7 +775,7 @@ paths:
         Démarrage hors connexion et quota non vérifiable : RG-COM-06.
       x-regles: [RG-CPT-09, RG-NAV-01, RG-NAV-02, RG-NAV-03, RG-NAV-04, RG-NAV-05, RG-NAV-06, RG-NAV-07, RG-NAV-08,
         RG-NAV-11, RG-NAV-17, RG-NAV-25, RG-NAV-27, RG-NAV-28, RG-CPT-05, RG-ECO-04, RG-NOT-02,
-        RG-IOS-06, RG-AND-08, RG-BAT-03]
+        RG-IOS-06, RG-AND-08, RG-BAT-03, RG-NAV-35, RG-NAV-36, RG-WEB-06]
       requestBody:
         required: true
         content:
@@ -1710,7 +1716,7 @@ components:
       required: [bateauId, appareilId, frequenceMinutes, personnesABord, debut]
       properties:
         bateauId: {type: string, format: uuid}
-        appareilId: {type: string, format: uuid}
+        appareilId: {type: string, format: uuid, description: 'Téléphone associé au bateau (RG-BAT-02) ; une navigation démarrée sur l''Application web n''en a pas (RG-WEB-06).'}
         destination:
           type: [object, 'null']
           properties:
@@ -1721,7 +1727,7 @@ components:
         personnesABord: {type: integer, minimum: 1}
         personnesAlertees:
           type: array
-          description: 'Contacts cochés à l''écran de démarrage ; les décochés ne reçoivent rien de cette navigation, SOS compris (RG-NAV-25).'
+          description: 'Contacts cochés « E-mail » à l''écran de démarrage : eux seuls reçoivent les e-mails et notifications de cette navigation, SOS compris ; les cases « SMS » restent sur le téléphone (RG-NAV-25).'
           items: {type: string, format: uuid}
         chefDeBord:
           type: [string, 'null']

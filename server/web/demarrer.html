@@ -1,0 +1,57 @@
+{{template "haut" .}}
+<h1>Démarrer navigation</h1>
+{{with .D}}
+{{if not $.EmailVerifie}}
+<div class="carte"><p>Confirmez d'abord votre adresse e-mail : ouvrez le lien que NautiLink vous a envoyé, puis démarrez la navigation.</p></div>
+{{else if not .Bateaux}}
+<div class="carte"><p>Aucun bateau dans votre compte : créez d'abord la fiche de votre bateau (« Bateaux »).</p>
+<p><a class="bouton" href="{{$.Base}}/bateaux">Bateaux</a></p></div>
+{{else if .QuotaEpuise}}
+<div class="carte alertes"><p>{{.QuotaEpuise}}</p>
+<p><a class="bouton" href="{{$.Base}}/quota">Quota et abonnement</a></p></div>
+{{else}}
+<form class="avec-position" method="post" action="{{$.Base}}/demarrer">
+{{template "champs-position"}}
+<section class="carte" aria-labelledby="titre-navigation">
+<h2 id="titre-navigation">Navigation</h2>
+{{if eq (len .Bateaux) 1}}{{range .Bateaux}}<input type="hidden" name="bateauId" value="{{.ID}}"><p>Bateau : <strong>{{.Nom}}</strong></p>{{end}}
+{{else}}<label for="bateauId">Bateau</label>
+<select id="bateauId" name="bateauId" required>{{range .Bateaux}}<option value="{{.ID}}" {{if eq .ID $.D.BateauID}}selected{{end}}>{{.Nom}}</option>{{end}}</select>{{end}}
+<label for="destination">Destination (facultative)</label>
+<input id="destination" name="destination" type="text" maxlength="200" value="{{.Destination}}">
+<label for="frequence">Fréquence des positions</label>
+<select id="frequence" name="frequence">{{range .Frequences}}<option value="{{.Minutes}}" {{if .Choisie}}selected{{end}}>{{.Libelle}}</option>{{end}}</select>
+<div class="grille">
+<div><label for="personnesABord">Personnes à bord</label>
+<input id="personnesABord" name="personnesABord" type="number" min="1" max="999" required value="{{.PersonnesABord}}"></div>
+<div><label for="chefDeBord">Chef de bord</label>
+<input id="chefDeBord" name="chefDeBord" type="text" maxlength="200" value="{{.ChefDeBord}}"></div>
+</div>
+</section>
+<section class="carte" aria-labelledby="titre-alertees">
+<h2 id="titre-alertees">Personnes alertées</h2>
+{{if .Personnes}}
+<p class="aide">Cochée, la personne reçoit les e-mails de cette navigation (début, SOS). Aucun SMS ne part de l'Application web.</p>
+<ul class="personnes alertees">
+{{range .Personnes}}<li><span>{{.Nom}}</span>
+  <label class="case"><input type="checkbox" name="email" value="{{.ID}}" {{if .Cochee}}checked{{end}} {{if .Sos}}data-sos{{end}}><span>E-mail{{if .SansEmail}} <span class="aide">(aucune adresse connue)</span>{{end}}</span></label></li>
+{{end}}</ul>
+{{else}}<p class="aide">Aucun contact suiveur ou contact SOS.</p>{{end}}
+<p class="erreur" id="sans-sos" {{if not .SansContactSos}}hidden{{end}}>Aucun contact SOS coché : personne ne recevra vos SMS SOS.</p>
+<p><a class="lien" href="{{$.Base}}/contacts">Ajouter une personne</a></p>
+</section>
+<section class="carte" aria-labelledby="titre-position">
+<h2 id="titre-position">Position et SMS</h2>
+<p class="aide">Au démarrage, votre navigateur Internet vous demande d'indiquer votre position : acceptez pour la joindre au début de la navigation et aux envois suivants. Les positions automatiques partent à la fréquence choisie tant que la page de la navigation reste ouverte ; elles s'arrêtent si vous la fermez ou si l'écran se met en veille. Le téléphone associé au bateau reprend la navigation s'il s'y connecte.</p>
+<p class="aide">Aucun SMS ne part de l'Application web : les réglages des SMS n'ont pas d'effet pour cette navigation.</p>
+<p class="aide" data-etat-position aria-live="polite"></p>
+<button type="submit">Début de navigation</button>
+</section>
+</form>
+{{end}}
+<p><a class="lien" href="{{$.Base}}/">Annuler</a></p>
+{{end}}
+<script src="{{$.Base}}/static/conduite.js"></script>
+{{template "bas" .}}
+
+{{define "champs-position"}}<input type="hidden" name="latitude"><input type="hidden" name="longitude"><input type="hidden" name="precision"><input type="hidden" name="decalage">{{end}}

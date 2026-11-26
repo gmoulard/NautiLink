@@ -52,6 +52,7 @@ type donneesNavigation struct {
 	Curseur            int64
 	Suppression        string           // date de suppression définitive, dans la corbeille
 	Modifier           *modificationNav // formulaires du navigateur (TODO-6.3), hors corbeille
+	AvecTelephone      bool             // navigation rattachée à un téléphone, qui envoie ses positions (RG-WEB-06)
 }
 
 // journalPresente : lignes du journal ; modifiables : notes, photos, notes
@@ -130,6 +131,7 @@ func (a *app) donneesDeLaNavigation(ctx context.Context, utilisateur, id string)
 		return d, err
 	}
 	d.Navigateur, d.EnCours, d.Corbeille = role == "navigateur", d.N.Etat == "en_cours", d.N.Etat == "corbeille"
+	d.AvecTelephone = n.appareil != ""
 	if d.Corbeille {
 		d.Suppression = dateFrancaise(*d.N.SupprimeeDefinitivementLe, n.decalage)
 	}

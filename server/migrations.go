@@ -335,6 +335,9 @@ var migrations = []string{
 	ALTER TABLE sessions_admin ADD COLUMN persistante boolean NOT NULL DEFAULT true;`,
 	// 12 — RG-NAV-36, D-164 : chef de bord saisi ; null : le navigateur.
 	`ALTER TABLE navigations ADD COLUMN chef_de_bord text;`,
+	// 13 — RG-WEB-06, D-163 : navigation démarrée sur l'Application web, sans
+	// téléphone, jusqu'au premier envoi du téléphone associé du bateau.
+	`ALTER TABLE navigations ALTER COLUMN appareil_id DROP NOT NULL;`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

@@ -2,9 +2,10 @@
 <h1>Envoyer un SOS ?</h1>
 {{with .D}}
 <div class="carte alertes">
-<p>Vos suiveurs et vos contacts SOS dont l'e-mail est connu recevront un e-mail avec {{if .Navigation}}la dernière position connue de la navigation{{else}}l'alerte{{end}} et la fiche du bateau. Aucun SMS ne part de l'Application web. Alertez aussi les secours : canal 16 de la VHF ou 196.</p>
+<p>Vos suiveurs et vos contacts SOS dont l'e-mail est connu recevront un e-mail avec votre position, si votre navigateur Internet la donne, {{if .Navigation}}sinon la dernière position connue de la navigation, {{end}}et la fiche du bateau. Aucun SMS ne part de l'Application web. Alertez aussi les secours : canal 16 de la VHF ou 196.</p>
 {{if or .Navigation .Bateaux}}
-<form method="post" action="{{$.Base}}/sos">
+<form class="avec-position" method="post" action="{{$.Base}}/sos">
+  {{template "champs-position"}}
   {{if .Navigation}}<input type="hidden" name="navigationId" value="{{.Navigation.ID}}">
   <p>Navigation : <strong>{{.Navigation.Nom}}</strong></p>
   {{else}}{{if eq (len .Bateaux) 1}}{{range .Bateaux}}<input type="hidden" name="bateauId" value="{{.ID}}"><p>Bateau : <strong>{{.Nom}}</strong></p>{{end}}
@@ -18,4 +19,5 @@
 <p><a class="lien" href="{{$.Base}}/{{if .Navigation}}navigations/{{.Navigation.ID}}{{end}}">Annuler</a></p>
 </div>
 {{end}}
+<script src="{{$.Base}}/static/conduite.js"></script>
 {{template "bas" .}}

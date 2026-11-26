@@ -55,6 +55,7 @@ func (a *app) routeur() http.Handler {
 	a.routesWebNavigations(mux, c)
 	a.routesWebJournal(mux, c)
 	a.routesWebConduite(mux, c)
+	a.routesWebDemarrage(mux, c)
 	a.routesWebPDF(mux, c)
 	a.routesQuota(mux, c+"/api/v1")
 	a.routesAchats(mux, c+"/api/v1")

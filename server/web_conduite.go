@@ -12,16 +12,18 @@ import (
 
 // Fonctions de l'application mobile dans l'Application web (TODO-6.8,
 // RG-WEB-01, RG-WEB-02, D-150), sans SMS (RG-IOS-02) : pendant une
-// navigation en cours, son navigateur envoie au journal une note, une photo
-// ou une note vocale (fichier choisi, comme les ajouts : RG-JRN-04,
-// RG-JRN-08) et la termine (RG-NAV-13 ; le téléphone l'apprend, RG-NAV-33) ;
+// navigation en cours, son navigateur envoie « Envoyer position », une note
+// ou un « Incident - avarie » (RG-JRN-11, D-165), une photo ou une note
+// vocale (fichier choisi, comme les ajouts : RG-JRN-04, RG-JRN-08) et la
+// termine (RG-NAV-13 ; le téléphone l'apprend, RG-NAV-33) ; la page envoie
+// les positions automatiques tant qu'elle reste ouverte (static/conduite.js) ;
 // SOS par Internet seulement, depuis la page de la navigation ou le tableau
-// de bord (RG-SOS-01, RG-SOS-02, RG-SOS-15). Points non décidés (Q-99),
-// appliqués en attendant : aucune position du navigateur Internet (le SOS
-// prend la dernière position du journal, RG-SOS-10) ; heures dans le fuseau
-// du téléphone au début de la navigation, UTC hors navigation ; SOS hors
-// navigation : bateau choisi parmi ceux du compte. Démarrage depuis le Web :
-// pas encore fait (Q-99).
+// de bord (RG-SOS-01, RG-SOS-02, RG-SOS-15), hors navigation avec le bateau
+// choisi parmi ceux du compte. Position : géolocalisation du navigateur
+// Internet si la personne l'accepte, sinon aucune (le SOS prend la dernière
+// position du journal, RG-SOS-10) (RG-WEB-05, D-163) ; heures dans le fuseau
+// du navigateur Internet, sinon celui du début de la navigation, sinon UTC
+// (RG-WEB-07). Démarrage : web_demarrage.go.
 
 func init() {
 	messages["envoye"] = "Envoyé au journal de bord."
@@ -30,9 +32,18 @@ func init() {
 }
 
 // heureWebMaintenant : heure d'un envoi fait depuis le Web, dans le fuseau
-// du téléphone au début de la navigation (RG-PRM-07, Q-99).
+// indiqué (RG-PRM-07, RG-WEB-07).
 func (a *app) heureWebMaintenant(decalage *int) time.Time {
 	return a.maintenant().In(zoneDe(decalage)).Truncate(time.Second)
+}
+
+// fuseauWeb : fuseau du navigateur Internet (RG-WEB-07), sinon celui du
+// début de la navigation.
+func fuseauWeb(r *http.Request, n navLigne) *int {
+	if f := decalageWeb(r.FormValue("decalage")); f != nil {
+		return f
+	}
+	return n.decalage
 }
 
 // navigationConduite : navigation en cours de ce navigateur.
@@ -100,12 +111,15 @@ func (a *app) routesWebConduite(mux *http.ServeMux, c string) {
 				return errInvalide("Fichier illisible.")
 			}
 		}
+		h := a.heureWebMaintenant(fuseauWeb(r, n))
 		e := evenementJSON{ID: nouvelUUID(), Type: "note", Origine: "web", Texte: texteOuNul(ptr(r.FormValue("texte"))),
-			HeureAcquisition: a.heureWebMaintenant(n.decalage)}
+			HeureAcquisition: h, Position: positionWeb(r, h)}
 		if e.Fichier, err = fichierAjout(donnees); err != nil {
 			return echec(w, r, s, d, err)
 		}
 		switch {
+		case r.FormValue("type") == "incident": // RG-JRN-11, D-165 : texte obligatoire, une pièce jointe
+			e.Type = "incident"
 		case e.Fichier != nil && e.Fichier.TypeMedia == "image/jpeg":
 			e.Type = "photo"
 		case e.Fichier != nil:
@@ -135,11 +149,45 @@ func (a *app) routesWebConduite(mux *http.ServeMux, c string) {
 		if r.FormValue("confirmation") == "" {
 			return echec(w, r, s, d, errInvalide("Cochez la case pour confirmer la fin de la navigation."))
 		}
-		fin := evenementJSON{ID: nouvelUUID(), Type: "fin", Origine: "web", HeureAcquisition: a.heureWebMaintenant(n.decalage)}
+		h := a.heureWebMaintenant(fuseauWeb(r, n))
+		fin := evenementJSON{ID: nouvelUUID(), Type: "fin", Origine: "web", HeureAcquisition: h, Position: positionWeb(r, h)}
 		if _, err := a.terminer(r.Context(), s.utilisateur, id, fin); err != nil {
 			return echec(w, r, s, d, err)
 		}
 		http.Redirect(w, r, page(id, "terminee"), http.StatusSeeOther)
+		return nil
+	}))
+
+	// « Envoyer position » (position manuelle, renvoi vers la page) et
+	// positions automatiques de static/conduite.js (204), par la
+	// géolocalisation du navigateur Internet (RG-WEB-05).
+	mux.HandleFunc("POST "+c+"/navigations/{id}/position", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
+		id := r.PathValue("id")
+		n, err := a.navigationConduite(r.Context(), s.utilisateur, id)
+		if err != nil {
+			return err
+		}
+		auto := r.FormValue("type") == "position_automatique"
+		h := a.heureWebMaintenant(fuseauWeb(r, n))
+		e := evenementJSON{ID: nouvelUUID(), Type: "position_manuelle", Origine: "web", HeureAcquisition: h, Position: positionWeb(r, h)}
+		if auto {
+			e.Type = "position_automatique"
+		}
+		if e.Position == nil {
+			err = errInvalide("Position indisponible : autorisez la localisation pour ce site dans votre navigateur Internet, puis réessayez.")
+		} else {
+			_, _, err = a.envoyerEvenement(r.Context(), s.utilisateur, id, e)
+		}
+		switch {
+		case auto && err != nil:
+			w.WriteHeader(enErreurAPI(err).statut)
+		case auto:
+			w.WriteHeader(http.StatusNoContent)
+		case err != nil:
+			return echec(w, r, s, d, err)
+		default:
+			http.Redirect(w, r, page(id, "position")+"#evenement-"+e.ID, http.StatusSeeOther)
+		}
 		return nil
 	}))
 
@@ -175,17 +223,19 @@ func (a *app) routesWebConduite(mux *http.ServeMux, c string) {
 		return sos(w, r, s, d, r.URL.Query().Get("navigation"))
 	}))
 	mux.HandleFunc("POST "+c+"/sos", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
-		al := alerteSosJSON{ProblemeRencontre: texteOuNul(ptr(r.FormValue("probleme"))), HeureDeclenchement: a.heureWebMaintenant(nil)}
+		al := alerteSosJSON{ProblemeRencontre: texteOuNul(ptr(r.FormValue("probleme"))), HeureDeclenchement: a.heureWebMaintenant(decalageWeb(r.FormValue("decalage")))}
+		al.Position = positionWeb(r, al.HeureDeclenchement) // RG-WEB-05 : position actuelle
 		if nav := r.FormValue("navigationId"); nav != "" {
 			n, err := a.navigationConduite(r.Context(), s.utilisateur, nav)
 			if err != nil {
 				return err
 			}
-			al.NavigationID, al.HeureDeclenchement = &n.id, a.heureWebMaintenant(n.decalage)
-			if al.Position, err = a.dernierePosition(r.Context(), n.id); err != nil {
-				return err
-			}
+			al.NavigationID, al.HeureDeclenchement = &n.id, a.heureWebMaintenant(fuseauWeb(r, n))
 			if al.Position != nil {
+				al.Position.HeureAcquisition = al.HeureDeclenchement
+			} else if al.Position, err = a.dernierePosition(r.Context(), n.id); err != nil {
+				return err
+			} else if al.Position != nil {
 				al.NaturePosition = "derniere_connue"
 			}
 		} else {

@@ -147,7 +147,7 @@ func validerEvenement(e *evenementJSON, types ...string) error {
 		}
 	case "incident":
 		// Incident ou avarie (RG-JRN-11, D-154) : texte obligatoire, une
-		// photo ou une note vocale facultative (une pièce jointe, Q-101).
+		// photo ou une note vocale facultative (une pièce jointe, D-165).
 		if e.Texte == nil {
 			return errInvalide("Décrivez l'incident ou l'avarie.")
 		}
@@ -186,7 +186,7 @@ type navLigne struct {
 	chef                                  *string // chef de bord saisi ; nul : le navigateur (RG-NAV-36)
 }
 
-const colonnesNav = `id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes, parametres,
+const colonnesNav = `id, navigateur_id, bateau_id, coalesce(appareil_id::text, ''), nom, destination, frequence_minutes, parametres,
 	personnes_a_bord, personnes_alertees::text[], debut_enregistre, fin_enregistree, debut, fin, meteo_depart, meteo_arrivee,
 	epuise_le, cloture_automatique_le, supprimee_le, empreinte, version, decalage_minutes, chef_de_bord`
 
@@ -498,6 +498,7 @@ type demarrageJSON struct {
 	PersonnesAlertees *[]string        `json:"personnesAlertees"`
 	ChefDeBord        *string          `json:"chefDeBord"`
 	Debut             evenementJSON    `json:"debut"`
+	web               bool             // démarrage depuis l'Application web, sans téléphone (RG-WEB-06)
 }
 
 func (d *demarrageJSON) empreinte() []byte {
@@ -587,8 +588,12 @@ func (a *app) demarrer(ctx context.Context, utilisateur, id string, d demarrageJ
 	if err := a.b.pool.QueryRow(ctx, "SELECT nom, appareil_associe_id FROM bateaux WHERE id = $1", d.BateauID).Scan(&nomBateau, &associe); err != nil {
 		return 0, navigationJSON{}, err
 	}
-	if associe == nil || !strings.EqualFold(*associe, d.AppareilID) {
-		return 0, navigationJSON{}, errInterdit("telephone_non_associe", "Ce téléphone n'est pas associé à ce bateau.")
+	var appareil *string // nul : navigation sans téléphone, démarrée sur le Web (RG-WEB-06)
+	if !d.web {
+		if associe == nil || !strings.EqualFold(*associe, d.AppareilID) {
+			return 0, navigationJSON{}, errInterdit("telephone_non_associe", "Ce téléphone n'est pas associé à ce bateau.")
+		}
+		appareil = &d.AppareilID
 	}
 	if err := a.verifierQuotaAuDemarrage(ctx, utilisateur); err != nil {
 		return 0, navigationJSON{}, err
@@ -606,7 +611,7 @@ func (a *app) demarrer(ctx context.Context, utilisateur, id string, d demarrageJ
 	_, err = tx.Exec(ctx, `INSERT INTO navigations (id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes,
 		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte, decalage_minutes, chef_de_bord)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13, $14)`,
-		id, utilisateur, d.BateauID, d.AppareilID, nom, d.Destination, d.FrequenceMinutes, jsonOuNul(d.Parametres),
+		id, utilisateur, d.BateauID, appareil, nom, d.Destination, d.FrequenceMinutes, jsonOuNul(d.Parametres),
 		d.PersonnesABord, d.PersonnesAlertees, d.Debut.HeureAcquisition, emp, decalageHoraire(d.Debut.HeureAcquisition), d.ChefDeBord)
 	if estDoublon(err) {
 		return 0, navigationJSON{}, &erreurAPI{http.StatusConflict, "navigation_en_cours",
@@ -1063,7 +1068,11 @@ func (a *app) operations() map[string]operation {
 				return 0, nil, errInvalide("Événement illisible.")
 			}
 			e.ID = id
-			return a.envoyerEvenement(ctx, s.utilisateur, navigation, e)
+			code, ev, err := a.envoyerEvenement(ctx, s.utilisateur, navigation, e)
+			if err == nil {
+				a.rattacherAuTelephone(ctx, s, navigation)
+			}
+			return code, ev, err
 		},
 		"fin": func(ctx context.Context, r *http.Request, s *session, id, navigation string, contenu json.RawMessage) (int, any, error) {
 			var e evenementJSON
@@ -1080,6 +1089,20 @@ func (a *app) operations() map[string]operation {
 	}
 	maps.Copy(ops, a.operationsSos())
 	return ops
+}
+
+// rattacherAuTelephone : une navigation démarrée sur le Web, sans téléphone,
+// passe au téléphone associé de son bateau à son premier envoi (RG-WEB-06,
+// RG-NAV-33), s'il n'a pas d'autre navigation en cours (RG-NAV-03).
+func (a *app) rattacherAuTelephone(ctx context.Context, s *session, navigation string) {
+	if _, err := a.b.pool.Exec(ctx, `UPDATE navigations n SET appareil_id = se.appareil_id, modifiee_le = now()
+		FROM sessions se, bateaux b
+		WHERE n.id = $1 AND n.appareil_id IS NULL AND n.fin_enregistree IS NULL AND se.id = $2
+		AND b.id = n.bateau_id AND se.appareil_id IS NOT NULL AND b.appareil_associe_id = se.appareil_id
+		AND NOT EXISTS (SELECT 1 FROM navigations m WHERE m.appareil_id = se.appareil_id AND m.fin_enregistree IS NULL)`,
+		navigation, s.id); err != nil && !estDoublon(err) {
+		log.Printf("navigation %s : rattachement au téléphone : %v", navigation, err)
+	}
 }
 
 type resultatElement struct {

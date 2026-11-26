@@ -144,6 +144,10 @@ img.photo { max-width: 100%; max-height: 360px; border-radius: 8px; }
 audio { width: 100%; max-width: 420px; }
 ul.personnes { margin: 0 0 12px; padding-left: 20px; }
 ul.personnes li { margin-bottom: 4px; }
+ul.personnes.alertees { padding-left: 0; list-style: none; }
+ul.personnes.alertees li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 16px; border-bottom: 1px solid var(--filet); padding: 4px 0; }
+ul.personnes.alertees label.case { margin: 0; align-items: center; min-height: 44px; }
+ul.personnes.alertees label.case input { margin-top: 0; }
 
 /* Formulaires du navigateur (TODO-6.3). */
 input[type=datetime-local], input[type=file] { width: 100%; min-height: 44px; padding: 8px 12px; font: inherit; color: var(--texte);

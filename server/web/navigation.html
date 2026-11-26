@@ -16,15 +16,25 @@
 <section class="carte" aria-labelledby="titre-conduite">
 <h2 id="titre-conduite">Pendant la navigation</h2>
 <p><a class="bouton sos" href="{{$.Base}}/sos?navigation={{.N.ID}}">Envoyer un SOS</a></p>
-<form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/conduite" enctype="multipart/form-data">
-  <label for="conduite-texte">Note</label>
+{{if .AvecTelephone}}<p class="aide">Le téléphone associé au bateau envoie les positions automatiques de cette navigation.</p>
+{{else}}<p class="aide" id="positions-auto" data-adresse="{{$.Base}}/navigations/{{.N.ID}}/position" data-frequence="{{.N.FrequenceMinutes}}" aria-live="polite">Positions automatiques à la fréquence de la navigation ({{.Frequence}}) tant que cette page reste ouverte : elles s'arrêtent si vous la fermez ou si l'écran se met en veille.</p>{{end}}
+<form class="avec-position" method="post" action="{{$.Base}}/navigations/{{.N.ID}}/position">
+  {{template "champs-position"}}
+  <button type="submit">Envoyer position</button>
+</form>
+<form class="avec-position" method="post" action="{{$.Base}}/navigations/{{.N.ID}}/conduite" enctype="multipart/form-data">
+  {{template "champs-position"}}
+  <label for="conduite-type">Type</label>
+  <select id="conduite-type" name="type"><option value="note">Note</option><option value="incident">Incident - avarie</option></select>
+  <label for="conduite-texte">Texte (obligatoire pour un incident ou une avarie)</label>
   <textarea id="conduite-texte" name="texte" rows="3" maxlength="4000"></textarea>
   <label for="conduite-fichier">Photo (JPEG) ou note vocale (AAC .m4a, 1 minute au plus), facultative</label>
   <input id="conduite-fichier" name="fichier" type="file" accept="image/jpeg,audio/mp4,audio/x-m4a,.m4a">
-  <p class="aide">L'envoi entre au journal de bord à l'heure où vous le faites, sans position. Aucun SMS ne part de l'Application web.</p>
+  <p class="aide">L'envoi entre au journal de bord à l'heure où vous le faites, avec votre position si votre navigateur Internet la donne. Aucun SMS ne part de l'Application web.</p>
   <button type="submit">Envoyer</button>
 </form>
-<form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/fin">
+<form class="avec-position" method="post" action="{{$.Base}}/navigations/{{.N.ID}}/fin">
+  {{template "champs-position"}}
   <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la fin de la navigation</span></label>
   <button class="secondaire" type="submit">Terminer la navigation</button>
 </form>
@@ -116,7 +126,7 @@
 </section>
 {{end}}{{end}}{{end}}
 <p><a class="lien" href="{{$.Base}}/">Retour au log de nav</a></p>
-{{if .EnCours}}<script src="{{$.Base}}/static/navigation.js"></script>{{end}}
+{{if .EnCours}}<script src="{{$.Base}}/static/navigation.js"></script>{{if .Navigateur}}<script src="{{$.Base}}/static/conduite.js"></script>{{end}}{{end}}
 {{end}}
 {{template "bas" .}}
 
