@@ -145,7 +145,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 | E-mails | Mailpit de `compose.test.yaml` (`http://127.0.0.1:8025`) | Mailpit : capturés, aucun e-mail réel | Relais de pi-appliance, puis celui de l'hébergeur (SPF, DKIM, DMARC) |
 | Notifications push, paiements | Aucun envoi réel ; Stripe en mode test | Aucun envoi réel ; Stripe en mode test | APNs, FCM, Stripe, Google Play et App Store réels |
 | SMS | Téléphone d'essai, vers des numéros de l'équipe | Téléphone d'essai, vers des numéros de l'équipe | Téléphones des navigateurs |
-| Applications mobiles | Prototype de démonstration sans serveur (`app/`, [D-57](07-decisions.md#d-57)) ; plus tard, adresse du serveur de développement | Version de test pointée sur le serveur de test | Versions publiées sur Google Play et l'App Store |
+| Applications mobiles | Prototype de démonstration sans serveur (`app/`, [D-57](07-decisions.md#d-57)) ; plus tard, adresse du serveur de développement | Version de test pointée sur le serveur de test | Bêta : dernière construction de la vraie application publiée sur le site (APK, IPA, [D-145](07-decisions.md#d-145)) ; puis versions publiées sur Google Play et l'App Store |
 | Données | D'essai seulement | D'essai seulement, jamais copiées de la production | Réelles |
 | Secrets | Aucun dans le dépôt | Mots de passe d'essai de `compose.test.yaml`, sans valeur | Posés dans le `.env` du service sur le Pi jamais dans le dépôt, sauf le mot de passe par défaut de la base, joignable par le seul serveur (D-130) |
 
