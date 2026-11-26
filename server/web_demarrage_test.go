@@ -119,10 +119,13 @@ func TestDemarrageWeb(t *testing.T) {
 	web := e.webConnecte("nav@exemple.org")
 
 	page := web.envoyer("GET", "/nautilink/demarrer", nil).Body.String()
-	for _, attendu := range []string{"Alizé", "Marc", "Léa", `value="Paul"`, "Début de navigation"} {
+	for _, attendu := range []string{"Alizé", "Marc", `value="`+marc+`"`, `value="Paul"`, "Début de navigation"} {
 		if !strings.Contains(page, attendu) {
 			t.Fatalf("écran de démarrage : %q absent", attendu)
 		}
+	}
+	if strings.Count(page, `name="email"`) != 2 { // le contact SOS et le suiveur
+		t.Fatalf("écran de démarrage : personnes alertées : %s", page)
 	}
 	rec := web.envoyer("POST", "/nautilink/demarrer", map[string]string{"bateauId": bateau, "frequence": "30", "personnesABord": "3",
 		"chefDeBord": "Paul", "destination": "Glénan", "email": marc, "latitude": "47.7", "longitude": "-3.36", "precision": "15", "decalage": "60"})
