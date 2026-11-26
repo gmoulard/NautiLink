@@ -34,6 +34,31 @@ class FauxServeurNautiLink {
   bool avertissementChange = false;
   bool emailVerifie = true;
 
+  /// Contacts ajoutés par `POST /v1/contacts`.
+  final contactsAjoutes = <Map>[];
+
+  /// Journal de la navigation suivie s1 ; `_rang` sert de curseur `depuis`.
+  final journalSuivi = <Map<String, Object?>>[
+    {
+      '_rang': 1,
+      'id': 'e1',
+      'type': 'debut',
+      'heureAcquisition': '2026-11-26T08:00:00+01:00',
+      'position': {
+        'latitude': 47.87,
+        'longitude': -3.92,
+        'heureAcquisition': '2026-11-26T08:00:00+01:00',
+      },
+    },
+    {
+      '_rang': 2,
+      'id': 'e2',
+      'type': 'photo',
+      'heureAcquisition': '2026-11-26T09:00:00+01:00',
+      'fichier': {'typeMedia': 'image/jpeg', 'recu': true},
+    },
+  ];
+
   /// Numéro du profil du navigateur, pour la copie des SMS (RG-SMS-08).
   String? telephoneNavigateur;
   int jetons = 0;
@@ -185,6 +210,120 @@ class FauxServeurNautiLink {
       );
       return reponse(204);
     }
+    // Navigation suivie s1 (vue suiveur, RG-IOS-05, RG-AND-09).
+    if (r.method == 'GET' && chemin == '/v1/navigations/s1/evenements') {
+      final depuis = r.url.queryParameters['depuis'];
+      return reponse(200, {
+        'evenements': [
+          for (final e in journalSuivi)
+            if (depuis == null || (e['_rang'] as int) > int.parse(depuis))
+              {...e}..remove('_rang'),
+        ],
+        'supprimes': [],
+        'curseur': '${journalSuivi.length}',
+      });
+    }
+    if (r.method == 'GET' && chemin == '/v1/navigations/s1') {
+      return reponse(200, {
+        'id': 's1',
+        'nom': 'Mistral — Glénan',
+        'role': 'suiveur',
+        'etat': journalSuivi.any((e) => e['type'] == 'fin')
+            ? 'terminee'
+            : 'en_cours',
+        'bateau': {'id': 'b9', 'nom': 'Mistral'},
+        'debut': '2026-11-26T08:00:00+01:00',
+        'navigateur': {'id': 'u9', 'nom': 'Yann'},
+        'personnesABord': 2,
+        'lieuDepart': {'nom': 'Concarneau'},
+        'fiche': {
+          'nom': 'Mistral',
+          'type': 'voilier',
+          'portAttache': 'Concarneau',
+        },
+        'suiveurs': [
+          {'id': 'u1', 'nom': 'Marin'},
+        ],
+        'contactsSos': [
+          {'id': 'u8', 'nom': 'Anne', 'telephone': '+33699999999'},
+        ],
+      });
+    }
+    if (r.method == 'GET' && chemin.startsWith('/v1/fichiers/')) {
+      // Image d'essai : PNG de 1 × 1 pixel.
+      return http.Response.bytes(const [
+        137,
+        80,
+        78,
+        71,
+        13,
+        10,
+        26,
+        10,
+        0,
+        0,
+        0,
+        13,
+        73,
+        72,
+        68,
+        82,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        8,
+        6,
+        0,
+        0,
+        0,
+        31,
+        21,
+        196,
+        137,
+        0,
+        0,
+        0,
+        13,
+        73,
+        68,
+        65,
+        84,
+        120,
+        218,
+        99,
+        100,
+        248,
+        207,
+        80,
+        15,
+        0,
+        3,
+        134,
+        1,
+        128,
+        90,
+        52,
+        125,
+        107,
+        0,
+        0,
+        0,
+        0,
+        73,
+        69,
+        78,
+        68,
+        174,
+        66,
+        96,
+        130,
+      ], 200);
+    }
     if (r.method == 'GET' && chemin.startsWith('/v1/navigations/')) {
       final id = chemin.split('/').last;
       final n = demarrees[id];
@@ -224,8 +363,18 @@ class FauxServeurNautiLink {
       case ('POST', '/v1/compte/verification/envoi'):
         return reponse(204);
       case ('GET', '/v1/navigations'):
+        final role = r.url.queryParameters['role'];
         return reponse(200, {
           'navigations': [
+            if (role != 'navigateur')
+              {
+                'id': 's1',
+                'nom': 'Mistral — Glénan',
+                'role': 'suiveur',
+                'etat': 'en_cours',
+                'bateau': {'id': 'b9', 'nom': 'Mistral'},
+                'debut': '2026-11-26T08:00:00+01:00',
+              },
             ...demarrees.values.where((n) => n['etat'] == 'en_cours'),
             {
               'id': 'n1',
@@ -274,6 +423,9 @@ class FauxServeurNautiLink {
                 associations['b2'] ?? '00000000-0000-4000-8000-000000000000',
           },
         ]);
+      case ('POST', '/v1/contacts'):
+        contactsAjoutes.add(c as Map);
+        return reponse(201, {...c, 'version': 1, 'etatInvitation': 'aucune'});
       case ('GET', '/v1/contacts'):
         return reponse(200, {
           'contacts': [
@@ -296,6 +448,17 @@ class FauxServeurNautiLink {
           'frequenceParDefaut': 60,
         });
       case ('GET', '/v1/alertes-sos'):
+        if (r.url.queryParameters['navigationId'] == 's1') {
+          return reponse(200, [
+            {
+              'id': 'a9',
+              'bateauId': 'b9',
+              'navigationId': 's1',
+              'heureDeclenchement': '2026-11-26T10:30:00+01:00',
+              'problemeRencontre': 'Voie d\'eau',
+            },
+          ]);
+        }
         return reponse(200, []);
       case ('DELETE', '/v1/sessions/courante'):
         return reponse(204);

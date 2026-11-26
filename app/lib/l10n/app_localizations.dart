@@ -2186,6 +2186,126 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Sans Internet, l\'alerte SOS ne peut pas partir de l\'iPhone. Elle partira automatiquement dès le retour de la connexion. Alertez les secours maintenant : canal 16 de la VHF ou 196.'**
   String get iosSosOffline;
+
+  /// No description provided for @menuFollowed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigations suivies'**
+  String get menuFollowed;
+
+  /// No description provided for @followNoVoyage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune navigation à suivre pour le moment.'**
+  String get followNoVoyage;
+
+  /// No description provided for @followFollowers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suiveurs'**
+  String get followFollowers;
+
+  /// No description provided for @followSosContacts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contacts SOS'**
+  String get followSosContacts;
+
+  /// No description provided for @followBoatSheet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fiche du bateau'**
+  String get followBoatSheet;
+
+  /// No description provided for @followSosAlerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alertes SOS de la navigation'**
+  String get followSosAlerts;
+
+  /// No description provided for @followNoPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune position reçue.'**
+  String get followNoPosition;
+
+  /// No description provided for @followLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation inaccessible : vérifiez la connexion, ou l\'accès a été retiré.'**
+  String get followLoadError;
+
+  /// No description provided for @followListen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écouter'**
+  String get followListen;
+
+  /// No description provided for @followStop.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêter'**
+  String get followStop;
+
+  /// No description provided for @followFileMissing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fichier pas encore reçu par le serveur.'**
+  String get followFileMissing;
+
+  /// No description provided for @followWebPage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir la page Web de la navigation'**
+  String get followWebPage;
+
+  /// No description provided for @followUpdated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise à jour à {time}'**
+  String followUpdated(String time);
+
+  /// No description provided for @boatHomePort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Port d\'attache'**
+  String get boatHomePort;
+
+  /// No description provided for @boatLength.
+  ///
+  /// In fr, this message translates to:
+  /// **'Longueur'**
+  String get boatLength;
+
+  /// No description provided for @boatRegistration.
+  ///
+  /// In fr, this message translates to:
+  /// **'Immatriculation'**
+  String get boatRegistration;
+
+  /// No description provided for @boatEngine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moteur'**
+  String get boatEngine;
+
+  /// No description provided for @boatDraft.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tirant d\'eau'**
+  String get boatDraft;
+
+  /// No description provided for @scopeThisVoyage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette navigation seulement'**
+  String get scopeThisVoyage;
+
+  /// No description provided for @addPersonPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau contact, enregistré au démarrage'**
+  String get addPersonPending;
 }
 
 class _AppLocalizationsDelegate

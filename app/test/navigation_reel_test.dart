@@ -201,6 +201,40 @@ void main() {
   });
 
   group('positions automatiques (TODO-5.3)', () {
+    test('2 heures sans éloignement de plus de 20 m : proposition de fin, puis 2 nouvelles heures après « Continuer » (RG-NAV-24)', () async {
+      final d = await connecte();
+      await demarrer(d);
+      final c = d.conduite;
+      Future<void> position(double dLat) async {
+        heure = heure.add(const Duration(hours: 1));
+        gps.position = PositionGps(
+          latitude: 47.38 + dLat,
+          longitude: -2.95,
+          heureAcquisition: heure,
+        );
+        await c.verifierPositionAutomatique();
+      }
+
+      await position(0.0001); // 11 m
+      expect(c.propositionFin, isFalse); // 1 heure seulement
+      await position(0.00005);
+      expect(c.propositionFin, isTrue); // 2 heures à moins de 20 m
+      await c.continuer();
+      expect(c.propositionFin, isFalse);
+      await position(0.00005);
+      expect(c.propositionFin, isFalse);
+      await position(0.00008);
+      expect(c.propositionFin, isTrue); // 2 nouvelles heures (D-85)
+      // Un éloignement de plus de 20 m (environ 55 m) : pas de proposition.
+      await c.continuer();
+      await position(0.0001);
+      await position(0.0006);
+      await position(0.0006);
+      expect(c.propositionFin, isFalse);
+      // Jamais de fin automatique.
+      expect(c.enCours, isNotNull);
+    });
+
     test('position enregistrée à la fréquence de la navigation et envoyée au serveur (RG-GPS-02, RG-GPS-03)', () async {
       final d = await connecte();
       await demarrer(d);

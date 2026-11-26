@@ -7,9 +7,12 @@ import 'stockage_session.dart';
 
 /// Réponse du serveur : code HTTP et corps JSON décodé (vide sans corps).
 class ReponseApi {
-  const ReponseApi(this.statut, this.corps);
+  const ReponseApi(this.statut, this.corps, [this.octets = const []]);
   final int statut;
   final Object? corps;
+
+  /// Corps brut : fichier d'une photo ou d'une note vocale (`GET /v1/fichiers/{id}`).
+  final List<int> octets;
 
   bool get reussie => statut >= 200 && statut < 300;
 }
@@ -200,7 +203,7 @@ class ClientApi {
           corps = null; // page d'erreur d'un relais, pas du serveur NautiLink
         }
       }
-      return ReponseApi(rep.statusCode, corps);
+      return ReponseApi(rep.statusCode, corps, rep.bodyBytes);
     } on http.ClientException catch (e) {
       throw HorsConnexion(e);
     } on TimeoutException catch (e) {

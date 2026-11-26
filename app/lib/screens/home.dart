@@ -14,6 +14,7 @@ import 'dashboard.dart';
 import 'memo.dart';
 import 'navigation.dart';
 import 'navigation_reel.dart';
+import 'suivi_reel.dart';
 
 /// Écran d'accueil de l'application mobile (cahier des charges §5.2).
 class HomeScreen extends StatelessWidget {
@@ -154,6 +155,7 @@ class HomeScreen extends StatelessWidget {
                 'quota' => const QuotaScreen(),
                 'sos' => const SosHistoryScreen(),
                 'assistance' => const AssistanceScreen(),
+                'suivi' => const SuiviReelScreen(),
                 _ => const DashboardScreen(),
               };
               Navigator.of(context)
@@ -167,6 +169,8 @@ class HomeScreen extends StatelessWidget {
               if (demo)
                 PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
               else ...[
+                // Vue suiveur, sur Android et iPhone (RG-IOS-05, RG-AND-09).
+                PopupMenuItem(value: 'suivi', child: Text(l.menuFollowed)),
                 PopupMenuItem(value: 'sos', child: Text(l.menuSosHistory)),
                 PopupMenuItem(
                   value: 'assistance',

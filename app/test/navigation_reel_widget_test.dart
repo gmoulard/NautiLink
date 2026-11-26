@@ -359,4 +359,43 @@ void main() {
       expect(sms.envoyes, isEmpty);
     },
   );
+
+  testWidgets(
+    '« Ajouter une personne » : nouveau contact coché, enregistré au démarrage avec le périmètre choisi (RG-NAV-26, RG-PAR-02)',
+    (tester) async {
+      await connecter(tester);
+      await toucher(tester, 'Démarrer navigation');
+      await toucher(tester, 'J\'ai compris');
+      await reveal(tester, find.byKey(const Key('start-add-person')));
+      await tester.tap(find.byKey(const Key('start-add-person')));
+      await attendre(tester);
+      await tester.enterText(find.byKey(const Key('add-name')), 'Paul');
+      await tester.enterText(
+        find.byKey(const Key('add-phone')),
+        '+33622222222',
+      );
+      await attendre(tester);
+      await toucher(tester, 'Ajouter');
+      await tester.tap(find.byKey(const Key('add-scope-voyage')));
+      await attendre(tester);
+      expect(find.text('Paul'), findsOneWidget);
+      expect(
+        find.text('Nouveau contact, enregistré au démarrage'),
+        findsOneWidget,
+      );
+      await demarrer(tester);
+      await attendre(tester);
+      final (_, navId, c) = serveur.elements.firstWhere(
+        (e) => e.$1 == 'demarrage',
+      );
+      final ajout = serveur.contactsAjoutes.single;
+      expect(ajout['nom'], 'Paul');
+      expect(ajout['perimetre'], 'navigation');
+      expect(ajout['navigationId'], navId);
+      expect(ajout['contactSos'], isTrue);
+      expect((c as Map)['personnesAlertees'], contains(ajout['id']));
+      // SMS de début prérempli aussi pour la nouvelle personne.
+      expect(sms.preremplis.last.$1, contains('+33622222222'));
+    },
+  );
 }

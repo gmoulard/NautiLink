@@ -186,6 +186,12 @@ class _StartReelScreenState extends State<StartReelScreen> {
   bool envoi = false;
   final destination = TextEditingController();
 
+  /// Personnes ajoutées par « Ajouter une personne » (RG-NAV-26) : nouveaux
+  /// contacts, cochés, enregistrés au démarrage avec le périmètre choisi
+  /// (RG-PAR-02) ; « Cette navigation seulement » vise la navigation qui
+  /// démarre.
+  final nouvelles = <({String id, Contact c, String perimetre})>[];
+
   /// Permission d'envoi de SMS (D-91 : sans elle, l'écran de démarrage dit
   /// que les positions automatiques partent au serveur seulement).
   bool? smsAutorise;
@@ -298,6 +304,61 @@ class _StartReelScreenState extends State<StartReelScreen> {
     );
   }
 
+  /// « Ajouter une personne » (RG-NAV-26) : nom, téléphone ou e-mail, puis
+  /// ce que la personne verra comme suiveur (RG-PAR-02).
+  Future<void> _ajouterPersonne() async {
+    final l = AppLocalizations.of(context);
+    final c = await Navigator.of(
+      context,
+    ).push<Contact>(MaterialPageRoute(builder: (_) => const AddPersonScreen()));
+    if (c == null || !mounted) return;
+    final perimetre = await showDialog<String>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: Text(l.scopeTitle),
+        children: [
+          SimpleDialogOption(
+            key: const Key('add-scope-voyage'),
+            onPressed: () => Navigator.pop(ctx, 'navigation'),
+            child: Text(l.scopeThisVoyage),
+          ),
+          SimpleDialogOption(
+            key: const Key('add-scope-navigator'),
+            onPressed: () => Navigator.pop(ctx, 'navigateur'),
+            child: Text(l.scopeNavigator),
+          ),
+        ],
+      ),
+    );
+    if (perimetre == null || !mounted) return;
+    final id = _depot(context).file.nouvelId();
+    setState(() {
+      nouvelles.add((id: id, c: c, perimetre: perimetre));
+      alertees!.add(id);
+    });
+  }
+
+  /// Nouveaux contacts enregistrés une fois la navigation démarrée : suiveur
+  /// avec le périmètre choisi (sauf adresse non confirmée, RG-CPT-09) et
+  /// contact SOS s'il a un numéro (RG-CTC-01, RG-CTC-05).
+  Future<void> _enregistrerNouvelles(
+    DepotReel depot,
+    String navigationId,
+  ) async {
+    final verifie = depot.profil?.emailVerifie != false;
+    for (final x in nouvelles) {
+      await depot.compte.ajouterContact(
+        id: x.id,
+        nom: x.c.name,
+        telephone: x.c.phone,
+        email: x.c.email,
+        suiveur: verifie,
+        perimetre: x.perimetre,
+        navigationId: navigationId,
+      );
+    }
+  }
+
   Future<void> _demarrer() async {
     final depot = _depot(context);
     final l = AppLocalizations.of(context);
@@ -324,6 +385,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
         parametres: _parametres(depot),
       );
       if (!mounted) return;
+      await _enregistrerNouvelles(depot, n.id);
       final etat = await depot.file.etat('demarrage:${n.id}');
       // SMS de début, prérempli (RG-NAV-08, RG-SMS-03).
       final sms = depot.canalSms.disponible
@@ -525,6 +587,28 @@ class _StartReelScreenState extends State<StartReelScreen> {
                       ].join(' · '),
                     ),
                   ),
+                for (final x in nouvelles)
+                  CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: alertees!.contains(x.id),
+                    onChanged: (v) => setState(
+                      () => v == true
+                          ? alertees!.add(x.id)
+                          : alertees!.remove(x.id),
+                    ),
+                    title: Text(x.c.name),
+                    subtitle: Text(l.addPersonPending),
+                  ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    key: const Key('start-add-person'),
+                    icon: const Icon(Icons.person_add_alt),
+                    label: Text(l.addPerson),
+                    onPressed: _ajouterPersonne,
+                  ),
+                ),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
@@ -627,6 +711,43 @@ class NavigationReelScreen extends StatefulWidget {
 class _NavigationReelScreenState extends State<NavigationReelScreen> {
   Timer? ticker;
   bool envoi = false;
+  bool propositionOuverte = false;
+
+  /// RG-NAV-24 : « Terminer la navigation » ou « Continuer » après 2 heures
+  /// sans éloignement de plus de 20 mètres.
+  void _proposerFin(DepotReel depot) {
+    if (propositionOuverte || envoi || !depot.conduite.propositionFin) return;
+    propositionOuverte = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final l = AppLocalizations.of(context);
+      final fin = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: Text(l.endVoyageQuestion),
+          content: Text(l.stationaryText, key: const Key('stationary')),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.continueLabel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l.endVoyage),
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      if (fin == true) {
+        propositionOuverte = false;
+        await _terminer(depot, confirme: true);
+      } else {
+        await depot.conduite.continuer();
+        propositionOuverte = false;
+      }
+    });
+  }
 
   /// Envoi par le navigateur, puis SMS prérempli de ce [type] (RG-SMS-03),
   /// puis résultat de chaque circuit (RG-COM-03).
@@ -680,24 +801,26 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
   /// « Terminer la navigation » : confirmation, fin envoyée (ou gardée sans
   /// Internet, RG-NAV-14), résultat, puis page détaillée de la navigation
   /// sur la plateforme Web (RG-NAV-13) ; hors connexion, message (RG-COM-06).
-  Future<void> _terminer(DepotReel depot) async {
+  Future<void> _terminer(DepotReel depot, {bool confirme = false}) async {
     final l = AppLocalizations.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.endVoyageQuestion),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l.end),
-          ),
-        ],
-      ),
-    );
+    final ok = confirme
+        ? true
+        : await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(l.endVoyageQuestion),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text(l.cancel),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text(l.end),
+                ),
+              ],
+            ),
+          );
     if (ok != true || !mounted) return;
     setState(() => envoi = true);
     final avant = depot.conduite.enCours;
@@ -891,6 +1014,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
         }
         final maintenant = depot.conduite.maintenant;
         final refus = n.refus;
+        _proposerFin(depot);
         return Scaffold(
           appBar: AppBar(title: Text(n.bateauNom)),
           body: Column(

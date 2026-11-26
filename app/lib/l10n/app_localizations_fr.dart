@@ -1265,4 +1265,67 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get iosSosOffline =>
       'Sans Internet, l\'alerte SOS ne peut pas partir de l\'iPhone. Elle partira automatiquement dès le retour de la connexion. Alertez les secours maintenant : canal 16 de la VHF ou 196.';
+
+  @override
+  String get menuFollowed => 'Navigations suivies';
+
+  @override
+  String get followNoVoyage => 'Aucune navigation à suivre pour le moment.';
+
+  @override
+  String get followFollowers => 'Suiveurs';
+
+  @override
+  String get followSosContacts => 'Contacts SOS';
+
+  @override
+  String get followBoatSheet => 'Fiche du bateau';
+
+  @override
+  String get followSosAlerts => 'Alertes SOS de la navigation';
+
+  @override
+  String get followNoPosition => 'Aucune position reçue.';
+
+  @override
+  String get followLoadError =>
+      'Navigation inaccessible : vérifiez la connexion, ou l\'accès a été retiré.';
+
+  @override
+  String get followListen => 'Écouter';
+
+  @override
+  String get followStop => 'Arrêter';
+
+  @override
+  String get followFileMissing => 'Fichier pas encore reçu par le serveur.';
+
+  @override
+  String get followWebPage => 'Ouvrir la page Web de la navigation';
+
+  @override
+  String followUpdated(String time) {
+    return 'Mise à jour à $time';
+  }
+
+  @override
+  String get boatHomePort => 'Port d\'attache';
+
+  @override
+  String get boatLength => 'Longueur';
+
+  @override
+  String get boatRegistration => 'Immatriculation';
+
+  @override
+  String get boatEngine => 'Moteur';
+
+  @override
+  String get boatDraft => 'Tirant d\'eau';
+
+  @override
+  String get scopeThisVoyage => 'Cette navigation seulement';
+
+  @override
+  String get addPersonPending => 'Nouveau contact, enregistré au démarrage';
 }

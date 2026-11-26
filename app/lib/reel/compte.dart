@@ -187,8 +187,9 @@ class GestionCompte {
     bool contactSos = true,
     String? perimetre,
     String? navigationId,
+    String? id,
   }) async {
-    final id = _uuid.v4();
+    id ??= _uuid.v4();
     String? texte(String? v) => v == null || v.trim().isEmpty ? null : v.trim();
     await _ajouter(
       ModificationCompte('contact_ajout', id, {

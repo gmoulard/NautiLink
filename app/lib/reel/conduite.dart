@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
@@ -71,6 +72,7 @@ class NavigationLocale {
     this.derniereAutomatique,
     this.dernierEnvoi,
     this.refus,
+    this.continuerLe,
   }) : journal = journal ?? [];
 
   final String id;
@@ -97,6 +99,10 @@ class NavigationLocale {
   /// (démarrage refusé après coup, clôture automatique : D-140, RG-ECO-12).
   String? refus;
 
+  /// « Continuer » après la proposition de fin (RG-NAV-24) : la proposition
+  /// revient après 2 nouvelles heures sans éloignement.
+  DateTime? continuerLe;
+
   Map<String, Object?> versJson() => {
     'id': id,
     'nom': nom,
@@ -114,6 +120,7 @@ class NavigationLocale {
         : heureRfc3339(derniereAutomatique!),
     'dernierEnvoi': dernierEnvoi == null ? null : heureRfc3339(dernierEnvoi!),
     'refus': refus,
+    'continuerLe': continuerLe == null ? null : heureRfc3339(continuerLe!),
   };
 
   static DateTime? _h(Object? v) =>
@@ -144,6 +151,7 @@ class NavigationLocale {
       derniereAutomatique: _h(j['derniereAutomatique']),
       dernierEnvoi: _h(j['dernierEnvoi']),
       refus: j['refus'] as String?,
+      continuerLe: _h(j['continuerLe']),
     );
   }
 
@@ -316,6 +324,61 @@ class ConduiteNavigation extends ChangeNotifier {
     _minuterie?.cancel();
     _minuterie = null;
     _derniereRecue = null;
+  }
+
+  /// Distance en mètres entre deux positions (haversine).
+  static double distanceMetres(PositionGps a, PositionGps b) {
+    const r = 6371000.0;
+    double rad(double d) => d * math.pi / 180;
+    final dLat = rad(b.latitude - a.latitude);
+    final dLon = rad(b.longitude - a.longitude);
+    final h =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(rad(a.latitude)) *
+            math.cos(rad(b.latitude)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+    return 2 * r * math.asin(math.min(1, math.sqrt(h)));
+  }
+
+  /// Durée et distance de RG-NAV-24.
+  static const dureeImmobile = Duration(hours: 2);
+  static const rayonImmobile = 20.0;
+
+  /// RG-NAV-24 : vrai quand les positions des 2 dernières heures (depuis le
+  /// début, ou depuis « Continuer ») restent toutes à 20 mètres au plus de
+  /// la dernière ; l'application propose alors de terminer, sans jamais
+  /// terminer d'elle-même.
+  bool get propositionFin {
+    final n = _nav;
+    if (n == null || n.refus != null) return false;
+    final depuis = n.continuerLe ?? n.debut;
+    final pts = [
+      for (final e in n.journal)
+        if (e.position != null && !e.heure.isBefore(depuis)) e,
+    ];
+    if (pts.isEmpty) return false;
+    final derniere = pts.last;
+    final limite = derniere.heure.subtract(dureeImmobile);
+    // Il faut au moins 2 heures de positions après le point de départ du calcul.
+    if (limite.isBefore(depuis) || pts.first.heure.isAfter(limite)) {
+      return false;
+    }
+    return pts
+        .where((e) => !e.heure.isBefore(limite))
+        .every(
+          (e) =>
+              distanceMetres(e.position!, derniere.position!) <= rayonImmobile,
+        );
+  }
+
+  /// « Continuer » : la proposition revient après 2 nouvelles heures (RG-NAV-24).
+  Future<void> continuer() async {
+    final n = _nav;
+    if (n == null) return;
+    n.continuerLe = maintenant;
+    await _garder();
+    _notifier();
   }
 
   /// Heure de la prochaine position automatique.

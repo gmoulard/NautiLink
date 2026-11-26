@@ -1256,4 +1256,67 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get iosSosOffline =>
       'Without Internet, the SOS alert cannot leave the iPhone. It will be sent automatically as soon as the connection returns. Alert the rescue services now: VHF channel 16 or 196.';
+
+  @override
+  String get menuFollowed => 'Followed voyages';
+
+  @override
+  String get followNoVoyage => 'No voyage to follow for now.';
+
+  @override
+  String get followFollowers => 'Followers';
+
+  @override
+  String get followSosContacts => 'SOS contacts';
+
+  @override
+  String get followBoatSheet => 'Boat sheet';
+
+  @override
+  String get followSosAlerts => 'SOS alerts of the voyage';
+
+  @override
+  String get followNoPosition => 'No position received.';
+
+  @override
+  String get followLoadError =>
+      'Voyage unavailable: check the connection, or access was removed.';
+
+  @override
+  String get followListen => 'Listen';
+
+  @override
+  String get followStop => 'Stop';
+
+  @override
+  String get followFileMissing => 'File not yet received by the server.';
+
+  @override
+  String get followWebPage => 'Open the voyage web page';
+
+  @override
+  String followUpdated(String time) {
+    return 'Updated at $time';
+  }
+
+  @override
+  String get boatHomePort => 'Home port';
+
+  @override
+  String get boatLength => 'Length';
+
+  @override
+  String get boatRegistration => 'Registration';
+
+  @override
+  String get boatEngine => 'Engine';
+
+  @override
+  String get boatDraft => 'Draught';
+
+  @override
+  String get scopeThisVoyage => 'This voyage only';
+
+  @override
+  String get addPersonPending => 'New contact, saved at start';
 }
