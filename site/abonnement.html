@@ -8,7 +8,7 @@
 <link rel="icon" href="assets/logo-nautilink.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,17 +16,22 @@
 
 <header class="topnav">
   <div class="wrap">
-    <a class="brand" href="index.html"><img src="assets/logo-nautilink.png" alt="" width="36" height="36"><span>Nauti<span class="link">Link</span></span></a>
+    <a class="brand" href="index.html">
+      <img src="assets/logo-nautilink.png" alt="" width="64" height="64">
+      <span><span class="name">NautiLink<span class="badge">Version bêta</span></span><span class="sig">Your sea, your safety, your story.</span></span>
+    </a>
     <nav aria-label="Navigation principale">
-      <a href="index.html">Accueil</a>
-      <a href="telecharger.html">Télécharger</a>
-      <a href="app/">Démonstration</a>
+      <a class="home" href="index.html" aria-label="Accueil"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg></a>
+      <a href="index.html#fonctions">Fonctions</a>
+      <a href="abonnement.html" aria-current="page">Abonnement</a>
       <a href="securite.html">Sécurité en mer</a>
+      <a href="app/">Démonstration</a>
+      <a class="button" href="telecharger.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4-5.7 5.7-5.7-5.7 1.4-1.4 3.3 3.3zM4 18h16v2H4z"/></svg>Télécharger</a>
     </nav>
   </div>
 </header>
 
-<main>
+<main class="text">
   <section>
     <div class="wrap narrow legal">
       <span class="kicker">Version gratuite - abonnement</span>
@@ -77,13 +82,24 @@
   </section>
 </main>
 
-<aside class="sponsor" aria-label="Sponsor">
-  <div class="wrap">
-    <img src="assets/sponsor-srt.png" alt="Guidon de la SRT" width="65" height="44">
-    <p>NautiLink est sponsorisée par la SRT · <a href="https://srtoulon.fr/" target="_blank" rel="noopener">srtoulon.fr</a></p>
+<div class="wrap notice">
+  <div class="beta" role="note">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2 1 21h22zm-1 7h2v6h-2zm0 8h2v2h-2z"/></svg>
+    <p>NautiLink est en version bêta et n'est pas un équipement de sécurité : il ne remplace ni le matériel de sécurité obligatoire, ni les procédures officielles d'alerte. <a href="avertissement.html">Lire l'avertissement</a><b>En cas de détresse : canal 16 de la VHF, 196 ou 112.</b></p>
   </div>
-</aside>
+  <aside class="sponsor" aria-label="Sponsor">
+    <img src="assets/sponsor-srt.png" alt="Guidon de la SRT" width="71" height="48">
+    <p>Sponsorisée<br>par la <a href="https://srtoulon.fr/" target="_blank" rel="noopener">SRT</a></p>
+  </aside>
+</div>
 
+<div class="waves" aria-hidden="true">
+  <svg viewBox="0 0 1200 70" preserveAspectRatio="none" focusable="false">
+    <path class="wave-1" d="M0 30 C150 5 300 5 450 25 S750 50 900 28 S1100 5 1200 20 V70 H0Z"/>
+    <path class="wave-2" d="M0 45 C200 22 350 30 500 42 S800 60 950 40 S1120 28 1200 38 V70 H0Z"/>
+    <path class="wave-3" d="M0 58 C180 45 380 50 560 58 S880 70 1040 56 S1150 50 1200 54 V70 H0Z"/>
+  </svg>
+</div>
 <footer>
   <div class="wrap">
     <p><b>NautiLink</b> · Your sea, your safety, your story. · <a href="index.html">Accueil</a> · <a href="avertissement.html">Avertissement</a> · <a href="https://github.com/gmoulard/NautiLink">Code source sur GitHub</a></p>

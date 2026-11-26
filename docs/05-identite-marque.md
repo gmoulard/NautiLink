@@ -141,7 +141,7 @@ Validation des fichiers du logo et des choix graphiques du §5.5 : TODO-8.1. Voi
 NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/), [D-68](07-decisions.md#d-68)).
 
 - Mention : « Sponsorisée par la SRT », toujours accompagnée du guidon de la SRT ([`site/assets/sponsor-srt.png`](../site/assets/sponsor-srt.png)).
-- Place : bandeau blanc à filet jaune en bas de chaque page du site et des autres écrans de l'application qui le portent ; sur l'écran d'accueil de l'application, le guidon seul, sans texte, au centre de la page sous le SOS ([D-131](07-decisions.md#d-131)).
+- Place : sur le site, en bas de chaque page, à droite du bandeau d'avertissement bêta (« Sponsorisée par la SRT », « SRT » en lien vers srtoulon.fr, [D-161](07-decisions.md#d-161)) ; bandeau blanc à filet jaune en bas des autres écrans de l'application qui le portent ; sur l'écran d'accueil de l'application, le guidon seul, sans texte, au centre de la page sous le SOS ([D-131](07-decisions.md#d-131)).
 - Couleurs du guidon : bleu `#1E3296`, jaune `#F8D818`, rouge des ancres. Elles servent au bandeau sponsor ; leur usage comme base de toute l'identité NautiLink est la proposition 11 de la [planche de designs](../site/designs/index.html), à choisir ([TODO-3.9](TODO.md)).
 - Le guidon reste la propriété de la SRT : ne pas le modifier ni le recolorer.
 
@@ -189,14 +189,14 @@ Choisie le 2026-11-26 ([D-157](07-decisions.md#d-157)) d'après l'étude [Nautil
 | Fond de page | dégradé ciel `#DDEFFB` vers `#F4FAFE` | `#0F2438` vers `#08172A` |
 | Cartes, champs | blanc, coins arrondis (16 à 18 px), ombre douce | `#15314D` |
 | Filets | `#D6E6F2` | `#24476A` |
-| Boutons d'action | turquoise `#17A2B0`, texte blanc, en pilule | `#2BC0C6`, texte `#08172A` |
+| Boutons d'action | turquoise `#17A2B0`, texte blanc, en pilule ; sur le site, fond turquoise foncé `#0B7F86` pour le contraste AA du texte blanc ([D-161](07-decisions.md#d-161)) ; le turquoise `#17A2B0` y reste pour les traits et soulignés | `#2BC0C6`, texte `#08172A` |
 | Liens | bleu `#1565C0` | `#5AAEE6` |
 | SOS | rouge `#D94343` | `#E35D5D` |
 | Avertissement bêta | texte rouge `#B3261E` sur rose `#FDE8E8`, précédé de ⚠ | `#FFB4AB` sur `#3A1518` |
 
 - **Typographie** : Inter partout ; titres en Inter ExtraBold (800), resserrés ; signature « Your sea, your safety, your story. » en Inter italique.
-- **En-tête** : logo en carré arrondi devant « NautiLink » en gras, signature à côté ; barre blanche translucide, fixée en haut.
-- **Décor** : bandeau d'accueil en ciel et mer, vagues (dessins SVG) sous le bandeau et au-dessus du pied de page ; pas de photo pour l'instant (les images de l'étude sont des maquettes).
+- **En-tête** : logo en carré arrondi devant « NautiLink » en gras, signature à côté ; barre blanche translucide, fixée en haut. Site : en-tête blanc, logo de 64 px, nom en gros, signature en italique dessous, mention « Version bêta », menu avec icône maison (page courante soulignée en turquoise) et bouton « Télécharger » ; fixé en haut sur ordinateur seulement.
+- **Décor** : bandeau d'accueil en ciel et mer, vagues (dessins SVG) sous le bandeau et au-dessus du pied de page ; pas de photo pour l'instant (les images de l'étude sont des maquettes). Site : voilier, mer, carte et appareils dessinés en SVG dans la page, icônes SVG en ligne, aucune image externe ([D-161](07-decisions.md#d-161)).
 - **Mise en page** : cartes blanches arrondies et ombrées ; rangée d'icônes des fonctions (sécurité, partage, journal, SOS, sans Internet, photos) ; bandeau d'avertissement bêta rouge avec la mention du sponsor.
 - Le turquoise reste réservé aux actions, le rouge au SOS et aux alertes (§6).
 

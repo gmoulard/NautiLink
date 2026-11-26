@@ -8,103 +8,133 @@
 <link rel="icon" href="assets/logo-nautilink.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="betabar" role="note">
-  <div class="wrap">
-    <b>Version bêta</b>
-    <span>NautiLink est en test et n'est pas un équipement de sécurité. En cas de détresse : canal 16 de la VHF ou 196.</span>
-    <a href="avertissement.html">Lire l'avertissement</a>
-  </div>
-</div>
-
 <header class="topnav">
   <div class="wrap">
-    <a class="brand" href="index.html"><img src="assets/logo-nautilink.png" alt="" width="36" height="36"><span>Nauti<span class="link">Link</span></span></a>
+    <a class="brand" href="index.html">
+      <img src="assets/logo-nautilink.png" alt="" width="64" height="64">
+      <span><span class="name">NautiLink<span class="badge">Version bêta</span></span><span class="sig">Your sea, your safety, your story.</span></span>
+    </a>
     <nav aria-label="Navigation principale">
-      <a href="#essayer">Essayer</a>
-      <a href="telecharger.html">Télécharger</a>
-      <a href="#fonctions">Fonctions</a>
-      <a href="#comment">Comment ça marche</a>
+      <a class="home" href="index.html" aria-label="Accueil" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg></a>
+      <a href="index.html#fonctions">Fonctions</a>
       <a href="abonnement.html">Abonnement</a>
       <a href="securite.html">Sécurité en mer</a>
-      <a href="avertissement.html">Avertissement</a>
+      <a href="app/">Démonstration</a>
+      <a class="button" href="telecharger.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4-5.7 5.7-5.7-5.7 1.4-1.4 3.3 3.3zM4 18h16v2H4z"/></svg>Télécharger</a>
     </nav>
   </div>
 </header>
 
-<section class="hero">
+<section class="hero" aria-labelledby="titre">
   <div class="wrap">
-    <div class="stack">
-      <span class="sig">Your sea, your safety, your story.</span>
-      <h1>Naviguez. Partagez. <span class="link">Gardez une trace.</span></h1>
-      <p class="lede">NautiLink est votre compagnon connecté de navigation. Que vous naviguiez en voilier ou en bateau à moteur, vos proches suivent votre position, vous transmettez vos informations importantes et vous gardez un journal de bord complet de chaque sortie.</p>
-      <div class="platforms">
-        <a class="pill" href="telecharger.html#application">Application Android</a>
-        <a class="pill" href="telecharger.html#application">Application iPhone</a>
-        <a class="pill" href="https://vdl.moulard.org/nautilink/">Application web</a>
-      </div>
-      <div class="ctas">
-        <a class="button" href="telecharger.html#application">Installer NautiLink</a>
-        <a class="button ghost" href="app/">Essayer la démonstration V0</a>
-      </div>
-    </div>
-    <img class="logo" src="assets/logo-nautilink.png" alt="Logo NautiLink : un voilier au centre d'un repère GPS, entouré de trois personnes reliées par des ondes" width="512" height="512">
+    <h1 id="titre"><span>Naviguez. Partagez.</span><span>Gardez une trace de chaque sortie.</span></h1>
+    <div class="bar" aria-hidden="true"></div>
+    <p class="slogan">Your sea, your safety, your story.</p>
+    <a class="button large" href="#fonctions"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5v15l12.5-7.5z"/></svg>Découvrir NautiLink</a>
+  </div>
+  <div class="sea" aria-hidden="true">
+    <svg viewBox="0 0 1200 300" preserveAspectRatio="xMaxYMax slice" focusable="false">
+      <defs>
+        <linearGradient id="mer" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" class="sea-stop-1"/>
+          <stop offset=".45" class="sea-stop-2"/>
+          <stop offset="1" class="sea-stop-3"/>
+        </linearGradient>
+      </defs>
+      <path class="hill" d="M640 142 C720 112 800 110 880 126 C960 104 1080 98 1200 116 V146 H640Z"/>
+      <rect x="0" y="140" width="1200" height="160" fill="url(#mer)"/>
+      <path class="far-sail" d="M300 138 l0 -18 l8 18z M420 139 l0 -14 l6 14z M548 138 l0 -20 l9 20z M690 140 l0 -12 l5 12z"/>
+      <g class="glint">
+        <path d="M40 160h30M130 172h22M210 158h18M300 186h34M390 166h20M470 196h28M560 176h24M640 158h16M720 204h30M820 168h22M1100 166h26M1160 190h20"/>
+        <path d="M70 214h40M180 236h26M260 206h30M350 252h44M450 226h24M540 262h36M630 232h28M760 250h40M1080 236h30M1150 262h28"/>
+        <path d="M20 280h30M120 290h44M240 272h26M380 284h34M500 292h40M600 276h22M700 288h36M1110 284h40"/>
+      </g>
+      <path class="sail-shade" d="M944 52 L944 226 L1040 226 Z"/>
+      <path class="sail" d="M944 52 L944 226 L988 226 Z"/>
+      <path class="sail" d="M934 70 L852 226 L934 226 Z"/>
+      <line class="mast" x1="939" y1="44" x2="939" y2="234"/>
+      <path class="hull" d="M818 234 H1062 L1028 266 H850 Z"/>
+      <path class="hull-line" d="M832 246 H1050 L1045 252 H837 Z"/>
+      <path class="wake" d="M790 270 q30 8 60 2 M1030 272 q40 6 80 -2 M760 282 q50 10 100 2 M1050 286 q50 6 100 -4"/>
+    </svg>
   </div>
 </section>
 
+<nav class="strip" aria-label="Fonctions de NautiLink">
+  <ul class="wrap">
+    <li><a href="securite.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2 4 5v6c0 5.2 3.4 9.7 8 11 4.6-1.3 8-5.8 8-11V5zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.4-5.4 1.4 1.4z"/></svg><span>Sécurité en mer</span></a></li>
+    <li><a href="#partage"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 10.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-6.5 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm13 0a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM12 12c-3.3 0-6 1.6-6 4v2.5h12V16c0-2.4-2.7-4-6-4zm-7.4.9C2.5 13.2 1 14.3 1 16v2.5h3.5V16c0-1.2.4-2.2 1.1-3.1h-1zm14.8 0h-1c.7.9 1.1 1.9 1.1 3.1v2.5H23V16c0-1.7-1.5-2.8-3.6-3.1z"/></svg><span>Partage avec vos proches</span></a></li>
+    <li><a href="#journal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M5 2h10l5 5v15H5zm9 1.8V8h4.2zM8 11v1.6h9V11zm0 3.5v1.6h9v-1.6zm0 3.5v1.6h6V18z"/></svg><span>Journal de bord</span></a></li>
+    <li><a href="#sos"><span class="sos-dot" aria-hidden="true">SOS</span><span>Alerte SOS</span></a></li>
+    <li><a href="#hors-ligne"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 8.6a15 15 0 0 1 20 0M5.2 12.1a10.4 10.4 0 0 1 13.6 0M8.6 15.6a5.4 5.4 0 0 1 6.8 0M3 3l18 18"/></g><circle cx="12" cy="19.4" r="1.7"/></svg><span>Fonctionne sans Internet</span></a></li>
+    <li><a href="#journal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M9 4 7.5 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.5L15 4zm3 4a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg><span>Photos et notes</span></a></li>
+  </ul>
+</nav>
+
 <main>
-  <section id="essayer">
-    <div class="wrap">
-      <div class="head">
-        <span class="kicker">Essayer</span>
-        <h2>Démonstration V0</h2>
-        <p class="muted">La démonstration V0 est terminée : elle reste disponible ici, telle quelle, pour découvrir tous les écrans. Des données d'exemple, aucun serveur : rien n'est réellement envoyé, ni SMS, ni e-mail, ni position. La version de production, en bêta, branchée sur le serveur, continue d'évoluer : <a href="telecharger.html#application">Installer NautiLink</a>.</p>
+  <div class="wrap cards">
+    <article class="card prepare">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path fill="#FFFFFF" d="M12 2 4 5v6c0 5.2 3.4 9.7 8 11 4.6-1.3 8-5.8 8-11V5z"/><path fill="#1565C0" d="m10.8 16.2-4-4 1.4-1.4 2.6 2.6 5.4-5.4 1.4 1.4z"/></svg>
       </div>
-      <div class="features">
-        <div class="feature">
-          <h3>Démonstration Web</h3>
-          <p>Dans votre navigateur : jouez le navigateur à bord ou le suiveur sur l'Application web.</p>
-          <a class="button" href="app/">Ouvrir la démonstration</a>
-        </div>
-        <div class="feature">
-          <h3>Android</h3>
-          <p>Fichier APK de démonstration à installer sur votre téléphone, sans Google Play. Android demandera d'autoriser l'installation depuis votre navigateur.</p>
-          <a class="button" href="downloads/nautilink-demo.apk">Télécharger l'APK</a>
-          <a href="telecharger.html#android">Comment l'installer</a>
-        </div>
-        <div class="feature">
-          <h3>iPhone</h3>
-          <p>Sans l'App Store : ajoutez la démonstration Web à l'écran d'accueil, ou installez l'application non signée avec votre identifiant Apple.</p>
-          <a class="button" href="telecharger.html#iphone">Installer sur iPhone</a>
-        </div>
+      <div class="body">
+        <h2>Préparez votre navigation en toute sérénité</h2>
+        <p>Numéros d'urgence, gilet de sauvetage, matériel obligatoire, météo, message MAYDAY, homme à la mer : notre mémo à garder à bord.</p>
+        <a class="button navy" href="securite.html">En savoir plus<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11h12.2l-5.6-5.6L12 4l8 8-8 8-1.4-1.4 5.6-5.6H4z"/></svg><span class="visually-hidden"> : mémo sécurité en mer</span></a>
       </div>
-    </div>
-  </section>
+    </article>
+    <article class="card simple">
+      <div class="body">
+        <h2>Une application simple et efficace</h2>
+        <ul class="checks">
+          <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.3 14.3-4.2-4.2 1.4-1.4 2.8 2.8 5.9-5.9 1.4 1.4z"/></svg>Partagez votre position avec vos proches, par Internet ou par SMS sur Android</li>
+          <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.3 14.3-4.2-4.2 1.4-1.4 2.8 2.8 5.9-5.9 1.4 1.4z"/></svg>Envoyez un SOS avec votre position à vos contacts SOS</li>
+          <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.3 14.3-4.2-4.2 1.4-1.4 2.8 2.8 5.9-5.9 1.4 1.4z"/></svg>Conservez votre journal de bord, sans limite de durée</li>
+          <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.3 14.3-4.2-4.2 1.4-1.4 2.8 2.8 5.9-5.9 1.4 1.4z"/></svg>Sans Internet : le GPS et les SMS continuent, le reste part au retour de la connexion</li>
+        </ul>
+      </div>
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 220 160" focusable="false">
+          <rect x="62" y="22" width="150" height="96" rx="7" fill="#0B2A55"/>
+          <rect x="68" y="28" width="138" height="84" rx="3" fill="#DCEFF9"/>
+          <path d="M68 28h58c-12 18 6 32-8 48s-22 22-50 36z" fill="#EFE6CC"/>
+          <path d="M188 42 C172 58 156 70 150 82 S132 98 118 104" fill="none" stroke="#1565C0" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+          <path d="M188 30a8 8 0 0 0-8 8c0 6 8 14 8 14s8-8 8-14a8 8 0 0 0-8-8zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" fill="#1565C0" fill-rule="evenodd"/>
+          <path d="M50 118h174l-9 11H59z" fill="#AFC2D1"/>
+          <rect x="14" y="34" width="64" height="122" rx="11" fill="#0B2A55"/>
+          <rect x="19" y="42" width="54" height="106" rx="7" fill="#1F6FB5"/>
+          <image href="assets/logo-nautilink.png" x="26" y="72" width="40" height="40"/>
+        </svg>
+      </div>
+    </article>
+  </div>
 
   <section id="fonctions">
     <div class="wrap">
       <div class="head">
         <span class="kicker">Fonctions</span>
         <h2>Tout ce qui relie le navigateur à ceux qui comptent pour lui</h2>
+        <p class="muted">NautiLink est votre compagnon connecté de navigation. Que vous naviguiez en voilier ou en bateau à moteur, vos proches suivent votre position, vous transmettez vos informations importantes et vous gardez un journal de bord complet de chaque sortie.</p>
       </div>
       <div class="features">
-        <div class="feature">
+        <div class="feature" id="partage">
           <h3>Position partagée</h3>
           <p>Votre position part à la fréquence choisie, de 15 minutes à 10 jours, ou à la demande. Vos proches suivent votre route sur une carte, en direct.</p>
         </div>
-        <div class="feature">
+        <div class="feature" id="journal">
           <h3>Journal de bord</h3>
           <p>Notes écrites, photos et notes vocales s'ajoutent à la navigation. Tout est rangé dans l'ordre et reste consultable, sans limite de durée.</p>
         </div>
-        <div class="feature sos">
+        <div class="feature sos" id="sos">
           <h3>Alerte SOS</h3>
           <p>Un bouton rouge, une confirmation, et vos contacts SOS reçoivent votre position et la fiche de votre bateau. Sur Android, par SMS, même sans Internet.</p>
         </div>
-        <div class="feature">
+        <div class="feature" id="hors-ligne">
           <h3>Fonctionne sans Internet</h3>
           <p>Le GPS et les SMS ne dépendent pas d'Internet. Les positions enregistrées en mer partent vers le serveur dès que la connexion revient.</p>
         </div>
@@ -115,6 +145,33 @@
         <div class="feature">
           <h3>Plusieurs bateaux</h3>
           <p>Un compte, plusieurs bateaux, chacun avec sa fiche : type, longueur, immatriculation, port d'attache, caractéristiques techniques.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="essayer">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Installer et essayer</span>
+        <h2>Sur Android, sur iPhone ou dans l'Application web</h2>
+        <p class="muted">La version de production, en bêta, branchée sur le serveur, continue d'évoluer : <a href="telecharger.html#application">Installer NautiLink</a>. La démonstration V0 est terminée : elle reste disponible ici, telle quelle, pour découvrir tous les écrans. Des données d'exemple, aucun serveur : rien n'est réellement envoyé, ni SMS, ni e-mail, ni position.</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <h3>Application web</h3>
+          <p>Créez votre compte et suivez vos navigations depuis un navigateur Internet.</p>
+          <a class="button" href="https://vdl.moulard.org/nautilink/">Ouvrir l'Application web</a>
+        </div>
+        <div class="feature">
+          <h3>Android et iPhone</h3>
+          <p>NautiLink n'est pas encore publiée sur Google Play ni sur l'App Store : vous l'installez directement depuis ce site.</p>
+          <a class="button" href="telecharger.html#application">Installer NautiLink</a>
+        </div>
+        <div class="feature">
+          <h3>Démonstration V0</h3>
+          <p>Dans votre navigateur : jouez le navigateur à bord ou le suiveur sur l'Application web, avec des données d'exemple.</p>
+          <a class="button ghost" href="app/">Ouvrir la démonstration</a>
         </div>
       </div>
     </div>
@@ -138,7 +195,7 @@
           </ol>
         </div>
         <div class="role follow">
-          <h3>Le suiveur, sur le Web ou son iPhone</h3>
+          <h3>Le suiveur, sur l'Application web ou son iPhone</h3>
           <ol>
             <li>Il reçoit une invitation et crée son compte.</li>
             <li>Il voit la dernière position, le tracé et le journal en direct.</li>
@@ -170,32 +227,30 @@
       </div>
     </div>
   </section>
-
-  <section id="securite">
-    <div class="wrap">
-      <div class="safety">
-        <div class="head" style="margin:0">
-          <span class="kicker">Sécurité en mer</span>
-          <h2>Les bons réflexes avant de larguer les amarres</h2>
-          <p class="muted">Numéros d'urgence, gilet de sauvetage, matériel obligatoire, météo, message MAYDAY, homme à la mer : notre mémo à garder à bord.</p>
-        </div>
-        <a class="button alert" href="securite.html">Lire le mémo sécurité</a>
-      </div>
-    </div>
-  </section>
 </main>
 
-<aside class="sponsor" aria-label="Sponsor">
-  <div class="wrap">
-    <img src="assets/sponsor-srt.png" alt="Guidon de la SRT" width="65" height="44">
-    <p>NautiLink est sponsorisée par la SRT · <a href="https://srtoulon.fr/" target="_blank" rel="noopener">srtoulon.fr</a></p>
-  </div>
-</aside>
 
+<div class="wrap notice">
+  <div class="beta" role="note">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2 1 21h22zm-1 7h2v6h-2zm0 8h2v2h-2z"/></svg>
+    <p>NautiLink est en version bêta et n'est pas un équipement de sécurité : il ne remplace ni le matériel de sécurité obligatoire, ni les procédures officielles d'alerte. <a href="avertissement.html">Lire l'avertissement</a><b>En cas de détresse : canal 16 de la VHF, 196 ou 112.</b></p>
+  </div>
+  <aside class="sponsor" aria-label="Sponsor">
+    <img src="assets/sponsor-srt.png" alt="Guidon de la SRT" width="71" height="48">
+    <p>Sponsorisée<br>par la <a href="https://srtoulon.fr/" target="_blank" rel="noopener">SRT</a></p>
+  </aside>
+</div>
+
+<div class="waves" aria-hidden="true">
+  <svg viewBox="0 0 1200 70" preserveAspectRatio="none" focusable="false">
+    <path class="wave-1" d="M0 30 C150 5 300 5 450 25 S750 50 900 28 S1100 5 1200 20 V70 H0Z"/>
+    <path class="wave-2" d="M0 45 C200 22 350 30 500 42 S800 60 950 40 S1120 28 1200 38 V70 H0Z"/>
+    <path class="wave-3" d="M0 58 C180 45 380 50 560 58 S880 70 1040 56 S1150 50 1200 54 V70 H0Z"/>
+  </svg>
+</div>
 <footer>
   <div class="wrap">
-    <p><b>NautiLink</b> · Your sea, your safety, your story. · <a href="https://github.com/gmoulard/NautiLink">Code source sur GitHub</a></p>
-    <p>NautiLink est en version bêta et n'est pas un équipement de sécurité au sens de la réglementation maritime. En cas de détresse, alertez les secours par le canal 16 de la VHF, le 196 ou le 112. <a href="avertissement.html">Avertissement et responsabilité</a></p>
+    <p><b>NautiLink</b> · Your sea, your safety, your story. · <a href="index.html">Accueil</a> · <a href="avertissement.html">Avertissement</a> · <a href="https://github.com/gmoulard/NautiLink">Code source sur GitHub</a></p>
     <p class="commit">Tous droits réservés · <a href="https://github.com/gmoulard/NautiLink">https://github.com/gmoulard/NautiLink</a> · V@VERSION@ · build @BUILD@ · commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT@">@COMMIT_COURT@</a></p>
   </div>
 </footer>
