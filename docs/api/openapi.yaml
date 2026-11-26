@@ -755,7 +755,7 @@ paths:
       - {$ref: '#/components/parameters/NavigationId'}
     put:
       tags: [Navigations]
-      summary: 'Démarrer une navigation (« Envoi message – Début de navigation »).'
+      summary: 'Démarrer une navigation (« Début de navigation »).'
       description: |
         Envoyé par l'application mobile à la confirmation du démarrage, avec l'identifiant tiré par le
         téléphone et l'événement de début (heure et position d'acquisition). Rejouable : le même
