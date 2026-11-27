@@ -16,7 +16,7 @@
 <section class="carte" aria-labelledby="titre-conduite">
 <h2 id="titre-conduite">Pendant la navigation</h2>
 <p><a class="bouton sos" href="{{$.Base}}/sos?navigation={{.N.ID}}">Envoyer un SOS</a></p>
-<p><a class="lien" href="{{or .N.MeteoMarine meteoMarine}}">Météo marine</a> <span class="aide">(prévision marine de Météo-France)</span></p>
+<p><a class="bouton" href="{{or .N.MeteoMarine meteoMarine}}">Météo marine</a> <span class="aide">(prévision marine de Météo-France)</span></p>
 {{if .AvecTelephone}}<p class="aide">Le téléphone associé au bateau envoie les positions automatiques de cette navigation.</p>
 {{else}}<p class="aide" id="positions-auto" data-adresse="{{$.Base}}/navigations/{{.N.ID}}/position" data-frequence="{{.N.FrequenceMinutes}}" aria-live="polite">Positions automatiques à la fréquence de la navigation ({{.Frequence}}) tant que cette page reste ouverte : elles s'arrêtent si vous la fermez ou si l'écran se met en veille.</p>{{end}}
 <form class="avec-position" method="post" action="{{$.Base}}/navigations/{{.N.ID}}/position">
@@ -34,11 +34,10 @@
   <p class="aide">L'envoi entre au journal de bord à l'heure où vous le faites, avec votre position si votre navigateur Internet la donne. Aucun SMS ne part de l'Application web.</p>
   <button type="submit">Envoyer</button>
 </form>
-<form class="avec-position" method="post" action="{{$.Base}}/navigations/{{.N.ID}}/fin">
-  {{template "champs-position"}}
-  <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la fin de la navigation</span></label>
-  <button class="secondaire" type="submit">Terminer la navigation</button>
+<form id="terminer" method="post" action="{{$.Base}}/navigations/{{.N.ID}}/fin">
+  <button type="submit" aria-haspopup="dialog">Terminer la navigation</button>
 </form>
+<dialog id="confirmer-fin" aria-labelledby="titre-confirmer-fin">{{template "confirmer-fin" $}}</dialog>
 </section>
 {{end}}{{end}}
 
@@ -200,3 +199,19 @@
 {{else}}<p class="aide">Le journal est vide.</p>{{end}}
 </section>
 {{end}}{{end}}
+
+{{/* Confirmation de « Terminer la navigation » (RG-NAV-13, D-178) : dans la
+   fenêtre ouverte par static/conduite.js, sinon (sans JavaScript) sur la
+   page fin.html. */}}
+{{define "confirmer-fin"}}
+<h2 id="titre-confirmer-fin">Terminer la navigation ?</h2>
+<p>La navigation « {{.D.N.Nom}} » sera terminée : plus aucune position ni note ne pourra y être envoyée pendant la sortie.</p>
+<form class="avec-position" method="post" action="{{.Base}}/navigations/{{.D.N.ID}}/fin">
+  {{template "champs-position"}}
+  <input type="hidden" name="confirmation" value="oui">
+  <div class="choix">
+  <button type="submit">Terminer la navigation</button>
+  <a class="bouton secondaire" href="{{.Base}}/navigations/{{.D.N.ID}}" data-fermer>Annuler</a>
+  </div>
+</form>
+{{end}}

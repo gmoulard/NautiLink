@@ -48,6 +48,10 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 - [x] **TODO-3.2**: API et formats de données, synchronisation Android ↔ serveur ↔ Web (2026-11-25, D-115 ; [`api/openapi.yaml`](api/openapi.yaml)).
 - [x] **TODO-3.1**: Architecture technique : [08-architecture.md](08-architecture.md) validé avec ses propositions (2026-11-25, D-86, D-96).
 
+## 6. Étape 3 — Application web
+
+- [x] **TODO-6.14**: Page de la navigation de l'Application web ([D-178](07-decisions.md#d-178), [RG-WEB-08](02-regles-metier.md#rg-web-08)) : « Météo marine » et « Terminer la navigation » en boutons turquoise ; plus de case à cocher : fenêtre de confirmation après le clic (`<dialog>` ouvert par `server/web/static/conduite.js`), page `server/web/fin.html` sans JavaScript (2026-11-27 ; rendus et confirmation constatés dans Chromium à 1280 et 390 px ; essais Go).
+
 ## 8. Lancement
 
 - [x] **TODO-8.1**: Fichiers du logo : redessin vectoriel validé, déclinaisons claire, sombre et monochrome, icônes Android, iPhone et Web ([`assets/logo/`](assets/logo/), 2026-11-25, D-117).

@@ -220,7 +220,7 @@ func TestLiensRelectureWeb(t *testing.T) {
 			t.Errorf("%s : mémo absent du pied de page", chemin)
 		}
 	}
-	if page := rendu(t, "navigation.html", donneesNavEssai(true, true)); !strings.Contains(page, `<a class="lien" href="https://meteofrance.com/meteo-marine">Météo marine</a>`) {
+	if page := rendu(t, "navigation.html", donneesNavEssai(true, true)); !strings.Contains(page, `<a class="bouton" href="https://meteofrance.com/meteo-marine">Météo marine</a>`) {
 		t.Error("navigation en cours : lien « Météo marine » absent")
 	}
 	if page := rendu(t, "navigation.html", donneesNavEssai(true, false)); strings.Contains(page, "Météo marine") {
@@ -230,7 +230,7 @@ func TestLiensRelectureWeb(t *testing.T) {
 	nd := d.D.(donneesNavigation)
 	nd.N.MeteoMarine = lienMeteoMarine(&lieuJSON{Nom: ptr("Lorient")})
 	d.D = nd
-	if page := rendu(t, "navigation.html", d); !strings.Contains(page, `<a class="lien" href="https://meteofrance.com/recherche/Lorient">Météo marine</a>`) {
+	if page := rendu(t, "navigation.html", d); !strings.Contains(page, `<a class="bouton" href="https://meteofrance.com/recherche/Lorient">Météo marine</a>`) {
 		t.Error("navigation en cours : lien « Météo marine » sans la commune de la dernière position")
 	}
 }

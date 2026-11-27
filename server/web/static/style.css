@@ -155,6 +155,12 @@ input[type=datetime-local], input[type=file] { width: 100%; min-height: 44px; pa
 details.modifier { margin-top: 6px; }
 details.modifier summary { color: var(--action); font-weight: 600; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; }
 details.modifier form { margin-bottom: 8px; }
+/* Fenêtre de confirmation de « Terminer la navigation » (D-178). */
+dialog { max-width: min(480px, calc(100vw - 32px)); border: 1px solid var(--filet); border-radius: 18px; padding: 20px;
+  background: var(--surface); color: var(--texte); box-shadow: 0 12px 32px rgba(11,42,85,.25); }
+dialog::backdrop { background: rgba(11,42,85,.45); }
+.choix { display: flex; flex-wrap: wrap; gap: 0 12px; align-items: center; }
+.bouton.secondaire { background: var(--surface); color: var(--action); border: 1px solid var(--filet); box-shadow: none; }
 
 /* Écrans d'accès (connexion, création du compte, mot de passe oublié) :
    écran de connexion de l'étude Nautilinkimages261126 (D-157, §15) ;

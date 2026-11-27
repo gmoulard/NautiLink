@@ -139,7 +139,8 @@ func (a *app) routesWebConduite(mux *http.ServeMux, c string) {
 		return nil
 	}))
 
-	// « Terminer la navigation », avec confirmation (RG-NAV-13).
+	// « Terminer la navigation », avec confirmation (RG-NAV-13) : fenêtre
+	// ouverte par static/conduite.js, qui envoie « confirmation » (D-178).
 	mux.HandleFunc("POST "+c+"/navigations/{id}/fin", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
 		id := r.PathValue("id")
 		n, err := a.navigationConduite(r.Context(), s.utilisateur, id)
@@ -147,7 +148,15 @@ func (a *app) routesWebConduite(mux *http.ServeMux, c string) {
 			return err
 		}
 		if r.FormValue("confirmation") == "" {
-			return echec(w, r, s, d, errInvalide("Cochez la case pour confirmer la fin de la navigation."))
+			// Sans JavaScript, pas de fenêtre de confirmation : la
+			// même question sur une page (D-178).
+			res, err := a.resumer(r.Context(), n, "navigateur")
+			if err != nil {
+				return err
+			}
+			d.Titre, d.D = "Terminer la navigation ?", donneesNavigation{N: res}
+			a.rendre(w, "fin.html", d)
+			return nil
 		}
 		h := a.heureWebMaintenant(fuseauWeb(r, n))
 		fin := evenementJSON{ID: nouvelUUID(), Type: "fin", Origine: "web", HeureAcquisition: h, Position: positionWeb(r, h)}
