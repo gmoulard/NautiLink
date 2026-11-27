@@ -293,13 +293,15 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 ## 9. Évolutions futures
 
-- [ ] **TODO-9.1**: Données gratuites du SHOM sur la carte du Web (priorité lancement depuis D-79) ([Q-23](06-questions-ouvertes.md#q-23)). Dépend de : TODO-6.2.
+- [~] **TODO-9.1**: Données gratuites du SHOM sur la carte du Web (priorité lancement depuis D-79) ([Q-23](06-questions-ouvertes.md#q-23)). Dépend de : TODO-6.2.
   - Critères d'acceptation : licence vérifiée, faisabilité et coût chiffrés.
+  - Fait (2026-11-27) : [étude](etudes/shom-cartes.md) : licence des cartes marines lue (payante, contrat pour une réutilisation commerciale), couches thématiques servies sans clé, faisabilité (dalles WMTS en Web Mercator comme OpenStreetMap) ; proposition dans Q-23. Reste : coût des cartes marines (devis du SHOM), licence de la couche retenue, choix de l'utilisateur.
 - [~] **TODO-9.2**: Autres langues ([Q-27](06-questions-ouvertes.md#q-27)). Dépend de : aucune.
   - Critères d'acceptation : textes des interfaces séparés du code dès le départ ; une deuxième langue essayée.
   - Fait dans le prototype : textes des écrans en fichiers ARB (`app/lib/l10n/`), essai en anglais, test associé. Tranché le 2026-11-25 (D-90) : français et anglais, langue du téléphone par défaut et réglable, messages dans la langue du navigateur (RG-PRM-03, RG-PRM-04). Langue par défaut sur le Web tranchée (D-93). Fait le 2026-11-25 : textes de `app/lib/data.dart` (types d'événements, fréquences, dates, durées, préférences SMS, lieux) et SMS SOS (RG-PRM-04) passés dans les fichiers ARB, test en anglais ; seules les données d'exemple (bateaux, lieux, notes, météo simulée) restent en français. Reste : relecture de la traduction anglaise par l'utilisateur.
-- [ ] **TODO-9.3**: Plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28), RG-ADM-05). Dépend de : TODO-7.1.
+- [~] **TODO-9.3**: Plusieurs versions de l'application Web ([Q-28](06-questions-ouvertes.md#q-28), RG-ADM-05). Dépend de : TODO-7.1.
   - Critères d'acceptation : stratégie de déploiement et de compatibilité écrite.
+  - Fait (2026-11-27) : [étude](etudes/versions-web.md) : stratégie de déploiement et de compatibilité proposée dans Q-28. Reste : choix de l'utilisateur.
 
 ## 10. Étape 5 — iPhone (15)
 

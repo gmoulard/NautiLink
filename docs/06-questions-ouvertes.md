@@ -80,6 +80,8 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : lancement (demande de l'utilisateur du 2026-11-24, D-79).
 - Étude : quelles données du SHOM sont gratuites et réutilisables sur la carte de la page d'une navigation (licence, clé d'accès, conditions d'affichage), et comment les superposer au fond OpenStreetMap et à OpenSeaMap (RG-NAV-29).
+- Fait (2026-11-27) : [étude](etudes/shom-cartes.md) : cartes marines RasterMarine payantes (licence, redevance et contrat pour une réutilisation commerciale ; tuile refusée sans abonnement) ; couches thématiques (épaves, réglementation de la navigation…) servies sans clé par le WMTS public, licence à vérifier couche par couche.
+- Proposition (non validée) : pas de cartes marines au lancement (devis au SHOM si souhaité) ; ajouter la couche « Épaves et obstructions » au-dessus d'OpenSeaMap si sa fiche de métadonnées confirme une licence ouverte, avec sa mention de source.
 
 ### <a id="q-27"></a>Q-27 — Autres langues
 
@@ -93,3 +95,5 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 
 - Priorité : plus tard.
 - Étude : déploiement et compatibilité de plusieurs versions de l'application Web, utilisateurs sur des versions différentes (RG-ADM-05).
+- Fait (2026-11-27) : [étude](etudes/versions-web.md) : Application web servie par le serveur (toujours à sa version) ; contraintes d'une seconde instance (base commune, tâches de fond, migrations compatibles).
+- Proposition (non validée) : une seule version en service ; pour une évolution risquée, une instance d'essai de la version suivante sur une adresse à part, même base, sans tâches de fond, ouverte aux administrateurs ; `/api/v1` gardée tant qu'une version mobile de la matrice l'utilise, rupture par `/api/v2`.
