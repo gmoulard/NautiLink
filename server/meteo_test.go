@@ -23,7 +23,9 @@ type fauxMeteoFrance struct {
 	refuser     bool // 503 partout
 	runPublie   string
 	appels      []string
-	jetonPerime bool // le premier appel avec le premier jeton rend 401
+	jetonPerime bool   // le premier appel avec le premier jeton rend 401
+	cle         string // clé d'API acceptée, avec l'en-tête enteteCle
+	enteteCle   string // « apikey » (par défaut) ou « Authorization » (Bearer)
 }
 
 func (f *fauxMeteoFrance) serveur(t *testing.T) *httptest.Server {
@@ -49,7 +51,13 @@ func (f *fauxMeteoFrance) serveur(t *testing.T) *httptest.Server {
 			return
 		}
 		jeton := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
-		if !strings.HasPrefix(jeton, "jeton") || (f.jetonPerime && jeton == "jeton1") {
+		cleOK := f.cle != "" && ((f.enteteCle == "" && r.Header.Get("apikey") == f.cle) ||
+			(f.enteteCle == "Authorization" && jeton == f.cle))
+		if r.URL.Path == "/vagues" && (cleOK || strings.HasPrefix(jeton, "jeton")) {
+			w.Write([]byte(`["0.025","0.1"]`))
+			return
+		}
+		if !cleOK && (!strings.HasPrefix(jeton, "jeton") || (f.jetonPerime && jeton == "jeton1")) {
 			http.Error(w, "jeton", http.StatusUnauthorized)
 			return
 		}

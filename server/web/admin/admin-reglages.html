@@ -9,16 +9,19 @@
   <dd>{{if .Ecran}}Posé sur cet écran le {{.Le.UTC.Format "02/01/2006 à 15:04"}} UTC par {{.Par}}{{if .Variable}} ; il remplace celui de la variable NAUTILINK_METEOFRANCE du serveur{{end}}.
       {{else if .Variable}}Celui de la variable NAUTILINK_METEOFRANCE du serveur.
       {{else}}Aucun : la météo n'est pas relevée.{{end}}</dd>
+  {{if .Actif}}<dt>Type</dt>
+  <dd>{{if .Cle}}Clé d'API, envoyée telle quelle à chaque appel{{if not .FinCle.IsZero}} ; valable jusqu'au {{.FinCle.Format "02/01/2006"}}{{if .FinProche}} : <strong>à renouveler bientôt</strong> sur le portail de Météo-France{{end}}{{else}}, sans date de fin{{end}}.
+      {{else}}Identifiant d'application : le serveur demande lui-même un jeton d'une heure, sans date de fin.{{end}}</dd>{{end}}
 </dl>
 {{if .Actif}}<form class="enligne" method="post" action="{{$.Base}}/admin/reglages/meteofrance/verification"><button class="secondaire" type="submit">Vérifier auprès de Météo-France</button></form>{{end}}
 {{if .Ecran}}<form class="enligne" method="post" action="{{$.Base}}/admin/reglages/meteofrance/suppression"><button class="danger" type="submit">{{if .Variable}}Revenir au code de la variable{{else}}Retirer le code{{end}}</button></form>{{end}}
 </div>
 <div class="carte">
 <h2>{{if .Actif}}Changer le code{{else}}Poser le code{{end}}</h2>
-<p class="aide">Collez la chaîne donnée par le portail de Météo-France pour l'en-tête « Authorization: Basic » (avec ou sans « Basic » devant), ou « identifiant:secret ». Le code est vérifié auprès de Météo-France avant d'être enregistré ; un code refusé n'est pas enregistré.</p>
+<p class="aide">Collez, tel que le portail de Météo-France le donne, sans rien ajouter devant : la clé d'API (« API Key », qui commence par « eyJ »), ou la chaîne de l'identifiant d'application (pour « Authorization: Basic »), ou « identifiant:secret ». Le serveur ajoute lui-même l'en-tête. Un jeton d'une heure n'est pas accepté : il cesserait de marcher aussitôt. Le code est vérifié auprès de Météo-France avant d'être enregistré ; un code refusé n'est pas enregistré.</p>
 <form method="post" action="{{$.Base}}/admin/reglages/meteofrance" autocomplete="off">
   <label for="code">Nouveau code d'accès</label>
-  <input id="code" name="code" type="password" required maxlength="1000" autocomplete="off" spellcheck="false">
+  <input id="code" name="code" type="password" required maxlength="4000" autocomplete="off" spellcheck="false">
   <button type="submit">Enregistrer</button>
 </form>
 </div>

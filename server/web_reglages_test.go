@@ -1,9 +1,13 @@
 package main
 
 import (
+	"encoding/base64"
+	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 )
 
 // TestNormaliserCodeMeteo : RG-ADM-08 : chaîne du portail, avec ou sans
@@ -19,7 +23,7 @@ func TestNormaliserCodeMeteo(t *testing.T) {
 			t.Errorf("%q : %q, %v", c.entree, v, err)
 		}
 	}
-	for _, v := range []string{"", "pas du base64 !", "c2VjcmV0", ":secret", "id:", "a b:c", strings.Repeat("a", 1001) + ":b"} {
+	for _, v := range []string{"", "pas du base64 !", "c2VjcmV0", ":secret", "id:", "a b:c", strings.Repeat("a", 4001) + ":b"} {
 		if _, err := normaliserCodeMeteo(v); err == nil {
 			t.Errorf("%q accepté", v)
 		}
@@ -128,5 +132,56 @@ func TestReglagesMeteoAdmin(t *testing.T) {
 	// réservé à l'espace administrateur
 	if rec := e.navigateur().envoyer("POST", "/nautilink/admin/reglages/meteofrance", map[string]string{"code": "id:secret"}); rec.Code != http.StatusSeeOther || rec.Header().Get("Location") != "/nautilink/admin/connexion" {
 		t.Fatalf("sans session : %d", rec.Code)
+	}
+}
+
+// jwtEssai : clé d'API d'essai (JWT non signé) expirant à fin.
+func jwtEssai(typ string, fin time.Time) string {
+	e := base64.RawURLEncoding.EncodeToString([]byte(`{"typ":"` + typ + `","alg":"RS256"}`))
+	c := base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf(`{"sub":"nautilink","exp":%d}`, fin.Unix())))
+	return e + "." + c + ".c2lnbmF0dXJl"
+}
+
+// TestCleAPIMeteo : clé d'API du portail collée sans en-tête : reconnue,
+// envoyée avec l'en-tête « apikey » (ou « Bearer » si c'est celui qui
+// marche), sans passer par /token ; jeton d'une heure et clé expirée refusés.
+func TestCleAPIMeteo(t *testing.T) {
+	cle := jwtEssai("JWT", time.Now().Add(365*24*time.Hour))
+	for _, v := range []string{cle, "apikey: " + cle, "Bearer " + cle, "  " + cle + "\n"} {
+		if n, err := normaliserCodeMeteo(v); err != nil || n != cle {
+			t.Errorf("%q : %q %v", v[:10], n, err)
+		}
+	}
+	if _, err := normaliserCodeMeteo(jwtEssai("at+jwt", time.Now().Add(time.Hour))); err == nil || !strings.Contains(err.Error(), "une heure") {
+		t.Errorf("jeton d'une heure : %v", err)
+	}
+	if _, err := normaliserCodeMeteo(jwtEssai("JWT", time.Now().Add(-time.Hour))); err == nil || !strings.Contains(err.Error(), "expiré") {
+		t.Errorf("clé expirée : %v", err)
+	}
+	if !finJWT(cle).After(time.Now().Add(364 * 24 * time.Hour)) {
+		t.Error("date de fin de la clé")
+	}
+
+	for _, entete := range []string{"", "Authorization"} {
+		f := &fauxMeteoFrance{cle: cle, enteteCle: entete}
+		a := &app{meteo: meteoEssai(t, f)}
+		a.meteo.variable = ""
+		code, err := a.verifierCodeMeteo(t.Context(), cle)
+		attendu := map[string]string{"": "apikey ", "Authorization": "Bearer "}[entete] + cle
+		if err != nil || code != attendu {
+			t.Fatalf("en-tête %q : %q %v", entete, code, err)
+		}
+		a.meteo.poserReglage(code)
+		if _, err := a.meteo.obtenir(t.Context(), a.meteo.vaguesURL+"0.025/packages/SP1/productMFWAM?format=grib2&time=001H", 10<<20); err != nil {
+			t.Fatalf("appel avec la clé (%q) : %v", entete, err)
+		}
+		if f.jetons != 0 {
+			t.Errorf("clé d'API : /token appelé")
+		}
+	}
+	f := &fauxMeteoFrance{cle: "autre"}
+	a := &app{meteo: meteoEssai(t, f)}
+	if _, err := a.verifierCodeMeteo(t.Context(), cle); !errors.Is(err, errCodeRefuse) {
+		t.Fatalf("clé refusée : %v", err)
 	}
 }

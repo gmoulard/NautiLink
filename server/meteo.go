@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -126,6 +127,76 @@ func (m *meteoFrance) obtenirJeton(ctx context.Context, renouveler bool) (string
 	return m.jeton, nil
 }
 
+// enteteCle : code d'accès qui est une clé d'API (jeton JWT donné par le
+// portail, envoyé tel quel à chaque appel, sans passer par /token) : en-tête
+// à poser ; forme gardée « apikey <clé> » ou « Bearer <clé> » (en-tête
+// constaté à la vérification), ou la clé seule (en-tête « apikey »). Sinon :
+// identifiant d'application, pour /token.
+func enteteCle(code string) (nom, valeur string, cle bool) {
+	switch {
+	case strings.HasPrefix(code, "apikey "):
+		return "apikey", code[len("apikey "):], true
+	case strings.HasPrefix(code, "Bearer "):
+		return "Authorization", code, true
+	case estJWT(code):
+		return "apikey", code, true
+	}
+	return "", "", false
+}
+
+// estJWT : trois parties en base64url séparées par des points, la première
+// étant un en-tête JSON.
+func estJWT(v string) bool {
+	p := strings.Split(v, ".")
+	if len(p) != 3 || p[0] == "" || p[1] == "" {
+		return false
+	}
+	var t map[string]any
+	b, err := base64.RawURLEncoding.DecodeString(strings.TrimRight(p[0], "="))
+	return err == nil && json.Unmarshal(b, &t) == nil
+}
+
+// finJWT : date d'expiration (« exp ») d'une clé JWT ; zéro sans date.
+func finJWT(v string) time.Time {
+	p := strings.Split(v, ".")
+	if len(p) != 3 {
+		return time.Time{}
+	}
+	b, err := base64.RawURLEncoding.DecodeString(strings.TrimRight(p[1], "="))
+	var c struct {
+		Exp float64 `json:"exp"`
+	}
+	if err != nil || json.Unmarshal(b, &c) != nil || c.Exp <= 0 {
+		return time.Time{}
+	}
+	return time.Unix(int64(c.Exp), 0).UTC()
+}
+
+// verifierCle : appel léger (liste des grilles MFWAM) avec la clé d'API et
+// l'en-tête donnés ; errCodeRefuse si Météo-France la refuse.
+func (m *meteoFrance) verifierCle(ctx context.Context, code string) error {
+	nom, valeur, _ := enteteCle(code)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, strings.TrimSuffix(m.vaguesURL, "/"), nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set(nom, valeur)
+	req.Header.Set("User-Agent", "NautiLink/"+version)
+	resp, err := m.client.Do(req)
+	if err != nil {
+		return err
+	}
+	io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<20))
+	resp.Body.Close()
+	switch resp.StatusCode {
+	case http.StatusUnauthorized, http.StatusForbidden:
+		return fmt.Errorf("%w (%s)", errCodeRefuse, resp.Status)
+	case http.StatusOK, http.StatusNotFound, http.StatusBadRequest:
+		return nil // accès accepté (ressource absente : la clé est passée)
+	}
+	return fmt.Errorf("Météo-France : %s", resp.Status)
+}
+
 // demanderJeton : jeton OAuth2 demandé à Météo-France pour ce code, sans le
 // garder ; errCodeRefuse si Météo-France refuse le code.
 func (m *meteoFrance) demanderJeton(ctx context.Context, code string) (string, time.Duration, error) {
@@ -176,15 +247,21 @@ func (m *meteoFrance) obtenir(ctx context.Context, adresse string, limite int64)
 		}
 	}
 	for essai := 0; essai < 2; essai++ {
-		jeton, err := m.obtenirJeton(ctx, essai > 0)
-		if err != nil {
-			return nil, err
+		nom, valeur, cle := enteteCle(m.identifiant())
+		if !cle {
+			jeton, err := m.obtenirJeton(ctx, essai > 0)
+			if err != nil {
+				return nil, err
+			}
+			nom, valeur = "Authorization", "Bearer "+jeton
+		} else if essai > 0 {
+			break // clé d'API refusée : pas de nouveau jeton à demander
 		}
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, adresse, nil)
 		if err != nil {
 			return nil, err
 		}
-		req.Header.Set("Authorization", "Bearer "+jeton)
+		req.Header.Set(nom, valeur)
 		req.Header.Set("User-Agent", "NautiLink/"+version)
 		resp, err := m.client.Do(req)
 		if err != nil {

@@ -37,7 +37,7 @@ Le portail propose deux façons de s'identifier, pour une « application » cré
 | Durée | Pas d'expiration de l'identifiant ; jeton court | Choisie à la création, 3 ans au plus selon la documentation (**à vérifier**) |
 | Risque | Rien à renouveler à la main | Panne le jour où la clé expire, si personne ne l'a renouvelée |
 
-Retenu le 2026-11-27 ([D-172](../07-decisions.md#d-172)) : identifiant d'application OAuth2, pour qu'aucune date d'expiration ne coupe la météo en pleine saison.
+Retenu le 2026-11-27 ([D-172](../07-decisions.md#d-172)) : identifiant d'application OAuth2, pour qu'aucune date d'expiration ne coupe la météo en pleine saison. Depuis le serveur 0.1.1 ([D-175](../07-decisions.md#d-175)), une clé d'API est aussi acceptée (écran « Réglages », § 5.1) : collée sans en-tête, le serveur ajoute `apikey:` ou `Authorization: Bearer` selon ce que Météo-France accepte ; sa date de fin est affichée. Le jeton OAuth2 d'une heure du portail est refusé.
 
 ## 5. Ranger les codes
 
@@ -50,7 +50,7 @@ Retenu le 2026-11-27 ([D-172](../07-decisions.md#d-172)) : identifiant d'applica
 
 ### 5.1 Poser le code sur pi-appliance
 
-**Le plus simple, depuis le serveur de 2026-11-27 (TODO-7.2, [RG-ADM-08](../02-regles-metier.md#rg-adm-08), [D-174](../07-decisions.md#d-174))** : Application web → menu « Administration » → connexion à l'espace administrateur → « Réglages » → coller la chaîne du portail (ou « identifiant:secret ») dans « Nouveau code d'accès » → « Enregistrer ». Le serveur vérifie le code auprès de Météo-France avant de l'enregistrer et le garde dans sa base : rien à refaire après une mise à jour du serveur, ni fichier `.env` à toucher, ni redémarrage. « Vérifier auprès de Météo-France » contrôle le code en service à tout moment. Les façons ci-dessous restent possibles (le code de l'écran l'emporte sur la variable) ; pour éviter deux endroits, ne garder que l'écran.
+**Le plus simple, depuis le serveur de 2026-11-27 (TODO-7.2, [RG-ADM-08](../02-regles-metier.md#rg-adm-08), [D-174](../07-decisions.md#d-174))** : Application web → menu « Administration » → connexion à l'espace administrateur → « Réglages » → coller, sans en-tête, la clé d'API du portail (« eyJ… »), la chaîne de l'identifiant d'application ou « identifiant:secret » dans « Nouveau code d'accès » → « Enregistrer ». Le serveur vérifie le code auprès de Météo-France avant de l'enregistrer et le garde dans sa base : rien à refaire après une mise à jour du serveur, ni fichier `.env` à toucher, ni redémarrage. « Vérifier auprès de Météo-France » contrôle le code en service à tout moment. Les façons ci-dessous restent possibles (le code de l'écran l'emporte sur la variable) ; pour éviter deux endroits, ne garder que l'écran.
 
 Le serveur est installé par « Docker Compose libre » (service `nautilink`, [`server/compose.yaml`](../../server/compose.yaml)). Dans les deux cas ci-dessous, le fichier Compose doit reprendre la variable, dans `environment` du service `nautilink` (ajoutée le 2026-11-27 avec le client Météo-France, TODO-4.10) :
 
