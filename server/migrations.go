@@ -338,6 +338,14 @@ var migrations = []string{
 	// 13 — RG-WEB-06, D-163 : navigation démarrée sur l'Application web, sans
 	// téléphone, jusqu'au premier envoi du téléphone associé du bateau.
 	`ALTER TABLE navigations ALTER COLUMN appareil_id DROP NOT NULL;`,
+	// 14 — RG-ADM-08, D-174 : réglages du serveur posés dans l'espace
+	// administrateur (code d'accès à Météo-France) ; jamais rendus par l'API.
+	`CREATE TABLE reglages (
+		cle text PRIMARY KEY,
+		valeur text NOT NULL,
+		modifie_le timestamptz NOT NULL DEFAULT now(),
+		modifie_par text NOT NULL
+	);`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

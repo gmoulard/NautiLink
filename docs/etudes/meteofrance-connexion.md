@@ -45,9 +45,12 @@ Retenu le 2026-11-27 ([D-172](../07-decisions.md#d-172)) : identifiant d'applica
 - Production (Raspberry Pi sous pi-appliance) : variable d'environnement du serveur, comme les autres secrets (08-architecture.md §6) ; comment la poser : § 5.1. Nom retenu ([D-172](../07-decisions.md#d-172)) : `NAUTILINK_METEOFRANCE`, qui contient l'identifiant d'application encodé tel que le portail le donne pour l'en-tête `Authorization: Basic` (identifiant et secret en base64 : un codage, pas un chiffrement).
 - Développement : variable posée dans le terminal du développeur, jamais écrite dans un fichier suivi par Git.
 - Test : pas de code ; le serveur de test ne relève pas la météo (aucun envoi réel, 08-architecture.md §6).
-- Sans variable posée, le serveur ne relève pas la météo et la page de la navigation ne l'affiche pas, sans erreur.
+- Ou bien, en production, écran « Réglages » de l'espace administrateur (§ 5.1), gardé dans la base du serveur, prioritaire sur la variable.
+- Sans variable ni code posé sur l'écran, le serveur ne relève pas la météo et la page de la navigation ne l'affiche pas, sans erreur.
 
 ### 5.1 Poser le code sur pi-appliance
+
+**Le plus simple, depuis le serveur de 2026-11-27 (TODO-7.2, [RG-ADM-08](../02-regles-metier.md#rg-adm-08), [D-174](../07-decisions.md#d-174))** : Application web → menu « Administration » → connexion à l'espace administrateur → « Réglages » → coller la chaîne du portail (ou « identifiant:secret ») dans « Nouveau code d'accès » → « Enregistrer ». Le serveur vérifie le code auprès de Météo-France avant de l'enregistrer et le garde dans sa base : rien à refaire après une mise à jour du serveur, ni fichier `.env` à toucher, ni redémarrage. « Vérifier auprès de Météo-France » contrôle le code en service à tout moment. Les façons ci-dessous restent possibles (le code de l'écran l'emporte sur la variable) ; pour éviter deux endroits, ne garder que l'écran.
 
 Le serveur est installé par « Docker Compose libre » (service `nautilink`, [`server/compose.yaml`](../../server/compose.yaml)). Dans les deux cas ci-dessous, le fichier Compose doit reprendre la variable, dans `environment` du service `nautilink` (ajoutée le 2026-11-27 avec le client Météo-France, TODO-4.10) :
 
@@ -82,7 +85,7 @@ Points 4 à 6 : tranchés le 2026-11-27 ([D-172](../07-decisions.md#d-172), RG-N
 
 ## 7. Renouveler ou révoquer
 
-- Fuite d'un code : le révoquer sur le portail, en créer un nouveau, mettre à jour la variable sur pi-appliance (§ 5.1 : le service redémarre).
+- Fuite d'un code : le révoquer sur le portail, en créer un nouveau, le poser sur l'écran « Réglages » de l'espace administrateur (§ 5.1, sans redémarrage) ou dans la variable.
 - Clé d'API (si ce choix est fait) : noter sa date d'expiration dans le TODO et la renouveler un mois avant.
 - Changement de responsable : transférer le compte ou créer un nouvel identifiant sous le compte du projet.
 

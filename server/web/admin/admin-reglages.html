@@ -1,0 +1,26 @@
+{{define "admin-reglages.html"}}{{template "admin-haut" .}}
+<h1>Réglages</h1>
+{{with .D}}
+<div class="carte">
+<h2>Météo-France</h2>
+<p class="aide">Code d'accès aux API de Météo-France, pour la météo du départ et de l'arrivée de chaque navigation. Il n'est jamais réaffiché.</p>
+<dl>
+  <dt>Code en service</dt>
+  <dd>{{if .Ecran}}Posé sur cet écran le {{.Le.UTC.Format "02/01/2006 à 15:04"}} UTC par {{.Par}}{{if .Variable}} ; il remplace celui de la variable NAUTILINK_METEOFRANCE du serveur{{end}}.
+      {{else if .Variable}}Celui de la variable NAUTILINK_METEOFRANCE du serveur.
+      {{else}}Aucun : la météo n'est pas relevée.{{end}}</dd>
+</dl>
+{{if .Actif}}<form class="enligne" method="post" action="{{$.Base}}/admin/reglages/meteofrance/verification"><button class="secondaire" type="submit">Vérifier auprès de Météo-France</button></form>{{end}}
+{{if .Ecran}}<form class="enligne" method="post" action="{{$.Base}}/admin/reglages/meteofrance/suppression"><button class="danger" type="submit">{{if .Variable}}Revenir au code de la variable{{else}}Retirer le code{{end}}</button></form>{{end}}
+</div>
+<div class="carte">
+<h2>{{if .Actif}}Changer le code{{else}}Poser le code{{end}}</h2>
+<p class="aide">Collez la chaîne donnée par le portail de Météo-France pour l'en-tête « Authorization: Basic » (avec ou sans « Basic » devant), ou « identifiant:secret ». Le code est vérifié auprès de Météo-France avant d'être enregistré ; un code refusé n'est pas enregistré.</p>
+<form method="post" action="{{$.Base}}/admin/reglages/meteofrance" autocomplete="off">
+  <label for="code">Nouveau code d'accès</label>
+  <input id="code" name="code" type="password" required maxlength="1000" autocomplete="off" spellcheck="false">
+  <button type="submit">Enregistrer</button>
+</form>
+</div>
+{{end}}
+{{template "admin-bas" .}}{{end}}

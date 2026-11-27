@@ -168,7 +168,7 @@ L'Application web a aussi toutes les fonctions de l'application mobile, conduite
 
 ## 7. Espace administrateur
 
-Fonctions au lancement : RG-ADM-01 à RG-ADM-04. Profils d'administrateurs et traçabilité : [D-47](07-decisions.md#d-47).
+Fonctions au lancement : RG-ADM-01 à RG-ADM-04 ; écran « Réglages » pour le code d'accès à Météo-France : RG-ADM-08. Profils d'administrateurs et traçabilité : [D-47](07-decisions.md#d-47).
 
 ## 8. Exigences transverses
 

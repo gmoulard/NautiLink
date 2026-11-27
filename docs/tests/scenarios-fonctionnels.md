@@ -204,6 +204,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 - **TS-ADM-04** ([RG-ADM-04](../02-regles-metier.md#rg-adm-04)) — Étant donné l'espace administrateur, quand on le parcourt, alors aucune fonction de gestion des langues n'y figure.
 - **TS-ADM-05** ([RG-ADM-05](../02-regles-metier.md#rg-adm-05)) — Étant donné l'espace administrateur au lancement, quand on le parcourt, alors aucune gestion de plusieurs versions de l'application Web n'y figure.
 - **TS-ADM-06** ([RG-ADM-06](../02-regles-metier.md#rg-adm-06)) — Étant donné une annonce publiée avec une date de fin, quand un utilisateur ouvre l'accueil de l'application mobile ou le tableau de bord Web, alors l'annonce s'affiche en bandeau en haut ; elle disparaît après la date de fin, ou dès que l'utilisateur la ferme.
+- **TS-ADM-07** ([RG-ADM-08](../02-regles-metier.md#rg-adm-08)) — Étant donné un administrateur sur l'écran « Réglages », quand il colle un code que Météo-France refuse, alors le code n'est pas enregistré et le code en service reste inchangé ; quand il colle un code accepté, alors l'écran dit « Posé sur cet écran » avec la date et son adresse, sans réafficher le code, la météo des navigations suivantes est relevée avec lui, et le journal trace le changement sans le code ; quand il retire le code, alors celui de la variable `NAUTILINK_METEOFRANCE` reprend, ou la météo n'est plus relevée sans variable.
 
 ## 15. Conservation des données (RG-DON)
 

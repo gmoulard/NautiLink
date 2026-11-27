@@ -26,6 +26,11 @@ var messagesAdmin = map[string]string{
 	"supprime":   "Suppression faite.",
 	"publiee":    "Annonce publiée.",
 	"deconnecte": "Vous êtes déconnecté de l'espace administrateur.",
+	// Réglages (web_reglages.go, RG-ADM-08).
+	"meteo-accepte":     "Code enregistré : Météo-France l'a accepté. La météo des navigations est relevée avec ce code.",
+	"meteo-non-verifie": "Code enregistré, mais Météo-France n'a pas répondu pour le vérifier : la météo sera relevée dès qu'il répondra.",
+	"meteo-retire":      "Code de cet écran retiré.",
+	"meteo-verifie":     "Météo-France accepte le code en service.",
 }
 
 type pageAdmin func(w http.ResponseWriter, r *http.Request, s *sessionAdmin, d *donneesAdmin) error
@@ -389,6 +394,8 @@ func (a *app) routesWebAdmin(mux *http.ServeMux, c string) {
 		}
 		return vers(w, r, "/annonces", "supprime")
 	}))
+
+	a.routesReglagesAdmin(mux, ca, tracer, vers)
 
 	// Journal des actions (RG-ADM-03, gardé 3 ans).
 	mux.HandleFunc("GET "+ca+"/journal", a.webAdmin(true, func(w http.ResponseWriter, r *http.Request, s *sessionAdmin, d *donneesAdmin) error {

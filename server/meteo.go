@@ -55,13 +55,17 @@ type meteoJSON struct {
 // meteoFrance : client des API de Météo-France ; adresses remplacées dans
 // les essais.
 type meteoFrance struct {
-	identifiant         string // NAUTILINK_METEOFRANCE, pour « Authorization: Basic »
+	// Code d'accès (identifiant d'application encodé pour « Authorization:
+	// Basic ») : celui posé dans l'espace administrateur l'emporte sur la
+	// variable NAUTILINK_METEOFRANCE (RG-ADM-08, D-174).
+	muCode              sync.RWMutex
+	variable, reglage   string
 	jetonURL, aromeURL  string
 	vaguesURL           string
 	client              *http.Client
 	pause               time.Duration // entre deux appels (60 appels par minute au plus)
 	mu                  sync.Mutex
-	jeton               string
+	jeton, jetonPour    string // jetonPour : code qui a obtenu le jeton
 	jetonFin            time.Time
 	dernierPassage      time.Time
 	cacheVagues         string // adresse du dernier fichier MFWAM lu
@@ -71,55 +75,93 @@ type meteoFrance struct {
 
 func nouvelleMeteoFrance(cfg config) *meteoFrance {
 	return &meteoFrance{
-		identifiant: cfg.MeteoFrance,
-		jetonURL:    adresseJetonMeteoFrance, aromeURL: adresseAromeWCS, vaguesURL: adresseVagues,
+		variable: cfg.MeteoFrance,
+		jetonURL: adresseJetonMeteoFrance, aromeURL: adresseAromeWCS, vaguesURL: adresseVagues,
 		client: &http.Client{Timeout: 90 * time.Second},
 		pause:  time.Second,
 	}
 }
 
-func (m *meteoFrance) actif() bool { return m != nil && m.identifiant != "" }
+func (m *meteoFrance) actif() bool { return m != nil && m.identifiant() != "" }
 
-var errMeteoIntrouvable = errors.New("Météo-France : ressource introuvable")
+// identifiant : code en service, celui de l'espace administrateur sinon
+// celui de la variable.
+func (m *meteoFrance) identifiant() string {
+	m.muCode.RLock()
+	defer m.muCode.RUnlock()
+	if m.reglage != "" {
+		return m.reglage
+	}
+	return m.variable
+}
+
+// poserReglage : code de l'espace administrateur ; vide : retour à la
+// variable. Le jeton du code précédent n'est plus utilisé (jetonPour).
+func (m *meteoFrance) poserReglage(v string) {
+	m.muCode.Lock()
+	m.reglage = v
+	m.muCode.Unlock()
+}
+
+var (
+	errMeteoIntrouvable = errors.New("Météo-France : ressource introuvable")
+	// errCodeRefuse : Météo-France refuse le code d'accès (400, 401, 403).
+	errCodeRefuse = errors.New("Météo-France refuse le code d'accès")
+)
 
 // obtenirJeton : jeton OAuth2 gardé en mémoire jusqu'à 5 minutes avant son
-// expiration (étude § 6).
+// expiration (étude § 6), ou jusqu'au changement du code.
 func (m *meteoFrance) obtenirJeton(ctx context.Context, renouveler bool) (string, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if !renouveler && m.jeton != "" && time.Now().Before(m.jetonFin) {
+	code := m.identifiant()
+	if !renouveler && m.jeton != "" && m.jetonPour == code && time.Now().Before(m.jetonFin) {
 		return m.jeton, nil
 	}
+	jeton, duree, err := m.demanderJeton(ctx, code)
+	if err != nil {
+		return "", err
+	}
+	m.jeton, m.jetonPour, m.jetonFin = jeton, code, time.Now().Add(duree-5*time.Minute)
+	return m.jeton, nil
+}
+
+// demanderJeton : jeton OAuth2 demandé à Météo-France pour ce code, sans le
+// garder ; errCodeRefuse si Météo-France refuse le code.
+func (m *meteoFrance) demanderJeton(ctx context.Context, code string) (string, time.Duration, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, m.jetonURL,
 		strings.NewReader(url.Values{"grant_type": {"client_credentials"}}.Encode()))
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Authorization", "Basic "+m.identifiant)
+	req.Header.Set("Authorization", "Basic "+code)
 	resp, err := m.client.Do(req)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("Météo-France, jeton : %s", resp.Status)
+	switch resp.StatusCode {
+	case http.StatusOK:
+	case http.StatusBadRequest, http.StatusUnauthorized, http.StatusForbidden:
+		return "", 0, fmt.Errorf("%w (%s)", errCodeRefuse, resp.Status)
+	default:
+		return "", 0, fmt.Errorf("Météo-France, jeton : %s", resp.Status)
 	}
 	var r struct {
 		Jeton string `json:"access_token"`
 		Duree int    `json:"expires_in"`
 	}
 	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&r); err != nil {
-		return "", err
+		return "", 0, err
 	}
 	if r.Jeton == "" {
-		return "", errors.New("Météo-France, jeton : réponse sans jeton")
+		return "", 0, errors.New("Météo-France, jeton : réponse sans jeton")
 	}
 	if r.Duree <= 0 {
 		r.Duree = 3600
 	}
-	m.jeton, m.jetonFin = r.Jeton, time.Now().Add(time.Duration(r.Duree)*time.Second-5*time.Minute)
-	return m.jeton, nil
+	return r.Jeton, time.Duration(r.Duree) * time.Second, nil
 }
 
 // obtenir : appel d'une API avec le jeton ; un refus 401 fait redemander un
@@ -354,6 +396,12 @@ func (m *meteoFrance) relever(ctx context.Context, lat, lon float64, h time.Time
 // ou « indisponible ». Les navigations plus anciennes ne sont pas reprises.
 func (a *app) relevesMeteo(ctx context.Context) error {
 	m := a.meteo
+	if m == nil {
+		return nil
+	}
+	if err := a.chargerCodeMeteo(ctx); err != nil {
+		return err
+	}
 	if !m.actif() {
 		return nil
 	}
