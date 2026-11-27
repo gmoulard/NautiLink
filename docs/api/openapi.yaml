@@ -846,8 +846,10 @@ paths:
         même si un SMS a échoué. Rejouable. Rend l'adresse de la page de la navigation sur
         l'Application web, que l'application ouvre. Le serveur relève la météo d'arrivée et envoie les
         notifications push de fin. Après une clôture automatique, une fin acquise après l'heure de
-        clôture est refusée (`navigation_cloturee`, RG-ECO-12).
-      x-regles: [RG-NAV-13, RG-NAV-14, RG-NAV-28, RG-NAV-16, RG-IOS-06, RG-AND-08, RG-ECO-12]
+        clôture est refusée (`navigation_cloturee`, RG-ECO-12). Réservée au téléphone qui a démarré
+        la navigation : envoyée par un autre téléphone du compte, 409 `autre_telephone` (RG-NAV-39) ;
+        l'Application web n'est pas concernée.
+      x-regles: [RG-NAV-13, RG-NAV-14, RG-NAV-28, RG-NAV-16, RG-IOS-06, RG-AND-08, RG-ECO-12, RG-NAV-39]
       requestBody:
         required: true
         content:
@@ -865,6 +867,45 @@ paths:
                     properties:
                       adressePage: {type: string, format: uri}
         '409': {$ref: '#/components/responses/Conflit'}
+  /v1/navigations/{navigationId}/rejoindre:
+    parameters:
+      - {$ref: '#/components/parameters/NavigationId'}
+    put:
+      tags: [Navigations]
+      summary: 'Rejoindre depuis un autre téléphone du compte la navigation en cours d''un bateau du compte.'
+      description: |
+        Le téléphone, enregistré sur le compte (`PUT /v1/appareils/{appareilId}`), n'a pas besoin
+        d'être associé au bateau. Il envoie ensuite positions manuelles, notes, photos, notes vocales
+        et SOS de cette navigation, qui vont au même journal de bord ; positions automatiques et fin
+        restent au téléphone qui l'a démarrée (`autre_telephone`). Un téléphone a au plus une
+        navigation en cours, démarrée ou rejointe : sinon 409 `navigation_en_cours` ; navigation
+        terminée : 409 `navigation_terminee` ; téléphone d'un autre compte : 403 `telephone_inconnu`.
+        Rejouable : 200 si le téléphone l'a déjà rejointe ou l'a démarrée. Aussi par la file
+        d'attente (`operation: rejoindre`, `id` : la navigation).
+      x-regles: [RG-NAV-03, RG-NAV-39, RG-BAT-02]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appareilId]
+              properties:
+                appareilId: {type: string, format: uuid}
+      responses:
+        '200':
+          description: 'Déjà rejointe, ou téléphone qui l''a démarrée.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Navigation'}
+        '201':
+          description: 'Navigation rejointe.'
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Navigation'}
+        '403': {$ref: '#/components/responses/Interdit'}
+        '409': {$ref: '#/components/responses/Conflit'}
+        '422': {$ref: '#/components/responses/Invalide'}
   /v1/navigations/{navigationId}/restauration:
     parameters:
       - {$ref: '#/components/parameters/NavigationId'}
@@ -956,7 +997,9 @@ paths:
       summary: 'Envoyer un événement (position, note, photo, note vocale) ou un ajout complémentaire depuis le Web.'
       description: |
         Idempotent : même identifiant et même contenu → 200, rien n'est créé deux fois ; même
-        identifiant et contenu différent → 409 `evenement_different`. Le fichier d'une photo ou d'une
+        identifiant et contenu différent → 409 `evenement_different`. Une position automatique
+        envoyée par un autre téléphone que celui du démarrage est refusée : 409 `autre_telephone`
+        (RG-NAV-39). Le fichier d'une photo ou d'une
         note vocale suit par `PUT /v1/fichiers/{evenementId}`. Refusé au-delà de 20 photos
         (`limite_photos`). Une nouvelle photo déclenche la notification push des suiveurs ; une
         position remet à zéro le délai de « position en retard ». Ajouts depuis le Web : navigation
@@ -1765,6 +1808,7 @@ components:
         nom: {type: string}
         role: {type: string, enum: [navigateur, suiveur]}
         etat: {type: string, enum: [en_cours, terminee, corbeille]}
+        appareilId: {type: string, format: uuid, description: 'Pour son navigateur : téléphone qui a démarré la navigation (absent : démarrée sur le Web, sans téléphone) ; un autre téléphone la rejoint (RG-NAV-33, RG-NAV-39).'}
         bateau: {type: object, properties: {id: {type: string, format: uuid}, nom: {type: string}}}
         debut: {type: string, format: date-time}
         fin: {type: [string, 'null'], format: date-time}
@@ -1797,6 +1841,10 @@ components:
             meteoArrivee: {$ref: '#/components/schemas/Meteo'}
             clotureAutomatiqueLe: {type: [string, 'null'], format: date-time, description: RG-ECO-05.}
             fiche: {$ref: '#/components/schemas/Bateau'}
+            telephonesRejoints:
+              type: array
+              description: 'Pour son navigateur : téléphones du compte qui ont rejoint la navigation (RG-NAV-39).'
+              items: {type: string, format: uuid}
             suiveurs:
               type: array
               description: 'Amis qui suivent la navigation (D-176 ; nom gardé pour les applications déjà installées).'
@@ -1899,7 +1947,7 @@ components:
       required: [operation, id]
       description: 'Un envoi de la file d''attente du téléphone.'
       properties:
-        operation: {type: string, enum: [demarrage, evenement, fin, alerte_sos, statuts_sms]}
+        operation: {type: string, enum: [demarrage, evenement, fin, rejoindre, alerte_sos, statuts_sms]}
         id: {type: string, format: uuid, description: 'Identifiant de la navigation, de l''événement ou de l''alerte.'}
         navigationId: {type: string, format: uuid}
         contenu: {type: object, description: Corps de l'appel unitaire correspondant.}

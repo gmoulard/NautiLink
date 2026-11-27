@@ -346,6 +346,15 @@ var migrations = []string{
 		modifie_le timestamptz NOT NULL DEFAULT now(),
 		modifie_par text NOT NULL
 	);`,
+	// 15 — RG-NAV-39, D-177 : téléphones du compte qui ont rejoint une
+	// navigation démarrée par un autre téléphone.
+	`CREATE TABLE navigations_rejointes (
+		navigation_id uuid NOT NULL REFERENCES navigations ON DELETE CASCADE,
+		appareil_id uuid NOT NULL REFERENCES appareils ON DELETE CASCADE,
+		rejointe_le timestamptz NOT NULL DEFAULT now(),
+		PRIMARY KEY (navigation_id, appareil_id)
+	);
+	CREATE INDEX navigations_rejointes_appareil ON navigations_rejointes (appareil_id);`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de
