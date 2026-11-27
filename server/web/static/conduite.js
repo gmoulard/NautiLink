@@ -70,7 +70,7 @@
     });
   });
 
-  // RG-SOS-14 : avertissement quand plus aucun contact SOS n'est coché.
+  // RG-SOS-14 : avertissement quand plus aucun ami n'est coché.
   var sansSos = document.getElementById("sans-sos");
   var casesSos = document.querySelectorAll("input[data-sos]");
   Array.prototype.forEach.call(casesSos, function (c) {

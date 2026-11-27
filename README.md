@@ -35,7 +35,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/00-glossaire.md`](docs/00-glossaire.md) | Vocabulaire commun à tous les documents. |
 | [`docs/01-cahier-des-charges.md`](docs/01-cahier-des-charges.md) | Périmètre, architecture, fonctionnalités écran par écran. |
 | [`docs/02-regles-metier.md`](docs/02-regles-metier.md) | Règles détaillées numérotées `RG-…`. **Fait foi en cas d'écart.** |
-| [`docs/03-parcours-utilisateur.md`](docs/03-parcours-utilisateur.md) | Parcours pas à pas du navigateur et du suiveur. |
+| [`docs/03-parcours-utilisateur.md`](docs/03-parcours-utilisateur.md) | Parcours pas à pas du navigateur et de ses amis. |
 | [`docs/04-modele-economique.md`](docs/04-modele-economique.md) | Offre gratuite, quota glissant, abonnement. |
 | [`docs/05-identite-marque.md`](docs/05-identite-marque.md) | Nom, signature, logo, couleurs, typographie, ton. |
 | [`docs/06-questions-ouvertes.md`](docs/06-questions-ouvertes.md) | Tout ce qui n'est pas décidé, numéroté `Q-…`. |

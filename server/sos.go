@@ -374,9 +374,9 @@ type donneesSos struct {
 	chef                      string // chef de bord, pendant une navigation (RG-NAV-36)
 }
 
-// destinatairesSos : suiveurs de la navigation, ou de périmètre navigateur
-// hors navigation (RG-SOS-06, RG-SOS-15), et contacts SOS dont l'e-mail est
-// connu, sans les personnes décochées au démarrage (RG-NAV-25) ; un
+// destinatairesSos : amis qui suivent la navigation, ou de périmètre
+// navigateur hors navigation (RG-SOS-06, RG-SOS-15), et tous les amis dont
+// l'e-mail est connu (D-176), sans les personnes décochées au démarrage (RG-NAV-25) ; un
 // suiveur dont l'accès a été accordé après le démarrage n'a pas pu être
 // décoché, de même qu'un contact SOS créé après le démarrage : ils sont
 // prévenus (RG-SOS-21, D-122). Une adresse ne reçoit qu'un e-mail. La copie
@@ -389,7 +389,7 @@ func (a *app) destinatairesSos(ctx context.Context, navigateur string, navigatio
 		AND ($3::text[] IS NULL OR ac.contact_id IS NULL OR ac.contact_id::text = ANY($3::text[])
 			OR ac.accorde_le > (SELECT creee_le FROM navigations WHERE id = $2::uuid))
 		UNION ALL
-		SELECT c.email FROM contacts c WHERE c.navigateur_id = $1 AND c.contact_sos AND c.supprime_le IS NULL
+		SELECT c.email FROM contacts c WHERE c.navigateur_id = $1 AND c.supprime_le IS NULL
 		AND coalesce(c.email, '') <> '' AND ($3::text[] IS NULL OR c.id::text = ANY($3::text[])
 			OR c.creee_le > (SELECT creee_le FROM navigations WHERE id = $2::uuid))`, navigateur, navigation, alertees)
 	if err != nil {
@@ -607,7 +607,7 @@ func copieSos(d donneesSos, dests []string, sujet, texte string) (string, string
 	l := d.lng
 	liste := strings.Join(dests, ", ")
 	if liste == "" {
-		liste = enLangue(l, "aucun suiveur ni contact SOS avec e-mail", "no follower or SOS contact with an e-mail address")
+		liste = enLangue(l, "aucun ami avec e-mail", "no friend with an e-mail address")
 	}
 	return enLangue(l, "Copie — ", "Copy — ") + sujet,
 		enLangue(l, "Copie de votre alerte SOS, envoyée par e-mail à : ", "Copy of your SOS alert, sent by e-mail to: ") + liste + "\n\n" + texte
@@ -656,7 +656,7 @@ func (a *app) emailsDebut(ctx context.Context, n navLigne) error {
 	if email != "" {
 		liste := strings.Join(dests, ", ")
 		if liste == "" {
-			liste = enLangue(l, "aucun suiveur", "no follower")
+			liste = enLangue(l, "aucun ami", "no friend")
 		}
 		a.courriel(email, enLangue(l, "Copie — ", "Copy — ")+sujet,
 			enLangue(l, "Copie de l'e-mail de début envoyé à : ", "Copy of the start e-mail sent to: ")+liste+"\n\n"+s.String())

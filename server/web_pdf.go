@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 )
 
 // Export PDF d'une navigation (TODO-6.4, RG-NAV-19) : par son navigateur et
-// par ses suiveurs (RG-PAR-08), depuis la page de la navigation. Le PDF
+// par ses amis (RG-PAR-08), depuis la page de la navigation. Le PDF
 // reprend les informations (RG-NAV-16, RG-NAV-27), la fiche du bateau, les
-// suiveurs et contacts SOS (RG-PAR-08), le tracé sur un fond uni (sans les
+// amis (RG-PAR-08, D-176), le tracé sur un fond uni (sans les
 // dalles d'OpenStreetMap : 08-architecture.md §7) avec départ, arrivée,
 // événements et alertes SOS (RG-NAV-31), les alertes SOS et le journal de
 // bord chronologique (RG-JRN-03) avec ses photos ; une note vocale y est
@@ -97,9 +98,8 @@ func exportPDF(d donneesNavigation, evts []evenementJSON, photos map[string][]by
 		}
 		return strings.Join(s, ", ")
 	}
-	titre("Suiveurs et contacts SOS")
-	ligne("Suiveurs", noms(n.Suiveurs))
-	ligne("Contacts SOS", noms(n.ContactsSos))
+	titre("Amis")
+	ligne("Amis", noms(append(slices.Clone(n.Suiveurs), n.ContactsSos...))) // D-176
 
 	titre("Tracé")
 	const largeurCarte, hauteurCarte = largeurA4 - 2*margePDF, 300.0

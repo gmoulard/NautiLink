@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-// Pages « Contacts » (TODO-4.3) : contacts, invitations, suiveurs, page
+// Pages « Amis » (TODO-4.3, D-176) : amis, invitations, accès, page
 // d'invitation.
 
 type donneesContacts struct {
@@ -16,7 +16,7 @@ type donneesContacts struct {
 }
 
 var formulaireContact = map[string]string{"nom": "texte", "telephone": "texte", "email": "texte",
-	"suiveur": "case", "contactSos": "case", "perimetre": "texte"}
+	"perimetre": "texte"}
 
 // champsContact : formulaire en modification partielle ; un champ vide est effacé.
 func champsContact(r *http.Request) champs {
@@ -77,7 +77,6 @@ func (a *app) routesWebContacts(mux *http.ServeMux, c string) {
 		k.Nom = r.FormValue("nom")
 		t, e := r.FormValue("telephone"), r.FormValue("email")
 		k.Telephone, k.Email = &t, &e
-		k.Suiveur, k.ContactSos = r.FormValue("suiveur") != "", r.FormValue("contactSos") != ""
 		return k
 	}
 

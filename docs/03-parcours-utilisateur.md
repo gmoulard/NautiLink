@@ -8,7 +8,7 @@ Ce document décrit les parcours pas à pas. Il applique les règles de [02-regl
 2. La personne reçoit l'invitation par e-mail (envoyé par le serveur) ou par SMS (envoyé par le téléphone du navigateur). Une invitation par téléphone lancée depuis le Web affiche le lien, que le navigateur transmet lui-même (RG-PAR-04).
 3. Elle ouvre le lien et arrive sur l'Application web.
 4. Elle se connecte ou crée son compte (e-mail, Google ou Apple) (RG-CPT-02).
-5. Elle devient suiveur avec le périmètre choisi par le navigateur (RG-PAR-05).
+5. Elle suit les navigations avec le périmètre choisi par le navigateur (RG-PAR-05).
 6. Elle voit la navigation partagée sur son tableau de bord.
 
 ## 2. Créer son compte et son bateau
@@ -16,7 +16,7 @@ Ce document décrit les parcours pas à pas. Il applique les règles de [02-regl
 1. L'utilisateur crée son compte sur le Web ou sur l'application mobile.
 2. Il crée la fiche de son bateau (RG-BAT-01).
 3. Il se connecte sur son téléphone (Android ou iPhone), qui devient le téléphone associé au bateau (RG-BAT-02).
-4. Il renseigne ses contacts, sur le Web ou sur l'application mobile : chacun est par défaut suiveur (une invitation part) et contact SOS ; il décoche ce qu'il ne veut pas (RG-CTC-01, RG-CTC-04).
+4. Il renseigne ses contacts, sur le Web ou sur l'application mobile : chacun est un ami (D-176) : une invitation part, et il est alerté des messages et du SOS, sans case de rôle (RG-CTC-01, RG-CTC-04).
 5. Il règle ses paramètres généraux (RG-PRM-01).
 
 ## 3. Navigateur sur l'application mobile
@@ -52,8 +52,8 @@ L'écran affiche le temps depuis le début et le temps depuis le dernier envoi (
 2. Boîte de confirmation (RG-SOS-02).
 3. Confirmation.
 4. Position acquise (RG-SOS-09 à RG-SOS-11).
-5. SMS SOS aux contacts SOS, même sans Internet (RG-SOS-05, RG-SOS-07, RG-SOS-08).
-6. Alerte envoyée au serveur, qui prévient les suiveurs par e-mail (RG-SOS-06).
+5. SMS SOS aux amis, même sans Internet (RG-SOS-05, RG-SOS-07, RG-SOS-08).
+6. Alerte envoyée au serveur, qui prévient les amis par e-mail (RG-SOS-06).
 7. Événement ajouté au journal.
 8. Résultat affiché pour chaque circuit et chaque contact (RG-SOS-12).
 
@@ -81,23 +81,23 @@ Accueil → « Navigations enregistrées » → liste du serveur → sélection 
 
 ### 3.8 Sur iPhone
 
-1. Au démarrage, un avertissement rappelle que le SOS passe uniquement par Internet et liste les contacts SOS sans e-mail, qui ne seront pas prévenus (RG-IOS-04).
+1. Au démarrage, un avertissement rappelle que le SOS passe uniquement par Internet et liste les amis sans e-mail, qui ne seront pas prévenus (RG-IOS-04).
 2. Positions, notes, photos et notes vocales partent au serveur seulement ; aucun SMS (RG-IOS-02).
-3. SOS : confirmation, alerte au serveur, e-mails et notifications push aux suiveurs ; sans Internet, l'application dit que l'alerte n'est pas partie et l'envoie dès le retour de la connexion (RG-IOS-03).
+3. SOS : confirmation, alerte au serveur, e-mails et notifications push aux amis ; sans Internet, l'application dit que l'alerte n'est pas partie et l'envoie dès le retour de la connexion (RG-IOS-03).
 
-## 4. Suiveur sur le Web
+## 4. Ami sur le Web
 
 ### 4.1 Suivre une navigation en cours
 
-Depuis son tableau de bord, le suiveur ouvre la navigation et voit la dernière position, les positions successives, le tracé, les dates et heures, les notes, les photos, les notes vocales, les événements et les alertes SOS (RG-PAR-07). La page se met à jour à mesure que les positions arrivent. Il peut aussi consulter la fiche du bateau, les autres suiveurs et les contacts SOS, et exporter la navigation en PDF (RG-PAR-08). Le suivi est gratuit et sans limite (RG-ECO-08).
+Depuis son tableau de bord, l'ami ouvre la navigation et voit la dernière position, les positions successives, le tracé, les dates et heures, les notes, les photos, les notes vocales, les événements et les alertes SOS (RG-PAR-07). La page se met à jour à mesure que les positions arrivent. Il peut aussi consulter la fiche du bateau, la liste « Amis », et exporter la navigation en PDF (RG-PAR-08). Le suivi est gratuit et sans limite (RG-ECO-08).
 
 ### 4.2 Suivre depuis un iPhone
 
-Le suiveur qui a l'application iPhone voit les mêmes informations que sur le Web, carte comprise, et reçoit une notification push à chaque alerte SOS (RG-IOS-05, RG-IOS-06).
+L'ami qui a l'application iPhone voit les mêmes informations que sur le Web, carte comprise, et reçoit une notification push à chaque alerte SOS (RG-IOS-05, RG-IOS-06).
 
 ### 4.3 Consulter une navigation terminée
 
-Le suiveur consulte le journal tant qu'il a l'accès (RG-PAR-06).
+L'ami consulte le journal tant qu'il a l'accès (RG-PAR-06).
 
 ## 5. Navigateur sur le Web
 
@@ -105,11 +105,11 @@ Le suiveur consulte le journal tant qu'il a l'accès (RG-PAR-06).
 
 Depuis le Web ou l'application mobile, le navigateur peut :
 
-1. voir sa liste de contacts, avec pour chacun les cases « Suiveur » et « Contact SOS » et le périmètre (RG-CTC-01) ;
+1. voir sa liste de contacts, avec pour chacun le périmètre (RG-CTC-01) ;
 2. inviter une personne par e-mail ou téléphone (RG-PAR-03) ;
-3. changer le périmètre d'un suiveur (RG-PAR-02) ;
-4. retirer un suiveur d'une navigation, ou de toutes ses navigations (RG-PAR-06) ;
-5. cocher ou décocher « Contact SOS » (RG-CTC-05).
+3. changer le périmètre d'un ami (RG-PAR-02) ;
+4. retirer l'accès d'un ami à une navigation, ou de toutes ses navigations (RG-PAR-06) ;
+5. ajouter ou retirer le numéro d'un ami, qui décide des SMS (RG-CTC-05).
 
 ### 5.2 Compléter le journal
 

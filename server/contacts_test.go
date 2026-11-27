@@ -49,14 +49,22 @@ func TestContacts(t *testing.T) {
 	if copie := e.courrier.dernier(t, "nav@exemple.org"); !strings.Contains(copie, "Copie de l'invitation") {
 		t.Fatalf("copie au navigateur : %q", copie)
 	}
-	// Sans numéro : « Contact SOS » décoché, et refusé s'il est demandé (RG-CTC-05).
+	// Un seul type de contact, l'ami (D-176) : « contactSos » vaut « a un
+	// numéro » (RG-CTC-05) ; l'ancien champ des applications installées est
+	// accepté et sans effet.
 	_, k = e.appel("POST", "/contacts", j, map[string]any{"nom": "Max", "email": "max@exemple.org", "suiveur": false})
 	if k["contactSos"] != false {
-		t.Fatalf("contact SOS sans numéro : %v", k)
+		t.Fatalf("ami sans numéro : %v", k)
 	}
 	max := k["id"].(string)
-	if code, r := e.appel("PATCH", "/contacts/"+max, j, map[string]any{"contactSos": true}); code != 422 || r["code"] != "contact_sos_sans_telephone" {
-		t.Fatalf("contact SOS sans numéro demandé : %d %v", code, r)
+	if code, r := e.appel("PATCH", "/contacts/"+max, j, map[string]any{"contactSos": true}); code != 200 || r["contactSos"] != false {
+		t.Fatalf("ancien champ contactSos : %d %v", code, r)
+	}
+	if code, r := e.appel("PATCH", "/contacts/"+max, j, map[string]any{"telephone": "+33600000009", "contactSos": false}); code != 200 || r["contactSos"] != true {
+		t.Fatalf("ami avec numéro : %d %v", code, r)
+	}
+	if code, _ := e.appel("PATCH", "/contacts/"+max, j, map[string]any{"telephone": nil}); code != 200 {
+		t.Fatalf("numéro retiré : %d", code)
 	}
 	// Ajout hors connexion : identifiant tiré par le téléphone, renvoi sans doublon.
 	idHC := "44444444-4444-4444-8444-444444444444"
