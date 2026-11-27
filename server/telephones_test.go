@@ -23,8 +23,9 @@ func (e *essai) secondTelephone(email string) (jeton, appareil string) {
 
 // TestRejoindreNavigation : avec PostgreSQL : un autre téléphone du compte
 // rejoint la navigation en cours (RG-NAV-39, D-177) ; il y envoie position
-// manuelle, note et SOS ; positions automatiques et fin lui sont refusées ;
-// il n'a qu'une navigation en cours (RG-NAV-03).
+// manuelle, note et SOS ; positions automatiques et fin d'un téléphone du
+// compte ne sont pas refusées (D-182) ; il n'a qu'une navigation en cours
+// (RG-NAV-03).
 func TestRejoindreNavigation(t *testing.T) {
 	e := nouvelEssai(t)
 	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
@@ -78,18 +79,13 @@ func TestRejoindreNavigation(t *testing.T) {
 		t.Fatalf("SOS du second téléphone : %d %v", code, r)
 	}
 
-	// Positions automatiques et fin : réservées au téléphone du démarrage.
+	// La navigation appartient au compte (D-182) : une position automatique
+	// d'un téléphone du compte est acceptée, quel qu'il soit (réinstallation).
 	auto := position(uuid(t), t0.Add(30*time.Minute), 3, 47.72, -3.38)
-	if code, r := e.appel("PUT", "/navigations/"+id+"/evenements/"+auto["id"].(string), tel2Jeton, auto); code != 409 || r["code"] != "autre_telephone" {
+	if code, r := e.appel("PUT", "/navigations/"+id+"/evenements/"+auto["id"].(string), tel2Jeton, auto); code != 201 {
 		t.Fatalf("position automatique du second téléphone : %d %v", code, r)
 	}
-	if code, _ := e.appel("PUT", "/navigations/"+id+"/evenements/"+auto["id"].(string), nav, auto); code != 201 {
-		t.Fatalf("position automatique du téléphone du démarrage : %d", code)
-	}
 	fin := map[string]any{"id": uuid(t), "type": "fin", "heureAcquisition": heure(t0.Add(time.Hour)), "numeroOrdre": 9}
-	if code, r := e.appel("PUT", "/navigations/"+id+"/fin", tel2Jeton, fin); code != 409 || r["code"] != "autre_telephone" {
-		t.Fatalf("fin par le second téléphone : %d %v", code, r)
-	}
 	_, j := e.appel("GET", "/navigations/"+id+"/evenements", nav, nil)
 	var types []string
 	for _, ev := range j["evenements"].([]any) {
@@ -114,8 +110,8 @@ func TestRejoindreNavigation(t *testing.T) {
 		t.Fatalf("démarrage par un téléphone qui a rejoint : %d %v", code, r)
 	}
 
-	// Fin par le téléphone du démarrage : le second téléphone est libre.
-	if code, r := e.appel("PUT", "/navigations/"+id+"/fin", nav, fin); code != 200 {
+	// Fin par le second téléphone, acceptée (D-182) : il est libre.
+	if code, r := e.appel("PUT", "/navigations/"+id+"/fin", tel2Jeton, fin); code != 200 {
 		t.Fatalf("fin : %d %v", code, r)
 	}
 	if code, r := e.appel("PUT", "/navigations/"+id+"/rejoindre", tel2Jeton, map[string]any{"appareilId": tel2}); code != 409 || r["code"] != "navigation_terminee" {
@@ -158,10 +154,6 @@ func TestDeuxNavigationsEnParallele(t *testing.T) {
 	}
 	if code, _ := e.appel("PUT", "/navigations/"+id2+"/evenements/"+p2["id"].(string), tel2Jeton, p2); code != 201 {
 		t.Fatalf("position de la navigation 2 : %d", code)
-	}
-	// Chaque téléphone reste à sa navigation.
-	if code, r := e.appel("PUT", "/navigations/"+id1+"/evenements/"+p2["id"].(string), tel2Jeton, p2); code != 409 {
-		t.Fatalf("position du téléphone 2 dans la navigation 1 : %d %v", code, r)
 	}
 	if code, r := e.appel("PUT", "/navigations/"+id1+"/rejoindre", tel2Jeton, map[string]any{"appareilId": tel2}); code != 409 || r["code"] != "navigation_en_cours" {
 		t.Fatalf("rejoindre avec une navigation en cours : %d %v", code, r)

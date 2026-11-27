@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"strings"
 
@@ -12,9 +11,12 @@ import (
 // Plusieurs téléphones d'un même compte dans une navigation (TODO-4.14,
 // RG-NAV-03, RG-NAV-39, D-177) : un téléphone du compte rejoint la
 // navigation en cours d'un bateau du compte et y envoie positions manuelles,
-// notes, photos, notes vocales et SOS ; positions automatiques et fin restent
-// au téléphone qui l'a démarrée. Un téléphone a au plus une navigation en
-// cours, démarrée ou rejointe ; un compte peut en avoir plusieurs.
+// notes, photos, notes vocales et SOS. La navigation appartient au compte,
+// pas à un téléphone : le serveur ne refuse aucun envoi d'un téléphone du
+// compte (D-182) ; c'est l'application qui n'envoie pas de positions
+// automatiques depuis un téléphone qui a rejoint. Un téléphone a au plus une
+// navigation en cours, démarrée ou rejointe ; un compte peut en avoir
+// plusieurs.
 
 func errTelephoneOccupe() error {
 	return &erreurAPI{http.StatusConflict, "navigation_en_cours", "Ce téléphone a déjà une navigation en cours.", 0}
@@ -99,29 +101,4 @@ func (a *app) telephonesRejoints(ctx context.Context, navigation string) ([]stri
 		return nil, err
 	}
 	return pgx.CollectRows(lignes, pgx.RowTo[string])
-}
-
-// reserveAuTelephone : positions automatiques et fin sont réservées au
-// téléphone qui a démarré la navigation ; un autre téléphone est refusé
-// (RG-NAV-39). Une navigation sans téléphone (démarrée sur le Web,
-// RG-WEB-06) et une session sans téléphone (Application web) ne sont pas
-// concernées.
-func (a *app) reserveAuTelephone(ctx context.Context, s *session, navigation string) error {
-	if !estUUID(navigation) {
-		return nil // l'appel lui-même rend l'erreur
-	}
-	var autre bool
-	err := a.b.pool.QueryRow(ctx, `SELECT n.appareil_id IS NOT NULL AND se.appareil_id IS NOT NULL AND n.appareil_id <> se.appareil_id
-		FROM navigations n, sessions se WHERE n.id = $1 AND se.id = $2`, navigation, s.id).Scan(&autre)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	if autre {
-		return &erreurAPI{http.StatusConflict, "autre_telephone",
-			"Seul le téléphone qui a démarré la navigation envoie les positions automatiques et la termine.", 0}
-	}
-	return nil
 }

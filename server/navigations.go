@@ -1097,11 +1097,6 @@ func (a *app) operations() map[string]operation {
 				return 0, nil, errInvalide("Événement illisible.")
 			}
 			e.ID = id
-			if e.Type == "position_automatique" {
-				if err := a.reserveAuTelephone(ctx, s, navigation); err != nil {
-					return 0, nil, err
-				}
-			}
 			code, ev, err := a.envoyerEvenement(ctx, s.utilisateur, navigation, e)
 			if err == nil {
 				a.rattacherAuTelephone(ctx, s, navigation)
@@ -1115,9 +1110,6 @@ func (a *app) operations() map[string]operation {
 			}
 			if navigation == "" {
 				navigation = id
-			}
-			if err := a.reserveAuTelephone(ctx, s, navigation); err != nil {
-				return 0, nil, err
 			}
 			n, err := a.terminer(ctx, s.utilisateur, navigation, e)
 			n.AdressePage = a.adressePublique(r) + "/navigations/" + navigation
