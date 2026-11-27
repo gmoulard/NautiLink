@@ -563,13 +563,13 @@ abstract class AppLocalizations {
   /// No description provided for @followerNeedsVerifiedEmail.
   ///
   /// In fr, this message translates to:
-  /// **'Confirmez votre adresse e-mail pour inviter des suiveurs ; un contact SOS reste possible.'**
+  /// **'Confirmez votre adresse e-mail pour inviter vos amis à suivre vos navigations.'**
   String get followerNeedsVerifiedEmail;
 
   /// No description provided for @scopeTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Ce que le suiveur voit'**
+  /// **'Ce que l\'ami voit'**
   String get scopeTitle;
 
   /// No description provided for @scopeNavigator.
@@ -617,7 +617,7 @@ abstract class AppLocalizations {
   /// No description provided for @invitationAccepted.
   ///
   /// In fr, this message translates to:
-  /// **'Suiveur : invitation acceptée'**
+  /// **'Invitation acceptée'**
   String get invitationAccepted;
 
   /// No description provided for @invitationCancelled.
@@ -683,7 +683,7 @@ abstract class AppLocalizations {
   /// No description provided for @followerRemove.
   ///
   /// In fr, this message translates to:
-  /// **'Retirer le suiveur de toutes mes navigations'**
+  /// **'Retirer l\'ami de toutes mes navigations'**
   String get followerRemove;
 
   /// No description provided for @followerRemoveConfirm.
@@ -1858,13 +1858,13 @@ abstract class AppLocalizations {
   /// No description provided for @noSosContact.
   ///
   /// In fr, this message translates to:
-  /// **'Vous n\'avez aucun contact SOS : personne ne recevra vos SMS SOS. Ajoutez-en un dans vos contacts sur la plateforme Web.'**
+  /// **'Vous n\'avez aucun ami : personne ne recevra vos alertes, SOS compris. Ajoutez-en un dans « Contacts ».'**
   String get noSosContact;
 
   /// No description provided for @noAlertablePerson.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun contact suiveur ou contact SOS.'**
+  /// **'Aucun ami dans vos contacts.'**
   String get noAlertablePerson;
 
   /// No description provided for @voyageRefused.
@@ -1924,7 +1924,7 @@ abstract class AppLocalizations {
   /// No description provided for @sosReelServerReceived.
   ///
   /// In fr, this message translates to:
-  /// **'Serveur : alerte reçue, e-mails envoyés aux suiveurs et aux contacts SOS'**
+  /// **'Serveur : alerte reçue, e-mails envoyés à vos amis'**
   String get sosReelServerReceived;
 
   /// No description provided for @sosReelServerQueued.
@@ -1948,7 +1948,7 @@ abstract class AppLocalizations {
   /// No description provided for @sosReelSmsNoContact.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun contact SOS avec un numéro : pas de SMS SOS.'**
+  /// **'Aucun ami coché « SMS » avec un numéro : pas de SMS SOS.'**
   String get sosReelSmsNoContact;
 
   /// No description provided for @sosReelSmsLastKnown.
@@ -2124,7 +2124,7 @@ abstract class AppLocalizations {
   /// No description provided for @smsResultNoRecipient.
   ///
   /// In fr, this message translates to:
-  /// **'SMS : aucun suiveur avec un numéro de téléphone'**
+  /// **'SMS : aucun ami avec un numéro de téléphone'**
   String get smsResultNoRecipient;
 
   /// No description provided for @smsResultNoPermission.
@@ -2148,7 +2148,7 @@ abstract class AppLocalizations {
   /// No description provided for @smsPermissionExplain.
   ///
   /// In fr, this message translates to:
-  /// **'NautiLink envoie lui-même les SMS SOS à vos contacts SOS, et les SMS de positions automatiques à vos suiveurs, même écran éteint. Autorisez l\'envoi de SMS à l\'écran suivant. Sans cette autorisation, le SMS SOS s\'ouvrira prérempli et les positions automatiques partiront au serveur seulement.'**
+  /// **'NautiLink envoie lui-même les SMS SOS et les SMS de positions automatiques à vos amis, même écran éteint. Autorisez l\'envoi de SMS à l\'écran suivant. Sans cette autorisation, le SMS SOS s\'ouvrira prérempli et les positions automatiques partiront au serveur seulement.'**
   String get smsPermissionExplain;
 
   /// No description provided for @smsAutoOffNotice.
@@ -2238,7 +2238,7 @@ abstract class AppLocalizations {
   /// No description provided for @iosStartNoEmail.
   ///
   /// In fr, this message translates to:
-  /// **'Contacts SOS sans e-mail, qui ne seront pas prévenus : {names}'**
+  /// **'Amis sans e-mail, qui ne seront pas prévenus : {names}'**
   String iosStartNoEmail(String names);
 
   /// No description provided for @iosSosOffline.
@@ -2262,7 +2262,7 @@ abstract class AppLocalizations {
   /// No description provided for @followFollowers.
   ///
   /// In fr, this message translates to:
-  /// **'Suiveurs'**
+  /// **'Amis'**
   String get followFollowers;
 
   /// No description provided for @followSosContacts.
@@ -2582,6 +2582,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Fond de carte © les contributeurs d\'OpenStreetMap · balisage © OpenSeaMap'**
   String get mapAttribution;
+
+  /// No description provided for @contactsFriends.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque contact est un ami : il peut suivre vos navigations et reçoit leurs messages et vos alertes SOS par les canaux cochés au démarrage (« E-mail », « SMS »).'**
+  String get contactsFriends;
+
+  /// No description provided for @noFriendChecked.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ami coché : personne ne sera alerté pendant cette navigation, SOS compris.'**
+  String get noFriendChecked;
+
+  /// No description provided for @filterFriend.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comme ami'**
+  String get filterFriend;
+
+  /// No description provided for @joinQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une navigation est en cours sur {boat}. Envoyer les positions automatiques depuis ce téléphone ?'**
+  String joinQuestion(String boat);
+
+  /// No description provided for @joinYes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui'**
+  String get joinYes;
+
+  /// No description provided for @joinNo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non, rejoindre seulement'**
+  String get joinNo;
+
+  /// No description provided for @joinedInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Navigation rejointe : vous ajoutez positions, notes, photos, notes vocales et SOS ; les positions automatiques et la fin restent sur le téléphone qui l\'a démarrée.'**
+  String get joinedInfo;
 }
 
 class _AppLocalizationsDelegate

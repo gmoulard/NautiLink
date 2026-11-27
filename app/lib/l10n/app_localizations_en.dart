@@ -272,10 +272,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get followerNeedsVerifiedEmail =>
-      'Confirm your e-mail address to invite followers; an SOS contact is still possible.';
+      'Confirm your e-mail address to invite your friends to follow your voyages.';
 
   @override
-  String get scopeTitle => 'What the follower sees';
+  String get scopeTitle => 'What the friend sees';
 
   @override
   String get scopeNavigator =>
@@ -300,7 +300,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invitationSent => 'Invitation sent, not accepted yet';
 
   @override
-  String get invitationAccepted => 'Follower: invitation accepted';
+  String get invitationAccepted => 'Invitation accepted';
 
   @override
   String get invitationCancelled => 'Invitation cancelled';
@@ -336,7 +336,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invitationCancel => 'Cancel invitation';
 
   @override
-  String get followerRemove => 'Remove follower from all my voyages';
+  String get followerRemove => 'Remove friend from all my voyages';
 
   @override
   String followerRemoveConfirm(String name) {
@@ -1028,10 +1028,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSosContact =>
-      'You have no SOS contact: nobody will receive your SOS text messages. Add one to your contacts on the web platform.';
+      'You have no friend: nobody will receive your alerts, SOS included. Add one in “Contacts”.';
 
   @override
-  String get noAlertablePerson => 'No follower or SOS contact.';
+  String get noAlertablePerson => 'No friend in your contacts.';
 
   @override
   String voyageRefused(String message) {
@@ -1069,7 +1069,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sosReelServerReceived =>
-      'Server: alert received, e-mails sent to followers and SOS contacts';
+      'Server: alert received, e-mails sent to your friends';
 
   @override
   String get sosReelServerQueued =>
@@ -1085,7 +1085,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sosReelSmsNoContact =>
-      'No SOS contact with a number: no SOS text message.';
+      'No friend checked “SMS” with a number: no SOS text message.';
 
   @override
   String sosReelSmsLastKnown(String position, String date) {
@@ -1208,7 +1208,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smsResultOff => 'SMS: turned off for this kind of message';
 
   @override
-  String get smsResultNoRecipient => 'SMS: no follower with a phone number';
+  String get smsResultNoRecipient => 'SMS: no friend with a phone number';
 
   @override
   String get smsResultNoPermission =>
@@ -1222,7 +1222,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smsPermissionExplain =>
-      'NautiLink itself sends SOS text messages to your SOS contacts, and automatic position messages to your followers, even with the screen off. Allow sending text messages on the next screen. Without this permission, the SOS message will open prefilled and automatic positions will go to the server only.';
+      'NautiLink itself sends SOS and automatic position text messages to your friends, even with the screen off. Allow sending text messages on the next screen. Without this permission, the SOS message will open prefilled and automatic positions will go to the server only.';
 
   @override
   String get smsAutoOffNotice =>
@@ -1279,7 +1279,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String iosStartNoEmail(String names) {
-    return 'SOS contacts without an email, who will not be alerted: $names';
+    return 'Friends without an email, who will not be alerted: $names';
   }
 
   @override
@@ -1293,7 +1293,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get followNoVoyage => 'No voyage to follow for now.';
 
   @override
-  String get followFollowers => 'Followers';
+  String get followFollowers => 'Friends';
 
   @override
   String get followSosContacts => 'SOS contacts';
@@ -1467,4 +1467,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mapAttribution =>
       'Map data © OpenStreetMap contributors · seamarks © OpenSeaMap';
+
+  @override
+  String get contactsFriends =>
+      'Each contact is a friend: they can follow your voyages and receive their messages and your SOS alerts through the channels checked at the start (“E-mail”, “SMS”).';
+
+  @override
+  String get noFriendChecked =>
+      'No friend checked: nobody will be alerted during this voyage, SOS included.';
+
+  @override
+  String get filterFriend => 'As friend';
+
+  @override
+  String joinQuestion(String boat) {
+    return 'A voyage is in progress on $boat. Send automatic positions from this phone?';
+  }
+
+  @override
+  String get joinYes => 'Yes';
+
+  @override
+  String get joinNo => 'No, just join';
+
+  @override
+  String get joinedInfo =>
+      'Joined voyage: you add positions, notes, photos, voice notes and SOS; automatic positions and the end stay on the phone that started it.';
 }

@@ -188,6 +188,20 @@ class FileAttente implements Envois {
     return e;
   }
 
+  /// Rejoindre la navigation en cours d'un bateau du compte depuis ce
+  /// téléphone (RG-NAV-39, `operation: rejoindre`), avant ses événements.
+  Future<void> rejoindre(String navigationId) async {
+    await _ajouter(
+      ElementFile(
+        operation: 'rejoindre',
+        id: navigationId,
+        navigationId: navigationId,
+        contenu: {'appareilId': await appareilId()},
+        priorite: Priorite.leger,
+      ),
+    );
+  }
+
   @override
   Future<void> alerteSos(String alerteId, Map<String, Object?> alerte) async {
     final e = ElementFile(

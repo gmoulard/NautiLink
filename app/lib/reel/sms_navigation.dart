@@ -156,13 +156,12 @@ class SmsNavigation {
     return t == null || t.trim().isEmpty ? null : DestinataireSms(t.trim());
   }
 
-  /// Suiveurs de la navigation avec un numéro, qui reçoivent les SMS
-  /// (RG-SMS-01), sans ceux dont « SMS » est décoché au démarrage
+  /// Amis avec un numéro, qui reçoivent les SMS de la navigation
+  /// (RG-SMS-01, D-176), sans ceux dont « SMS » est décoché au démarrage
   /// (RG-NAV-25, Q-102).
   List<DestinataireSms> suiveurs(NavigationLocale n) => [
     for (final c in contacts())
-      if (c.suiveur &&
-          c.recevoirSms &&
+      if (c.recevoirSms &&
           (c.telephone?.trim().isNotEmpty ?? false) &&
           n.recoitSms(c.id))
         DestinataireSms(c.telephone!.trim(), contactId: c.id),
@@ -178,13 +177,12 @@ class SmsNavigation {
     ParametresGeneraux? defaut,
   ) => [if (prevu(n, type, defaut)) ...suiveurs(n), ?_copie];
 
-  /// Contacts SOS prévenus par SMS : ceux cochés « SMS » au démarrage
-  /// (RG-NAV-25, Q-102),
-  /// tous hors navigation ; seulement avec un numéro (RG-SOS-05).
+  /// Amis prévenus par SMS SOS : ceux cochés « SMS » au démarrage
+  /// (RG-NAV-25, Q-102), tous hors navigation ; seulement avec un numéro
+  /// (RG-SOS-05, RG-CTC-05, D-176).
   List<DestinataireSms> contactsSos(NavigationLocale? n) => [
     for (final c in contacts())
-      if (c.contactSos &&
-          (c.telephone?.trim().isNotEmpty ?? false) &&
+      if ((c.telephone?.trim().isNotEmpty ?? false) &&
           (n == null || n.recoitSms(c.id)))
         DestinataireSms(c.telephone!.trim(), contactId: c.id),
   ];

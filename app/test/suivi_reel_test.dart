@@ -77,7 +77,12 @@ void main() {
         expect(find.text('Alertes SOS de la navigation'), findsOneWidget);
         expect(find.textContaining('Voie d\'eau'), findsOneWidget);
         expect(find.text('Fiche du bateau'), findsOneWidget);
-        expect(find.text('Contacts SOS (1)'), findsOneWidget);
+        // D-176 : une seule liste « Amis », plus de « Suiveurs » ni de
+        // « Contacts SOS » ; RG-NAV-29 : mention des fonds de carte.
+        expect(find.textContaining('Amis ('), findsOneWidget);
+        expect(find.textContaining('Contacts SOS'), findsNothing);
+        expect(find.textContaining('Suiveurs'), findsNothing);
+        expect(find.byKey(const Key('map-attribution')), findsOneWidget);
         expect(find.textContaining('Photo'), findsWidgets);
 
         // Nouvelle position reçue par le serveur : relue sans recharger.

@@ -74,7 +74,13 @@ class NavigationLocale {
     this.dernierEnvoi,
     this.refus,
     this.continuerLe,
+    this.rejointe = false,
   }) : journal = journal ?? [];
+
+  /// Navigation rejointe depuis ce téléphone, démarrée par un autre téléphone
+  /// du compte (RG-NAV-39, D-177, D-184) : il y ajoute positions manuelles,
+  /// notes, photos, notes vocales et SOS, sans positions automatiques ni fin.
+  final bool rejointe;
 
   final String id;
   String nom;
@@ -131,6 +137,7 @@ class NavigationLocale {
     'dernierEnvoi': dernierEnvoi == null ? null : heureRfc3339(dernierEnvoi!),
     'refus': refus,
     'continuerLe': continuerLe == null ? null : heureRfc3339(continuerLe!),
+    if (rejointe) 'rejointe': true,
   };
 
   static DateTime? _h(Object? v) =>
@@ -168,6 +175,7 @@ class NavigationLocale {
       dernierEnvoi: _h(j['dernierEnvoi']),
       refus: j['refus'] as String?,
       continuerLe: _h(j['continuerLe']),
+      rejointe: j['rejointe'] == true,
     );
   }
 
@@ -318,7 +326,8 @@ class ConduiteNavigation extends ChangeNotifier {
   /// d'acquisition, que le serveur soit joignable ou non.
   void _lancerAutomatiques() {
     final n = _nav;
-    if (n == null || _suivi != null) return;
+    // Navigation rejointe : pas de positions automatiques (RG-NAV-39).
+    if (n == null || n.rejointe || _suivi != null) return;
     _suivi = positions.suivre(Duration(minutes: n.frequenceMinutes)).listen((
       p,
     ) {
@@ -367,7 +376,7 @@ class ConduiteNavigation extends ChangeNotifier {
   /// terminer d'elle-même.
   bool get propositionFin {
     final n = _nav;
-    if (n == null || n.refus != null) return false;
+    if (n == null || n.refus != null || n.rejointe) return false;
     final depuis = n.continuerLe ?? n.debut;
     final pts = [
       for (final e in n.journal)
@@ -400,7 +409,7 @@ class ConduiteNavigation extends ChangeNotifier {
   /// Heure de la prochaine position automatique.
   DateTime? get prochaineAutomatique {
     final n = _nav;
-    if (n == null) return null;
+    if (n == null || n.rejointe) return null;
     return (n.derniereAutomatique ?? n.debut).add(
       Duration(minutes: n.frequenceMinutes),
     );
@@ -474,7 +483,10 @@ class ConduiteNavigation extends ChangeNotifier {
   /// navigation reçu par le serveur (RG-NAV-10).
   void _envoiReussi(EnvoiReussi e) {
     final n = _nav;
-    if (n == null || e.navigationId != n.id) return;
+    // « Rejoindre » n'est pas un envoi de la navigation (RG-NAV-39).
+    if (n == null || e.navigationId != n.id || e.operation == 'rejoindre') {
+      return;
+    }
     n.dernierEnvoi = maintenant;
     unawaited(_garder());
     _notifier();
@@ -672,7 +684,8 @@ class ConduiteNavigation extends ChangeNotifier {
   /// l'envoi de la fin.
   Future<(String, EtatEnvoi)?> terminer() async {
     final n = _nav;
-    if (n == null) return null;
+    // La fin reste au téléphone qui a démarré la navigation (RG-NAV-39).
+    if (n == null || n.rejointe) return null;
     final heure = maintenant;
     _arreterAutomatiques();
     final p = await positions.positionActuelle(demander: true);
@@ -691,7 +704,8 @@ class ConduiteNavigation extends ChangeNotifier {
 
   /// Reprend sur ce téléphone une navigation en cours qu'il ne connaît pas
   /// (copie locale perdue : réinstallation, autre compte entre-temps), d'après
-  /// le serveur (D-140).
+  /// le serveur (D-140), ou la rejoint ([NavigationLocale.rejointe], sans
+  /// positions automatiques, RG-NAV-39).
   Future<void> adopter(NavigationLocale n) async {
     if (_nav != null) return;
     _nav = n;

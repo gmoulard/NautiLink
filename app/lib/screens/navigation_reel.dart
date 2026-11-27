@@ -49,7 +49,7 @@ List<String> lignesResultat(
 
 /// Explication puis demande de l'autorisation d'envoi de SMS, au démarrage
 /// d'une navigation et non au premier SOS (RG-AND-02, étude des
-/// autorisations § 4), quand un contact SOS a un numéro ou que des SMS de
+/// autorisations § 4), quand un ami a un numéro ou que des SMS de
 /// positions automatiques sont prévus.
 Future<void> demanderSms(
   BuildContext context,
@@ -60,9 +60,7 @@ Future<void> demanderSms(
   if (!canal.disponible || await canal.autorise()) return;
   final utile =
       positionsAutomatiques ||
-      depot.contacts.any(
-        (c) => c.contactSos && (c.telephone?.isNotEmpty ?? false),
-      );
+      depot.contacts.any((c) => c.telephone?.isNotEmpty ?? false);
   if (!utile || !context.mounted) return;
   final l = AppLocalizations.of(context);
   await showDialog<void>(
@@ -227,10 +225,10 @@ class _StartReelScreenState extends State<StartReelScreen> {
     super.dispose();
   }
 
-  List<ContactNl> _alertables(Depot d) =>
-      d.contacts.where((c) => c.suiveur || c.contactSos).toList();
+  /// Personnes alertées : tous les amis (RG-NAV-25, D-176).
+  List<ContactNl> _alertables(Depot d) => d.contacts.toList();
 
-  /// « E-mail » possible : adresse connue ou compte du suiveur (notifications).
+  /// « E-mail » possible : adresse connue ou compte de l'ami (notifications).
   static bool _emailPossible(ContactNl c) =>
       (c.email?.trim().isNotEmpty ?? false) || c.utilisateurId != null;
 
@@ -328,7 +326,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
   }
 
   /// « Ajouter une personne » (RG-NAV-26) : nom, téléphone ou e-mail, puis
-  /// ce que la personne verra comme suiveur (RG-PAR-02).
+  /// ce que l'ami verra (RG-PAR-02).
   Future<void> _ajouterPersonne() async {
     final l = AppLocalizations.of(context);
     final c = await Navigator.of(
@@ -362,21 +360,18 @@ class _StartReelScreenState extends State<StartReelScreen> {
     });
   }
 
-  /// Nouveaux contacts enregistrés une fois la navigation démarrée : suiveur
-  /// avec le périmètre choisi (sauf adresse non confirmée, RG-CPT-09) et
-  /// contact SOS s'il a un numéro (RG-CTC-01, RG-CTC-05).
+  /// Nouveaux amis enregistrés une fois la navigation démarrée, invités avec
+  /// le périmètre choisi (RG-CTC-01, RG-CTC-04, D-176).
   Future<void> _enregistrerNouvelles(
     DepotReel depot,
     String navigationId,
   ) async {
-    final verifie = depot.profil?.emailVerifie != false;
     for (final x in nouvelles) {
       await depot.compte.ajouterContact(
         id: x.id,
         nom: x.c.name,
         telephone: x.c.phone,
         email: x.c.email,
-        suiveur: verifie,
         perimetre: x.perimetre,
         navigationId: navigationId,
       );
@@ -492,13 +487,14 @@ class _StartReelScreenState extends State<StartReelScreen> {
       for (final c in alertables)
         if (_smsPossible(c)) c.id,
     };
-    final aucunSos = !depot.contacts.any((c) => c.contactSos);
-    final sosCoche = alertables.any(
-      (c) =>
-          c.contactSos &&
-          (alertees!.contains(c.id) ||
-              (smsCircuit && alerteesSms!.contains(c.id))),
-    );
+    // RG-SOS-14, D-176 : aucun ami, ou aucun ami coché.
+    final aucunSos = alertables.isEmpty && nouvelles.isEmpty;
+    final sosCoche =
+        [...alertables.map((c) => c.id), ...nouvelles.map((x) => x.id)].any(
+          (id) =>
+              alertees!.contains(id) ||
+              (smsCircuit && alerteesSms!.contains(id)),
+        );
     // TODO-5.14 : personnes dans un tableau sans bordure, colonnes nom,
     // « E-mail » et « SMS » (SMS sur Android seulement, RG-IOS-02).
     final petit = Theme.of(context).textTheme.bodySmall;
@@ -763,7 +759,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
                   ),
                 ),
                 // RG-IOS-02, RG-IOS-04 : sur iPhone, SOS par Internet seulement ;
-                // contacts SOS sans e-mail, qui ne seront pas prévenus.
+                // amis sans e-mail, qui ne seront pas prévenus.
                 if (depot.plateforme == 'ios') ...[
                   Card(
                     color: const Color(0xFFFBE9E9),
@@ -779,9 +775,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
                       subtitle: () {
                         final sansEmail = [
                           for (final c in depot.contacts)
-                            if (c.contactSos &&
-                                (c.email?.trim().isEmpty ?? true))
-                              c.nom,
+                            if (c.email?.trim().isEmpty ?? true) c.nom,
                         ];
                         return sansEmail.isEmpty
                             ? null
@@ -807,7 +801,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
                       ),
                     ),
                   ),
-                // RG-SOS-14, RG-NAV-25 : avertissement sans contact SOS.
+                // RG-SOS-14, RG-NAV-25 : avertissement sans ami coché.
                 if (aucunSos || !sosCoche)
                   Card(
                     color: const Color(0xFFFBE9E9),
@@ -816,7 +810,9 @@ class _StartReelScreenState extends State<StartReelScreen> {
                         Icons.warning_amber,
                         color: NlColors.alert,
                       ),
-                      title: Text(aucunSos ? l.noSosContact : l.noSosChecked),
+                      title: Text(
+                        aucunSos ? l.noSosContact : l.noFriendChecked,
+                      ),
                     ),
                   ),
                 const SizedBox(height: 16),
@@ -1498,10 +1494,18 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                       const SizedBox(height: 24),
                       SosButton(onPressed: () => confirmSosReel(context)),
                       const SizedBox(height: 12),
-                      OutlinedButton(
-                        onPressed: envoi ? null : () => _terminer(depot),
-                        child: Text(l.endVoyage),
-                      ),
+                      // RG-NAV-39 : la fin reste au téléphone qui a démarré.
+                      if (n.rejointe)
+                        Text(
+                          l.joinedInfo,
+                          key: const Key('joined-info'),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        )
+                      else
+                        OutlinedButton(
+                          onPressed: envoi ? null : () => _terminer(depot),
+                          child: Text(l.endVoyage),
+                        ),
                       const SizedBox(height: 20),
                       Text(
                         l.logbook,
@@ -1626,7 +1630,43 @@ class Chronos extends StatelessWidget {
 
 /// « Reprendre la dernière navigation » de la vraie application (RG-NAV-12).
 Future<void> openNavigationReel(BuildContext context) async {
-  await _depot(context).reprendre();
+  final depot = _depot(context);
+  final inconnue = depot.navigationInconnue;
+  var automatiques = true;
+  if (inconnue != null) {
+    // D-184 : navigation en cours sur un bateau du compte, inconnue du
+    // téléphone : il la reprend (RG-NAV-33) ou la rejoint (RG-NAV-39).
+    final l = AppLocalizations.of(context);
+    final connu = await depot.envoieLesPositionsAutomatiques();
+    if (!context.mounted) return;
+    final choix =
+        connu ??
+        await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            content: Text(
+              l.joinQuestion(inconnue.bateauNom ?? inconnue.nom),
+              key: const Key('join-question'),
+            ),
+            actions: [
+              TextButton(
+                key: const Key('join-no'),
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(l.joinNo),
+              ),
+              FilledButton(
+                key: const Key('join-yes'),
+                style: FilledButton.styleFrom(minimumSize: const Size(88, 44)),
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(l.joinYes),
+              ),
+            ],
+          ),
+        );
+    if (choix == null) return;
+    automatiques = choix;
+  }
+  await depot.reprendre(automatiques: automatiques);
   if (!context.mounted) return;
   await Navigator.of(context)
       .push(MaterialPageRoute(builder: (_) => const NavigationReelScreen()));

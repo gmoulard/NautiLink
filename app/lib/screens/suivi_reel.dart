@@ -90,7 +90,7 @@ class _SuiviReelScreenState extends State<SuiviReelScreen> {
               fmtDuration(l, Duration(minutes: n.dureeMinutes!)),
             if (n.distanceMetres != null)
               l.distanceNm((n.distanceMetres! / 1852).toStringAsFixed(1)),
-            if (n.commeSuiveur) l.filterFollower,
+            if (n.commeSuiveur) l.filterFriend,
           ].whereType<String>().join(' · '),
         ),
         trailing: n.enCours ? Text(l.live) : null,
@@ -115,7 +115,7 @@ class _SuiviReelScreenState extends State<SuiviReelScreen> {
                 for (final (v, t) in [
                   (null, l.filterAll),
                   ('navigateur', l.filterNavigator),
-                  ('suiveur', l.filterFollower),
+                  ('suiveur', l.filterFriend),
                 ])
                   ChoiceChip(
                     label: Text(t),
@@ -289,23 +289,18 @@ class _NavigationSuivieScreenState extends State<NavigationSuivieScreen> {
                           ),
                     ],
                   ),
-                if (d.suiveurs.isNotEmpty)
+                // D-176 : une seule liste « Amis » (anciens champs
+                // `suiveurs` et `contactsSos` de l'API).
+                if (d.suiveurs.isNotEmpty || d.contactsSos.isNotEmpty)
                   ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    title: Text('${l.followFollowers} (${d.suiveurs.length})'),
-                    children: [
-                      for (final p in d.suiveurs)
-                        ListTile(dense: true, title: Text(p.nom)),
-                    ],
-                  ),
-                if (d.contactsSos.isNotEmpty)
-                  ExpansionTile(
+                    key: const Key('follow-friends'),
                     tilePadding: EdgeInsets.zero,
                     title: Text(
-                      '${l.followSosContacts} (${d.contactsSos.length})',
+                      '${l.followFollowers} '
+                      '(${d.suiveurs.length + d.contactsSos.length})',
                     ),
                     children: [
-                      for (final p in d.contactsSos)
+                      for (final p in [...d.suiveurs, ...d.contactsSos])
                         ListTile(
                           dense: true,
                           title: Text(p.nom),

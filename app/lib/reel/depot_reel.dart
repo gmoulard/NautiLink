@@ -419,11 +419,38 @@ class DepotReel extends Depot {
     }
   }
 
+  /// Navigation en cours d'un bateau du compte que ce téléphone ne connaît
+  /// pas (réinstallation, autre téléphone du compte), à reprendre ou à
+  /// rejoindre (RG-NAV-33, RG-NAV-39, D-184) ; vide sinon.
+  ResumeNavigation? get navigationInconnue =>
+      conduite.enCours == null ? super.navigationEnCours : null;
+
+  /// Lien de ce téléphone avec [navigationInconnue], d'après le serveur
+  /// (D-184) : vrai s'il l'a démarrée (même identifiant), faux s'il l'a
+  /// déjà rejointe, vide s'il ne le sait pas (identifiant changé par une
+  /// réinstallation, autre téléphone) : l'application demande alors.
+  Future<bool?> envoieLesPositionsAutomatiques() async {
+    final r = navigationInconnue;
+    if (r == null) return null;
+    try {
+      final d = await api.appelObjet('GET', '/v1/navigations/${r.id}');
+      final moi = await session.appareilId();
+      if (d['appareilId'] == moi) return true;
+      final rejoints = d['telephonesRejoints'];
+      if (rejoints is List && rejoints.contains(moi)) return false;
+    } catch (e) {
+      debugPrint('Lien du téléphone : $e');
+    }
+    return null;
+  }
+
   /// « Reprendre la dernière navigation » (RG-NAV-12) : la navigation gardée
   /// sur le téléphone ; sinon celle que le serveur dit en cours, relue sur le
   /// serveur (fréquence, personnes à bord) ou, hors connexion, d'après la
   /// dernière liste reçue (D-140). Vide s'il n'y en a pas.
-  Future<NavigationLocale?> reprendre() async {
+  /// [automatiques] faux : le téléphone la rejoint seulement, sans en
+  /// envoyer les positions automatiques ni la fin (RG-NAV-39, D-184).
+  Future<NavigationLocale?> reprendre({bool automatiques = true}) async {
     final locale = conduite.enCours;
     if (locale != null) return locale;
     final r = super.navigationEnCours;
@@ -434,6 +461,8 @@ class DepotReel extends Depot {
     } catch (e) {
       debugPrint('Reprise : $e');
     }
+    // Rejoindre, par la file d'attente : avant les événements de ce téléphone.
+    if (!automatiques) await file.rejoindre(r.id);
     final dest = detail['destination'];
     await conduite.adopter(
       NavigationLocale(
@@ -450,11 +479,10 @@ class DepotReel extends Depot {
             (detail['personnesABord'] as num?)?.toInt() ??
             session.dernierNombrePersonnes,
         destination: dest is Map ? dest['texte'] as String? : null,
-        personnesAlertees: [
-          for (final c in _contacts)
-            if (c.suiveur || c.contactSos) c.id,
-        ],
+        // Personnes alertées : tous les amis (RG-NAV-33, D-176).
+        personnesAlertees: [for (final c in _contacts) c.id],
         derniereAutomatique: conduite.maintenant,
+        rejointe: !automatiques,
       ),
     );
     return conduite.enCours;

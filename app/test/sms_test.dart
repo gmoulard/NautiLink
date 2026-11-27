@@ -40,8 +40,6 @@ void main() {
       telephone: '+33622222222',
       recevoirSms: false,
     ),
-    // Contact SOS seulement.
-    ContactNl(id: 'c3', nom: 'Jo', telephone: '+33633333333', suiveur: false),
     // Décoché au démarrage (RG-NAV-25).
     ContactNl(id: 'c4', nom: 'Léa', telephone: '+33644444444'),
   ];
@@ -75,15 +73,32 @@ void main() {
 
   setUp(monter);
 
-  test('suiveurs de la navigation : numéro, « Recevoir les SMS », cochés (RG-SMS-01, RG-NAV-25)', () {
+  test('amis de la navigation : numéro, « Recevoir les SMS », cochés (RG-SMS-01, RG-NAV-25, D-176)', () {
     expect(sms.suiveurs(navigation()).map((d) => d.contactId), ['c1']);
-    expect(sms.contactsSos(navigation()).map((d) => d.contactId), [
-      'c1',
-      'c2',
-      'c3',
-    ]);
-    // Hors navigation : tous les contacts SOS avec un numéro.
-    expect(sms.contactsSos(null).length, 4);
+    expect(sms.contactsSos(navigation()).map((d) => d.contactId), ['c1', 'c2']);
+    // Hors navigation : tous les amis avec un numéro.
+    expect(sms.contactsSos(null).length, 3);
+    // D-176 : les anciens rôles ne comptent plus, chaque contact est un ami.
+    final ancien = SmsNavigation(
+      canal: canal,
+      envois: envois,
+      profil: () => null,
+      contacts: () => const [
+        ContactNl(
+          id: 'c1',
+          nom: 'Jo',
+          telephone: '+33633333333',
+          suiveur: false,
+          contactSos: false,
+        ),
+      ],
+      bateaux: () => const [],
+      langue: () => 'fr',
+      pageNavigation: (id) => 'https://essai.example/navigations/$id',
+      statutsSos: (a, s) async {},
+    );
+    expect(ancien.suiveurs(navigation()).length, 1);
+    expect(ancien.contactsSos(navigation()).length, 1);
   });
 
   test('heures envoyées : heure locale puis UTC (RG-PRM-07, D-146)', () async {
@@ -119,13 +134,12 @@ void main() {
     );
     // Sans décalage donné : celui du téléphone.
     final ici = DateTime(2026, 11, 26, 9, 15);
-    expect(
-      heureEnvoyee(fr, ici),
-      '09:15 (${fmtTime(ici.toUtc())} UTC)',
-    );
+    expect(heureEnvoyee(fr, ici), '09:15 (${fmtTime(ici.toUtc())} UTC)');
     expect(
       sms.texte(navigation(), 'position_manuelle', heure: ici),
-      startsWith('NautiLink Alizé — position à 09:15 (${fmtTime(ici.toUtc())} UTC).'),
+      startsWith(
+        'NautiLink Alizé — position à 09:15 (${fmtTime(ici.toUtc())} UTC).',
+      ),
     );
   });
 
@@ -297,12 +311,12 @@ void main() {
         second: 'SOS 2',
       );
       f.flushMicrotasks();
-      // 3 contacts SOS cochés + copie au navigateur, deux SMS chacun.
-      expect(canal.envoyes.length, 8);
+      // 2 amis cochés + copie au navigateur, deux SMS chacun.
+      expect(canal.envoyes.length, 6);
       expect(envois.sosRetentes('sos:a1'), isTrue);
       final dernier = statuts.last;
       expect(dernier.$1, 'a1');
-      expect(dernier.$2.where((s) => s['rang'] == 2).length, 4);
+      expect(dernier.$2.where((s) => s['rang'] == 2).length, 3);
       expect(
         dernier.$2.firstWhere((s) => s['contactId'] == null)['telephone'],
         '+33600000000',
@@ -310,14 +324,14 @@ void main() {
       expect(dernier.$2.every((s) => s['statut'] == 'echec'), isTrue);
       f.elapse(const Duration(minutes: 1));
       f.flushMicrotasks();
-      expect(canal.envoyes.length, 16);
+      expect(canal.envoyes.length, 12);
       f.elapse(const Duration(minutes: 1));
       f.flushMicrotasks();
-      expect(canal.envoyes.length, 24); // jusqu'à la réussite ou l'arrêt
+      expect(canal.envoyes.length, 18); // jusqu'à la réussite ou l'arrêt
       envois.arreterSos('sos:a1');
       f.elapse(const Duration(minutes: 3));
       f.flushMicrotasks();
-      expect(canal.envoyes.length, 24);
+      expect(canal.envoyes.length, 18);
     });
   });
 
@@ -347,7 +361,7 @@ void main() {
       second: 'SOS 2',
     );
     expect(i, IssueSms.prerempli);
-    expect(nombre, 4);
+    expect(nombre, 3);
     expect(canal.preremplis.single.$2, 'SOS 1\nSOS 2');
   });
 

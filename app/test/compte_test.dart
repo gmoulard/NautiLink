@@ -278,7 +278,7 @@ void main() {
       final id = await d.compte.ajouterContact(
         nom: 'Marc',
         telephone: '+33698765432',
-        suiveur: false,
+        perimetre: 'navigateur',
       );
       await d.modifierContact('c1', {'contactSos': false});
       final marc = d.contacts.firstWhere((c) => c.id == id);
@@ -307,7 +307,7 @@ void main() {
       await d2.compte.ajouterContact(
         nom: 'X',
         email: 'x@example.org',
-        suiveur: false,
+        perimetre: 'navigateur',
       );
       expect(serveur.contacts.length, 3);
       d.dispose();
@@ -387,7 +387,7 @@ void main() {
       final id = await d.compte.ajouterContact(
         nom: 'Marc',
         telephone: '+33698765432',
-        suiveur: false,
+        perimetre: 'navigateur',
       );
       final i = await d.compte.inviter(
         contactId: id,
@@ -489,22 +489,22 @@ void main() {
     }
 
     testWidgets(
-      'contacts : cases, ajout avec le périmètre, invitation par téléphone par SMS',
+      'contacts : des amis, sans cases « Suiveur » ni « Contact SOS », ajout avec le périmètre, invitation par téléphone par SMS (D-176)',
       (tester) async {
         await ouvrir(tester);
         await menu(tester, 'Contacts');
         expect(find.text('Claire'), findsOneWidget);
-        expect(find.text('Suiveur : invitation acceptée'), findsOneWidget);
-
-        // « Contact SOS » décoché : envoyé champ par champ.
-        await tester.tap(find.widgetWithText(CheckboxListTile, 'Contact SOS'));
-        await tester.runAsync(
-          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        expect(find.text('Invitation acceptée'), findsOneWidget);
+        expect(find.byType(CheckboxListTile), findsNothing);
+        expect(find.textContaining('Suiveur'), findsNothing);
+        expect(find.textContaining('Contact SOS'), findsNothing);
+        expect(
+          find.textContaining('Chaque contact est un ami'),
+          findsOneWidget,
         );
-        await tester.pumpAndSettle();
-        expect(serveur.corps['PATCH /v1/contacts/c1'], {'contactSos': false});
 
         await tapKey(tester, 'contact-add');
+        expect(find.byType(CheckboxListTile), findsNothing);
         await tester.enterText(find.byKey(const Key('contact-name')), 'Marc');
         await tester.enterText(
           find.byKey(const Key('contact-phone')),
@@ -512,8 +512,8 @@ void main() {
         );
         await tester.pumpAndSettle();
         await tapKey(tester, 'contact-save');
-        // Suiveur coché par défaut : choix du périmètre (RG-CTC-04, RG-PAR-02).
-        expect(find.text('Ce que le suiveur voit'), findsOneWidget);
+        // Chaque ami est invité : choix du périmètre (RG-CTC-04, RG-PAR-02).
+        expect(find.text('Ce que l\'ami voit'), findsOneWidget);
         await tapKey(tester, 'scope-navigation');
         await tapKey(tester, 'scope-ok');
         await tester.runAsync(
@@ -523,6 +523,8 @@ void main() {
         final post = serveur.corps['POST /v1/contacts'] as Map;
         expect(post['perimetre'], 'navigation');
         expect(post['navigationId'], 'n1');
+        expect(post.containsKey('suiveur'), isFalse);
+        expect(post.containsKey('contactSos'), isFalse);
         expect(find.text('Marc'), findsOneWidget);
 
         // Fiche du contact : invitation par téléphone, lien et SMS (Android).

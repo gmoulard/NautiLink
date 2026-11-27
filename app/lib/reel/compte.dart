@@ -177,30 +177,28 @@ class GestionCompte {
   }
 
   /// Ajout d'un contact (RG-CTC-01, RG-CTC-02), identifiant tiré par le
-  /// téléphone pour un ajout hors connexion sans doublon. « Suiveur » coché
-  /// demande le périmètre et envoie l'invitation au retour (RG-CTC-04).
+  /// téléphone pour un ajout hors connexion sans doublon. L'ami reçoit au
+  /// retour l'invitation avec le périmètre choisi (RG-CTC-04, D-176).
   Future<String> ajouterContact({
     required String nom,
     String? telephone,
     String? email,
-    bool suiveur = true,
-    bool contactSos = true,
     String? perimetre,
     String? navigationId,
     String? id,
   }) async {
     id ??= _uuid.v4();
     String? texte(String? v) => v == null || v.trim().isEmpty ? null : v.trim();
+    // D-176 : plus d'anciens champs « suiveur » et « contactSos » ; l'ami
+    // reçoit l'invitation avec le périmètre choisi.
     await _ajouter(
       ModificationCompte('contact_ajout', id, {
         'id': id,
         'nom': nom.trim(),
         'telephone': texte(telephone),
         'email': texte(email),
-        'suiveur': suiveur,
-        'contactSos': contactSos && texte(telephone) != null,
-        if (suiveur) 'perimetre': perimetre,
-        if (suiveur && perimetre == 'navigation') 'navigationId': navigationId,
+        'perimetre': ?perimetre,
+        if (perimetre == 'navigation') 'navigationId': navigationId,
       }),
     );
     return id;
@@ -262,8 +260,10 @@ class GestionCompte {
           r = await api.appel('POST', '/v1/contacts', json: m.champs);
         } on ErreurApi catch (e) {
           // Adresse du navigateur non confirmée : l'invitation est refusée,
-          // le contact est gardé sans « Suiveur » (RG-CPT-09, D-136).
-          if (e.code != 'email_non_verifie' || m.champs['suiveur'] != true) {
+          // l'ami est gardé sans invitation (RG-CPT-09, D-136) : seul cas où
+          // part encore l'ancien champ `suiveur: false`, que l'API garde
+          // pour ajouter un ami sans invitation.
+          if (e.code != 'email_non_verifie' || m.champs['suiveur'] == false) {
             rethrow;
           }
           dernierRefus = e.message;

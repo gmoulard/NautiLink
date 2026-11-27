@@ -98,7 +98,8 @@ void main() {
       expect(find.text('Version gratuite'), findsOneWidget);
       expect(find.text('Envoyer un SOS'), findsOneWidget);
       expect(find.text('Mémo sécurité en mer'), findsOneWidget);
-      // Une navigation est en cours : « Démarrer navigation » est inactif.
+      // Une navigation est en cours sur le compte, inconnue de ce téléphone :
+      // il peut en démarrer une autre, sur un autre bateau (D-177, RG-NAV-39).
       expect(
         tester
             .widget<ButtonStyleButton>(
@@ -108,7 +109,7 @@ void main() {
               ),
             )
             .onPressed,
-        isNull,
+        isNotNull,
       );
 
       await tapText(tester, 'Navigations enregistrées');

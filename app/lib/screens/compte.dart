@@ -99,7 +99,9 @@ class ContactsScreen extends StatelessWidget {
               ),
             ),
           ),
-        Text(l.contactsDefault),
+        // D-176 : un seul type de contact, l'ami ; la démonstration, figée
+        // (D-144), garde « Suiveur » et « Contact SOS ».
+        Text(demo ? l.contactsDefault : l.contactsFriends),
         const SizedBox(height: 12),
         for (final c in depot.contacts) _CarteContact(contact: c),
         if (!demo) ...[
@@ -139,7 +141,7 @@ class _CarteContact extends StatelessWidget {
       children: [
         Text(c.nom, style: const TextStyle(fontWeight: FontWeight.w700)),
         Text([c.telephone, c.email].whereType<String>().join(' · ')),
-        if (!demo && c.suiveur)
+        if (!demo)
           Text(
             etatInvitationLabel(l, c.etatInvitation),
             style: Theme.of(context).textTheme.bodySmall,
@@ -175,36 +177,37 @@ class _CarteContact extends StatelessWidget {
                   ],
                 ),
               ),
-            Row(
-              children: [
-                Expanded(
-                  child: CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(l.roleFollower),
-                    value: c.suiveur,
-                    onChanged: (v) => changerSuiveur(context, c, v ?? false),
+            if (demo)
+              Row(
+                children: [
+                  Expanded(
+                    child: CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text(l.roleFollower),
+                      value: c.suiveur,
+                      onChanged: (v) => changerSuiveur(context, c, v ?? false),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(l.roleSos),
-                    subtitle: c.telephone == null
-                        ? Text(l.phoneRequired)
-                        : null,
-                    value: c.contactSos,
-                    // RG-CTC-05 : « Contact SOS » demande un numéro.
-                    onChanged: c.telephone == null
-                        ? null
-                        : (v) => depot.modifierContact(c.id, {
-                            'contactSos': v ?? false,
-                          }),
+                  Expanded(
+                    child: CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text(l.roleSos),
+                      subtitle: c.telephone == null
+                          ? Text(l.phoneRequired)
+                          : null,
+                      value: c.contactSos,
+                      // RG-CTC-05 : « Contact SOS » demande un numéro.
+                      onChanged: c.telephone == null
+                          ? null
+                          : (v) => depot.modifierContact(c.id, {
+                              'contactSos': v ?? false,
+                            }),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),
@@ -349,8 +352,6 @@ class _ContactScreenState extends State<ContactScreen> {
   final _nom = TextEditingController();
   final _tel = TextEditingController();
   final _email = TextEditingController();
-  bool _suiveur = true;
-  bool _sos = true;
   bool _rempli = false;
   String? _erreur;
   bool _occupe = false;
@@ -382,12 +383,7 @@ class _ContactScreenState extends State<ContactScreen> {
       _nom.text = c.nom;
       _tel.text = c.telephone ?? '';
       _email.text = c.email ?? '';
-      _suiveur = c.suiveur;
-      _sos = c.contactSos;
       _lireEnLigne();
-    } else {
-      // Adresse non confirmée : pas d'invitation, un contact SOS reste permis (RG-CPT-09).
-      _suiveur = _depot.profil?.emailVerifie != false;
     }
   }
 
@@ -427,8 +423,10 @@ class _ContactScreenState extends State<ContactScreen> {
     }
     final c = _contact;
     if (c == null) {
+      // D-176 : l'ami est invité à suivre les navigations, avec le
+      // périmètre choisi ; adresse non confirmée : pas d'invitation (RG-CPT-09).
       Perimetre? p;
-      if (_suiveur) {
+      if (_depot.profil?.emailVerifie != false) {
         p = await choisirPerimetre(context);
         if (p == null) return;
       }
@@ -436,8 +434,6 @@ class _ContactScreenState extends State<ContactScreen> {
         nom: _nom.text,
         telephone: tel,
         email: email,
-        suiveur: _suiveur,
-        contactSos: _sos && tel != null,
         perimetre: p?.perimetre,
         navigationId: p?.navigationId,
       );
@@ -591,28 +587,16 @@ class _ContactScreenState extends State<ContactScreen> {
               border: const OutlineInputBorder(),
             ),
           ),
-          if (nouveau) ...[
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              title: Text(l.roleFollower),
-              subtitle: verifie ? null : Text(l.followerNeedsVerifiedEmail),
-              value: _suiveur && verifie,
-              onChanged: verifie
-                  ? (v) => setState(() => _suiveur = v ?? false)
-                  : null,
+          // D-176 : ni « Suiveur » ni « Contact SOS » : nom, téléphone,
+          // e-mail, puis le périmètre à l'enregistrement.
+          if (nouveau && !verifie)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                l.followerNeedsVerifiedEmail,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              title: Text(l.roleSos),
-              subtitle: _texte(_tel) == null ? Text(l.phoneRequired) : null,
-              value: _sos && _texte(_tel) != null,
-              onChanged: _texte(_tel) == null
-                  ? null
-                  : (v) => setState(() => _sos = v ?? false),
-            ),
-          ],
           if (_erreur != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -630,7 +614,7 @@ class _ContactScreenState extends State<ContactScreen> {
           if (c != null) ...[
             const SizedBox(height: 16),
             _CarteContact(contact: c),
-            if (c.suiveur) _invitationEtAcces(l, c),
+            _invitationEtAcces(l, c),
             const SizedBox(height: 16),
             TextButton.icon(
               key: const Key('contact-delete'),

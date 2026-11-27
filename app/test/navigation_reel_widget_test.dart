@@ -375,9 +375,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(
-          'Serveur : alerte reçue, e-mails envoyés aux suiveurs et aux contacts SOS',
-        ),
+        find.text('Serveur : alerte reçue, e-mails envoyés à vos amis'),
         findsOneWidget,
       );
       final (numeros, texte, _) = sms.preremplis.single;
@@ -443,9 +441,58 @@ void main() {
       serveur.navigationEnCours = true;
       await connecter(tester);
       await toucher(tester, 'Reprendre la dernière navigation');
+      // D-184 : navigation inconnue du téléphone : l'application demande.
+      expect(
+        find.text(
+          'Une navigation est en cours sur Alizé. Envoyer les positions '
+          'automatiques depuis ce téléphone ?',
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const Key('join-yes')));
+      await attendre(tester);
       expect(find.byKey(const Key('voyage-name')), findsOneWidget);
       expect(find.text('Alizé — Houat'), findsOneWidget);
       expect(find.text('Envoyer position'), findsOneWidget);
+      expect(find.text('Terminer la navigation'), findsOneWidget);
+      expect(serveur.elements.where((e) => e.$1 == 'rejoindre'), isEmpty);
+    },
+  );
+
+  testWidgets(
+    'rejoindre depuis un autre téléphone du compte : ajouts sans positions automatiques ni fin (D-177, D-184, RG-NAV-39)',
+    (tester) async {
+      serveur.navigationEnCours = true;
+      await connecter(tester);
+      await toucher(tester, 'Reprendre la dernière navigation');
+      await tester.tap(find.byKey(const Key('join-no')));
+      await attendre(tester);
+      expect(find.text('Alizé — Houat'), findsOneWidget);
+      expect(find.byKey(const Key('joined-info')), findsOneWidget);
+      expect(find.text('Terminer la navigation'), findsNothing);
+      expect(find.byKey(const Key('next-auto-position')), findsNothing);
+      final rejoindre = serveur.elements.firstWhere((e) => e.$1 == 'rejoindre');
+      expect(rejoindre.$2, 'n1');
+      expect((rejoindre.$3 as Map)['appareilId'], isNotEmpty);
+      // Une position manuelle part pour la navigation rejointe.
+      await toucher(tester, 'Envoyer position');
+      await attendre(tester);
+      expect(
+        serveur.elements.where(
+          (e) =>
+              e.$1 == 'evenement' &&
+              (e.$3 as Map)['type'] == 'position_manuelle',
+        ),
+        isNotEmpty,
+      );
+      expect(
+        serveur.elements.where(
+          (e) =>
+              e.$1 == 'evenement' &&
+              (e.$3 as Map)['type'] == 'position_automatique',
+        ),
+        isEmpty,
+      );
     },
   );
 
@@ -459,9 +506,7 @@ void main() {
       expect(find.byKey(const Key('ios-start-warning')), findsOneWidget);
       // Claire est contact SOS sans e-mail : elle ne sera pas prévenue.
       expect(
-        find.text(
-          'Contacts SOS sans e-mail, qui ne seront pas prévenus : Claire',
-        ),
+        find.text('Amis sans e-mail, qui ne seront pas prévenus : Claire'),
         findsOneWidget,
       );
       await demarrer(tester);
@@ -514,7 +559,9 @@ void main() {
       expect(ajout['nom'], 'Paul');
       expect(ajout['perimetre'], 'navigation');
       expect(ajout['navigationId'], navId);
-      expect(ajout['contactSos'], isTrue);
+      // D-176 : plus d'anciens champs « suiveur » et « contactSos ».
+      expect(ajout.containsKey('suiveur'), isFalse);
+      expect(ajout.containsKey('contactSos'), isFalse);
       // Q-102 : sans adresse, « E-mail » est décoché (alertes du serveur) ;
       // « SMS » est coché.
       expect((c as Map)['personnesAlertees'], isNot(contains(ajout['id'])));

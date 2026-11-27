@@ -65,7 +65,13 @@ class HomeScreen extends StatelessWidget {
       ],
       const SizedBox(height: 20),
       FilledButton.icon(
-        onPressed: (demo ? state.current != null : enCours != null)
+        // D-177, RG-NAV-39 : un téléphone sans navigation, démarrée ou
+        // rejointe, peut en démarrer une, même si une autre est en cours
+        // sur un autre bateau du compte.
+        onPressed:
+            (demo
+                ? state.current != null
+                : (depot as DepotReel).conduite.enCours != null)
             ? null
             : () => demo ? openStart(context) : openStartReel(context),
         icon: const Icon(Icons.play_arrow),
