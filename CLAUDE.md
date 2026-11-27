@@ -71,7 +71,7 @@ Dans un même commit :
 
 ## Versions
 
-Serveur (`server/VERSION`), application (`version:` de `app/pubspec.yaml`) et site (`site/VERSION`) ont chacun leur version (D-128). Changer une version : dans le même commit, ajouter une ligne à la matrice de `docs/09-versions.md` ; pour le serveur, changer aussi l'étiquette de l'image dans `server/compose.yaml`.
+Serveur (`server/VERSION`), application (`version:` de `app/pubspec.yaml`) et site (`site/VERSION`) ont chacun leur version (D-128). Changer une version : dans le même commit, ajouter une ligne à la matrice de `docs/09-versions.md`. Le serveur est déployé par l'image `:latest` de `server/compose.yaml` (D-173) : aucune étiquette à changer.
 
 ## Vérifications avant commit
 
