@@ -28,7 +28,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7, TODO-10.8 | LOT-11, LOT-13, LOT-15 ; demande explicite de l'utilisateur ([D-155](07-decisions.md#d-155)) | [!] |
 | LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3 | LOT-13, LOT-14 | [ ] |
 | LOT-18 | Demandes du 2026-11-26 : nom, pied de page, paramètres, chef de bord, incidents | TODO-3.17, TODO-3.19, TODO-4.9, TODO-5.10, TODO-5.11 | LOT-11 | [ ] |
-| LOT-19 | Demandes du 2026-11-27 : amis, plusieurs téléphones, météo dans le monde | TODO-4.13, TODO-4.14, TODO-4.12 | aucun | [ ] |
+| LOT-19 | Demandes du 2026-11-27 : amis, plusieurs téléphones, météo dans le monde | TODO-4.13, TODO-4.14, TODO-4.12 | aucun | [~] |
 | LOT-20 | Demandes du 2026-11-27 : Application web | TODO-6.14, TODO-6.15, TODO-6.16, TODO-6.17, TODO-6.18 | aucun | [ ] |
 | LOT-21 | Demandes du 2026-11-27 : look et écrans de l'application mobile | TODO-3.21, TODO-5.14, TODO-5.15 | LOT-19 | [ ] |
 | LOT-22 | Demandes du 2026-11-27 : site vitrine | TODO-3.22 | aucun | [[~] |
