@@ -669,7 +669,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filterNavigator => 'Comme navigateur';
 
   @override
-  String get filterFollower => 'Comme ami';
+  String get filterFollower => 'Mes amis en mer';
 
   @override
   String get inProgress => 'En cours';
@@ -1468,7 +1468,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucun ami coché : personne ne sera alerté pendant cette navigation, SOS compris.';
 
   @override
-  String get filterFriend => 'Comme ami';
+  String get filterFriend => 'Mes amis en mer';
 
   @override
   String joinQuestion(String boat) {

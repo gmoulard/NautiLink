@@ -1277,7 +1277,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterFollower.
   ///
   /// In fr, this message translates to:
-  /// **'Comme ami'**
+  /// **'Mes amis en mer'**
   String get filterFollower;
 
   /// No description provided for @inProgress.
@@ -2562,7 +2562,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterFriend.
   ///
   /// In fr, this message translates to:
-  /// **'Comme ami'**
+  /// **'Mes amis en mer'**
   String get filterFriend;
 
   /// No description provided for @joinQuestion.

@@ -151,7 +151,7 @@ func TestRenduTableau(t *testing.T) {
 	if filtre < 0 || alize < filtre || mistral < alize || glenan > houat || houat > mistral {
 		t.Fatalf("ordre : filtre %d, Alizé %d, Mistral %d, en cours %d, terminée %d", filtre, alize, mistral, glenan, houat)
 	}
-	for _, attendu := range []string{"Bonjour Paul", "Comme navigateur", "Comme ami",
+	for _, attendu := range []string{"Bonjour Paul", "Comme navigateur", "Mes amis en mer",
 		`href="/nautilink/?role=ami" aria-current="page"`, "Vous suivez cette navigation", "Votre navigation",
 		"20-nov-26 09:00-11:05 UTC 5 milles", "20-nov-26 09:00-en cours UTC", "En cours",
 		"2 h 05", "9,3 km (5,0 milles)", "2026-11-20 09:00 UTC", `class="bulle"`, "<polyline",
