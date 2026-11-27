@@ -5,16 +5,17 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 )
 
 // Exports CSV et YAML d'une navigation (TODO-6.15, D-180, RG-WEB-09) : à
-// côté de « Exporter en PDF », avec les mêmes droits (navigateur et suiveurs,
+// côté de « Exporter en PDF », avec les mêmes droits (navigateur et amis,
 // RG-NAV-19, RG-PAR-08). CSV : une ligne par événement du journal de bord,
 // séparateur point-virgule et marque UTF-8 pour les tableurs ; YAML : fiche de
-// la navigation (informations, bateau, suiveurs et contacts SOS par leur nom,
+// la navigation (informations, bateau, amis par leur nom (D-176),
 // comme le PDF), alertes SOS et journal. Les fichiers (photos, notes
 // vocales) n'y sont que signalés.
 
@@ -157,8 +158,7 @@ func exportYAML(d donneesNavigation) []byte {
 		y.texte(2, "immatriculation", b.Immatriculation)
 		y.texte(2, "portAttache", b.PortAttache)
 	}
-	y.noms(1, "suiveurs", n.Suiveurs)
-	y.noms(1, "contactsSos", n.ContactsSos)
+	y.noms(1, "amis", append(slices.Clone(n.Suiveurs), n.ContactsSos...)) // D-176
 
 	if len(d.Alertes) == 0 {
 		y.champ(0, "alertesSos", "[]")

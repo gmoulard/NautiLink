@@ -31,12 +31,12 @@ flowchart LR
   T --> S
   S --> P
   S -- SMTP --> R
-  R -- e-mail --> E[Suiveurs, invités,<br/>contacts SOS avec e-mail,<br/>copie au navigateur]
+  R -- e-mail --> E[Amis avec e-mail, invités,<br/>copie au navigateur]
   S --> APN[Service push d'Apple<br/>APNs]
   APN -- notification push --> I
   S --> FCM[Firebase Cloud<br/>Messaging]
   FCM -- notification push --> A
-  A -- SMS / MMS par la SIM --> D[Suiveurs avec téléphone,<br/>contacts SOS,<br/>copie au navigateur]
+  A -- SMS / MMS par la SIM --> D[Amis avec téléphone,<br/>copie au navigateur]
 ```
 
 ## 2. Ce qui est décidé
@@ -51,7 +51,7 @@ flowchart LR
 | Base de données | PostgreSQL propre au service pendant la bêta : service `base` de [`compose.yaml`](../server/compose.yaml), volume `nautilink-base`, sur un réseau interne partagé avec le seul serveur, sans port publié ; mot de passe « nautilink » par défaut, remplaçable dans le `.env` du service. | [D-62](07-decisions.md#d-62), [D-130](07-decisions.md#d-130) |
 | E-mails | Envoyés par le serveur via le relais d'envoi de pi-appliance pendant la bêta (invitations, accès, SOS, début de navigation, copie au navigateur). | [D-62](07-decisions.md#d-62), [D-10](07-decisions.md#d-10), [D-14](07-decisions.md#d-14), [D-41](07-decisions.md#d-41), [D-55](07-decisions.md#d-55) |
 | SMS et MMS | Envoyés par la carte SIM du téléphone Android, sans prestataire ; SMS SOS et de positions automatiques envoyés automatiquement, autres SMS ordinaires préremplis ; pas de SMS depuis l'iPhone. | [D-48](07-decisions.md#d-48), [D-82](07-decisions.md#d-82), [D-32](07-decisions.md#d-32), RG-COM-01, RG-SMS-03 |
-| Notifications push | Envoyées par le serveur : APNs pour l'iPhone, Firebase Cloud Messaging pour Android. Pour le suiveur sur iPhone : SOS, début, fin, nouvelle photo, position en retard ; contenu sur Android non décidé (§3.3). | [D-44](07-decisions.md#d-44), [D-86](07-decisions.md#d-86), RG-IOS-06 |
+| Notifications push | Envoyées par le serveur : APNs pour l'iPhone, Firebase Cloud Messaging pour Android. Pour l'ami sur iPhone : SOS, début, fin, nouvelle photo, position en retard ; contenu sur Android non décidé (§3.3). | [D-44](07-decisions.md#d-44), [D-86](07-decisions.md#d-86), RG-IOS-06 |
 | Stockage des photos et notes vocales | Dans PostgreSQL (§3.1). | [D-86](07-decisions.md#d-86) |
 | Photos | 20 par navigation au plus, environ 1 Mo chacune, envoyées au serveur ; le SMS peut donner un lien vers la photo hébergée. | [D-40](07-decisions.md#d-40), [D-49](07-decisions.md#d-49), RG-JRN-08, RG-SMS-05 |
 | Notes vocales | AAC `.m4a`, 1 minute au plus, enregistrement seul, conservé sur le serveur ; le SMS donne un lien d'écoute sur l'Application web. | [D-53](07-decisions.md#d-53), [D-71](07-decisions.md#d-71), RG-JRN-04, RG-SMS-06 |
@@ -79,7 +79,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 
 **Décidé** ([D-86](07-decisions.md#d-86)) : le serveur Go envoie les notifications push par le service push d'Apple (APNs) pour l'iPhone, avec une clé du compte développeur Apple ([D-60](07-decisions.md#d-60)), et par Firebase Cloud Messaging (FCM), service de Google, pour Android.
 
-- Notifications reçues par le suiveur sur Android : les mêmes que sur iPhone (RG-AND-08, [D-92](07-decisions.md#d-92)).
+- Notifications reçues par l'ami sur Android : les mêmes que sur iPhone (RG-AND-08, [D-92](07-decisions.md#d-92)).
 
 ### 3.4 Sauvegardes
 
@@ -113,7 +113,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
   - modifications concurrentes (même contact, mêmes paramètres ou même navigation changés sur deux supports) : la dernière modification reçue par le serveur l'emporte, champ par champ ; le client n'envoie que les champs qu'il a changés (`PATCH`), aucune modification n'est refusée pour ce motif, et l'application mobile affiche ensuite la version du serveur, sans message (RG-COM-04, [D-99](07-decisions.md#d-99)) ;
   - événements reçus après une clôture automatique : ceux acquis avant l'heure de clôture sont gardés, ceux d'après refusés (`navigation_cloturee`) ; un SOS acquis après la clôture devient un SOS depuis l'accueil (RG-ECO-12, [D-102](07-decisions.md#d-102)) ;
   - annonces de l'administrateur : `GET /v1/annonces` rend celles à afficher en bandeau, `POST /v1/annonces/{annonceId}/fermeture` la ferme pour l'utilisateur (RG-ADM-06, [D-103](07-decisions.md#d-103)) ;
-  - désinscriptions du suiveur : réglages du profil, valables pour tous les navigateurs suivis (RG-NOT-04, [D-104](07-decisions.md#d-104)).
+  - désinscriptions de l'ami : réglages du profil, valables pour tous les navigateurs suivis (RG-NOT-04, [D-104](07-decisions.md#d-104)).
 - **Hors connexion** : comportement de chaque écran mobile, RG-COM-06 ([D-114](07-decisions.md#d-114)).
 
 ## 5. File d'attente et doublons

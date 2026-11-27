@@ -2,7 +2,7 @@
 <h1>Envoyer un SOS ?</h1>
 {{with .D}}
 <div class="carte alertes">
-<p>Vos suiveurs et vos contacts SOS dont l'e-mail est connu recevront un e-mail avec votre position, si votre navigateur Internet la donne, {{if .Navigation}}sinon la dernière position connue de la navigation, {{end}}et la fiche du bateau. Aucun SMS ne part de l'Application web. Alertez aussi les secours : canal 16 de la VHF ou 196.</p>
+<p>Vos amis dont l'e-mail est connu recevront un e-mail avec votre position, si votre navigateur Internet la donne, {{if .Navigation}}sinon la dernière position connue de la navigation, {{end}}et la fiche du bateau. Aucun SMS ne part de l'Application web. Alertez aussi les secours : canal 16 de la VHF ou 196.</p>
 {{if or .Navigation .Bateaux}}
 <form class="avec-position" method="post" action="{{$.Base}}/sos">
   {{template "champs-position"}}

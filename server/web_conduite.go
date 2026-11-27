@@ -28,7 +28,7 @@ import (
 func init() {
 	messages["envoye"] = "Envoyé au journal de bord."
 	messages["terminee"] = "Navigation terminée."
-	messages["sos"] = "Alerte SOS envoyée : les e-mails partent à vos suiveurs et à vos contacts SOS dont l'e-mail est connu. Aucun SMS n'est envoyé depuis l'Application web : alertez aussi les secours, canal 16 de la VHF ou 196."
+	messages["sos"] = "Alerte SOS envoyée : les e-mails partent à vos amis dont l'e-mail est connu. Aucun SMS n'est envoyé depuis l'Application web : alertez aussi les secours, canal 16 de la VHF ou 196."
 }
 
 // heureWebMaintenant : heure d'un envoi fait depuis le Web, dans le fuseau

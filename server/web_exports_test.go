@@ -41,8 +41,8 @@ func TestExportYAML(t *testing.T) {
 	d.Journal[2].E.Texte = &piege
 	doc := string(exportYAML(d))
 	for _, attendu := range []string{"navigation:\n  nom: \"Alizé — Glénan\"\n", "  navigateur: \"Paul\"\n", "  destination: \"Glénan\"\n",
-		"  personnesABord: 3\n", "  bateau:\n    nom: ", "    portAttache: \"Lorient\"\n", "  suiveurs:\n    - \"Léa\"\n",
-		"  contactsSos:\n    - \"Secours\"\n", "alertesSos:\n  - heure: ", "    probleme: \"Voie d'eau\"\n", "    horsNavigation: true\n",
+		"  personnesABord: 3\n", "  bateau:\n    nom: ", "    portAttache: \"Lorient\"\n", "  amis:\n    - \"Léa\"\n    - \"Secours\"\n",
+		"alertesSos:\n  - heure: ", "    probleme: \"Voie d'eau\"\n", "    horsNavigation: true\n",
 		"journal:\n  - heure: 2026-11-20T09:00:00Z\n    type: debut\n", `    texte: "Ligne 1\nLigne 2 : « guillemets \" » # pas un commentaire"` + "\n",
 		"    fichier: \"photo\"\n", "    horsHeuresAffichees: true\n"} {
 		if !strings.Contains(doc, attendu) {

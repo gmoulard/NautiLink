@@ -15,7 +15,7 @@ import (
 // (RG-NAV-05), personnes à bord (RG-NAV-27), chef de bord (RG-NAV-35),
 // personnes alertées avec la seule case « E-mail » (RG-NAV-25 : aucun SMS
 // depuis le Web, RG-WEB-01), quota (RG-NAV-07, RG-ECO-04), avertissement
-// sans contact SOS (RG-SOS-14). Position du début par la géolocalisation du
+// sans ami coché (RG-SOS-14). Position du début par la géolocalisation du
 // navigateur Internet si la personne l'accepte (RG-WEB-05), heures dans son
 // fuseau (RG-WEB-07) : champs remplis par static/conduite.js. La navigation
 // n'est rattachée à aucun téléphone ; le téléphone associé du bateau la
@@ -136,12 +136,10 @@ func (a *app) donneesDuDemarrage(ctx context.Context, utilisateur, nom string, s
 	if err != nil {
 		return d, err
 	}
+	// Tous les amis sont alertés, SOS compris (RG-NAV-25, D-176).
 	d.SansContactSos = true
 	for _, c := range contacts {
-		if !c.Suiveur && !c.ContactSos {
-			continue
-		}
-		pa := personneAlertee{ID: c.ID, Nom: c.Nom, Sos: c.ContactSos, Cochee: saisie == nil || slices.Contains(cochees, c.ID),
+		pa := personneAlertee{ID: c.ID, Nom: c.Nom, Sos: true, Cochee: saisie == nil || slices.Contains(cochees, c.ID),
 			SansEmail: c.Email == nil && c.UtilisateurID == nil}
 		if pa.Sos && pa.Cochee {
 			d.SansContactSos = false

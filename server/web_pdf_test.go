@@ -116,7 +116,7 @@ func TestExportPDF(t *testing.T) {
 	}
 	texte := textePDF(t, doc)
 	for _, attendu := range []string{"Alizé — Glénan", "Informations", "Navigateur : Paul", "Personnes à bord : 3",
-		"Port d'attache : Lorient", "Suiveurs : Léa", "Contacts SOS : Secours", "Tracé", "Alertes SOS", "Voie d'eau",
+		"Port d'attache : Lorient", "Amis : Léa, Secours", "Tracé", "Alertes SOS", "Voie d'eau",
 		"Journal de bord", "Début de navigation · 2026-11-20 09:00 UTC", "Note vocale, à écouter sur l'Application web.",
 		"en dehors des heures affichées", "page 2"} {
 		if !strings.Contains(texte, chainePDF(winAnsi(attendu))[1:len(chainePDF(winAnsi(attendu)))-1]) {

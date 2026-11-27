@@ -478,12 +478,14 @@ paths:
               schema: {$ref: '#/components/schemas/ListeContacts'}
     post:
       tags: [Contacts et partage]
-      summary: 'Ajouter un contact (depuis le Web, l''application mobile ou l''écran de démarrage).'
+      summary: 'Ajouter un ami (depuis le Web, l''application mobile ou l''écran de démarrage).'
       description: |
-        Les deux cases sont cochées par défaut ; sans numéro, « Contact SOS » est décoché, et refusé
-        s'il est demandé (code `contact_sos_sans_telephone`). Cocher « Suiveur » demande le périmètre
-        et crée une invitation : par e-mail si l'adresse est connue, sinon par téléphone (lien rendu
-        par `GET /v1/invitations`). Identifiant tiré par le client pour un ajout hors connexion : un
+        Un seul type de contact, l'ami (D-176) : il est alerté des messages et du SOS par les canaux
+        cochés au démarrage et reçoit une invitation à suivre les navigations, qui demande le
+        périmètre : par e-mail si l'adresse est connue, sinon par téléphone (lien rendu par
+        `GET /v1/invitations`). Les anciens champs `suiveur` et `contactSos` des applications déjà
+        installées restent acceptés : `suiveur: false` ajoute l'ami sans invitation ;
+        `contactSos` est sans effet (plus de refus `contact_sos_sans_telephone`). Identifiant tiré par le client pour un ajout hors connexion : un
         renvoi rend le contact existant (200), sans doublon. Sans nom, le contact prend son e-mail ou
         son numéro comme nom.
       x-regles: [RG-CTC-01, RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-NAV-26]
@@ -509,13 +511,13 @@ paths:
       - {$ref: '#/components/parameters/ContactId'}
     patch:
       tags: [Contacts et partage]
-      summary: 'Modifier un contact, cocher ou décocher ses cases.'
+      summary: 'Modifier un ami.'
       description: |
-        Décocher « Suiveur » retire le suiveur de toutes les navigations, immédiatement. Seuls les
-        champs envoyés sont modifiés : la dernière modification reçue l'emporte, champ par champ,
-        sans refus si le contact a changé entre-temps sur un autre support (RG-COM-04). Retirer le
-        numéro décoche « Contact SOS ». Décocher « Suiveur » annule l'invitation en attente ; le
-        recocher envoie une nouvelle invitation.
+        Seuls les champs envoyés sont modifiés : la dernière modification reçue l'emporte, champ par
+        champ, sans refus si le contact a changé entre-temps sur un autre support (RG-COM-04).
+        `contactSos` vaut toujours « a un numéro ». Ancien champ `suiveur` des applications déjà
+        installées : `false` retire l'ami de toutes les navigations, immédiatement, et annule
+        l'invitation en attente (RG-PAR-06) ; `true` envoie une nouvelle invitation.
       x-regles: [RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-PAR-06, RG-CTC-03, RG-COM-04]
       requestBody:
         required: true
@@ -550,12 +552,12 @@ paths:
                 items: {$ref: '#/components/schemas/Invitation'}
     post:
       tags: [Contacts et partage]
-      summary: 'Inviter un suiveur par e-mail ou par téléphone, avec un périmètre.'
+      summary: 'Inviter un ami par e-mail ou par téléphone, avec un périmètre.'
       description: |
         Par e-mail : le serveur envoie l'e-mail (copie au navigateur). Par téléphone : le serveur rend
         le lien ; sur Android l'application ouvre le SMS prérempli (copie au navigateur), sur le Web
         et l'iPhone le lien est affiché pour que le navigateur le transmette. L'invité est ajouté à
-        la liste de contacts, les deux cases cochées (« Contact SOS » seulement avec un numéro). Une
+        la liste des amis (D-176). Une
         nouvelle invitation du même contact annule celle en attente. Adresse e-mail du navigateur
         non confirmée : 403 `email_non_verifie` (RG-CPT-09).
       x-regles: [RG-CPT-09, RG-PAR-02, RG-PAR-03, RG-PAR-04, RG-CTC-04, RG-NOT-02, RG-NOT-03, RG-SMS-08]
@@ -797,7 +799,7 @@ paths:
     get:
       tags: [Navigations]
       summary: 'Page d''une navigation (navigateur ou suiveur ayant accès).'
-      description: 'Comprend la fiche du bateau, les suiveurs et les contacts SOS du navigateur (RG-PAR-08). Introuvable pour un suiveur quand elle est dans la corbeille ou quand son accès est retiré.'
+      description: 'Comprend la fiche du bateau et les amis du navigateur (RG-PAR-08, D-176). Introuvable pour un suiveur quand elle est dans la corbeille ou quand son accès est retiré.'
       x-regles: [RG-NAV-16, RG-NAV-27, RG-NAV-28, RG-PAR-01, RG-PAR-07, RG-PAR-08, RG-NAV-20, RG-PAR-06,
         RG-ECO-08, RG-IOS-05]
       responses:
@@ -1108,9 +1110,9 @@ paths:
         Envoyée en priorité, hors de la file ordinaire, et renvoyée jusqu'à réception (iPhone sans
         Internet : dès le retour de la connexion). Acceptée quel que soit le quota ou l'abonnement.
         Rejouable sans doublon. Le serveur enregistre l'alerte dans le journal (ou dans l'historique
-        du bateau hors navigation), envoie l'e-mail aux suiveurs (de la navigation, ou de périmètre
-        navigateur hors navigation) et aux contacts SOS dont l'e-mail est connu, sauf les personnes
-        décochées au démarrage, avec copie au navigateur, et les notifications push SOS. Un SOS
+        du bateau hors navigation), envoie l'e-mail à tous les amis dont l'e-mail est connu (adresse
+        du compte pour ceux qui suivent la navigation, sinon celle de la fiche), sauf les personnes
+        décochées au démarrage (D-176), avec copie au navigateur, et les notifications push SOS. Un SOS
         acquis après une clôture automatique est enregistré comme un SOS depuis l'accueil
         (RG-ECO-12).
       x-regles: [RG-ECO-12, RG-SOS-19, RG-SOS-02, RG-SOS-03, RG-SOS-04, RG-SOS-06, RG-SOS-09, RG-SOS-10, RG-SOS-11, RG-SOS-12,
@@ -1590,8 +1592,8 @@ components:
         nom: {type: string}
         telephone: {type: [string, 'null']}
         email: {type: [string, 'null'], format: email}
-        suiveur: {type: boolean, default: true}
-        contactSos: {type: boolean, default: true}
+        suiveur: {type: boolean, default: true, deprecated: true, description: 'Ancien champ, gardé pour les applications déjà installées (D-176) : faux, l''ami n''est pas invité ou ses accès sont retirés.'}
+        contactSos: {type: boolean, deprecated: true, description: 'Ancien champ (D-176) : accepté et sans effet à l''envoi ; rendu vrai quand l''ami a un numéro.'}
         perimetre: {$ref: '#/components/schemas/Perimetre'}
         navigationId: {type: [string, 'null'], format: uuid}
 
@@ -1797,9 +1799,11 @@ components:
             fiche: {$ref: '#/components/schemas/Bateau'}
             suiveurs:
               type: array
+              description: 'Amis qui suivent la navigation (D-176 ; nom gardé pour les applications déjà installées).'
               items: {$ref: '#/components/schemas/Personne'}
             contactsSos:
               type: array
+              description: 'Autres amis du navigateur (D-176 ; nom gardé). La page affiche les deux listes en une seule, « Amis ».'
               items: {$ref: '#/components/schemas/Personne'}
 
     Evenement:

@@ -49,11 +49,10 @@
 <h2>Contacts</h2>
 {{if .Contacts}}
 <table class="empilable">
-  <thead><tr><th scope="col">Nom</th><th scope="col">Téléphone</th><th scope="col">Adresse e-mail</th><th scope="col">Rôle</th><th scope="col"></th></tr></thead>
+  <thead><tr><th scope="col">Nom</th><th scope="col">Téléphone</th><th scope="col">Adresse e-mail</th><th scope="col"></th></tr></thead>
   <tbody>
   {{range .Contacts}}
   <tr><td data-label="Nom">{{.Nom}}</td><td data-label="Téléphone">{{deref .Telephone}}</td><td data-label="Adresse e-mail">{{deref .Email}}</td>
-      <td data-label="Rôle">{{if .Suiveur}}Suiveur{{end}}{{if and .Suiveur .ContactSos}}, {{end}}{{if .ContactSos}}Contact SOS{{end}}</td>
       <td><form class="enligne" method="post" action="{{$.Base}}/admin/contacts/{{.ID}}/suppression"><button class="danger" type="submit">Supprimer</button></form></td></tr>
   {{end}}
   </tbody>

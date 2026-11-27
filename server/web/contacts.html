@@ -5,13 +5,12 @@
 <h2>Mes contacts</h2>
 {{if .Contacts}}
 <table class="empilable">
-  <thead><tr><th scope="col">Nom</th><th scope="col">Téléphone</th><th scope="col">E-mail</th><th scope="col">Suiveur</th><th scope="col">Contact SOS</th></tr></thead>
+  <thead><tr><th scope="col">Nom</th><th scope="col">Téléphone</th><th scope="col">E-mail</th><th scope="col">Suivi</th></tr></thead>
   <tbody>
   {{range .Contacts}}
   <tr><td data-label="Nom"><a class="lien" href="{{$.Base}}/contacts/{{.ID}}">{{.Nom}}</a></td>
       <td data-label="Téléphone">{{deref .Telephone}}</td><td data-label="E-mail">{{deref .Email}}</td>
-      <td data-label="Suiveur">{{if .Suiveur}}{{if eq .EtatInvitation "acceptee"}}Oui{{else if eq .EtatInvitation "envoyee"}}Invitation envoyée{{else}}Oui{{end}}{{else}}Non{{end}}</td>
-      <td data-label="Contact SOS">{{if .ContactSos}}Oui{{else}}Non{{end}}</td></tr>
+      <td data-label="Suivi">{{if .Suiveur}}{{if eq .EtatInvitation "envoyee"}}Invitation envoyée{{else}}Suit vos navigations{{end}}{{else}}Accès retiré{{end}}</td></tr>
   {{end}}
   </tbody>
 </table>
@@ -27,20 +26,20 @@
 </form>
 </div>
 <div class="carte">
-<h2>Mes suiveurs</h2>
+<h2>Accès à vos navigations</h2>
 {{if .Donnes}}
 <table class="empilable">
-  <thead><tr><th scope="col">Suiveur</th><th scope="col">Voit</th><th scope="col">Depuis</th><th scope="col"></th></tr></thead>
+  <thead><tr><th scope="col">Ami</th><th scope="col">Voit</th><th scope="col">Depuis</th><th scope="col"></th></tr></thead>
   <tbody>
   {{range .Donnes}}
-  <tr><td data-label="Suiveur">{{.Suiveur.Nom}}</td>
+  <tr><td data-label="Ami">{{.Suiveur.Nom}}</td>
       <td data-label="Voit">{{if eq .Perimetre "navigateur"}}Toutes vos navigations{{else}}Une navigation{{end}}</td>
       <td data-label="Depuis">{{.AccordeLe.Format "02/01/2006"}}</td>
       <td><form class="enligne" method="post" action="{{$.Base}}/acces/{{.ID}}/retrait"><button class="danger" type="submit">Retirer</button></form></td></tr>
   {{end}}
   </tbody>
 </table>
-<p class="aide">« Retirer » retire le suiveur de toutes vos navigations, présentes et futures, tout de suite.</p>
+<p class="aide">« Retirer » retire à cet ami l'accès à toutes vos navigations, présentes et futures, tout de suite.</p>
 {{else}}
 <p>Personne ne suit encore vos navigations.</p>
 {{end}}

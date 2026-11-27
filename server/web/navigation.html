@@ -4,7 +4,7 @@
 {{if not .Navigateur}}<p class="aide suivi">Navigation de {{.N.Navigateur.Nom}} : vous la suivez en lecture seule.</p>{{end}}
 <p class="exports"><a class="bouton" href="{{$.Base}}/navigations/{{.N.ID}}/pdf" download>Exporter en PDF</a> <a class="bouton" href="{{$.Base}}/navigations/{{.N.ID}}/csv" download>Exporter en CSV</a> <a class="bouton" href="{{$.Base}}/navigations/{{.N.ID}}/yaml" download>Exporter en YAML</a></p>
 {{if .Corbeille}}
-<div class="carte"><p>Cette navigation est dans la corbeille : elle sera supprimée définitivement le {{.Suppression}}. Vos suiveurs n'y ont plus accès. <a class="lien" href="{{$.Base}}/corbeille">Corbeille</a></p></div>
+<div class="carte"><p>Cette navigation est dans la corbeille : elle sera supprimée définitivement le {{.Suppression}}. Vos amis n'y ont plus accès. <a class="lien" href="{{$.Base}}/corbeille">Corbeille</a></p></div>
 {{end}}
 <div id="direct" data-adresse="{{$.Base}}/navigations/{{.N.ID}}/direct" data-curseur="{{.Curseur}}" data-version="{{.N.Version}}" data-etat="{{.N.Etat}}">
 {{template "navigation-direct" $}}
@@ -105,21 +105,18 @@
 </section>
 
 <section class="carte" aria-labelledby="titre-personnes">
-<h2 id="titre-personnes">Suiveurs et contacts SOS</h2>
-<h3>Suiveurs de cette navigation</h3>
-{{if .N.Suiveurs}}<ul class="personnes">
+<h2 id="titre-personnes">Amis</h2>
+{{if or .N.Suiveurs .N.ContactsSos}}<ul class="personnes">
 {{range .N.Suiveurs}}<li>{{.Nom}}{{if $.D.Navigateur}}{{if not $.D.Corbeille}}
   <form class="enligne" method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/suiveurs/{{.ID}}/retrait"><button class="secondaire" type="submit">Retirer de cette navigation</button></form>{{end}}{{end}}</li>
-{{end}}</ul>{{else}}<p class="aide">Aucun suiveur.</p>{{end}}
-<h3>Contacts SOS</h3>
-{{if .N.ContactsSos}}<ul class="personnes">{{range .N.ContactsSos}}<li>{{.Nom}}</li>{{end}}</ul>{{else}}<p class="aide">Aucun contact SOS.</p>{{end}}
+{{end}}{{range .N.ContactsSos}}<li>{{.Nom}}</li>{{end}}</ul>{{else}}<p class="aide">Aucun ami.</p>{{end}}
 </section>
 
 {{if .Navigateur}}{{if not .EnCours}}{{if not .Corbeille}}
 <section class="carte" aria-labelledby="titre-supprimer">
 <h2 id="titre-supprimer">Supprimer la navigation</h2>
 <form method="post" action="{{$.Base}}/navigations/{{.N.ID}}/suppression">
-  <p class="aide">La navigation passe dans la corbeille : vous pouvez la restaurer pendant 30 jours, puis elle est supprimée définitivement. Vos suiveurs n'y ont plus accès. Son temps reste décompté de votre quota.</p>
+  <p class="aide">La navigation passe dans la corbeille : vous pouvez la restaurer pendant 30 jours, puis elle est supprimée définitivement. Vos amis n'y ont plus accès. Son temps reste décompté de votre quota.</p>
   <label class="case"><input type="checkbox" name="confirmation" required><span>Je confirme la suppression de cette navigation</span></label>
   <button class="danger" type="submit">Supprimer</button>
 </form>

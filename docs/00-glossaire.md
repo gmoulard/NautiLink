@@ -6,7 +6,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 |-------|------------|
 | **Utilisateur** | Personne possédant un compte NautiLink. Il n'existe qu'un seul type de compte utilisateur ([RG-CPT-01](02-regles-metier.md#rg-cpt-01)). |
 | **Navigateur** | Rôle d'un utilisateur lorsqu'il conduit une navigation avec l'un de ses bateaux, depuis l'application mobile ou l'Application web ([RG-WEB-01](02-regles-metier.md#rg-web-01)). |
-| **Suiveur** | Rôle d'un utilisateur lorsqu'il consulte les navigations d'un autre utilisateur qui lui a donné un accès. Un même utilisateur peut être navigateur et suiveur. |
+| **Ami** | Personne de la liste de contacts du navigateur ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)) : il reçoit les messages des navigations et les alertes SOS par les canaux cochés au démarrage, et suit les navigations quand il a accepté l'invitation, avec son compte. Un même utilisateur peut être navigateur et ami d'un autre navigateur. Remplace les anciens termes *suiveur* et *contact SOS* ([D-176](07-decisions.md#d-176)). |
 | **Propriétaire** | Utilisateur qui a créé un bateau. Il est le seul à pouvoir naviguer avec ce bateau ([RG-CPT-05](02-regles-metier.md#rg-cpt-05)). |
 | **Bateau** | Navire décrit par une fiche bateau, rattaché à un seul propriétaire. |
 | **Fiche bateau** | Description du bateau : nom, type, longueur, immatriculation, port d'attache, photo, caractéristiques techniques ([RG-BAT-01](02-regles-metier.md#rg-bat-01)). |
@@ -24,13 +24,12 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Incident - avarie** | Événement du journal de bord qui consigne un incident ou une avarie : texte, avec photo et note vocale facultatives ([RG-JRN-11](02-regles-metier.md#rg-jrn-11)). |
 | **Chef de bord** | Personne responsable du bateau pendant la navigation, choisie sur l'écran de démarrage, par défaut le navigateur ; texte libre, modifiable ensuite ([RG-NAV-35](02-regles-metier.md#rg-nav-35), [RG-NAV-36](02-regles-metier.md#rg-nav-36)). |
 | **Note vocale** | Enregistrement de la voix, conservé sur le serveur et réécoutable, sans transcription ([D-71](07-decisions.md#d-71)). |
-| **Alerte SOS** | Alerte de détresse déclenchée depuis l'application mobile ou l'Application web ([RG-WEB-02](02-regles-metier.md#rg-web-02)) : SMS aux contacts SOS (Android seulement), enregistrement sur le serveur, e-mail aux suiveurs. |
-| **Contact** | Personne de la liste unique du navigateur : nom, téléphone et/ou e-mail, cases « Suiveur » et « Contact SOS », cochées par défaut ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)). |
-| **Contact SOS** | Contact dont la case « Contact SOS » est cochée ; reçoit les SMS SOS. Il a forcément un numéro de téléphone. |
-| **Destinataire SMS** | Suiveur d'une navigation ayant renseigné un numéro de téléphone ; reçoit les SMS ordinaires de cette navigation ([RG-SMS-01](02-regles-metier.md#rg-sms-01)). |
+| **Alerte SOS** | Alerte de détresse déclenchée depuis l'application mobile ou l'Application web ([RG-WEB-02](02-regles-metier.md#rg-web-02)) : SMS aux amis (Android seulement), enregistrement sur le serveur, e-mail aux amis. |
+| **Contact** | Synonyme d'*ami* : personne de la liste unique du navigateur, avec nom, téléphone et/ou e-mail, sans rôle à choisir ([RG-CTC-01](02-regles-metier.md#rg-ctc-01)). |
+| **Destinataire SMS** | Ami coché « SMS » pour une navigation et qui a un numéro de téléphone ; reçoit les SMS ordinaires de cette navigation ([RG-SMS-01](02-regles-metier.md#rg-sms-01)). |
 | **SMS ordinaire** | Tout SMS ou MMS autre qu'un SMS SOS : début, positions, notes, photos, notes vocales, fin. Sur Android, il s'ouvre prérempli dans l'application SMS et part d'un appui, sauf le SMS de position automatique, qui part automatiquement ([RG-SMS-03](02-regles-metier.md#rg-sms-03)). |
 | **Invitation** | Message (e-mail ou SMS) contenant un lien qui mène à la connexion ou à la création d'un compte, puis donne un accès. |
-| **Accès** | Droit d'un suiveur sur les navigations d'un navigateur. Périmètre *navigation* (une seule) ou *navigateur* (toutes, présentes et futures, tous bateaux confondus). |
+| **Accès** | Droit d'un ami sur les navigations d'un navigateur. Périmètre *navigation* (une seule) ou *navigateur* (toutes, présentes et futures, tous bateaux confondus). |
 | **Paramètres généraux** | Réglages par défaut du navigateur (SMS, fréquence), synchronisés entre les applications mobiles et le Web. |
 | **Paramètres de navigation** | Copie des paramètres généraux modifiable au démarrage, valable pour cette seule navigation. |
 | **Avertissement bêta** | Texte sur la version bêta et la responsabilité, accepté à la création du compte ([RG-CPT-06](02-regles-metier.md#rg-cpt-06), [texte](textes/avertissement-beta.md)). |
@@ -41,3 +40,4 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Abonnement** | Offre payante qui lève la limite du quota gratuit, par compte : 15 € payés une fois, pour 10 ans (RG-ECO-06). |
 | **Corbeille** | État d'une navigation supprimée, restaurable pendant 30 jours. |
 | **Administrateur** | Personne de l'équipe NautiLink qui utilise l'espace administrateur, distinct de l'espace utilisateur. |
+| **Suiveur**, **Contact SOS** | Anciens termes, remplacés par *ami* ([D-176](07-decisions.md#d-176)) ; ils restent dans les décisions passées et dans les noms de champs de l'API gardés pour les applications déjà installées. |

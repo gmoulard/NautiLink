@@ -173,7 +173,7 @@ func (a *app) donneesDeLaNavigation(ctx context.Context, utilisateur, id string)
 }
 
 func init() {
-	messages["retire"] = "Ce suiveur n'a plus accès à cette navigation."
+	messages["retire"] = "Cet ami n'a plus accès à cette navigation."
 }
 
 // origineSeulement : les serveurs de dalles d'OpenStreetMap demandent

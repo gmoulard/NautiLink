@@ -4,8 +4,8 @@
 <div class="carte">
 <form method="post" action="{{$.Base}}/parametres">
   <p class="aide">Ces paramètres servent à chaque nouvelle navigation ; vous pouvez les changer au démarrage pour une seule navigation. Ils sont les mêmes sur le Web et sur votre téléphone.</p>
-  <h2>SMS à vos suiveurs</h2>
-  <label class="case"><input type="checkbox" name="smsActifs" {{if oui .SmsActifs}}checked{{end}}><span>Envoyer des SMS à mes suiveurs</span></label>
+  <h2>SMS à vos amis</h2>
+  <label class="case"><input type="checkbox" name="smsActifs" {{if oui .SmsActifs}}checked{{end}}><span>Envoyer des SMS à mes amis</span></label>
   <p class="aide">Quels SMS partent :</p>
   {{with .SmsParType}}
   <label class="case"><input type="checkbox" name="debut" {{if oui .Debut}}checked{{end}}><span>Début de navigation</span></label>

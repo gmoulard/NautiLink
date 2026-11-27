@@ -102,7 +102,7 @@ func TestAlerteSos(t *testing.T) {
 	contact("Tardif", "06 44 44 44 44", "tardif@exemple.org")
 
 	// SOS en navigation, même avec une adresse non confirmée (RG-SOS-03) :
-	// e-mail aux suiveurs et aux contacts SOS avec e-mail, copie au navigateur.
+	// e-mail aux amis qui suivent la navigation et aux autres amis avec e-mail (D-176), copie au navigateur.
 	e.a.b.pool.Exec(t.Context(), "UPDATE utilisateurs SET email_verifie_le = NULL WHERE email = 'nav@exemple.org'")
 	sos := uuid(t)
 	al := alerteSos(bateau, id, t0.Add(time.Hour), true)
@@ -232,15 +232,15 @@ func TestAlerteSos(t *testing.T) {
 		t.Fatalf("SOS après la fin modifiable : %d", code)
 	}
 
-	// SOS depuis l'accueil (RG-SOS-15) : suiveurs de périmètre navigateur,
-	// tous les contacts SOS avec e-mail ; pas Paul (périmètre navigation).
+	// SOS depuis l'accueil (RG-SOS-15) : tous les amis avec e-mail, Paul
+	// (périmètre navigation) compris (D-176).
 	n0 = e.courrier.nombre()
 	code, r = e.appel("PUT", "/alertes-sos/"+uuid(t), nav, alerteSos(bateau, nil, t0.Add(110*time.Minute), false))
 	if code != 201 || r["navigationId"] != nil {
 		t.Fatalf("SOS depuis l'accueil : %d %v", code, r)
 	}
 	memes(t, "e-mails du SOS depuis l'accueil", e.courrier.recusPar(n0, "SOS — Alizé"), "lea@exemple.org", "zoe@exemple.org",
-		"marc@exemple.org", "secours@exemple.org", "decoche@exemple.org", "tardif@exemple.org", "nav@exemple.org")
+		"marc@exemple.org", "paul@exemple.org", "secours@exemple.org", "decoche@exemple.org", "tardif@exemple.org", "nav@exemple.org")
 	// Historique du bateau : Marc (périmètre navigateur) voit les trois, Paul
 	// (périmètre navigation) seulement ceux de sa navigation (RG-SOS-20).
 	if _, l := e.liste("GET", "/alertes-sos?bateauId="+bateau, marc, nil); len(l) != 3 {
@@ -273,7 +273,7 @@ func TestAlerteSos(t *testing.T) {
 	if code != 201 || r["navigationId"] != nil {
 		t.Fatalf("SOS après la clôture automatique : %d %v", code, r)
 	}
-	if l := e.courrier.recusPar(n0, "SOS — Alizé"); !slices.Contains(l, "decoche@exemple.org") || slices.Contains(l, "paul@exemple.org") {
+	if l := e.courrier.recusPar(n0, "SOS — Alizé"); !slices.Contains(l, "decoche@exemple.org") {
 		t.Fatalf("e-mails du SOS après la clôture automatique : %v", l)
 	}
 	_, j = e.appel("GET", "/navigations/"+id2+"/evenements", nav, nil)

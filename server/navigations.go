@@ -401,8 +401,10 @@ func (a *app) resumer(ctx context.Context, n navLigne, role string) (navigationJ
 	return r, nil
 }
 
-// detailler : page d'une navigation : fiche du bateau, suiveurs et contacts
-// SOS du navigateur (RG-PAR-08).
+// detailler : page d'une navigation : fiche du bateau et amis (RG-PAR-08,
+// D-176) : « suiveurs », comptes qui suivent la navigation, et
+// « contactsSos », les autres amis du navigateur (noms gardés pour les
+// applications déjà installées).
 func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigationJSON, error) {
 	r, err := a.resumer(ctx, n, role)
 	if err != nil {
@@ -431,8 +433,13 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 	if r.Suiveurs, err = a.suiveursDe(ctx, n); err != nil {
 		return r, err
 	}
+	var suivent []string
+	for _, s := range r.Suiveurs {
+		suivent = append(suivent, s.ID)
+	}
 	lignes, err := a.b.pool.Query(ctx, `SELECT id, nom, telephone, email FROM contacts
-		WHERE navigateur_id = $1 AND contact_sos AND supprime_le IS NULL ORDER BY nom`, n.navigateur)
+		WHERE navigateur_id = $1 AND supprime_le IS NULL
+		AND (utilisateur_id IS NULL OR NOT utilisateur_id::text = ANY($2::text[])) ORDER BY nom`, n.navigateur, suivent)
 	if err != nil {
 		return r, err
 	}

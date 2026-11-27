@@ -63,7 +63,7 @@ type accesJSON struct {
 	AccordeLe    time.Time    `json:"accordeLe"`
 }
 
-const colonnesContact = `c.id, c.navigateur_id, c.nom, c.telephone, c.email, c.suiveur, c.contact_sos, c.perimetre,
+const colonnesContact = `c.id, c.navigateur_id, c.nom, c.telephone, c.email, c.suiveur, c.telephone IS NOT NULL, c.perimetre,
 	c.navigation_id, c.version, c.utilisateur_id, c.modifie_le, c.supprime_le IS NOT NULL,
 	coalesce((SELECT i.etat FROM invitations i WHERE i.contact_id = c.id ORDER BY i.creee_le DESC LIMIT 1), 'aucune'),
 	coalesce((SELECT u.telephone IS NULL OR u.recevoir_sms FROM utilisateurs u WHERE u.id = c.utilisateur_id), true)`
@@ -89,10 +89,10 @@ func (a *app) contact(ctx context.Context, q interface {
 // (toutes ses navigations présentes et futures) (RG-PAR-02).
 func validerPerimetre(perimetre *string, navigation *string) error {
 	if perimetre == nil || (*perimetre != "navigation" && *perimetre != "navigateur") {
-		return errInvalide("Choisissez ce que le suiveur verra : une navigation ou toutes vos navigations.")
+		return errInvalide("Choisissez ce que votre ami verra : une navigation ou toutes vos navigations.")
 	}
 	if *perimetre == "navigation" && (navigation == nil || !estUUID(*navigation)) {
-		return errInvalide("Choisissez la navigation que le suiveur verra.")
+		return errInvalide("Choisissez la navigation que votre ami verra.")
 	}
 	if *perimetre == "navigateur" && navigation != nil {
 		*navigation = ""
@@ -108,9 +108,12 @@ func texteOuNul(p *string) *string {
 	return &t
 }
 
-// appliquerContact : champs présents dans c (RG-CTC-01, RG-CTC-05). À la
-// création, les deux cases sont cochées par défaut ; « Contact SOS » est
-// décoché pour un contact sans numéro, et refusé s'il est demandé.
+// appliquerContact : champs présents dans c (RG-CTC-01, RG-CTC-05). Chaque
+// contact est un ami, sans rôle à choisir (D-176) : à la création il est
+// invité (suiveur) ; « contactSos » vaut toujours « a un numéro ». Les champs
+// « suiveur » et « contactSos » des applications déjà installées restent
+// acceptés : « suiveur » invite ou retire les accès comme avant (RG-PAR-06),
+// « contactSos » est sans effet : tout ami est alerté du SOS.
 func appliquerContact(k *contactJSON, c champs, creation bool) error {
 	for nom, v := range map[string]**string{"telephone": &k.Telephone, "email": &k.Email, "perimetre": &k.Perimetre, "navigationId": &k.NavigationID} {
 		if c.a(nom) {
@@ -152,27 +155,20 @@ func appliquerContact(k *contactJSON, c champs, creation bool) error {
 		return errInvalide("Indiquez un numéro de téléphone ou une adresse e-mail.")
 	}
 	if creation {
-		k.Suiveur, k.ContactSos = true, k.Telephone != nil
+		k.Suiveur = true
 	}
 	if c.a("suiveur") {
 		if err := c.lire("suiveur", &k.Suiveur); err != nil {
 			return err
 		}
 	}
-	sosDemande := false
 	if c.a("contactSos") {
-		if err := c.lire("contactSos", &k.ContactSos); err != nil {
+		var sos bool
+		if err := c.lire("contactSos", &sos); err != nil {
 			return err
 		}
-		sosDemande = k.ContactSos
 	}
-	if k.Telephone == nil {
-		if sosDemande {
-			return &erreurAPI{http.StatusUnprocessableEntity, "contact_sos_sans_telephone",
-				"Un contact SOS doit avoir un numéro de téléphone.", 0}
-		}
-		k.ContactSos = false
-	}
+	k.ContactSos = k.Telephone != nil
 	if k.Nom == "" {
 		if k.Email != nil {
 			k.Nom = *k.Email
@@ -385,7 +381,7 @@ func (a *app) inviterContact(ctx context.Context, tx pgx.Tx, r *http.Request, na
 // errInvitationEmail : un compte dont l'adresse n'est pas confirmée n'envoie
 // pas d'invitation, par aucun canal (RG-CPT-09, D-105).
 var errInvitationEmail = &erreurAPI{http.StatusForbidden, "email_non_verifie",
-	"Confirmez d'abord votre adresse e-mail : ouvrez le lien que NautiLink vous a envoyé, puis invitez vos suiveurs.", 0}
+	"Confirmez d'abord votre adresse e-mail : ouvrez le lien que NautiLink vous a envoyé, puis invitez vos amis.", 0}
 
 func (a *app) inviter(ctx context.Context, tx pgx.Tx, r *http.Request, navigateur string, k contactJSON, canal string) (invitationJSON, func(), error) {
 	var confirmee bool
@@ -667,7 +663,7 @@ func (a *app) changerPerimetre(ctx context.Context, navigateur, id string, perim
 	}
 	_, err := a.b.pool.Exec(ctx, "UPDATE acces SET perimetre = $2, navigation_id = $3 WHERE id = $1", id, *perimetre, texteOuNul(navigation))
 	if estDoublon(err) {
-		return accesJSON{}, &erreurAPI{http.StatusConflict, "invalide", "Ce suiveur a déjà cet accès.", 0}
+		return accesJSON{}, &erreurAPI{http.StatusConflict, "invalide", "Cet ami a déjà cet accès.", 0}
 	}
 	if err != nil {
 		return accesJSON{}, err
