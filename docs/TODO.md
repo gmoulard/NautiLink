@@ -30,7 +30,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-18 | Demandes du 2026-11-26 : nom, pied de page, paramètres, chef de bord, incidents | TODO-3.17, TODO-3.19, TODO-4.9, TODO-5.10, TODO-5.11 | LOT-11 | [ ] |
 | LOT-19 | Demandes du 2026-11-27 : amis, plusieurs téléphones, météo dans le monde | TODO-4.13, TODO-4.14, TODO-4.12 | aucun | [~] |
 | LOT-20 | Demandes du 2026-11-27 : Application web | TODO-6.14, TODO-6.15, TODO-6.16, TODO-6.17, TODO-6.18 | aucun | [~] |
-| LOT-21 | Demandes du 2026-11-27 : look et écrans de l'application mobile | TODO-3.21, TODO-5.14, TODO-5.15 | LOT-19 | [ ] |
+| LOT-21 | Demandes du 2026-11-27 : look et écrans de l'application mobile | TODO-3.21, TODO-5.14, TODO-5.15 | LOT-19 | [~] |
 | LOT-22 | Demandes du 2026-11-27 : site vitrine | TODO-3.22 | aucun | [~] |
 
 ## 0. Ménage du dépôt
