@@ -55,6 +55,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/etudes/nom-nautilink.md`](docs/etudes/nom-nautilink.md) | Étude : disponibilité du nom NautiLink, antériorité, domaines, réseaux sociaux. |
 | [`docs/etudes/shom-cartes.md`](docs/etudes/shom-cartes.md) | Étude : données du SHOM sur la carte de l'Application web, licences, service WMTS. |
 | [`docs/etudes/versions-web.md`](docs/etudes/versions-web.md) | Étude : plusieurs versions de l'Application web, déploiement et compatibilité. |
+| [`docs/etudes/modele-donnees.md`](docs/etudes/modele-donnees.md) | Étude : modèle de données, tables de la base du serveur et base locale du téléphone. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images ; fichiers du logo (vectoriels, déclinaisons, icônes) dans [`docs/assets/logo/`](docs/assets/logo/). |
 | [`app/`](app/) | Application mobile Flutter (Android, iPhone), voir son [README](app/README.md). |

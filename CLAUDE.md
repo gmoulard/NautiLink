@@ -33,6 +33,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Disponibilité du nom NautiLink : marques, domaines, réseaux sociaux | `docs/etudes/nom-nautilink.md` |
 | Cartes et données du SHOM sur la carte du Web : licences, WMTS | `docs/etudes/shom-cartes.md` |
 | Plusieurs versions de l'Application web : déploiement, compatibilité | `docs/etudes/versions-web.md` |
+| Modèle de données : tables PostgreSQL du serveur, base locale du téléphone | `docs/etudes/modele-donnees.md` |
 
 ## Ordre de priorité en cas d'écart
 

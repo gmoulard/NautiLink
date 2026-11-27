@@ -40,6 +40,7 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 
 ## 2. Études techniques
 
+- [x] **TODO-2.75**: Modèle de données documenté (2026-11-27) : [étude](etudes/modele-donnees.md), tables du serveur (migrations 1 à 16) et base locale du téléphone.
 - [x] **TODO-2.6**: Fonctionnement hors connexion de chaque écran Android (2026-11-25, D-114, RG-COM-06).
 
 ## 3. Préparation du développement
