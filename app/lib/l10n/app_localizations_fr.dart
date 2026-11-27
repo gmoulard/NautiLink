@@ -218,10 +218,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get quotaNextRecovery =>
-      'Prochaines minutes récupérables : 3 h 40 min dans 4 jours (navigation du début de semaine).';
-
-  @override
   String get subscriptionTitle => 'Abonnement';
 
   @override
@@ -977,11 +973,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String quotaAsOf(String date) {
     return 'État du $date';
-  }
-
-  @override
-  String quotaNextAt(String duration, String date) {
-    return 'Prochaines minutes récupérables : $duration le $date.';
   }
 
   @override

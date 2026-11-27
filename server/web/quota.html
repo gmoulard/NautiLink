@@ -12,8 +12,6 @@
 </dl>
 {{if .Q.Epuise}}<p class="erreur">Quota épuisé : vous ne pouvez pas démarrer de navigation avant le retour de minutes, sauf avec un abonnement. Le SOS reste toujours disponible.</p>{{end}}
 {{if .Cloture}}<p class="erreur">La navigation en cours sera clôturée automatiquement le {{.Cloture}}, sauf abonnement.</p>{{end}}
-{{if .Prochaines}}<h3>Prochaines minutes récupérables</h3>
-<ul>{{range .Prochaines}}<li>{{.Duree}} à partir du {{.Heure}}</li>{{end}}</ul>{{end}}
 {{end}}
 </div>
 {{if not .Q.Abonnement.Actif}}
