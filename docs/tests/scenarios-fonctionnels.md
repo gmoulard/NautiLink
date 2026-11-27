@@ -194,7 +194,7 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 ## 13. Notifications (RG-NOT)
 
 - **TS-NOT-01** ([RG-NOT-01](../02-regles-metier.md#rg-not-01)) — Étant donné un événement notifié, quand il survient, alors la notification est un e-mail envoyé par le serveur.
-- **TS-NOT-02** ([RG-NOT-02](../02-regles-metier.md#rg-not-02)) — Étant donné une invitation, un nouvel accès accordé ou une alerte SOS, quand l'événement survient, alors l'e-mail correspondant est envoyé ; un ami sur iPhone reçoit aussi une notification push pour l'alerte SOS (voir TS-IOS-07).
+- **TS-NOT-02** ([RG-NOT-02](../02-regles-metier.md#rg-not-02)) — Étant donné une invitation, un nouvel accès accordé ou une alerte SOS, quand l'événement survient, alors l'e-mail correspondant est envoyé ; un ami sur iPhone reçoit aussi une notification push pour l'alerte SOS (voir TS-IOS-07). Étant donné un ami sans compte, avec e-mail, coché au démarrage, quand la navigation démarre, alors il reçoit l'e-mail de début à l'adresse de sa fiche, avec « demandez à <navigateur> de vous décocher » ([D-182](../07-decisions.md#d-182)).
 - **TS-NOT-03** ([RG-NOT-03](../02-regles-metier.md#rg-not-03)) — Étant donné un navigateur, quand le serveur envoie un e-mail d'invitation, de nouvel accès, d'alerte SOS ou de début de navigation, alors une copie part à l'adresse du compte du navigateur, sans réglage pour la désactiver.
 - **TS-NOT-04** ([RG-NOT-04](../02-regles-metier.md#rg-not-04)) — Étant donné un ami de deux navigateurs, quand il se désinscrit des e-mails de début ou désactive un type de notification push, alors il ne les reçoit plus pour aucun des deux.
 

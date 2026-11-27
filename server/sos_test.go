@@ -77,7 +77,7 @@ func TestAlerteSos(t *testing.T) {
 	e.suivre(nav, marc, "marc@exemple.org", "navigateur", "")
 
 	// Démarrage : Marc et « Décoché » décochés (RG-NAV-25) ; e-mail de début
-	// aux suiveurs cochés non désinscrits, copie au navigateur (RG-NOT-02,
+	// aux amis cochés non désinscrits, copie au navigateur (RG-NOT-02,
 	// RG-NOT-03).
 	t0 := time.Now().Add(-2 * time.Hour).Truncate(time.Second)
 	id := uuid(t)
@@ -89,7 +89,19 @@ func TestAlerteSos(t *testing.T) {
 	if code, r := e.appel("PUT", "/navigations/"+id, nav, d); code != 201 {
 		t.Fatalf("démarrage : %d %v", code, r)
 	}
-	memes(t, "e-mails de début", e.courrier.recusPar(n0, "démarré une navigation"), "lea@exemple.org", "nav@exemple.org")
+	// Ami sans compte coché (« Secours ») : à l'adresse de sa fiche, avec
+	// « demandez à … de vous décocher » (D-182) ; « Décoché » ne reçoit rien.
+	memes(t, "e-mails de début", e.courrier.recusPar(n0, "démarré une navigation"), "lea@exemple.org", "nav@exemple.org", "secours@exemple.org")
+	if txt := e.courrier.texte(n0, "secours@exemple.org", "démarré"); !strings.Contains(txt, "demandez à Navigateur de vous décocher") ||
+		strings.Contains(txt, "dans votre compte NautiLink") {
+		t.Fatalf("e-mail de début à un ami sans compte : %q", txt)
+	}
+	if txt := e.courrier.texte(n0, "lea@exemple.org", "démarré"); !strings.Contains(txt, "dans votre compte NautiLink") {
+		t.Fatalf("e-mail de début à un ami avec compte : %q", txt)
+	}
+	if c := e.courrier.texte(n0, "nav@exemple.org", "Copie — "); !strings.Contains(c, "secours@exemple.org") {
+		t.Fatalf("copie de l'e-mail de début : %q", c)
+	}
 	if txt := e.courrier.texte(n0, "lea@exemple.org", "démarré"); !strings.Contains(txt, "Glénan") ||
 		!strings.Contains(txt, "https://exemple.org/nautilink/navigations/"+id) {
 		t.Fatalf("texte de l'e-mail de début : %q", txt)

@@ -615,9 +615,11 @@ func copieSos(d donneesSos, dests []string, sujet, texte string) (string, string
 
 // ------------------------------------------------------------------ e-mail de début (RG-NOT-02)
 
-// emailsDebut : e-mail de début de navigation aux suiveurs de la navigation
-// qui ne s'en sont pas désinscrits (RG-NOT-02, RG-NOT-04), sauf les personnes
-// décochées au démarrage (RG-NAV-25), et copie au navigateur (RG-NOT-03).
+// emailsDebut : e-mail de début de navigation aux amis qui suivent la
+// navigation et ne s'en sont pas désinscrits (RG-NOT-02, RG-NOT-04), et aux
+// amis sans compte, à l'adresse de leur fiche, avec « demandez à
+// <navigateur> de vous décocher » (D-182) ; sauf les personnes décochées au
+// démarrage (RG-NAV-25) ; copie au navigateur (RG-NOT-03).
 func (a *app) emailsDebut(ctx context.Context, n navLigne) error {
 	lignes, err := a.b.pool.Query(ctx, `SELECT u.email FROM acces ac JOIN utilisateurs u ON u.id = ac.suiveur_id
 		WHERE ac.navigateur_id = $1 AND u.id <> $1 AND u.emails_debut
@@ -632,6 +634,19 @@ func (a *app) emailsDebut(ctx context.Context, n navLigne) error {
 		return err
 	}
 	dests = sansDoublon(dests)
+	lignes, err = a.b.pool.Query(ctx, `SELECT c.email FROM contacts c WHERE c.navigateur_id = $1 AND c.supprime_le IS NULL
+		AND c.utilisateur_id IS NULL AND coalesce(c.email, '') <> ''
+		AND ($2::text[] IS NULL OR c.id::text = ANY($2::text[]))`, n.navigateur, n.alertees)
+	if err != nil {
+		return err
+	}
+	sansCompte, err := pgx.CollectRows(lignes, pgx.RowTo[string])
+	if err != nil {
+		return err
+	}
+	sansCompte = slices.DeleteFunc(sansDoublon(sansCompte), func(x string) bool {
+		return slices.ContainsFunc(dests, func(d string) bool { return strings.EqualFold(d, x) })
+	})
 	var nom, email, l, bateau string
 	if err := a.b.pool.QueryRow(ctx, "SELECT u.nom, u.email, u.langue, b.nom FROM utilisateurs u, bateaux b WHERE u.id = $1 AND b.id = $2",
 		n.navigateur, n.bateau).Scan(&nom, &email, &l, &bateau); err != nil {
@@ -647,19 +662,26 @@ func (a *app) emailsDebut(ctx context.Context, n navLigne) error {
 	if a.cfg.AdressePublique != "" {
 		s.WriteString("\n" + enLangue(l, "Suivre la navigation : ", "Follow the trip: ") + a.cfg.AdressePublique + "/navigations/" + n.id + "\n")
 	}
-	s.WriteString(enLangue(l, "\nPour ne plus recevoir ces e-mails, décochez « E-mail au début d'une navigation » dans votre compte NautiLink.\n",
-		"\nTo stop receiving these e-mails, untick “E-mail at the start of a trip” in your NautiLink account.\n"))
-	s.WriteString("\nNautiLink — " + enLangue(l, "Version bêta", "Beta version") + "\n")
+	corps := s.String()
+	signature := "\nNautiLink — " + enLangue(l, "Version bêta", "Beta version") + "\n"
+	avecCompte := corps + enLangue(l, "\nPour ne plus recevoir ces e-mails, décochez « E-mail au début d'une navigation » dans votre compte NautiLink.\n",
+		"\nTo stop receiving these e-mails, untick “E-mail at the start of a trip” in your NautiLink account.\n") + signature
 	for _, x := range dests {
-		a.courriel(x, sujet, s.String())
+		a.courriel(x, sujet, avecCompte)
 	}
+	sansCompteTexte := corps + enLangue(l, "\nPour ne plus recevoir ces e-mails, demandez à "+nom+" de vous décocher.\n",
+		"\nTo stop receiving these e-mails, ask "+nom+" to untick you.\n") + signature
+	for _, x := range sansCompte {
+		a.courriel(x, sujet, sansCompteTexte)
+	}
+	dests = append(dests, sansCompte...)
 	if email != "" {
 		liste := strings.Join(dests, ", ")
 		if liste == "" {
 			liste = enLangue(l, "aucun ami", "no friend")
 		}
 		a.courriel(email, enLangue(l, "Copie — ", "Copy — ")+sujet,
-			enLangue(l, "Copie de l'e-mail de début envoyé à : ", "Copy of the start e-mail sent to: ")+liste+"\n\n"+s.String())
+			enLangue(l, "Copie de l'e-mail de début envoyé à : ", "Copy of the start e-mail sent to: ")+liste+"\n\n"+avecCompte)
 	}
 	return nil
 }
