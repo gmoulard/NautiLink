@@ -11,8 +11,9 @@ import (
 // (RG-NAV-29, D-79). Calculée par le serveur et dessinée en SVG, sans
 // bibliothèque ni JavaScript (08-architecture.md §2) : dalles de 256 pixels
 // en projection de Mercator, tracé des positions non masquées (RG-NAV-22),
-// points des événements et des alertes SOS (RG-NAV-31). Le même calcul, sans
-// les dalles, sert à l'aperçu du tableau de bord et au PDF (RG-NAV-19).
+// points des événements et des alertes SOS (RG-NAV-31). Le même calcul sert
+// à l'aperçu du log de nav et au PDF (RG-NAV-19), dont le serveur assemble
+// lui-même le fond (dalles.go, D-180).
 
 const (
 	tailleDalle = 256
@@ -32,6 +33,7 @@ type pointCarte struct {
 type dalleCarte struct {
 	X, Y         float64 // coin haut gauche, en pixels de la carte
 	Fond, Balise string  // adresses des images
+	Chemin       string  // « /zoom/x/y.png », pour le fond du PDF (dalles.go)
 }
 
 // carte : ce que dessine le gabarit « carte ».
@@ -106,7 +108,7 @@ func cadrer(trace, marques []pointCarte, largeur, hauteur float64, avecDalles bo
 			for tx := int(math.Floor(x0 / tailleDalle)); float64(tx*tailleDalle) < x0+largeur; tx++ {
 				chemin := "/" + strconv.Itoa(zoom) + "/" + strconv.Itoa(((tx%n)+n)%n) + "/" + strconv.Itoa(ty) + ".png"
 				c.Dalles = append(c.Dalles, dalleCarte{X: arrondi(float64(tx*tailleDalle) - x0), Y: arrondi(float64(ty*tailleDalle) - y0),
-					Fond: adresseOSM + chemin, Balise: adresseOSea + chemin})
+					Fond: adresseOSM + chemin, Balise: adresseOSea + chemin, Chemin: chemin})
 			}
 		}
 	}

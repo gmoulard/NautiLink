@@ -201,8 +201,8 @@ func (a *app) traceDe(ctx context.Context, n navigationJSON) ([]pointCarte, erro
 	return l, lignes.Err()
 }
 
-// ligneDe : présentation d'une navigation, avec l'aperçu (tracé seul, sans
-// dalles : le tableau de bord ne charge aucune image de carte).
+// ligneDe : présentation d'une navigation, avec l'aperçu sur le fond
+// OpenStreetMap et OpenSeaMap (D-180).
 func (a *app) ligneDe(ctx context.Context, n navigationJSON) (ligneNav, error) {
 	l := ligneNav{Titre: titreLog(n), N: n, Depart: heureWeb(n.Debut, n.decalage), LieuDepart: lieuTexte(n.LieuDepart),
 		LieuArrivee: lieuTexte(n.LieuArrivee), Duree: dureeTexte(n.DureeMinutes), Distance: distanceTexte(n.DistanceMetres)}
@@ -227,7 +227,7 @@ func (a *app) ligneDe(ctx context.Context, n navigationJSON) (ligneNav, error) {
 		}
 		marques = append(marques, pointCarte{Latitude: der.Latitude, Longitude: der.Longitude, Sorte: sorte, Titre: titre})
 	}
-	l.Apercu = cadrer(trace, marques, 320, 200, false)
+	l.Apercu = cadrer(trace, marques, 320, 200, true) // fond OpenStreetMap et OpenSeaMap (D-180)
 	return l, nil
 }
 
@@ -287,6 +287,7 @@ func (a *app) pageTableau(w http.ResponseWriter, r *http.Request, s *session, d 
 	}
 	t.Quota, t.Disponible = &q, dureeTexte(q.DisponibleMinutes)
 	d.Titre, d.D = "Log de nav", t
+	origineSeulement(w) // dalles des aperçus (D-180)
 	a.rendre(w, "tableau.html", d)
 	return nil
 }

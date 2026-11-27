@@ -44,7 +44,8 @@
       <dt>Durée</dt><dd>{{.Duree}}</dd>
       <dt>Distance</dt><dd>{{.Distance}}</dd>
     </dl>
-    {{if .Apercu}}{{template "carte" .Apercu}}{{else}}<p class="aide">Aucune position reçue.</p>{{end}}
+    {{if .Apercu}}{{template "carte" .Apercu}}
+    <p class="aide source">Fond de carte © les contributeurs d'OpenStreetMap · balisage © OpenSeaMap</p>{{else}}<p class="aide">Aucune position reçue.</p>{{end}}
     {{if .Derniere}}<p>{{if eq .N.Etat "en_cours"}}Dernière position{{else}}Dernière position reçue{{end}} : {{.Derniere}}, {{.HeureD}}</p>{{end}}
   </div>
 </li>

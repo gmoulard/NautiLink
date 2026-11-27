@@ -12,8 +12,9 @@ import (
 // Petit rédacteur de PDF (export d'une navigation, RG-NAV-19, TODO-6.4),
 // sans bibliothèque (08-architecture.md §7) : pages A4, polices standard
 // Helvetica et Helvetica-Bold en codage WinAnsi (français compris), texte
-// coupé à la largeur de la page, traits, cercles, rectangles et photos JPEG
-// incluses telles quelles. Les coordonnées partent du haut de la page.
+// coupé à la largeur de la page, traits, cercles, rectangles, photos JPEG
+// incluses telles quelles et liens actifs vers des adresses Internet. Les
+// coordonnées partent du haut de la page.
 
 const (
 	largeurA4, hauteurA4 = 595.28, 841.89
@@ -25,16 +26,26 @@ type imagePDF struct {
 	largeur, hauteur, can int
 }
 
+// lienPDF : zone active d'une page, en points depuis le haut de la page.
+type lienPDF struct {
+	x, y, l, h float64
+	adresse    string
+}
+
+// morceau : partie d'une ligne de texte, lien actif si adresse n'est pas vide.
+type morceau struct{ texte, adresse string }
+
 type docPDF struct {
 	pages   []*bytes.Buffer
+	liens   [][]lienPDF // par page
 	page    *bytes.Buffer
 	images  []imagePDF
 	y       float64 // position courante depuis le haut
-	piedDe  func(numero int) string
+	piedDe  func(d *docPDF, numero int)
 	numeros []int
 }
 
-func nouveauPDF(pied func(numero int) string) *docPDF {
+func nouveauPDF(pied func(d *docPDF, numero int)) *docPDF {
 	d := &docPDF{piedDe: pied}
 	d.nouvellePage()
 	return d
@@ -43,9 +54,39 @@ func nouveauPDF(pied func(numero int) string) *docPDF {
 func (d *docPDF) nouvellePage() {
 	d.page = &bytes.Buffer{}
 	d.pages = append(d.pages, d.page)
+	d.liens = append(d.liens, nil)
 	d.y = margePDF
 	if d.piedDe != nil {
-		d.texte(margePDF, hauteurA4-margePDF/2, 8, false, d.piedDe(len(d.pages)))
+		d.piedDe(d, len(d.pages))
+	}
+}
+
+// lien : zone active de la page courante vers une adresse.
+func (d *docPDF) lien(x, y, l, h float64, adresse string) {
+	d.liens[len(d.liens)-1] = append(d.liens[len(d.liens)-1], lienPDF{x, y, l, h, adresse})
+}
+
+// ligneLiee : une ligne faite de morceaux, centrée sur la page si x < 0 ;
+// les liens sont en bleu, soulignés et actifs.
+func (d *docPDF) ligneLiee(x, y, taille float64, morceaux []morceau) {
+	total := 0.0
+	for _, m := range morceaux {
+		total += largeurTexte(m.texte, taille, false)
+	}
+	if x < 0 {
+		x = (largeurA4 - total) / 2
+	}
+	for _, m := range morceaux {
+		l := largeurTexte(m.texte, taille, false)
+		if m.adresse == "" {
+			d.texte(x, y, taille, false, m.texte)
+		} else {
+			fmt.Fprintf(d.page, "q %s", couleur(21, 101, 192, true))
+			d.texte(x, y, taille, false, m.texte)
+			fmt.Fprintf(d.page, "%s0.4 w %s %s m %s %s l S Q\n", couleur(21, 101, 192, false), f(x), f(hauteurA4-y-1.2), f(x+l), f(hauteurA4-y-1.2))
+			d.lien(x, y-taille, l, taille*1.3, m.adresse)
+		}
+		x += l
 	}
 }
 
@@ -278,14 +319,23 @@ func (d *docPDF) octets() []byte {
 		ressourcesImages += fmt.Sprintf(" /Im%d %d 0 R", i+1, n)
 	}
 	var kids []string
-	for _, p := range d.pages {
+	for i, p := range d.pages {
 		var z bytes.Buffer
 		w := zlib.NewWriter(&z)
 		w.Write(p.Bytes())
 		w.Close()
 		c := objet(fmt.Sprintf("<< /Length %d /Filter /FlateDecode >>", z.Len()), z.Bytes())
-		pg := objet(fmt.Sprintf("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %s %s] /Contents %d 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /XObject <<%s >> >> >>",
-			f(largeurA4), f(hauteurA4), c, ressourcesImages), nil)
+		annotations := ""
+		for _, l := range d.liens[i] {
+			a := objet(fmt.Sprintf("<< /Type /Annot /Subtype /Link /Rect [%s %s %s %s] /Border [0 0 0] /A << /S /URI /URI %s >> >>",
+				f(l.x), f(hauteurA4-l.y-l.h), f(l.x+l.l), f(hauteurA4-l.y), chainePDF([]byte(l.adresse))), nil)
+			annotations += fmt.Sprintf(" %d 0 R", a)
+		}
+		if annotations != "" {
+			annotations = " /Annots [" + annotations + " ]"
+		}
+		pg := objet(fmt.Sprintf("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %s %s] /Contents %d 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /XObject <<%s >> >>%s >>",
+			f(largeurA4), f(hauteurA4), c, ressourcesImages, annotations), nil)
 		kids = append(kids, strconv.Itoa(pg)+" 0 R")
 	}
 	fixe := func(n int, contenu string) {

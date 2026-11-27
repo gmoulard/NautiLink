@@ -5,6 +5,7 @@ import (
 	"compress/zlib"
 	"image"
 	"image/color"
+	"image/draw"
 	"image/jpeg"
 	"io"
 	"os"
@@ -89,7 +90,10 @@ func TestExportPDF(t *testing.T) {
 	evts := journalEssai()
 	evts[2].Texte = &long
 	d.Journal = journalPresente(evts, nil, false)
-	doc := exportPDF(d, evts, map[string][]byte{"e4": photoEssai(t)})
+	v := construction{Numero: "1.2.3", Build: "7", Commit: "0123456789abcdef"}
+	var carteRecue *carte
+	fond := func(c *carte) []byte { carteRecue = c; return fondEssai(t, int(c.Largeur), int(c.Hauteur)) }
+	doc := exportPDF(d, evts, map[string][]byte{"e4": photoEssai(t)}, fond, v)
 	if !bytes.HasPrefix(doc, []byte("%PDF-1.4")) || !bytes.HasSuffix(doc, []byte("%%EOF\n")) {
 		t.Fatal("en-tête ou fin du PDF")
 	}
@@ -116,9 +120,11 @@ func TestExportPDF(t *testing.T) {
 	}
 	texte := textePDF(t, doc)
 	for _, attendu := range []string{"Alizé — Glénan", "Informations", "Navigateur : Paul", "Personnes à bord : 3",
-		"Port d'attache : Lorient", "Amis : Léa, Secours", "Tracé", "Alertes SOS", "Voie d'eau",
+		"Port d'attache : Lorient", "Amis : Léa, Secours", "Carte", "Alertes SOS", "Voie d'eau",
 		"Journal de bord", "Début de navigation · 2026-11-20 09:00 UTC", "Note vocale, à écouter sur l'Application web.",
-		"en dehors des heures affichées", "page 2"} {
+		"en dehors des heures affichées", " · page 2", "NautiLink", "Your sea, your safety, your story.", "Version bêta", "Mémo sécurité en mer",
+		"Tous droits réservés · ", " · V1.2.3 · build 7 · commit ", "0123456", "Fond de carte © ", "les contributeurs d'OpenStreetMap", "OpenSeaMap",
+		"orange : incident ou avarie"} {
 		if !strings.Contains(texte, chainePDF(winAnsi(attendu))[1:len(chainePDF(winAnsi(attendu)))-1]) {
 			t.Errorf("%q absent du PDF", attendu)
 		}
@@ -126,15 +132,54 @@ func TestExportPDF(t *testing.T) {
 	if !strings.Contains(texte, "/Im1 Do") || !strings.Contains(texte, " c b Q") || !strings.Contains(texte, " l S Q") {
 		t.Error("photo, points ou tracé non dessinés")
 	}
+	// Logo (96 × 96) en tête, fond de carte à la taille de la carte (D-180).
+	if !bytes.Contains(doc, []byte("/Subtype /Image /Width 96 /Height 96")) {
+		t.Error("logo absent")
+	}
+	if carteRecue == nil || len(carteRecue.Dalles) == 0 || carteRecue.Dalles[0].Chemin == "" ||
+		!bytes.Contains(doc, []byte("/Subtype /Image /Width "+strconv.Itoa(int(carteRecue.Largeur))+" /Height "+strconv.Itoa(int(carteRecue.Hauteur)))) {
+		t.Errorf("fond de carte absent : %+v", carteRecue)
+	}
+	// Liens actifs du pied de page (chaque page) et de la mention de la carte.
+	for _, adresse := range []string{adresseAvertissement, adresseMemo, v.Site(), v.Depot() + "/commit/0123456789abcdef", adresseOSMCopyright, adresseOpenSeaMap} {
+		if !bytes.Contains(doc, []byte("/S /URI /URI "+chainePDF([]byte(adresse)))) {
+			t.Errorf("lien vers %s absent", adresse)
+		}
+	}
+	if n, pages := bytes.Count(doc, []byte("/S /URI /URI "+chainePDF([]byte(adresseMemo)))), bytes.Count(doc, []byte("/Type /Page ")); n != pages {
+		t.Errorf("lien du mémo sur %d pages sur %d", n, pages)
+	}
+	if !regexp.MustCompile(`/Type /Page /Parent 2 0 R .* /Annots \[( \d+ 0 R)+ \] >>`).Match(doc) {
+		t.Error("annotations non rattachées aux pages")
+	}
+	// Sans fond : fond uni et mention de l'indisponibilité.
+	if texte := textePDF(t, exportPDF(d, evts, nil, nil, v)); !strings.Contains(texte, "Fond de carte indisponible") || strings.Contains(texte, "balisage ") {
+		t.Error("PDF sans fond de carte")
+	}
 	if dossier := os.Getenv("NAUTILINK_PDF_ESSAI"); dossier != "" {
 		_ = os.WriteFile(dossier+"/navigation-essai.pdf", doc, 0o644)
 	}
 }
 
+// fondEssai : JPEG uni de l × h pixels.
+func fondEssai(t *testing.T, l, h int) []byte {
+	t.Helper()
+	img := image.NewRGBA(image.Rect(0, 0, l, h))
+	draw.Draw(img, img.Bounds(), &image.Uniform{color.RGBA{200, 220, 180, 255}}, image.Point{}, draw.Src)
+	var b bytes.Buffer
+	if err := jpeg.Encode(&b, img, nil); err != nil {
+		t.Fatal(err)
+	}
+	return b.Bytes()
+}
+
 // TestPDFWeb : avec PostgreSQL : PDF du navigateur et du suiveur
-// (RG-NAV-19, RG-PAR-08), refusé sans accès.
+// (RG-NAV-19, RG-PAR-08), refusé sans accès ; fond de carte téléchargé par
+// le serveur (faux serveur de dalles).
 func TestPDFWeb(t *testing.T) {
 	e := nouvelEssai(t)
+	dalles, appels, _ := fauxServeurDalles(t) // faux serveur de dalles (D-180)
+	e.a.dalles = dalles
 	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
 	t0 := time.Now().Add(-5 * time.Hour).Truncate(time.Second)
 	fin := t0.Add(2 * time.Hour)
@@ -154,6 +199,12 @@ func TestPDFWeb(t *testing.T) {
 			!strings.Contains(rec.Header().Get("Content-Disposition"), "attachment") || !bytes.Contains(rec.Body.Bytes(), []byte("/Subtype /Image")) {
 			t.Fatalf("PDF pour %s : %d %q", email, rec.Code, rec.Header().Get("Content-Type"))
 		}
+	}
+	if appels.Load() == 0 || !strings.Contains(textePDF(t, e.webConnecte("nav@exemple.org").envoyer("GET", "/nautilink/navigations/"+id+"/pdf", nil).Body.Bytes()), string(winAnsi("Fond de carte © "))) {
+		t.Fatal("fond de carte du PDF non téléchargé")
+	}
+	if dossier := os.Getenv("NAUTILINK_PDF_ESSAI"); dossier != "" {
+		_ = os.WriteFile(dossier+"/navigation-web.pdf", e.webConnecte("nav@exemple.org").envoyer("GET", "/nautilink/navigations/"+id+"/pdf", nil).Body.Bytes(), 0o644)
 	}
 	e.compte("eve@exemple.org", "Ève")
 	if rec := e.webConnecte("eve@exemple.org").envoyer("GET", "/nautilink/navigations/"+id+"/pdf", nil); rec.Code != 404 {

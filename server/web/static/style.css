@@ -125,7 +125,7 @@ ul.log li.navigation:focus-within .bulle { display: block; }
 .bulle svg.carte { max-width: 332px; margin-top: 8px; }
 
 /* Carte (RG-NAV-29) : dalles OpenStreetMap et OpenSeaMap, tracé, points. */
-svg.carte { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--filet); }
+svg.carte { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--filet); padding: 0; margin: 0; box-shadow: none; } /* pas le cadre des cartes .carte */
 svg.carte .mer { fill: #AAD3DF; }
 svg.carte .trace { fill: none; stroke: #0E6BA8; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
 svg.carte .point { stroke: #FFFFFF; stroke-width: 2; fill: #0E6BA8; }

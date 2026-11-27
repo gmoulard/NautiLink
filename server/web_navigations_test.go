@@ -138,7 +138,7 @@ func TestRenduTableau(t *testing.T) {
 	ligne := func(n navigationJSON, bateau string) ligneNav {
 		n.Bateau = resumeBateau{ID: bateau, Nom: bateau}
 		l := ligneNav{Titre: titreLog(n), N: n, Depart: heureWeb(n.Debut, nil), Duree: dureeTexte(n.DureeMinutes), Distance: distanceTexte(n.DistanceMetres)}
-		l.Apercu = cadrer([]pointCarte{{Latitude: 47.7, Longitude: -4}, {Latitude: 47.6, Longitude: -3.9}}, nil, 320, 200, false)
+		l.Apercu = cadrer([]pointCarte{{Latitude: 47.7, Longitude: -4}, {Latitude: 47.6, Longitude: -3.9}}, nil, 320, 200, true)
 		return l
 	}
 	enCours := []ligneNav{ligne(navEssai("Alizé — Glénan", "en_cours", "navigateur"), "Alizé")}
@@ -155,12 +155,13 @@ func TestRenduTableau(t *testing.T) {
 		`href="/nautilink/?role=suiveur" aria-current="page"`, "Vous suivez cette navigation", "Votre navigation",
 		"20-nov-26 09:00-11:05 UTC 5 milles", "20-nov-26 09:00-en cours UTC", "En cours",
 		"2 h 05", "9,3 km (5,0 milles)", "2026-11-20 09:00 UTC", `class="bulle"`, "<polyline",
-		`href="/nautilink/navigations/11111111-0000-4000-8000-000000000001"`, "?curseur=50&amp;role=suiveur"} {
+		`href="/nautilink/navigations/11111111-0000-4000-8000-000000000001"`, "?curseur=50&amp;role=suiveur",
+		"https://tile.openstreetmap.org/", "https://tiles.openseamap.org/seamark/", "Fond de carte © les contributeurs d'OpenStreetMap · balisage © OpenSeaMap"} {
 		if !strings.Contains(page, attendu) {
 			t.Errorf("%q absent du log de nav", attendu)
 		}
 	}
-	for _, absent := range []string{"<h1>Tableau de bord</h1>", "Aperçu</summary>", "openstreetmap"} {
+	for _, absent := range []string{"<h1>Tableau de bord</h1>", "Aperçu</summary>"} {
 		if strings.Contains(page, absent) {
 			t.Errorf("%q présent dans le log de nav", absent)
 		}
