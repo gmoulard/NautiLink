@@ -197,6 +197,7 @@ class SmsNavigation {
     'note' => 'notes',
     'photo' => 'photos',
     'note_vocale' => 'notesVocales',
+    'incident' => 'incidents',
     'fin' => 'fin',
     _ => null,
   };
@@ -231,6 +232,7 @@ class SmsNavigation {
       'note' => l.smsKindNote,
       'photo' => l.smsKindPhoto,
       'note_vocale' => l.smsKindVoice,
+      'incident' => l.smsKindIncident,
       'fin' => l.smsKindEnd,
       _ => l.smsKindPosition,
     };
@@ -255,13 +257,16 @@ class SmsNavigation {
       if (note != null && note.isNotEmpty) l.smsNoteLine(note),
       if (type == 'photo') l.smsPhotoLine(lienEvenement),
       if (type == 'note_vocale') l.smsVoiceLine(lienEvenement),
+      // RG-JRN-11 : incident ou avarie, mis en évidence sur la page de la navigation.
+      if (type == 'incident') l.smsIncidentLine(lienEvenement),
       if (type == 'debut') l.smsFollowLine(page),
     ].join('\n');
   }
 
   /// SMS ordinaire envoyé automatiquement avec la permission d'envoi de SMS
   /// (D-158), sinon ouvert prérempli (RG-SMS-03) : début, position manuelle,
-  /// note, photo (MMS si prévu, RG-SMS-05), note vocale, fin ; adressé aux
+  /// note, photo (MMS si prévu, RG-SMS-05), note vocale, incident ou avarie
+  /// (RG-JRN-11), fin ; adressé aux
   /// suiveurs de la navigation et au navigateur (copie, RG-SMS-08).
   Future<(IssueSms, int)> ordinaire(
     NavigationLocale n,

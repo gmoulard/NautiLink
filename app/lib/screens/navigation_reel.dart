@@ -258,6 +258,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
     'notes': SmsType.note,
     'photos': SmsType.photo,
     'notesVocales': SmsType.voice,
+    'incidents': SmsType.incident,
     'fin': SmsType.end,
   };
 
@@ -688,6 +689,21 @@ class _StartReelScreenState extends State<StartReelScreen> {
                   l.alertedPersons,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
+                // TODO-5.13 (demande du 2026-11-26) : « Début de navigation »
+                // avec la liste des personnes alertées, juste au-dessus d'elle.
+                const SizedBox(height: 8),
+                FilledButton(
+                  key: const Key('start-send'),
+                  onPressed: envoi ? null : _demarrer,
+                  child: envoi
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(l.sendStart),
+                ),
+                const SizedBox(height: 8),
                 if (alertables.isEmpty) Text(l.noAlertablePerson),
                 // Q-102 : un sélecteur « E-mail » et un « SMS » par personne,
                 // sans distinguer suiveur et contact SOS.
@@ -781,16 +797,6 @@ class _StartReelScreenState extends State<StartReelScreen> {
                     ),
                   ),
                 const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: envoi ? null : _demarrer,
-                  child: envoi
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(l.sendStart),
-                ),
                 const PiedDePage(),
               ],
             ),
@@ -867,6 +873,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     String type,
     Future<EtatEnvoi?> Function() f, {
     String? Function()? photo,
+    String Function()? titreFinal,
   }) async {
     if (envoi) return;
     final l = AppLocalizations.of(context);
@@ -883,9 +890,11 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           n.journal.isNotEmpty &&
           depot.canalSms.disponible) {
         final e = n.journal.last;
+        // Type de l'événement créé : « NOTE » crée une note ou un incident
+        // (D-165), chacun avec sa préférence de SMS (RG-SMS-02).
         sms = await depot.sms.ordinaire(
           n,
-          type,
+          e.type,
           defaut: depot.parametres,
           position: e.position,
           note: e.texte,
@@ -904,7 +913,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     if (etat == null || !mounted) return;
     await showSendResult(
       context,
-      etat.refuse ? l.sendRefused : titre,
+      etat.refuse ? l.sendRefused : (titreFinal?.call() ?? titre),
       lignesResultat(l, etat, sms: sms),
     );
   }
@@ -1086,6 +1095,147 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
     );
   }
 
+  /// Fenêtre de « NOTE » (D-165) : « Note » ou « Incident - avarie » ; pour
+  /// un incident ou une avarie, texte obligatoire et une pièce jointe
+  /// facultative, photo ou note vocale (RG-JRN-11).
+  Future<({bool incident, String texte, String piece})?> _saisieNote(
+    bool avecMedias,
+  ) {
+    final c = TextEditingController();
+    final l = AppLocalizations.of(context);
+    var incident = false;
+    var piece = 'aucune';
+    return showDialog<({bool incident, String texte, String piece})>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, majDialogue) => AlertDialog(
+          title: Text(l.noteTitle),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SegmentedButton<bool>(
+                  key: const Key('note-kind'),
+                  segments: [
+                    ButtonSegment(value: false, label: Text(l.noteKindNote)),
+                    ButtonSegment(
+                      value: true,
+                      icon: const Icon(Icons.report_problem_outlined),
+                      label: Text(l.noteKindIncident),
+                    ),
+                  ],
+                  selected: {incident},
+                  onSelectionChanged: (v) =>
+                      majDialogue(() => incident = v.first),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  key: const Key('note-text'),
+                  controller: c,
+                  autofocus: true,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: incident ? l.incidentHint : l.noteHint,
+                  ),
+                ),
+                if (incident && avecMedias) ...[
+                  const SizedBox(height: 12),
+                  Text(l.incidentAttachment),
+                  RadioGroup<String>(
+                    groupValue: piece,
+                    onChanged: (v) => majDialogue(() => piece = v ?? piece),
+                    child: Column(
+                      children: [
+                        for (final (v, t) in [
+                          ('aucune', l.attachmentNone),
+                          ('photo', l.attachmentPhoto),
+                          ('vocal', l.attachmentVoice),
+                        ])
+                          RadioListTile<String>(
+                            key: Key('incident-piece-$v'),
+                            value: v,
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(t),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l.cancel),
+            ),
+            TextButton(
+              // RG-JRN-11 : texte obligatoire, pour une note comme pour un
+              // incident : sans texte, la fenêtre reste ouverte.
+              onPressed: () {
+                if (c.text.trim().isEmpty) return;
+                Navigator.pop(ctx, (
+                  incident: incident,
+                  texte: c.text.trim(),
+                  piece: incident ? piece : 'aucune',
+                ));
+              },
+              child: Text(l.validateSend),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Incident ou avarie (RG-JRN-11, D-165), avec sa pièce jointe éventuelle :
+  /// photo prise ou note vocale enregistrée comme par « Photo » et « Vocal ».
+  Future<EtatEnvoi?> _incident(
+    DepotReel depot,
+    ({bool incident, String texte, String piece}) s,
+  ) async {
+    final c = depot.conduite;
+    final medias = depot.medias;
+    final l = AppLocalizations.of(context);
+    if (s.piece == 'aucune' || medias == null) return c.incident(s.texte);
+    final id = depot.file.nouvelId();
+    if (s.piece == 'photo') {
+      final f = await medias.photo(id);
+      if (f == null) return null;
+      return c.incident(
+        s.texte,
+        id: id,
+        chemin: f.chemin,
+        typeMedia: 'image/jpeg',
+        taille: f.tailleOctets,
+      );
+    }
+    if (!await medias.commencerVocal(id)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l.micRefused)));
+      }
+      return null;
+    }
+    if (!mounted) return null;
+    final r = await showDialog<(FichierMedia, int)>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _EnregistrementVocal(medias: medias),
+    );
+    if (r == null) return null;
+    return c.incident(
+      s.texte,
+      id: id,
+      chemin: r.$1.chemin,
+      typeMedia: 'audio/mp4',
+      taille: r.$1.tailleOctets,
+      dureeSecondes: r.$2,
+    );
+  }
+
   List<Widget> _boutons(DepotReel depot, AppLocalizations l) {
     final c = depot.conduite;
     final medias = depot.medias;
@@ -1110,11 +1260,16 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
               label: Text(l.noteButton),
               onPressed: envoi
                   ? null
-                  : () => _envoyer(l.noteSent, 'note', () async {
-                      final t = await _texte(l.noteTitle, l.noteHint);
-                      if (t == null || t.isEmpty) return null;
-                      return c.note(t);
-                    }),
+                  : () {
+                      var titre = l.noteSent;
+                      _envoyer(l.noteSent, 'note', () async {
+                        final s = await _saisieNote(medias != null);
+                        if (s == null) return null;
+                        if (!s.incident) return c.note(s.texte);
+                        titre = l.incidentSent;
+                        return _incident(depot, s);
+                      }, titreFinal: () => titre);
+                    },
             ),
           ),
           const SizedBox(width: 8),
@@ -1345,6 +1500,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                                 'note',
                                 'photo',
                                 'note_vocale',
+                                'incident',
                               }.contains(e.type)
                               ? () => _actionsEvenement(depot, n, e)
                               : null,
@@ -1852,7 +2008,8 @@ class EvenementTile extends StatelessWidget {
   const EvenementTile({super.key, required this.evenement, this.onTap});
   final EvenementLocal evenement;
 
-  /// Note, photo, note vocale : actions du journal (RG-JRN-06).
+  /// Note, photo, note vocale, incident ou avarie : actions du journal
+  /// (RG-JRN-06).
   final VoidCallback? onTap;
 
   @override
@@ -1866,6 +2023,7 @@ class EvenementTile extends StatelessWidget {
       'note' => (Icons.edit_note, l.eventNote),
       'photo' => (Icons.photo_outlined, l.eventPhoto),
       'note_vocale' => (Icons.mic_none, l.eventVoice),
+      'incident' => (Icons.report_problem_outlined, l.eventIncident),
       'sos' => (Icons.sos, l.eventSos),
       'fin' => (Icons.sports_score, l.eventEnd),
       _ => (Icons.circle_outlined, e.type),
@@ -1887,16 +2045,18 @@ class EvenementTile extends StatelessWidget {
         l.gpsUnavailable,
     ];
     final sos = e.type == 'sos';
+    // RG-JRN-11 : incident ou avarie mis en évidence, comme l'alerte SOS.
+    final enEvidence = sos || e.type == 'incident';
     return ListTile(
       contentPadding: EdgeInsets.zero,
       onTap: onTap,
       trailing: onTap == null ? null : const Icon(Icons.more_vert),
-      leading: Icon(icone, color: sos ? NlColors.alert : NlColors.teal),
+      leading: Icon(icone, color: enEvidence ? NlColors.alert : NlColors.teal),
       title: Text(
         '${fmtTime(e.heure)} · $titre',
         style: TextStyle(
           fontWeight: FontWeight.w600,
-          color: sos ? NlColors.alert : null,
+          color: enEvidence ? NlColors.alert : null,
         ),
       ),
       subtitle: details.isEmpty ? null : Text(details.join('\n')),

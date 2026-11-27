@@ -181,7 +181,16 @@ String frequencyLabel(AppLocalizations l, int minutes) => minutes % 1440 == 0
     : l.frequencyMinutes(minutes);
 
 /// Types de messages réglables un par un (RG-SMS-02).
-enum SmsType { start, autoPosition, manualPosition, note, photo, voice, end }
+enum SmsType {
+  start,
+  autoPosition,
+  manualPosition,
+  note,
+  photo,
+  voice,
+  incident, // RG-SMS-02, RG-JRN-11
+  end,
+}
 
 String smsTypeLabel(AppLocalizations l, SmsType t) => switch (t) {
   SmsType.start => l.smsTypeStart,
@@ -190,6 +199,7 @@ String smsTypeLabel(AppLocalizations l, SmsType t) => switch (t) {
   SmsType.note => l.smsTypeNote,
   SmsType.photo => l.smsTypePhoto,
   SmsType.voice => l.smsTypeVoice,
+  SmsType.incident => l.smsTypeIncident,
   SmsType.end => l.smsTypeEnd,
 };
 
@@ -249,6 +259,7 @@ class AppState extends ChangeNotifier {
     SmsType.note: true,
     SmsType.photo: false,
     SmsType.voice: true,
+    SmsType.incident: true,
     SmsType.end: true,
   };
 

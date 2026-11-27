@@ -614,6 +614,30 @@ class ConduiteNavigation extends ChangeNotifier {
     dureeSecondes: dureeSecondes.clamp(1, 60),
   );
 
+  /// « Incident - avarie » de la fenêtre « NOTE » (RG-JRN-11, D-154,
+  /// D-165) : texte obligatoire, une photo ou une note vocale facultative.
+  Future<EtatEnvoi> incident(
+    String texte, {
+    String? id,
+    String? chemin,
+    String? typeMedia,
+    int? taille,
+    int? dureeSecondes,
+  }) async {
+    if (chemin == null || typeMedia == null || taille == null) {
+      return _etat(await enregistrer('incident', id: id, texte: texte.trim()));
+    }
+    return _media(
+      id ?? file.nouvelId(),
+      'incident',
+      chemin,
+      typeMedia,
+      taille,
+      dureeSecondes: dureeSecondes?.clamp(1, 60),
+      texte: texte.trim(),
+    );
+  }
+
   Future<EtatEnvoi> _media(
     String id,
     String type,
@@ -621,10 +645,12 @@ class ConduiteNavigation extends ChangeNotifier {
     String typeMedia,
     int taille, {
     int? dureeSecondes,
+    String? texte,
   }) async {
     final cle = await enregistrer(
       type,
       id: id,
+      texte: texte,
       fichier: {
         'typeMedia': typeMedia,
         'tailleOctets': taille,

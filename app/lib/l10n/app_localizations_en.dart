@@ -569,6 +569,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noteSent => 'Note sent';
 
   @override
+  String get noteKindNote => 'Note';
+
+  @override
+  String get noteKindIncident => 'Incident or damage';
+
+  @override
+  String get incidentHint => 'Describe the incident or damage';
+
+  @override
+  String get incidentAttachment => 'Attachment (optional)';
+
+  @override
+  String get attachmentNone => 'None';
+
+  @override
+  String get attachmentPhoto => 'Photo';
+
+  @override
+  String get attachmentVoice => 'Voice note';
+
+  @override
+  String get incidentSent => 'Incident or damage sent';
+
+  @override
   String get photoButton => 'Photo';
 
   @override
@@ -739,6 +763,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventVoice => 'Voice note';
 
   @override
+  String get eventIncident => 'Incident or damage';
+
+  @override
   String get eventSos => 'SOS alert';
 
   @override
@@ -814,6 +841,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smsTypeVoice => 'Voice notes';
+
+  @override
+  String get smsTypeIncident => 'Incidents and damage';
 
   @override
   String get smsTypeEnd => 'Voyage end';
@@ -1104,6 +1134,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smsKindVoice => 'voice note';
 
   @override
+  String get smsKindIncident => 'incident or damage';
+
+  @override
   String get smsKindEnd => 'voyage end';
 
   @override
@@ -1132,6 +1165,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String smsVoiceLine(String link) {
     return 'Voice note: $link';
+  }
+
+  @override
+  String smsIncidentLine(String link) {
+    return 'Details: $link';
   }
 
   @override

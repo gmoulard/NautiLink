@@ -1100,6 +1100,54 @@ abstract class AppLocalizations {
   /// **'Note envoyée'**
   String get noteSent;
 
+  /// No description provided for @noteKindNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note'**
+  String get noteKindNote;
+
+  /// No description provided for @noteKindIncident.
+  ///
+  /// In fr, this message translates to:
+  /// **'Incident - avarie'**
+  String get noteKindIncident;
+
+  /// No description provided for @incidentHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décrivez l\'incident ou l\'avarie'**
+  String get incidentHint;
+
+  /// No description provided for @incidentAttachment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pièce jointe (facultative)'**
+  String get incidentAttachment;
+
+  /// No description provided for @attachmentNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune'**
+  String get attachmentNone;
+
+  /// No description provided for @attachmentPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo'**
+  String get attachmentPhoto;
+
+  /// No description provided for @attachmentVoice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note vocale'**
+  String get attachmentVoice;
+
+  /// No description provided for @incidentSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Incident - avarie envoyé'**
+  String get incidentSent;
+
   /// No description provided for @photoButton.
   ///
   /// In fr, this message translates to:
@@ -1418,6 +1466,12 @@ abstract class AppLocalizations {
   /// **'Note vocale'**
   String get eventVoice;
 
+  /// No description provided for @eventIncident.
+  ///
+  /// In fr, this message translates to:
+  /// **'Incident - avarie'**
+  String get eventIncident;
+
   /// No description provided for @eventSos.
   ///
   /// In fr, this message translates to:
@@ -1507,6 +1561,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Notes vocales'**
   String get smsTypeVoice;
+
+  /// No description provided for @smsTypeIncident.
+  ///
+  /// In fr, this message translates to:
+  /// **'Incidents - avaries'**
+  String get smsTypeIncident;
 
   /// No description provided for @smsTypeEnd.
   ///
@@ -1969,6 +2029,12 @@ abstract class AppLocalizations {
   /// **'note vocale'**
   String get smsKindVoice;
 
+  /// No description provided for @smsKindIncident.
+  ///
+  /// In fr, this message translates to:
+  /// **'incident - avarie'**
+  String get smsKindIncident;
+
   /// No description provided for @smsKindEnd.
   ///
   /// In fr, this message translates to:
@@ -2010,6 +2076,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Note vocale : {link}'**
   String smsVoiceLine(String link);
+
+  /// No description provided for @smsIncidentLine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails : {link}'**
+  String smsIncidentLine(String link);
 
   /// No description provided for @smsFollowLine.
   ///

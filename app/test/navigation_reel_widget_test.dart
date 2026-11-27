@@ -94,6 +94,14 @@ void main() {
         findsOneWidget,
       ); // un seul bateau : pas de choix
       expect(find.text('Claire'), findsOneWidget); // personne alertée, cochée
+      // TODO-5.13 : « Début de navigation » juste au-dessus de la liste des
+      // personnes alertées, sous son titre.
+      final bouton = tester.getTopLeft(find.byKey(const Key('start-send'))).dy;
+      expect(
+        bouton,
+        greaterThan(tester.getTopLeft(find.text('Personnes alertées')).dy),
+      );
+      expect(bouton, lessThan(tester.getTopLeft(find.text('Claire')).dy));
       expect(
         find.text('1 heure'),
         findsOneWidget,
@@ -267,6 +275,53 @@ void main() {
         'note_vocale',
       ]);
       expect(serveur.fichiers.length, 2);
+    },
+  );
+
+  testWidgets(
+    '« Incident - avarie » dans la fenêtre de NOTE : texte obligatoire, photo facultative, SMS (TODO-5.11, RG-JRN-11, D-165)',
+    (tester) async {
+      await naviguer(tester);
+      await toucher(tester, 'NOTE');
+      await toucher(tester, 'Incident - avarie');
+      // RG-JRN-11 : pas d'envoi sans texte, la fenêtre reste ouverte.
+      await toucher(tester, 'Valider l\'envoi');
+      expect(find.byKey(const Key('note-text')), findsOneWidget);
+      expect(evenements(), isEmpty);
+      await tester.enterText(
+        find.byKey(const Key('note-text')),
+        'Voie d\'eau au presse-étoupe',
+      );
+      await tester.pump();
+      await toucher(tester, 'Valider l\'envoi');
+      expect(find.text('Incident - avarie envoyé'), findsOneWidget);
+      await toucher(tester, 'OK');
+      // RG-SMS-02 : SMS du type « Incidents - avaries », avec le lien de l'événement.
+      expect(sms.preremplis.last.$2, contains('incident - avarie'));
+      expect(
+        sms.preremplis.last.$2,
+        contains('Note : Voie d\'eau au presse-étoupe'),
+      );
+      expect(sms.preremplis.last.$2, contains('Détails : https://'));
+      expect(find.text('Voie d\'eau au presse-étoupe'), findsOneWidget);
+
+      // une seule pièce jointe : photo
+      await toucher(tester, 'NOTE');
+      await toucher(tester, 'Incident - avarie');
+      await tester.enterText(find.byKey(const Key('note-text')), 'Safran');
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('incident-piece-photo')));
+      await tester.pump();
+      await toucher(tester, 'Valider l\'envoi');
+      expect(find.text('Incident - avarie envoyé'), findsOneWidget);
+      await toucher(tester, 'OK');
+
+      final evts = evenements();
+      expect(evts.map((e) => e['type']), ['incident', 'incident']);
+      expect(evts[0]['texte'], 'Voie d\'eau au presse-étoupe');
+      expect(evts[0]['fichier'], isNull);
+      expect((evts[1]['fichier'] as Map)['typeMedia'], 'image/jpeg');
+      expect(serveur.fichiers.length, 1);
     },
   );
 

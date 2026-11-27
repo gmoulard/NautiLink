@@ -96,6 +96,7 @@ class DepotDemo extends Depot {
     SmsType.note: 'notes',
     SmsType.photo: 'photos',
     SmsType.voice: 'notesVocales',
+    SmsType.incident: 'incidents',
     SmsType.end: 'fin',
   };
 
