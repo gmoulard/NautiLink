@@ -58,6 +58,7 @@ type donneesPage struct {
 	Retour                 string
 	DemanderAvertissement  bool
 	Annonces               []annonceJSON     // bandeau du tableau de bord (RG-ADM-06)
+	Rubrique               string            // entrée du menu de la page ouverte, en bleu foncé (D-178)
 	F                      map[string]string // valeurs saisies, renvoyées après une erreur
 	D                      any               // données propres à la page
 }
@@ -74,13 +75,30 @@ var messages = map[string]string{
 
 type pageWeb func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error
 
+// rubriqueDe : entrée du menu à laquelle appartient une page, d'après le
+// premier élément de son chemin (D-178) : la page d'une navigation et le
+// démarrage relèvent du log de nav.
+func rubriqueDe(chemin string) string {
+	premier, _, _ := strings.Cut(strings.TrimPrefix(chemin, "/"), "/")
+	switch premier {
+	case "", "navigations", "demarrer":
+		return "log"
+	case "mot-de-passe":
+		return "compte"
+	case "mot-de-passe-oublie":
+		return "connexion"
+	}
+	return premier
+}
+
 // web : enveloppe commune des pages : base prête, session (renvoi vers la
 // connexion si elle est exigée), refus des formulaires venus d'un autre site,
 // cookie de session prolongé.
 func (a *app) web(connecte bool, p pageWeb) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		d := &donneesPage{Base: a.cfg.Chemin, Version: constructionServeur(), Avertissement: adresseAvertissement,
-			VersionAvertissement: versionAvertissement, Message: messages[r.URL.Query().Get("ok")], F: map[string]string{}}
+			VersionAvertissement: versionAvertissement, Message: messages[r.URL.Query().Get("ok")], F: map[string]string{},
+			Rubrique: rubriqueDe(strings.TrimPrefix(r.URL.Path, a.cfg.Chemin))}
 		if !a.b.prete() && (connecte || r.Method != http.MethodGet) {
 			w.WriteHeader(http.StatusServiceUnavailable)
 			d.Titre = "Service momentanément indisponible"

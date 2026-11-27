@@ -464,12 +464,6 @@ abstract class AppLocalizations {
   /// **'Disponible : {duration}'**
   String quotaLeft(String duration);
 
-  /// No description provided for @quotaNextRecovery.
-  ///
-  /// In fr, this message translates to:
-  /// **'Prochaines minutes récupérables : 3 h 40 min dans 4 jours (navigation du début de semaine).'**
-  String get quotaNextRecovery;
-
   /// No description provided for @subscriptionTitle.
   ///
   /// In fr, this message translates to:
@@ -1770,12 +1764,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'État du {date}'**
   String quotaAsOf(String date);
-
-  /// No description provided for @quotaNextAt.
-  ///
-  /// In fr, this message translates to:
-  /// **'Prochaines minutes récupérables : {duration} le {date}.'**
-  String quotaNextAt(String duration, String date);
 
   /// No description provided for @voyageInProgress.
   ///

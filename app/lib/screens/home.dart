@@ -437,7 +437,8 @@ class SmsSettings extends StatelessWidget {
   }
 }
 
-/// Quota et abonnement (RG-ECO-09).
+/// Quota et abonnement (RG-ECO-09) : temps consommé, temps disponible et
+/// abonnement, sans les prochaines minutes récupérables (D-179).
 class QuotaScreen extends StatelessWidget {
   const QuotaScreen({super.key});
 
@@ -451,8 +452,6 @@ class QuotaScreen extends StatelessWidget {
         ? 0.0
         : (used / (used + left)).clamp(0.0, 1.0);
     final l = AppLocalizations.of(context);
-    final next = q?.prochainesMinutes;
-    final nextAt = q?.prochainesMinutesLe;
     final recu = q?.recuLe;
     return Scaffold(
       appBar: AppBar(title: Text(l.menuQuota)),
@@ -478,15 +477,6 @@ class QuotaScreen extends StatelessWidget {
               Text(l.quotaLeft(fmtDuration(l, Duration(minutes: left)))),
             ],
             const SizedBox(height: 8),
-            if (depot.demonstration)
-              Text(l.quotaNextRecovery)
-            else if (next != null && nextAt != null)
-              Text(
-                l.quotaNextAt(
-                  fmtDuration(l, Duration(minutes: next)),
-                  fmtDate(l, nextAt),
-                ),
-              ),
             // Dernier état reçu, avec son heure (RG-COM-06).
             if (!depot.demonstration && recu != null)
               Text(l.quotaAsOf(fmtDate(l, recu))),

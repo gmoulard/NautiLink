@@ -48,5 +48,5 @@ L'abonnement ne conditionne jamais l'accès aux données déjà enregistrées (R
 ## 6. Exigences pour l'application
 
 - Le quota est calculé par le serveur, pour être identique sur tous les appareils (RG-ECO-09).
-- Les applications mobiles et le Web affichent le temps consommé, le temps disponible, les prochaines minutes récupérables et l'état de l'abonnement sur un écran « Quota et abonnement » et en résumé sur l'accueil (RG-ECO-09).
+- Les applications mobiles et le Web affichent le temps consommé, le temps disponible et l'état de l'abonnement sur un écran « Quota et abonnement » et en résumé sur l'accueil (RG-ECO-09).
 - Le temps de suivi n'est jamais compté (RG-ECO-03).

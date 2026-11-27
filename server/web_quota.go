@@ -5,22 +5,19 @@ import (
 )
 
 // Page « Quota et abonnement » de l'Application web (TODO-6.7, RG-ECO-09,
-// RG-ECO-10) : temps consommé et disponible, prochaines minutes
-// récupérables, clôture automatique annoncée, état de l'abonnement, quel que
-// soit le canal de la souscription (RG-ECO-07) ; « Souscrire l'abonnement »
-// par carte bancaire avec Stripe (RG-ECO-11, stripe.go) ; lien vers la page
-// d'information du site.
+// RG-ECO-10) : temps consommé et disponible, clôture automatique annoncée,
+// état de l'abonnement, quel que soit le canal de la souscription
+// (RG-ECO-07), sans les prochaines minutes récupérables (D-179) ;
+// « Souscrire l'abonnement » par carte bancaire avec Stripe (RG-ECO-11,
+// stripe.go) ; lien vers la page d'information du site.
 
 const adresseInfoAbonnement = "https://gmoulard.github.io/NautiLink/abonnement.html"
 
 var libellesCanal = map[string]string{"stripe": "carte bancaire sur le Web", "google_play": "Google Play", "app_store": "App Store"}
 
-type ligneProchaines struct{ Duree, Heure string }
-
 type donneesQuota struct {
 	Q                      quotaJSON
 	Consomme, Disponible   string
-	Prochaines             []ligneProchaines
 	Cloture, FinAbonnement string
 	Canal                  string
 	Info                   string
@@ -46,9 +43,6 @@ func (a *app) routesWebQuota(mux *http.ServeMux, c string) {
 		}
 		dq := donneesQuota{Q: q, Consomme: dureeTexte(q.ConsommeMinutes), Disponible: dureeTexte(q.DisponibleMinutes),
 			Info: adresseInfoAbonnement, StripeOuvert: a.stripe.cle != "", Canal: libellesCanal[texteOuVide(q.Abonnement.Canal)]}
-		for _, p := range q.ProchainesMinutes {
-			dq.Prochaines = append(dq.Prochaines, ligneProchaines{dureeTexte(p.Minutes), heureWeb(p.DisponiblesLe, nil)})
-		}
 		if q.ClotureAutomatiqueLe != nil {
 			dq.Cloture = heureWeb(*q.ClotureAutomatiqueLe, nil)
 		}

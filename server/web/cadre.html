@@ -16,20 +16,20 @@
     <button class="menu-bouton secondaire" type="button" aria-expanded="false" aria-controls="menu" hidden>Menu</button>
     <nav id="menu" aria-label="Menu principal">
     {{if .Connecte}}
-      <a href="{{.Base}}/">Log de nav</a>
-      <a href="{{.Base}}/bateaux">Bateaux</a>
-      <a href="{{.Base}}/contacts">Contacts</a>
-      <a href="{{.Base}}/parametres">Paramètres</a>
-      <a href="{{.Base}}/quota">Quota et abonnement</a>
-      <a href="{{.Base}}/alertes-sos">Alertes SOS</a>
-      <a href="{{.Base}}/corbeille">Corbeille</a>
-      <a href="{{.Base}}/compte">Mon compte</a>
-      <a href="{{.Base}}/assistance">Assistance</a>
+      <a href="{{.Base}}/"{{if eq .Rubrique "log"}} aria-current="page"{{end}}>Log de nav</a>
+      <a href="{{.Base}}/bateaux"{{if eq .Rubrique "bateaux"}} aria-current="page"{{end}}>Bateaux</a>
+      <a href="{{.Base}}/contacts"{{if eq .Rubrique "contacts"}} aria-current="page"{{end}}>Contacts</a>
+      <a href="{{.Base}}/parametres"{{if eq .Rubrique "parametres"}} aria-current="page"{{end}}>Paramètres</a>
+      <a href="{{.Base}}/quota"{{if eq .Rubrique "quota"}} aria-current="page"{{end}}>Quota et abonnement</a>
+      <a href="{{.Base}}/alertes-sos"{{if eq .Rubrique "alertes-sos"}} aria-current="page"{{end}}>Alertes SOS</a>
+      <a href="{{.Base}}/corbeille"{{if eq .Rubrique "corbeille"}} aria-current="page"{{end}}>Corbeille</a>
+      <a href="{{.Base}}/compte"{{if eq .Rubrique "compte"}} aria-current="page"{{end}}>Mon compte</a>
+      <a href="{{.Base}}/assistance"{{if eq .Rubrique "assistance"}} aria-current="page"{{end}}>Assistance</a>
       {{if .Admin}}<a href="{{.Base}}/admin/">Administration</a>{{end}}
-      <form class="enligne" method="post" action="{{.Base}}/deconnexion"><button class="secondaire" type="submit">Se déconnecter</button></form>
+      <form class="enligne" method="post" action="{{.Base}}/deconnexion"><button class="menu" type="submit">Se déconnecter</button></form>
     {{else}}
-      <a href="{{.Base}}/connexion">Se connecter</a>
-      <a href="{{.Base}}/inscription">Créer un compte</a>
+      <a href="{{.Base}}/connexion"{{if eq .Rubrique "connexion"}} aria-current="page"{{end}}>Se connecter</a>
+      <a href="{{.Base}}/inscription"{{if eq .Rubrique "inscription"}} aria-current="page"{{end}}>Créer un compte</a>
     {{end}}
     </nav>
   </div>

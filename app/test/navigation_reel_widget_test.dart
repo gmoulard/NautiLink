@@ -195,6 +195,8 @@ void main() {
       );
       await toucher(tester, 'Quota et abonnement');
       expect(find.text('En savoir plus sur l\'abonnement'), findsOneWidget);
+      // D-179 : plus de prochaines minutes récupérables sur l'écran.
+      expect(find.textContaining('récupérables'), findsNothing);
       expect(serveur.elements, isEmpty);
     },
   );

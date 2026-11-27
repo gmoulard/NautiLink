@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -45,6 +46,12 @@ func TestQuotaGlissant(t *testing.T) {
 	if q["consommeMinutes"] != 1440.0 || q["disponibleMinutes"] != 0.0 || q["epuise"] != true || len(prochaines) != 2 ||
 		prochaines[0].(map[string]any)["minutes"] != 600.0 || prochaines[0].(map[string]any)["disponiblesLe"] != "2026-11-23T08:00:00Z" {
 		t.Fatalf("quota épuisé : %v", q)
+	}
+	// Page Web : temps consommé et disponible, sans les prochaines minutes
+	// récupérables (D-179).
+	if page := e.webConnecte("nav@exemple.org").envoyer("GET", "/nautilink/quota", nil).Body.String(); !strings.Contains(page, "Quota épuisé") ||
+		!strings.Contains(page, "Consommé sur 7 jours") || strings.Contains(page, "récupérables") {
+		t.Fatalf("page « Quota et abonnement » : %s", page)
 	}
 	// Démarrage refusé, avec l'heure du retour des minutes (RG-ECO-04).
 	_, code, r := e.naviguer(nav, bateau, tel, mercredi.Add(15*time.Hour), nil)
