@@ -21,7 +21,9 @@ import (
 
 // Météo du début et de la fin d'une navigation (RG-NAV-28, RG-NAV-38,
 // TODO-4.10, D-172) : vent et pression du modèle AROME (service WCS de
-// Météo-France, petite grille en GRIB2 autour du point), état de la mer du
+// Météo-France, petite grille en GRIB2 autour du point), hors de son domaine
+// du modèle ARPEGE, Europe à 0,1° puis Globe à 0,25° (même service WCS,
+// TODO-4.12, D-181), état de la mer du
 // modèle de vagues MFWAM (fichier GRIB2 CCSDS entier, lu au point de grille
 // de mer le plus proche, grib2.go). Adresses et ressources : étude
 // docs/etudes/meteofrance-connexion.md § 6 et § 9.1.
@@ -29,6 +31,8 @@ import (
 const (
 	adresseJetonMeteoFrance = "https://portail-api.meteofrance.fr/token"
 	adresseAromeWCS         = "https://public-api.meteofrance.fr/public/arome/1.0/wcs/MF-NWP-HIGHRES-AROME-001-FRANCE-WCS/GetCoverage"
+	adresseArpegeEuropeWCS  = "https://public-api.meteofrance.fr/public/arpege/1.0/wcs/MF-NWP-GLOBAL-ARPEGE-01-EUROPE-WCS/GetCoverage"
+	adresseArpegeGlobeWCS   = "https://public-api.meteofrance.fr/public/arpege/1.0/wcs/MF-NWP-GLOBAL-ARPEGE-025-GLOBE-WCS/GetCoverage"
 	adresseVagues           = "https://public-api.meteofrance.fr/previnum/DPPaquetWAVESMODELS/v1/models/MFWAM/grids/"
 	sourceMeteo             = "Météo-France"
 	// delaiMeteo : nouveaux essais pendant 1 heure, puis « Météo
@@ -62,6 +66,8 @@ type meteoFrance struct {
 	muCode              sync.RWMutex
 	variable, reglage   string
 	jetonURL, aromeURL  string
+	arpegeEuropeURL     string
+	arpegeGlobeURL      string
 	vaguesURL           string
 	client              *http.Client
 	pause               time.Duration // entre deux appels (60 appels par minute au plus)
@@ -72,12 +78,14 @@ type meteoFrance struct {
 	cacheVagues         string // adresse du dernier fichier MFWAM lu
 	champVagues         *champGRIB
 	runArome, runVagues time.Time // dernier calcul trouvé, essayé en premier
+	runArpege           map[string]time.Time
 }
 
 func nouvelleMeteoFrance(cfg config) *meteoFrance {
 	return &meteoFrance{
 		variable: cfg.MeteoFrance,
 		jetonURL: adresseJetonMeteoFrance, aromeURL: adresseAromeWCS, vaguesURL: adresseVagues,
+		arpegeEuropeURL: adresseArpegeEuropeWCS, arpegeGlobeURL: adresseArpegeGlobeWCS,
 		client: &http.Client{Timeout: 90 * time.Second},
 		pause:  time.Second,
 	}
@@ -285,6 +293,32 @@ func (m *meteoFrance) obtenir(ctx context.Context, adresse string, limite int64)
 // dansArome : domaine du modèle AROME à 0,01° (étude § 9.1).
 func dansArome(lat, lon float64) bool { return lat >= 37.5 && lat <= 55.4 && lon >= -12 && lon <= 16 }
 
+// dansArpegeEurope : domaine d'ARPEGE Europe à 0,1° (20° à 72° N, 32° O à
+// 42° E ; à constater sur le catalogue, étude § 9.1, TODO-4.12).
+func dansArpegeEurope(lat, lon float64) bool {
+	return lat >= 20 && lat <= 72 && lon >= -32 && lon <= 42
+}
+
+// modeleWCS : modèle de vent et de pression interrogé par le service WCS.
+type modeleWCS struct {
+	nom     string        // AROME, ARPEGE Europe, ARPEGE Globe
+	adresse string        // point GetCoverage
+	pas     float64       // pas de la grille, en degrés
+	calcul  time.Duration // un nouveau calcul toutes les « calcul » heures
+}
+
+// modeleVent : AROME dans son domaine, sinon ARPEGE Europe, sinon ARPEGE
+// Globe (RG-NAV-28, D-181).
+func (m *meteoFrance) modeleVent(lat, lon float64) modeleWCS {
+	switch {
+	case dansArome(lat, lon):
+		return modeleWCS{"AROME", m.aromeURL, 0.01, 3 * time.Hour}
+	case dansArpegeEurope(lat, lon):
+		return modeleWCS{"ARPEGE Europe", m.arpegeEuropeURL, 0.1, 6 * time.Hour}
+	}
+	return modeleWCS{"ARPEGE Globe", m.arpegeGlobeURL, 0.25, 6 * time.Hour}
+}
+
 // grilleVagues : grille MFWAM à 0,025° sur les côtes françaises (38° à 53°
 // N, 8° O à 12° E), sinon celle à 0,1°.
 func grilleVagues(lat, lon float64) string {
@@ -311,21 +345,27 @@ func calculs(h time.Time, pas time.Duration, nombre int, connu time.Time) []time
 	return l
 }
 
-// valeurArome : une couverture AROME au point, à l'heure h : petite grille
-// en GRIB2 autour du point, lue au point le plus proche.
-func (m *meteoFrance) valeurArome(ctx context.Context, couverture string, hauteur bool, lat, lon float64, h time.Time) (float64, error) {
+// valeurWCS : une couverture du modèle au point, à l'heure h : petite
+// grille en GRIB2 autour du point (3 × 3 points), lue au point le plus
+// proche ; calculs cherchés en remontant, le dernier trouvé en premier.
+func (m *meteoFrance) valeurWCS(ctx context.Context, mod modeleWCS, couverture string, hauteur bool, lat, lon float64, h time.Time) (float64, error) {
 	var derniere error = errMeteoIntrouvable
-	for _, run := range calculs(h, 3*time.Hour, 5, m.runArome) {
+	connu := m.runArome
+	if mod.adresse != m.aromeURL {
+		connu = m.runArpege[mod.adresse]
+	}
+	demi := 1.5 * mod.pas
+	for _, run := range calculs(h, mod.calcul, 5, connu) {
 		q := url.Values{"service": {"WCS"}, "version": {"2.0.1"},
 			"coverageid": {couverture + "___" + run.UTC().Format("2006-01-02T15.04.05Z")},
 			"format":     {"application/wmo-grib"},
 			"subset": {"time(" + h.UTC().Format(time.RFC3339) + ")",
-				fmt.Sprintf("lat(%.3f,%.3f)", lat-0.015, lat+0.015),
-				fmt.Sprintf("long(%.3f,%.3f)", lon-0.015, lon+0.015)}}
+				fmt.Sprintf("lat(%.3f,%.3f)", lat-demi, lat+demi),
+				fmt.Sprintf("long(%.3f,%.3f)", lon-demi, lon+demi)}}
 		if hauteur {
 			q["subset"] = append(q["subset"], "height(10)")
 		}
-		b, err := m.obtenir(ctx, m.aromeURL+"?"+q.Encode(), 1<<20)
+		b, err := m.obtenir(ctx, mod.adresse+"?"+q.Encode(), 1<<20)
 		if errors.Is(err, errMeteoIntrouvable) {
 			continue
 		}
@@ -338,9 +378,16 @@ func (m *meteoFrance) valeurArome(ctx context.Context, couverture string, hauteu
 		}
 		v, ok := champs[0].valeurPres(lat, lon, 2)
 		if !ok {
-			return 0, errors.New("AROME : point absent de la grille rendue")
+			return 0, errors.New(mod.nom + " : point absent de la grille rendue")
 		}
-		m.runArome = run
+		if mod.adresse == m.aromeURL {
+			m.runArome = run
+		} else {
+			if m.runArpege == nil {
+				m.runArpege = map[string]time.Time{}
+			}
+			m.runArpege[mod.adresse] = run
+		}
 		return v, nil
 	}
 	return 0, derniere
@@ -431,27 +478,27 @@ func (m *meteoFrance) relever(ctx context.Context, lat, lon float64, h time.Time
 	h = h.UTC().Round(time.Hour)
 	r := meteoJSON{ReleveeLe: maintenant.UTC(), HeurePrevision: h, Source: sourceMeteo}
 	complet := true
-	if dansArome(lat, lon) {
-		u, err1 := m.valeurArome(ctx, "U_COMPONENT_OF_WIND__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND", true, lat, lon, h)
-		var v float64
-		var err2 error
-		if err1 == nil {
-			v, err2 = m.valeurArome(ctx, "V_COMPONENT_OF_WIND__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND", true, lat, lon, h)
-		}
-		if err := errors.Join(err1, err2); err != nil {
-			log.Printf("météo, vent : %v", err)
-			complet = false
-		} else {
-			r.VentVitesseNoeuds = arrondiA(math.Hypot(u, v)*noeudsParMs, 1)
-			d := int(math.Round(math.Mod(math.Atan2(-u, -v)*180/math.Pi+360, 360))) % 360 // d'où vient le vent
-			r.VentDirectionDegres = &d
-		}
-		if p, err := m.valeurArome(ctx, "PRESSURE__MEAN_SEA_LEVEL", false, lat, lon, h); err != nil {
-			log.Printf("météo, pression : %v", err)
-			complet = false
-		} else {
-			r.PressionHpa = arrondiA(p/100, 1)
-		}
+	// Vent et pression partout dans le monde : AROME, sinon ARPEGE (D-181).
+	mod := m.modeleVent(lat, lon)
+	u, err1 := m.valeurWCS(ctx, mod, "U_COMPONENT_OF_WIND__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND", true, lat, lon, h)
+	var v float64
+	var err2 error
+	if err1 == nil {
+		v, err2 = m.valeurWCS(ctx, mod, "V_COMPONENT_OF_WIND__SPECIFIC_HEIGHT_LEVEL_ABOVE_GROUND", true, lat, lon, h)
+	}
+	if err := errors.Join(err1, err2); err != nil {
+		log.Printf("météo, vent : %v", err)
+		complet = false
+	} else {
+		r.VentVitesseNoeuds = arrondiA(math.Hypot(u, v)*noeudsParMs, 1)
+		d := int(math.Round(math.Mod(math.Atan2(-u, -v)*180/math.Pi+360, 360))) % 360 // d'où vient le vent
+		r.VentDirectionDegres = &d
+	}
+	if p, err := m.valeurWCS(ctx, mod, "PRESSURE__MEAN_SEA_LEVEL", false, lat, lon, h); err != nil {
+		log.Printf("météo, pression : %v", err)
+		complet = false
+	} else {
+		r.PressionHpa = arrondiA(p/100, 1)
 	}
 	if hv, ok, err := m.hauteurVagues(ctx, lat, lon, h); err != nil {
 		log.Printf("météo, vagues : %v", err)
