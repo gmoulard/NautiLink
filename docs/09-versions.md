@@ -1,6 +1,6 @@
 # NautiLink — Versions et compatibilité
 
-Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-128](07-decisions.md#d-128)). Mise à jour : 2026-11-26.
+Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-128](07-decisions.md#d-128)). Mise à jour : 2026-11-27.
 
 ## 1. Composants et numéro de version
 
@@ -45,6 +45,7 @@ Une ligne par combinaison publiée ; la plus récente en haut. L'API est décrit
 
 | Date | Serveur | API | Application | Site | Compatibilité |
 |------|---------|-----|-------------|------|---------------|
+| 2026-11-27 | 0.0.1 | 0.1.0 (proposition) | 0.4.0 (vraie application, APK reconstruit à la demande de l'utilisateur du 2026-11-27) ; démonstration 0.0.1 figée | 0.0.2 | « Incident - avarie » dans la fenêtre de « NOTE » (TODO-5.11, D-165) et bouton « Début de navigation » au-dessus des personnes alertées (TODO-5.13) : événement `incident` déjà accepté par le serveur 0.0.1. Le serveur 0.0.1 (nouvelle construction) ajoute la météo du départ et de l'arrivée (TODO-4.10) et le champ `meteoMarine` (TODO-4.11), ignorés par les applications plus anciennes. IPA non reconstruite (D-155). |
 | 2026-11-26 | 0.0.1 | 0.1.0 (proposition) | 0.3.0 (vraie application, APK publié le 2026-11-26 à la demande de l'utilisateur) ; démonstration 0.0.1 figée | 0.0.2 | Identité graphique du 2026-11-26 ([D-157](07-decisions.md#d-157)) : apparence seulement, compatible avec le serveur 0.0.1. IPA non reconstruite (D-155). |
 | 2026-11-26 | 0.0.1 | 0.1.0 (proposition) | 0.2.0 (vraie application) ; démonstration 0.0.1 figée | 0.0.2 | Remarques de relecture de l'application Android (TODO-5.12) : écrans seulement, mêmes routes du serveur ; le sélecteur « SMS » du démarrage reste sur le téléphone. Compatible avec le serveur 0.0.1. |
 | 2026-11-26 | 0.0.1 | 0.1.0 (proposition) | 0.1.0 (vraie application) ; démonstration 0.0.1 figée | 0.0.2 | Vraie application complète (SMS, vue suiveur, notifications push, achats, connexion Google et Apple), branchée sur le serveur : routes de navigation, contacts, SOS et synchronisation du serveur 0.0.1 ; notifications push, achats intégrés et reprise d'un téléphone par un autre compte demandent le serveur du même commit (pas encore de nouvelle version publiée du serveur). Démonstration V0 terminée, figée au commit `8ac9c1a` en version 0.0.1 et toujours publiée par le site (D-144). Le site 0.0.2 présente les deux. |
