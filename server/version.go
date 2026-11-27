@@ -43,8 +43,9 @@ func (c construction) CommitCourt() string {
 func (construction) Depot() string { return depot }
 
 // Site : site de présentation, lien « NautiLink » du pied de page de
-// l'Application web (D-149) ; l'espace administrateur garde le dépôt (D-128).
-func (construction) Site() string { return "https://gmoulard.github.io/NautiLink/" }
+// l'Application web et du PDF : le site vitrine (D-149, D-178) ; l'espace
+// administrateur garde le dépôt (D-128).
+func (construction) Site() string { return "https://nautilink.moulard.org/index.html" }
 
 // Memo : mémo sécurité en mer du site, lien du pied de page de chaque page
 // de l'Application web (RG-SOS-22, D-166).

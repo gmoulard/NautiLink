@@ -155,7 +155,7 @@ void main() {
     await openHome(tester);
     await reveal(tester, find.text('Site de NautiLink'));
     expect(find.text('Site de NautiLink'), findsOneWidget);
-    expect(siteUrl, 'https://gmoulard.github.io/NautiLink/');
+    expect(siteUrl, 'https://nautilink.moulard.org/index.html');
   });
 
   testWidgets('démarrage : personnes à bord, personnes alertées, ajout d\'un contact (RG-NAV-25 à 27)', (tester) async {

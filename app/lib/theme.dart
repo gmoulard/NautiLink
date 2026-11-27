@@ -60,7 +60,11 @@ TextStyle displayStyle(double size, {double weight = 800, Color? color}) =>
       height: 1.15,
     );
 
-ThemeData nlTheme(Brightness brightness) {
+/// Thème de l'application. [reel] : vraie application, au look du
+/// 2026-11-27 (D-178, §15) : texte plus petit, formes plus rondes, menu sur
+/// la couleur de fond des pages ; la démonstration, figée (D-144), garde le
+/// thème du 2026-11-26.
+ThemeData nlTheme(Brightness brightness, {bool reel = false}) {
   final dark = brightness == Brightness.dark;
   final bg = dark ? NlColors.skyDark : NlColors.sky;
   final fg = dark ? NlColors.inkDark : NlColors.ink;
@@ -87,7 +91,7 @@ ThemeData nlTheme(Brightness brightness) {
     fontFamily: kFont,
   );
   const pilule = StadiumBorder();
-  return base.copyWith(
+  final theme = base.copyWith(
     scaffoldBackgroundColor: bg,
     textTheme: base.textTheme.copyWith(
       headlineSmall: displayStyle(24, color: fg),
@@ -160,6 +164,95 @@ ThemeData nlTheme(Brightness brightness) {
       ),
     ),
   );
+  if (!reel) return theme;
+  // D-178 : texte plus petit, formes plus rondes.
+  final texte = Typography.englishLike2021
+      .merge(theme.textTheme)
+      .apply(fontSizeFactor: .92);
+  final rond = BorderRadius.circular(22);
+  return theme.copyWith(
+    textTheme: texte.copyWith(
+      headlineSmall: displayStyle(22, color: fg),
+      titleLarge: displayStyle(18, color: fg),
+      titleMedium: displayStyle(15, weight: 700, color: fg),
+    ),
+    appBarTheme: theme.appBarTheme.copyWith(
+      titleTextStyle: displayStyle(18, color: fg),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: theme.filledButtonTheme.style!.copyWith(
+        minimumSize: const WidgetStatePropertyAll(Size.fromHeight(50)),
+        textStyle: const WidgetStatePropertyAll(
+          TextStyle(
+            fontFamily: kFont,
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: theme.outlinedButtonTheme.style!.copyWith(
+        minimumSize: const WidgetStatePropertyAll(Size.fromHeight(48)),
+        textStyle: const WidgetStatePropertyAll(
+          TextStyle(
+            fontFamily: kFont,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ),
+    inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: rond,
+        borderSide: BorderSide(color: ligne),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: rond,
+        borderSide: BorderSide(color: ligne),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: rond,
+        borderSide: BorderSide(color: bouton, width: 1.6),
+      ),
+    ),
+    cardTheme: theme.cardTheme.copyWith(
+      shape: RoundedRectangleBorder(
+        borderRadius: rond,
+        side: BorderSide(color: ligne),
+      ),
+    ),
+    // D-178 : menu ⋮ aux angles arrondis, sur la couleur de fond des pages.
+    popupMenuTheme: PopupMenuThemeData(
+      color: bg,
+      surfaceTintColor: Colors.transparent,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: ligne),
+      ),
+      textStyle: TextStyle(fontFamily: kFont, fontSize: 15, color: fg),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: bg,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: bg,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+      ),
+    ),
+    chipTheme: theme.chipTheme.copyWith(shape: pilule),
+    snackBarTheme: const SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      shape: StadiumBorder(),
+    ),
+  );
 }
 
 /// Fond des écrans (§15) : dégradé ciel et vagues en bas, derrière le contenu.
@@ -170,6 +263,8 @@ class RadarBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Vraie application (D-178) : fond des pages, avec les isobares.
+    if (DepotScope.reel(context)) return Isobares(child: child);
     final dark = Theme.of(context).brightness == Brightness.dark;
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -185,6 +280,209 @@ class RadarBackground extends StatelessWidget {
       child: child,
     );
   }
+}
+
+/// Décor de la variante 1 « Isobares » de la planche météo (D-178,
+/// `site/designs/meteo.html`) : isobares fines autour d'un point, à droite,
+/// avec la pression en hectopascals, derrière le contenu.
+class Isobares extends StatelessWidget {
+  const Isobares({super.key, required this.child, this.centreY = 330});
+  final Widget child;
+
+  /// Hauteur du centre des isobares, depuis le haut de la zone.
+  final double centreY;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    return Material(
+      color: theme.scaffoldBackgroundColor,
+      child: CustomPaint(
+        painter: _IsobaresPainter(
+          couleur: dark ? NlColors.accentDark : const Color(0xFF0E6BA8),
+          centreY: centreY,
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+class _IsobaresPainter extends CustomPainter {
+  const _IsobaresPainter({required this.couleur, required this.centreY});
+  final Color couleur;
+  final double centreY;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final centre = Offset(size.width * .88, centreY);
+    const rayons = [47.0, 85.0, 123.0, 161.0, 199.0];
+    const opacites = [.22, .17, .13, .09, .05];
+    for (var i = 0; i < rayons.length; i++) {
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: centre,
+          width: rayons[i] * 2.3,
+          height: rayons[i] * 2,
+        ),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.4
+          ..color = couleur.withValues(alpha: opacites[i]),
+      );
+    }
+    final texte = TextPainter(
+      text: TextSpan(
+        text: '1012',
+        style: TextStyle(
+          fontFamily: kFont,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: couleur.withValues(alpha: .3),
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    texte.paint(canvas, centre - Offset(texte.width / 2, texte.height / 2));
+  }
+
+  @override
+  bool shouldRepaint(covariant _IsobaresPainter old) =>
+      old.couleur != couleur || old.centreY != centreY;
+}
+
+/// Bandeau photo du bateau, en haut de l'accueil et de la connexion (D-178,
+/// étude Nautilinkimages261126.png) : la photo, le logo, « NautiLink » et la
+/// signature, puis une vague turquoise et la vague blanche (couleur des
+/// pages). [actions] : boutons posés en haut à droite (menu ⋮ de l'accueil).
+class BandeauPhoto extends StatelessWidget {
+  const BandeauPhoto({super.key, this.hauteur = 230, this.actions});
+  final double hauteur;
+  final Widget? actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final haut = MediaQuery.paddingOf(context).top;
+    return SizedBox(
+      key: const Key('bandeau-photo'),
+      height: hauteur + haut,
+      child: Stack(
+        fit: StackFit.expand,
+        clipBehavior: Clip.none,
+        children: [
+          Image.asset(
+            'assets/bandeau-bateau.jpg',
+            fit: BoxFit.cover,
+            // Le voilier, à droite de la photo, reste visible.
+            alignment: const Alignment(.6, .3),
+            excludeFromSemantics: true,
+          ),
+          // Ciel éclairci derrière le logo et le nom.
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment(.5, .2),
+                colors: [Color(0xB3F4FAFE), Color(0x00F4FAFE)],
+              ),
+            ),
+          ),
+          Positioned(
+            left: 16,
+            right: actions == null ? 16 : 52,
+            top: haut + 16,
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.asset(
+                    'assets/logo-nautilink.png',
+                    key: const Key('brand-logo'),
+                    width: 56,
+                    height: 56,
+                    excludeFromSemantics: true,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'NautiLink',
+                        style: displayStyle(26, color: NlColors.ink),
+                      ),
+                      Text(
+                        'Your sea, your safety, your story.',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: NlColors.ink,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (actions != null)
+            Positioned(right: 4, top: haut + 4, child: actions!),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: -1,
+            height: 48,
+            child: CustomPaint(
+              painter: _VagueBandeauPainter(theme.scaffoldBackgroundColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VagueBandeauPainter extends CustomPainter {
+  const _VagueBandeauPainter(this.fond);
+  final Color fond;
+
+  Path _vague(
+    Size s,
+    double gauche,
+    double creux,
+    double bosse,
+    double droite,
+  ) => Path()
+    ..moveTo(0, s.height * gauche)
+    ..cubicTo(
+      s.width * .3,
+      s.height * creux,
+      s.width * .65,
+      s.height * bosse,
+      s.width,
+      s.height * droite,
+    )
+    ..lineTo(s.width, s.height)
+    ..lineTo(0, s.height)
+    ..close();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      _vague(size, .2, .95, -.2, .15),
+      Paint()..color = NlColors.turquoise.withValues(alpha: .9),
+    );
+    canvas.drawPath(_vague(size, .5, 1.15, .05, .45), Paint()..color = fond);
+  }
+
+  @override
+  bool shouldRepaint(covariant _VagueBandeauPainter old) => old.fond != fond;
 }
 
 /// Vagues turquoise et bleues (§15), au-dessus du pied de page.
@@ -311,6 +609,7 @@ class SponsorFooter extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(width: 10),
           // TODO-3.13 : petit lien vers le site de présentation.
           InkWell(
             onTap: () => launchUrl(
@@ -397,13 +696,17 @@ class AppFrame extends StatelessWidget {
   }
 }
 
-/// « Tous droits réservés · NautiLink · V0.0.1 · build 12 · commit 93b0f97 » ;
-/// « NautiLink » ouvre le site de présentation (D-149). La démonstration,
+/// « Tous droits réservés · NautiLink · Version bêta · V0.0.1 · build 12 ·
+/// commit 93b0f97 » ; « NautiLink » ouvre le site vitrine (D-149, D-178). La démonstration,
 /// figée (D-144), garde l'adresse du dépôt (D-128).
 class BuildFooterLine extends StatelessWidget {
-  const BuildFooterLine({super.key, this.style});
+  const BuildFooterLine({super.key, this.style, this.beta});
 
   final TextStyle? style;
+
+  /// Vraie application : lien « Version bêta », vers l'avertissement, qui
+  /// remplace le bandeau bêta (D-178, RG-CPT-07).
+  final VoidCallback? beta;
 
   @override
   Widget build(BuildContext context) {
@@ -432,6 +735,14 @@ class BuildFooterLine extends StatelessWidget {
           ),
           child: Text(reel ? l.appTitle : repositoryUrl, style: linkStyle),
         ),
+        if (beta != null) ...[
+          Text(' · ', style: style),
+          InkWell(
+            key: const Key('footer-beta'),
+            onTap: beta,
+            child: Text(l.betaBanner, style: linkStyle),
+          ),
+        ],
         Text(' · $build', style: style),
       ],
     );

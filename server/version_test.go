@@ -25,7 +25,7 @@ func TestPiedDePage(t *testing.T) {
 
 	h := nouveauRouteur(config{Chemin: "/nautilink"}, &base{})
 	for chemin, lien := range map[string]string{
-		"/nautilink/":       `<a href="https://gmoulard.github.io/NautiLink/">NautiLink</a>`,
+		"/nautilink/":       `<a href="https://nautilink.moulard.org/index.html">NautiLink</a>`,
 		"/nautilink/admin/": `<a href="https://github.com/gmoulard/NautiLink">https://github.com/gmoulard/NautiLink</a>`,
 	} {
 		corps := requete(t, h, chemin).Body.String()
@@ -37,5 +37,13 @@ func TestPiedDePage(t *testing.T) {
 				t.Errorf("%s : %q absent du pied de page", chemin, attendu)
 			}
 		}
+	}
+	// D-178 : plus de bandeau bêta, un lien « Version bêta » dans le pied de page.
+	corps := requete(t, h, "/nautilink/").Body.String()
+	if strings.Contains(corps, `class="beta"`) {
+		t.Error("bandeau bêta encore affiché")
+	}
+	if !strings.Contains(corps, `<a href="`+adresseAvertissement+`">Version bêta</a>`) {
+		t.Error("lien « Version bêta » absent du pied de page")
 	}
 }

@@ -49,7 +49,18 @@ void main() {
     (tester) async {
       await ouvrir(tester);
       expect(find.text('Connexion'), findsWidgets);
-      expect(find.text('Version bêta'), findsOneWidget); // RG-CPT-07
+      // RG-CPT-07, D-178 : plus de bandeau, le lien « Version bêta » du pied
+      // de page ; bandeau photo du bateau en haut de la connexion.
+      expect(find.text('Version bêta'), findsOneWidget);
+      expect(find.byKey(const Key('footer-beta')), findsOneWidget);
+      expect(find.byKey(const Key('bandeau-photo')), findsOneWidget);
+      await tester.ensureVisible(find.byKey(const Key('footer-beta')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('footer-beta')));
+      await tester.pumpAndSettle();
+      expect(find.text('Avertissement bêta'), findsOneWidget);
+      Navigator.of(tester.element(find.text('Avertissement bêta'))).pop();
+      await tester.pumpAndSettle();
       final google = tester.widget<OutlinedButton>(
         find.widgetWithText(OutlinedButton, 'Continuer avec Google'),
       );

@@ -210,8 +210,8 @@ const subscriptionInfoUrl =
 /// Mémo sécurité en mer du site de présentation (TODO-3.12 ; vraie application : RG-SOS-22).
 const securityMemoUrl = 'https://gmoulard.github.io/NautiLink/securite.html';
 
-/// Site de présentation, cité en pied de page sous le sponsor (TODO-3.13).
-const siteUrl = 'https://gmoulard.github.io/NautiLink/';
+/// Site vitrine, cité en pied de page (TODO-3.13 ; lien « NautiLink » : D-149, D-178).
+const siteUrl = 'https://nautilink.moulard.org/index.html';
 
 class AppState extends ChangeNotifier {
   AppState() {

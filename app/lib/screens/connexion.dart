@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data.dart';
 import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../reel/api.dart';
@@ -20,91 +21,50 @@ String messageErreur(AppLocalizations l, Object e) => switch (e) {
 
 DepotReel _depot(BuildContext context) => DepotScope.of(context) as DepotReel;
 
-/// Mention « Version bêta », visible tant que dure la bêta (RG-CPT-07).
-class BetaBanner extends StatelessWidget {
-  const BetaBanner({super.key, this.detail});
-  final String? detail;
+/// « Hors connexion · données du … » (RG-COM-06), en pastille arrondie,
+/// seulement hors connexion. Le bandeau « Version bêta » qui la portait est
+/// remplacé par le lien du pied de page (D-178, RG-CPT-07).
+class BandeauHorsConnexion extends StatelessWidget {
+  const BandeauHorsConnexion({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final depot = DepotScope.of(context);
+    if (!depot.horsConnexion) return const SizedBox.shrink();
     final l = AppLocalizations.of(context);
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    // Avertissement bêta rouge sur rose, précédé de ⚠ (D-157, §15).
-    final rouge = dark ? NlColors.betaFgDark : NlColors.betaFg;
-    return Container(
-      width: double.infinity,
-      color: dark ? NlColors.betaBgDark : NlColors.betaBg,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.warning_amber_rounded, size: 16, color: rouge),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              detail == null ? l.betaBanner : '${l.betaBanner} · $detail',
-              style: TextStyle(
-                color: rouge,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// En-tête de marque (D-157, §15) : logo en carré arrondi, « NautiLink » et
-/// la signature, sur le dégradé ciel, avec des vagues.
-class EnTeteMarque extends StatelessWidget {
-  const EnTeteMarque({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                'assets/logo-nautilink.png',
-                key: const Key('brand-logo'),
-                width: 64,
-                height: 64,
-                excludeFromSemantics: true,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'NautiLink',
-                    style: displayStyle(30, color: theme.colorScheme.onSurface),
-                  ),
-                  Text(
-                    'Your sea, your safety, your story.',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    final actualise = depot.actualiseLe;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: theme.colorScheme.outline),
         ),
-        const SizedBox(height: 8),
-        const Vagues(hauteur: 28),
-      ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.cloud_off_outlined, size: 16),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  l.offlineSince(
+                    actualise == null ? '—' : fmtDate(l, actualise),
+                  ),
+                  key: const Key('hors-connexion'),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -215,21 +175,21 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
     final l = AppLocalizations.of(context);
     final depot = _depot(context);
     return Scaffold(
-      body: Column(
-        children: [
-          const BetaBanner(),
-          Expanded(
-            child: RadarBackground(
-              child: Center(
+      body: RadarBackground(
+        child: AutofillGroup(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              // D-178 : bandeau photo du bateau et vague blanche, comme l'étude.
+              const BandeauPhoto(),
+              Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 480),
-                  child: AutofillGroup(
-                    child: ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 32, 20, 20),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // D-157 : en-tête de l'étude, puis « Connexion ».
-                        const EnTeteMarque(),
-                        const SizedBox(height: 12),
                         Text(
                           l.loginTitle,
                           textAlign: TextAlign.center,
@@ -372,9 +332,9 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -447,7 +407,6 @@ class _CreationCompteScreenState extends State<CreationCompteScreen> {
       appBar: AppBar(title: Text(l.createAccountTitle)),
       body: Column(
         children: [
-          const BetaBanner(),
           Expanded(
             child: Center(
               child: ConstrainedBox(

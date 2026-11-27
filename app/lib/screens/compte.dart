@@ -11,7 +11,6 @@ import '../theme.dart';
 import 'pied.dart';
 import 'connexion.dart';
 import 'memo.dart';
-import 'warning.dart';
 
 /// Écrans « Autres écrans » de l'application mobile (cahier des charges §5.5) :
 /// contacts, paramètres généraux, historique des alertes SOS, assistance.
@@ -1107,17 +1106,7 @@ class AssistanceScreen extends StatelessWidget {
               leading: const Icon(Icons.info_outline),
               title: Text(l.assistanceWarning),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => Scaffold(
-                    appBar: AppBar(title: Text(l.assistanceWarning)),
-                    body: const SingleChildScrollView(
-                      padding: EdgeInsets.all(20),
-                      child: Column(children: [WarningText(), PiedDePage()]),
-                    ),
-                  ),
-                ),
-              ),
+              onTap: () => ouvrirAvertissement(context),
             ),
           ),
           Card(

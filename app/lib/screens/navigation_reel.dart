@@ -550,7 +550,6 @@ class _StartReelScreenState extends State<StartReelScreen> {
       appBar: AppBar(title: Text(l.startVoyage)),
       body: Column(
         children: [
-          const BetaBanner(),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(20),
@@ -1391,15 +1390,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           appBar: AppBar(title: Text(n.bateauNom)),
           body: Column(
             children: [
-              BetaBanner(
-                detail: depot.horsConnexion
-                    ? l.offlineSince(
-                        depot.actualiseLe == null
-                            ? '—'
-                            : fmtDate(l, depot.actualiseLe!),
-                      )
-                    : null,
-              ),
+              const BandeauHorsConnexion(),
               Expanded(
                 child: RadarBackground(
                   child: ListView(

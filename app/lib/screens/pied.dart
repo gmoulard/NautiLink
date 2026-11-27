@@ -4,6 +4,7 @@ import '../depot/depot.dart';
 import '../l10n/app_localizations.dart';
 import '../theme.dart';
 import 'memo.dart';
+import 'warning.dart';
 
 /// Pied de page de la vraie application (Q-102) : intégré à la fin de la
 /// page, après les boutons, et non plus fixé en bas de l'écran ; il porte le
@@ -33,14 +34,34 @@ class PiedDePage extends StatelessWidget {
               label: Text(l.homeSecurityMemo),
               onPressed: () => openSecurityMemo(context),
             ),
+            // « Version bêta » vers l'avertissement, à la place du bandeau
+            // (D-178, RG-CPT-07).
             BuildFooterLine(
               style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+              beta: () => ouvrirAvertissement(context),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+/// Avertissement bêta, consultable à tout moment (RG-CPT-07) : depuis le lien
+/// « Version bêta » du pied de page et depuis l'assistance.
+Future<void> ouvrirAvertissement(BuildContext context) {
+  final l = AppLocalizations.of(context);
+  return Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => Scaffold(
+        appBar: AppBar(title: Text(l.assistanceWarning)),
+        body: const SingleChildScrollView(
+          padding: EdgeInsets.all(20),
+          child: Column(children: [WarningText(), PiedDePage()]),
+        ),
+      ),
+    ),
+  );
 }
 
 /// Page sans liste défilante (attente, message seul) : le contenu, centré,

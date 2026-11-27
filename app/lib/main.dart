@@ -160,8 +160,8 @@ class _NautiLinkAppState extends State<NautiLinkApp>
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           debugShowCheckedModeBanner: false,
-          theme: nlTheme(Brightness.light),
-          darkTheme: nlTheme(Brightness.dark),
+          theme: nlTheme(Brightness.light, reel: !depot.demonstration),
+          darkTheme: nlTheme(Brightness.dark, reel: !depot.demonstration),
           // Pied de page de tous les écrans : licence, dépôt, version (D-128).
           builder: (context, child) => AppFrame(child: child!),
           home: const _Root(),

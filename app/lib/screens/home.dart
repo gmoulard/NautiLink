@@ -31,211 +31,239 @@ class HomeScreen extends StatelessWidget {
     final quota = depot.quota;
     final enCours = depot.navigationEnCours;
     final profil = depot.profil;
-    final list = ListView(
-      padding: const EdgeInsets.all(20),
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        if (!demo && profil != null && !profil.emailVerifie) ...[
-          _EmailNonVerifie(email: profil.email),
-          const SizedBox(height: 12),
-        ],
-        if (!demo && enCours != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            l.voyageInProgress(enCours.nom),
-            key: const Key('voyage-in-progress'),
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ],
-        const SizedBox(height: 20),
-        FilledButton.icon(
-          onPressed: (demo ? state.current != null : enCours != null)
-              ? null
-              : () => demo ? openStart(context) : openStartReel(context),
-          icon: const Icon(Icons.play_arrow),
-          label: Text(l.startVoyage),
-        ),
+    final contenu = <Widget>[
+      if (!demo && profil != null && !profil.emailVerifie) ...[
+        _EmailNonVerifie(email: profil.email),
         const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: (demo ? state.current == null : enCours == null)
-              ? null
-              : () => demo
-                    ? Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const NavigationScreen(),
-                        ),
-                      )
-                    : openNavigationReel(context),
-          icon: const Icon(Icons.restore),
-          label: Text(l.resumeVoyage),
-        ),
+      ],
+      if (!demo && enCours != null) ...[
         const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => demo
-                  ? const DashboardScreen(onlyMine: true)
-                  : const SavedVoyagesScreen(),
-            ),
-          ),
-          icon: const Icon(Icons.history),
-          label: Text(l.savedVoyages),
-        ),
-        const SizedBox(height: 32),
-        SosButton(
-          onPressed: () => demo ? confirmSos(context) : confirmSosReel(context),
-        ),
-        const SizedBox(height: 8),
         Text(
-          l.homeDistressHint,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall,
+          l.voyageInProgress(enCours.nom),
+          key: const Key('voyage-in-progress'),
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        // Lien vers les règles de sécurité, sous le SOS (Q-102).
-        if (!demo)
-          TextButton.icon(
-            key: const Key('home-memo'),
-            icon: const Icon(Icons.health_and_safety_outlined),
-            label: Text(l.homeSecurityRules),
-            onPressed: () => openSecurityMemo(context),
-          ),
-        const SizedBox(height: 24),
-        // Sponsor : le guidon de la SRT seul, sans texte (D-131).
-        Center(
-          child: Image.asset(
-            'assets/sponsor-srt.png',
-            key: const Key('home-sponsor'),
-            height: 44,
-            semanticLabel: l.sponsorLogoLabel,
+      ],
+      const SizedBox(height: 20),
+      FilledButton.icon(
+        onPressed: (demo ? state.current != null : enCours != null)
+            ? null
+            : () => demo ? openStart(context) : openStartReel(context),
+        icon: const Icon(Icons.play_arrow),
+        label: Text(l.startVoyage),
+      ),
+      const SizedBox(height: 12),
+      OutlinedButton.icon(
+        onPressed: (demo ? state.current == null : enCours == null)
+            ? null
+            : () => demo
+                  ? Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const NavigationScreen(),
+                      ),
+                    )
+                  : openNavigationReel(context),
+        icon: const Icon(Icons.restore),
+        label: Text(l.resumeVoyage),
+      ),
+      const SizedBox(height: 12),
+      OutlinedButton.icon(
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => demo
+                ? const DashboardScreen(onlyMine: true)
+                : const SavedVoyagesScreen(),
           ),
         ),
-        const SizedBox(height: 8),
-        // RG-ECO-10 : « Version gratuite » ou « Version abonné », vers
-        // « Quota et abonnement » (D-131).
+        icon: const Icon(Icons.history),
+        label: Text(l.savedVoyages),
+      ),
+      const SizedBox(height: 32),
+      SosButton(
+        onPressed: () => demo ? confirmSos(context) : confirmSosReel(context),
+      ),
+      const SizedBox(height: 8),
+      Text(
+        l.homeDistressHint,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+      // Lien vers les règles de sécurité, sous le SOS (Q-102).
+      if (!demo)
+        TextButton.icon(
+          key: const Key('home-memo'),
+          icon: const Icon(Icons.health_and_safety_outlined),
+          label: Text(l.homeSecurityRules),
+          onPressed: () => openSecurityMemo(context),
+        ),
+      const SizedBox(height: 24),
+      // Sponsor : le guidon de la SRT seul, sans texte (D-131).
+      Center(
+        child: Image.asset(
+          'assets/sponsor-srt.png',
+          key: const Key('home-sponsor'),
+          height: 44,
+          semanticLabel: l.sponsorLogoLabel,
+        ),
+      ),
+      const SizedBox(height: 8),
+      // RG-ECO-10 : « Version gratuite » ou « Version abonné », vers
+      // « Quota et abonnement » (D-131).
+      Center(
+        child: TextButton(
+          key: const Key('home-version'),
+          onPressed: () =>
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
+          child: Text(
+            quota?.abonnementActif == true
+                ? l.homeSubscriberVersion
+                : l.homeFreeVersion,
+            style: const TextStyle(decoration: TextDecoration.underline),
+          ),
+        ),
+      ),
+      if (demo) ...[
+        // Mémo sécurité en mer intégré, lisible hors connexion (RG-SOS-22).
+        TextButton.icon(
+          icon: const Icon(Icons.health_and_safety_outlined),
+          label: Text(l.homeSecurityMemo),
+          onPressed: () => openSecurityMemo(context),
+        ),
+        // Petit lien vers le site de présentation (TODO-3.13).
         Center(
-          child: TextButton(
-            key: const Key('home-version'),
-            onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => const QuotaScreen())),
+          child: InkWell(
+            onTap: () => launchUrl(
+              Uri.parse(siteUrl),
+              mode: LaunchMode.externalApplication,
+            ),
             child: Text(
-              quota?.abonnementActif == true
-                  ? l.homeSubscriberVersion
-                  : l.homeFreeVersion,
-              style: const TextStyle(decoration: TextDecoration.underline),
+              l.footerSiteLink,
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(decoration: TextDecoration.underline),
             ),
           ),
         ),
-        if (demo) ...[
-          // Mémo sécurité en mer intégré, lisible hors connexion (RG-SOS-22).
-          TextButton.icon(
-            icon: const Icon(Icons.health_and_safety_outlined),
-            label: Text(l.homeSecurityMemo),
-            onPressed: () => openSecurityMemo(context),
-          ),
-          // Petit lien vers le site de présentation (TODO-3.13).
-          Center(
-            child: InkWell(
-              onTap: () => launchUrl(
-                Uri.parse(siteUrl),
-                mode: LaunchMode.externalApplication,
-              ),
-              child: Text(
-                l.footerSiteLink,
-                style: Theme.of(context).textTheme.bodySmall
-                    ?.copyWith(decoration: TextDecoration.underline),
-              ),
-            ),
-          ),
+      ],
+      // Pied de page en fin de page, mémo compris (Q-102).
+      const PiedDePage(),
+    ];
+    final menu = PopupMenuButton<String>(
+      onSelected: (v) {
+        if (v == 'logout') {
+          depot.deconnecter();
+          return;
+        }
+        final page = switch (v) {
+          'contacts' => const ContactsScreen(),
+          'params' => const SettingsScreen(),
+          'quota' => const QuotaScreen(),
+          'sos' => const SosHistoryScreen(),
+          'assistance' => const AssistanceScreen(),
+          'suivi' => const SuiviReelScreen(),
+          _ => const DashboardScreen(),
+        };
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+      },
+      // Autres écrans (cahier des charges §5.5, TODO-5.7).
+      itemBuilder: (_) => [
+        PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
+        PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
+        PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
+        if (demo)
+          PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
+        else ...[
+          // Vue suiveur, sur Android et iPhone (RG-IOS-05, RG-AND-09).
+          PopupMenuItem(value: 'suivi', child: Text(l.menuFollowed)),
+          PopupMenuItem(value: 'sos', child: Text(l.menuSosHistory)),
+          PopupMenuItem(value: 'assistance', child: Text(l.menuAssistance)),
+          PopupMenuItem(value: 'logout', child: Text(l.logout)),
         ],
-        // Pied de page en fin de page, mémo compris (Q-102).
-        const PiedDePage(),
       ],
     );
-    final actualise = depot.actualiseLe;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l.appTitle),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (v) {
-              if (v == 'logout') {
-                depot.deconnecter();
-                return;
-              }
-              final page = switch (v) {
-                'contacts' => const ContactsScreen(),
-                'params' => const SettingsScreen(),
-                'quota' => const QuotaScreen(),
-                'sos' => const SosHistoryScreen(),
-                'assistance' => const AssistanceScreen(),
-                'suivi' => const SuiviReelScreen(),
-                _ => const DashboardScreen(),
-              };
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => page));
-            },
-            // Autres écrans (cahier des charges §5.5, TODO-5.7).
-            itemBuilder: (_) => [
-              PopupMenuItem(value: 'contacts', child: Text(l.menuContacts)),
-              PopupMenuItem(value: 'params', child: Text(l.menuSettings)),
-              PopupMenuItem(value: 'quota', child: Text(l.menuQuota)),
-              if (demo)
-                PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
-              else ...[
-                // Vue suiveur, sur Android et iPhone (RG-IOS-05, RG-AND-09).
-                PopupMenuItem(value: 'suivi', child: Text(l.menuFollowed)),
-                PopupMenuItem(value: 'sos', child: Text(l.menuSosHistory)),
-                PopupMenuItem(
-                  value: 'assistance',
-                  child: Text(l.menuAssistance),
+    if (demo) {
+      // Démonstration figée (D-144) : barre de titre et bandeau d'origine.
+      return Scaffold(
+        appBar: AppBar(title: Text(l.appTitle), actions: [menu]),
+        body: Column(
+          children: [
+            const DemoBanner(),
+            Expanded(
+              child: RadarBackground(
+                child: ListView(
+                  padding: const EdgeInsets.all(20),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: contenu,
                 ),
-                PopupMenuItem(value: 'logout', child: Text(l.logout)),
-              ],
-            ],
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          if (demo)
-            const DemoBanner()
-          else
-            BetaBanner(
-              detail: depot.horsConnexion
-                  ? l.offlineSince(
-                      actualise == null ? '—' : fmtDate(l, actualise),
-                    )
-                  : null,
+              ),
             ),
-          // RG-ADM-06 : annonces de l'administrateur, jusqu'à leur fermeture.
-          if (depot is DepotReel)
-            for (final a in depot.annonces)
-              Material(
-                color: NlColors.teal,
-                child: ListTile(
-                  key: Key('annonce-${a.id}'),
-                  dense: true,
-                  leading: const Icon(Icons.campaign, color: NlColors.white),
-                  title: Text(
-                    a.texte,
-                    style: const TextStyle(color: NlColors.white),
+          ],
+        ),
+      );
+    }
+    // Vraie application (D-178) : bandeau photo du bateau et vague blanche en
+    // haut, menu ⋮ posé sur la photo ; plus de bandeau « Version bêta ».
+    final theme = Theme.of(context);
+    return Scaffold(
+      body: RadarBackground(
+        // Actualisation de l'accueil en tirant la liste (D-135).
+        child: RefreshIndicator(
+          onRefresh: depot.actualiser,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              BandeauPhoto(
+                actions: Material(
+                  color: theme.scaffoldBackgroundColor.withValues(alpha: .85),
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: menu,
+                ),
+              ),
+              const BandeauHorsConnexion(),
+              // RG-ADM-06 : annonces de l'administrateur, jusqu'à leur fermeture.
+              if (depot is DepotReel)
+                for (final a in depot.annonces)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Material(
+                      color: NlColors.teal,
+                      borderRadius: BorderRadius.circular(22),
+                      child: ListTile(
+                        key: Key('annonce-${a.id}'),
+                        dense: true,
+                        leading: const Icon(
+                          Icons.campaign,
+                          color: NlColors.white,
+                        ),
+                        title: Text(
+                          a.texte,
+                          style: const TextStyle(color: NlColors.white),
+                        ),
+                        trailing: IconButton(
+                          tooltip: l.close,
+                          icon: const Icon(Icons.close, color: NlColors.white),
+                          onPressed: () => depot.fermerAnnonce(a.id),
+                        ),
+                      ),
+                    ),
                   ),
-                  trailing: IconButton(
-                    tooltip: l.close,
-                    icon: const Icon(Icons.close, color: NlColors.white),
-                    onPressed: () => depot.fermerAnnonce(a.id),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: contenu,
+                    ),
                   ),
                 ),
               ),
-          Expanded(
-            child: RadarBackground(
-              child: demo
-                  ? list
-                  // Actualisation de l'accueil en tirant la liste (D-135).
-                  : RefreshIndicator(onRefresh: depot.actualiser, child: list),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

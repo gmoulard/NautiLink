@@ -86,6 +86,9 @@ flutter:
     - assets/sponsor-srt.png
     # Logo (docs/05-identite-marque.md §5.5), en-tête de l'écran de connexion (D-157).
     - assets/logo-nautilink.png
+    # Photo du bateau de l'utilisateur, réduite (docs/etudes/IMG_20230508_112008.jpg),
+    # bandeau de l'accueil et de la connexion (D-178).
+    - assets/bandeau-bateau.jpg
     # Mémo sécurité en mer, copié de site/securite.html par outils/copier-memo.sh (RG-SOS-22).
     - assets/memo/securite.html
   # Police de l'identité graphique du 2026-11-26 (D-157, docs/05-identite-marque.md §15),
