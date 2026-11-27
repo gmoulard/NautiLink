@@ -42,10 +42,32 @@ Proposition (non validée) : identifiant d'application OAuth2, pour qu'aucune da
 ## 5. Ranger les codes
 
 - **Jamais** dans le dépôt, dans un ticket, dans un e-mail ni dans une conversation avec un assistant.
-- Production (Raspberry Pi sous pi-appliance) : variable d'environnement posée par la console de pi-appliance, comme les autres secrets (08-architecture.md §6). Nom proposé (non validé) : `NAUTILINK_METEOFRANCE`, qui contient l'identifiant d'application encodé tel que le portail le donne pour l'en-tête `Authorization: Basic`.
+- Production (Raspberry Pi sous pi-appliance) : variable d'environnement du serveur, comme les autres secrets (08-architecture.md §6) ; comment la poser : § 5.1. Nom proposé (non validé) : `NAUTILINK_METEOFRANCE`, qui contient l'identifiant d'application encodé tel que le portail le donne pour l'en-tête `Authorization: Basic` (identifiant et secret en base64 : un codage, pas un chiffrement).
 - Développement : variable posée dans le terminal du développeur, jamais écrite dans un fichier suivi par Git.
 - Test : pas de code ; le serveur de test ne relève pas la météo (aucun envoi réel, 08-architecture.md §6).
 - Sans variable posée, le serveur ne relève pas la météo et la page de la navigation ne l'affiche pas, sans erreur.
+
+### 5.1 Poser le code sur pi-appliance
+
+Le serveur est installé par « Docker Compose libre » (service `nautilink`, [`server/compose.yaml`](../../server/compose.yaml)). Dans les deux cas ci-dessous, le fichier Compose doit reprendre la variable, dans `environment` du service `nautilink` (à ajouter avec le client Météo-France, TODO-4.10) :
+
+```yaml
+NAUTILINK_METEOFRANCE: "${NAUTILINK_METEOFRANCE:-}"
+```
+
+**Avant l'évolution TODO-2.85 de pi-appliance** (console jusqu'à la 0.2.8 au moins) : la console n'a pas d'écran pour le fichier `.env` d'un Docker Compose libre, et elle le réécrit à chaque réinstallation (seule façon de mettre à jour un Docker Compose libre : changer l'image dans le fichier et réinstaller) avec ses seules variables (`PI_INSTANCE`, `PI_HOST`, `PI_SMTP_…`). Deux façons, au choix :
+
+- **Par « Réglages avancés »** (proposé, sans ligne de commande) : fiche du service `nautilink` → « Réglages avancés » → conteneur `nautilink` → variable `NAUTILINK_METEOFRANCE=<valeur>` → enregistrer ; la console redémarre le service et remet les réglages d'avant s'il ne repart pas. La variable est posée directement dans le conteneur : la ligne du fichier Compose ci-dessus n'est pas nécessaire (elle ne gêne pas : la variable des réglages avancés l'emporte). Limites : la valeur reste lisible en clair par tout administrateur qui ouvre cet écran ; à vérifier : réglage gardé après une réinstallation.
+- **Par le fichier `.env`** : depuis le terminal de Cockpit (marketplace de la console) ou en SSH, `sudo nano /var/lib/pi-appliance/services/nautilink/.env` (dossier des données de pi-appliance, sur le disque USB s'il y est), ajouter la ligne `NAUTILINK_METEOFRANCE='<valeur>'` sans toucher aux lignes `PI_…` (pas d'apostrophe dans la valeur, pas de commentaire : la console les efface), puis « Reconstruire » dans la fiche du service (données et `.env` gardés). **La ligne est perdue à chaque réinstallation** : la remettre après chaque mise à jour du serveur, comme `NAUTILINK_ADMINS`, `NAUTILINK_GOOGLE_CLIENTS` et les autres réglages du `.env`.
+
+**Après l'évolution TODO-2.85 de pi-appliance** (champ « Contenu du fichier .env » d'un Docker Compose libre ; tranché le 2026-11-27, pas encore réalisé ; version de la console à noter ici quand elle sortira) :
+
+- **À l'installation** : coller dans le champ « Contenu du fichier .env » la ligne `NAUTILINK_METEOFRANCE=<valeur>`, avec les autres réglages du `.env` de NautiLink (`NAUTILINK_ADMINS`, `NAUTILINK_GOOGLE_CLIENTS`…). Les variables `PI_…` restent à la console : le champ les refuse.
+- **Changer le code** (renouvellement, fuite, § 7) : « Réglages avancés » de la fiche du service, où le `.env` se modifie ; le service redémarre, et l'ancien `.env` est remis s'il ne repart pas.
+- **Mise à jour du serveur** (réinstallation après une désinstallation qui garde les données) : le champ est prérempli avec l'ancien `.env` ; vérifier qu'il contient la ligne, puis installer.
+- **« Reconstruire »** garde le `.env` ; **« Réinitialisation d'usine »** demande s'il faut le garder : répondre oui, sinon le code est à reposer.
+- **« Source »** montre le `.env` avec le fichier Docker Compose (réservé aux administrateurs) : ne pas copier son contenu dans un ticket, un e-mail ni une conversation avec un assistant.
+- Dès cette version installée sur le Pi, passer de « Réglages avancés » (variable du conteneur) au champ `.env`, et retirer la variable des réglages avancés pour qu'il n'y ait qu'un seul endroit.
 
 ## 6. Utilisation par le serveur
 
@@ -60,7 +82,7 @@ Proposition (non validée) pour les points 4 à 6 : comportement en cas d'échec
 
 ## 7. Renouveler ou révoquer
 
-- Fuite d'un code : le révoquer sur le portail, en créer un nouveau, mettre à jour la variable sur pi-appliance, redémarrer le serveur.
+- Fuite d'un code : le révoquer sur le portail, en créer un nouveau, mettre à jour la variable sur pi-appliance (§ 5.1 : le service redémarre).
 - Clé d'API (si ce choix est fait) : noter sa date d'expiration dans le TODO et la renouveler un mois avant.
 - Changement de responsable : transférer le compte ou créer un nouvel identifiant sous le compte du projet.
 
@@ -115,7 +137,7 @@ Dans cet ordre ; reporter chaque constat dans ce document et dans [Q-39](../06-q
    Décisions du 2026-11-27 ([D-168](../07-decisions.md#d-168), puis [D-169](../07-decisions.md#d-169)) : AROME pour le vent et la pression ; MFWAM (paquet `SP1`, GRIB2) pour l'état de la mer, décodé par le serveur. Les souscriptions « Environnement » et « ARPEGE » (sauf besoin hors de la zone d'AROME) peuvent être retirées ; garder « Package Modèles de vague et surcote ». Décodage côté serveur : la lecture marche avec `eccodes` (bibliothèque C, avec la compression CCSDS de `libaec`) ; bibliothèques Go sans dépendance C annoncées pour le modèle 5.42, non encore essayées : `dmarkham/grib2` (MIT, valeur au point le plus proche), `knoweather/simple-grib` (MIT), `pspoerri/go-tiled-eccodes` (MIT), `shyrmapp/aec` (Apache-2.0, décompression seule) ; toutes récentes et peu utilisées : à vérifier sur un vrai fichier contre `eccodes` avant de choisir (TODO-4.10).
 4. **Décisions à prendre avec le porteur du projet** (Q-39) : type de code (identifiant OAuth2, proposé au § 4), nom de la variable (`NAUTILINK_METEOFRANCE`, proposé au § 5), comportement en cas d'échec et conservation (§ 6, points 4 à 6), API retenue pour chaque donnée d'après l'étape 3. Puis trancher Q-39 (`D-nn`, règles, selon « Trancher une question » de `CLAUDE.md`).
 5. **Code du serveur** : action [TODO-4.10](../TODO.md) : client Météo-France (jeton en mémoire, file d'appels, nouvel essai), relevé au début et à la fin de chaque navigation, colonnes `meteo_depart` et `meteo_arrivee`, affichage sur la page de la navigation de l'Application web et dans le PDF, essais avec un faux Météo-France ; sans variable posée, aucun relevé et aucune erreur.
-6. **Mise en service** : poser la variable sur pi-appliance par la console (§ 5), redémarrer le serveur, démarrer puis terminer une navigation d'essai et constater la météo sur sa page ; cocher le § 8.
+6. **Mise en service** : poser la variable sur pi-appliance (§ 5.1, avant ou après TODO-2.85 de pi-appliance), démarrer puis terminer une navigation d'essai et constater la météo sur sa page ; cocher le § 8.
 
 ## Sources
 
