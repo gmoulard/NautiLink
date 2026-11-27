@@ -13,7 +13,7 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Application mobile** | L'application Android ou l'application iPhone. Elles ont les mêmes fonctions, sauf le circuit SMS qui n'existe que sur Android ([RG-IOS-02](02-regles-metier.md#rg-ios-02)). |
 | **Application web** | L'application NautiLink ouverte dans un navigateur Internet : tableau de bord, pages des navigations, gestion du compte et toutes les fonctions de l'application mobile, sans SMS ([RG-WEB-01](02-regles-metier.md#rg-web-01)). Anciennement « plateforme Web » ([D-147](07-decisions.md#d-147)). |
 | **Téléphone associé** | Téléphone Android ou iPhone enregistré pour un bateau. Un bateau a au plus un téléphone associé ; un téléphone peut être associé à plusieurs bateaux du même compte. |
-| **Navigation** | Période entre le démarrage et la fin d'une sortie en mer, effectuée avec un bateau et un téléphone associé. États : *en cours*, *terminée*, *dans la corbeille*. |
+| **Navigation** | Période entre le démarrage et la fin d'une sortie en mer, effectuée avec un bateau et un téléphone associé, que d'autres téléphones du compte peuvent rejoindre ([RG-NAV-39](02-regles-metier.md#rg-nav-39)). États : *en cours*, *terminée*, *dans la corbeille*. |
 | **Log de nav** | Page d'accueil de l'Application web : navigations de chaque bateau, une ligne par navigation ([D-156](07-decisions.md#d-156)). |
 | **Position** | Coordonnées GPS horodatées à l'instant de leur acquisition par le téléphone. |
 | **Position automatique** | Position acquise et transmise à la fréquence de la navigation. |

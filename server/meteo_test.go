@@ -7,6 +7,7 @@ import (
 	"math"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"strings"
 	"sync"
@@ -62,7 +63,7 @@ func (f *fauxMeteoFrance) serveur(t *testing.T) *httptest.Server {
 			return
 		}
 		switch {
-		case r.URL.Path == "/arome":
+		case r.URL.Path == "/arome", r.URL.Path == "/arpege-europe", r.URL.Path == "/arpege-globe":
 			q := r.URL.Query()
 			id := q.Get("coverageid")
 			if !strings.HasSuffix(id, "___"+f.runPublie) || q.Get("format") != "application/wmo-grib" {
@@ -86,7 +87,9 @@ func (f *fauxMeteoFrance) serveur(t *testing.T) *httptest.Server {
 			for i := range vals {
 				vals[i] = v
 			}
-			// grille de 3 × 3 points à 0,01° autour du centre de la zone demandée
+			// grille de 3 × 3 points autour du centre de la zone demandée, au
+			// pas du modèle : AROME 0,01°, ARPEGE Europe 0,1°, ARPEGE Globe 0,25°
+			pas := map[string]float64{"/arome": 0.01, "/arpege-europe": 0.1, "/arpege-globe": 0.25}[r.URL.Path]
 			la, lo := 47.55, -3.55
 			for _, sub := range q["subset"] {
 				var x, y float64
@@ -96,7 +99,7 @@ func (f *fauxMeteoFrance) serveur(t *testing.T) *httptest.Server {
 					lo = (x + y) / 2
 				}
 			}
-			w.Write(grib2Simple(0, cat, num, 3, 3, la+0.01, lo-0.01, 0.01, vals, 0))
+			w.Write(grib2Simple(0, cat, num, 3, 3, la+pas, lo-pas, pas, vals, 0))
 		case strings.HasPrefix(r.URL.Path, "/vagues/0.025/packages/SP1/productMFWAM"), strings.HasPrefix(r.URL.Path, "/vagues/0.1/packages/SP1/productMFWAM"):
 			if r.URL.Query().Get("format") != "grib2" || !strings.HasSuffix(r.URL.Query().Get("time"), "H") {
 				http.Error(w, "paramètres", http.StatusBadRequest)
@@ -115,6 +118,7 @@ func meteoEssai(t *testing.T, f *fauxMeteoFrance) *meteoFrance {
 	s := f.serveur(t)
 	m := nouvelleMeteoFrance(config{MeteoFrance: "aWQ6c2VjcmV0"})
 	m.jetonURL, m.aromeURL, m.vaguesURL, m.pause = s.URL+"/token", s.URL+"/arome", s.URL+"/vagues/", 0
+	m.arpegeEuropeURL, m.arpegeGlobeURL = s.URL+"/arpege-europe", s.URL+"/arpege-globe"
 	return m
 }
 
@@ -162,10 +166,50 @@ func TestReleverMeteo(t *testing.T) {
 	if r, complet := m2.relever(context.Background(), 47.55, -3.55, h, h); complet || !r.Indisponible {
 		t.Errorf("panne : %+v %v", r, complet)
 	}
-	// hors des domaines d'AROME et de la grille de vagues : rien n'est attendu
+	// hors de la grille de vagues : pas d'état de la mer attendu ; vent et
+	// pression d'ARPEGE Globe (D-181)
 	m3 := meteoEssai(t, &fauxMeteoFrance{runPublie: "2026-11-26T18.00.00Z"})
-	if r, complet := m3.relever(context.Background(), -30, 150, h, h); !complet || !r.Indisponible {
-		t.Errorf("hors domaine : %+v %v", r, complet)
+	if r, complet := m3.relever(context.Background(), -30, 150, h, h); !complet || r.Indisponible || r.HauteurVaguesMetres != nil || r.PressionHpa == nil {
+		t.Errorf("hors de la grille de vagues : %+v %v", r, complet)
+	}
+}
+
+// TestReleverMeteoTroisDomaines : RG-NAV-28, D-181, TODO-4.12 : vent et
+// pression d'AROME dans son domaine, sinon d'ARPEGE Europe à 0,1°, sinon
+// d'ARPEGE Globe à 0,25° ; calculs d'ARPEGE toutes les 6 heures.
+func TestReleverMeteoTroisDomaines(t *testing.T) {
+	h := time.Date(2026, 11, 26, 23, 10, 0, 0, time.UTC)
+	for _, c := range []struct {
+		lieu     string
+		lat, lon float64
+		chemin   string
+		demi     string // demi-largeur de la zone demandée : 1,5 pas de grille
+	}{
+		{"au large de Lorient", 47.55, -3.55, "/arome", "lat(47.535,47.565)"},
+		{"Méditerranée orientale", 34.5, 33.0, "/arpege-europe", "lat(34.350,34.650)"},
+		{"Antilles", 16.2, -61.5, "/arpege-globe", "lat(15.825,16.575)"},
+	} {
+		f := &fauxMeteoFrance{runPublie: "2026-11-26T18.00.00Z"}
+		m := meteoEssai(t, f)
+		r, complet := m.relever(context.Background(), c.lat, c.lon, h, h)
+		if !complet || r.VentVitesseNoeuds == nil || math.Abs(*r.VentVitesseNoeuds-6.1) > 0.05 || r.PressionHpa == nil || *r.PressionHpa != 1016.4 {
+			t.Errorf("%s : %+v %v %v", c.lieu, r, complet, f.appels)
+			continue
+		}
+		var vent []string
+		for _, a := range f.appels {
+			if strings.Contains(a, "COMPONENT_OF_WIND") || strings.Contains(a, "PRESSURE") {
+				vent = append(vent, a)
+			}
+		}
+		for _, a := range vent {
+			if !strings.HasPrefix(a, c.chemin+"?") || !strings.Contains(a, url.QueryEscape(c.demi)) {
+				t.Errorf("%s : appel %s, attendu %s avec %s", c.lieu, a, c.chemin, c.demi)
+			}
+		}
+		if c.chemin != "/arome" && !strings.Contains(strings.Join(vent, "\n"), "___2026-11-26T18.00.00Z") {
+			t.Errorf("%s : calcul de 18 h UTC non demandé : %v", c.lieu, vent)
+		}
 	}
 }
 

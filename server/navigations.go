@@ -313,6 +313,8 @@ type navigationJSON struct {
 	MeteoArrivee              json.RawMessage  `json:"meteoArrivee,omitempty"`
 	ClotureAutomatiqueLe      *time.Time       `json:"clotureAutomatiqueLe,omitempty"`
 	Fiche                     *bateauJSON      `json:"fiche,omitempty"`
+	AppareilID                string           `json:"appareilId,omitempty"`         // téléphone qui l'a démarrée (RG-NAV-39), pour son navigateur
+	TelephonesRejoints        []string         `json:"telephonesRejoints,omitempty"` // téléphones qui l'ont rejointe (RG-NAV-39)
 	Suiveurs                  []personneJSON   `json:"suiveurs,omitempty"`
 	ContactsSos               []personneJSON   `json:"contactsSos,omitempty"`
 	AdressePage               string           `json:"adressePage,omitempty"`
@@ -337,6 +339,9 @@ func distance(p, q positionJSON) float64 {
 // (somme des distances entre positions successives, D-35).
 func (a *app) resumer(ctx context.Context, n navLigne, role string) (navigationJSON, error) {
 	r := navigationJSON{ID: n.id, Nom: n.nom, Role: role, Debut: n.debut, Fin: n.fin, decalage: n.decalage}
+	if role == "navigateur" {
+		r.AppareilID = n.appareil // RG-NAV-33, RG-NAV-39 : reprise par ce téléphone, ou rejoindre
+	}
 	if n.destination != nil {
 		r.destinationTexte = n.destination.Texte
 	}
@@ -430,6 +435,11 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 		return r, err
 	}
 	r.Fiche = &b
+	if role == "navigateur" {
+		if r.TelephonesRejoints, err = a.telephonesRejoints(ctx, n.id); err != nil {
+			return r, err
+		}
+	}
 	if r.Suiveurs, err = a.suiveursDe(ctx, n); err != nil {
 		return r, err
 	}
@@ -617,6 +627,16 @@ func (a *app) demarrer(ctx context.Context, utilisateur, id string, d demarrageJ
 		return 0, navigationJSON{}, err
 	}
 	defer tx.Rollback(ctx)
+	if appareil != nil {
+		if err := verrouTelephone(ctx, tx, *appareil); err != nil {
+			return 0, navigationJSON{}, err
+		}
+		if occupe, err := telephoneOccupe(ctx, tx, *appareil, id); err != nil {
+			return 0, navigationJSON{}, err
+		} else if occupe {
+			return 0, navigationJSON{}, errTelephoneOccupe()
+		}
+	}
 	_, err = tx.Exec(ctx, `INSERT INTO navigations (id, navigateur_id, bateau_id, appareil_id, nom, destination, frequence_minutes,
 		parametres, personnes_a_bord, personnes_alertees, debut_enregistre, debut, empreinte, decalage_minutes, chef_de_bord)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13, $14)`,
@@ -1077,6 +1097,11 @@ func (a *app) operations() map[string]operation {
 				return 0, nil, errInvalide("Événement illisible.")
 			}
 			e.ID = id
+			if e.Type == "position_automatique" {
+				if err := a.reserveAuTelephone(ctx, s, navigation); err != nil {
+					return 0, nil, err
+				}
+			}
 			code, ev, err := a.envoyerEvenement(ctx, s.utilisateur, navigation, e)
 			if err == nil {
 				a.rattacherAuTelephone(ctx, s, navigation)
@@ -1091,10 +1116,22 @@ func (a *app) operations() map[string]operation {
 			if navigation == "" {
 				navigation = id
 			}
+			if err := a.reserveAuTelephone(ctx, s, navigation); err != nil {
+				return 0, nil, err
+			}
 			n, err := a.terminer(ctx, s.utilisateur, navigation, e)
 			n.AdressePage = a.adressePublique(r) + "/navigations/" + navigation
 			return http.StatusOK, n, err
 		},
+	}
+	ops["rejoindre"] = func(ctx context.Context, r *http.Request, s *session, id, _ string, contenu json.RawMessage) (int, any, error) {
+		var c struct {
+			AppareilID string `json:"appareilId"`
+		}
+		if err := json.Unmarshal(contenu, &c); err != nil {
+			return 0, nil, errInvalide("Demande illisible.")
+		}
+		return a.rejoindre(ctx, s.utilisateur, id, c.AppareilID)
 	}
 	maps.Copy(ops, a.operationsSos())
 	return ops
@@ -1108,7 +1145,9 @@ func (a *app) rattacherAuTelephone(ctx context.Context, s *session, navigation s
 		FROM sessions se, bateaux b
 		WHERE n.id = $1 AND n.appareil_id IS NULL AND n.fin_enregistree IS NULL AND se.id = $2
 		AND b.id = n.bateau_id AND se.appareil_id IS NOT NULL AND b.appareil_associe_id = se.appareil_id
-		AND NOT EXISTS (SELECT 1 FROM navigations m WHERE m.appareil_id = se.appareil_id AND m.fin_enregistree IS NULL)`,
+		AND NOT EXISTS (SELECT 1 FROM navigations m WHERE m.appareil_id = se.appareil_id AND m.fin_enregistree IS NULL)
+		AND NOT EXISTS (SELECT 1 FROM navigations_rejointes r JOIN navigations m ON m.id = r.navigation_id
+			WHERE r.appareil_id = se.appareil_id AND m.fin_enregistree IS NULL)`,
 		navigation, s.id); err != nil && !estDoublon(err) {
 		log.Printf("navigation %s : rattachement au téléphone : %v", navigation, err)
 	}
@@ -1176,6 +1215,7 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 	}
 	mux.HandleFunc("PUT "+v+"/navigations/{navigationId}", a.api(true, unitaire("demarrage", false)))
 	mux.HandleFunc("PUT "+v+"/navigations/{navigationId}/fin", a.api(true, unitaire("fin", true)))
+	mux.HandleFunc("PUT "+v+"/navigations/{navigationId}/rejoindre", a.api(true, unitaire("rejoindre", false)))
 	mux.HandleFunc("PUT "+v+"/navigations/{navigationId}/evenements/{evenementId}", a.api(true, unitaire("evenement", true)))
 
 	mux.HandleFunc("GET "+v+"/navigations", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
