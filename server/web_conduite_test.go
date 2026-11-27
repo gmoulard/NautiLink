@@ -90,9 +90,22 @@ func TestConduiteWeb(t *testing.T) {
 		t.Fatalf("SOS d'un suiveur sur la navigation : %d", rec.Code)
 	}
 
-	// Fin : confirmation demandée, puis navigation terminée.
-	if rec := web.envoyer("POST", base+"/fin", map[string]string{}); rec.Code != 422 {
+	// Fin : boutons turquoise, fenêtre de confirmation (D-178) ; sans
+	// confirmation (pas de JavaScript), la question sur une page.
+	page := web.envoyer("GET", base, nil).Body.String()
+	for _, m := range []string{`class="bouton" href="https://`, `<form id="terminer"`, `<dialog id="confirmer-fin"`, `name="confirmation" value="oui"`} {
+		if !strings.Contains(page, m) {
+			t.Fatalf("page de la navigation sans %q", m)
+		}
+	}
+	if strings.Contains(page, `type="checkbox" name="confirmation"`) && strings.Contains(page, "Je confirme la fin") {
+		t.Fatal("case à cocher de la fin encore présente")
+	}
+	if rec := web.envoyer("POST", base+"/fin", map[string]string{}); rec.Code != 200 || !strings.Contains(rec.Body.String(), "Terminer la navigation ?") {
 		t.Fatalf("fin sans confirmation : %d", rec.Code)
+	}
+	if _, n := e.appel("GET", "/navigations/"+id, nav, nil); n["etat"] != "en_cours" {
+		t.Fatalf("fin sans confirmation : %v", n)
 	}
 	if rec := web.envoyer("POST", base+"/fin", map[string]string{"confirmation": "on"}); rec.Code != 303 {
 		t.Fatalf("fin : %d %s", rec.Code, rec.Body.String())

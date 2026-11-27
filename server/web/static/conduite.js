@@ -4,7 +4,8 @@
 // géolocalisation du navigateur Internet et joint le décalage horaire ;
 // refusée ou indisponible, le formulaire part sans position. Sur la page
 // d'une navigation en cours, envoie les positions automatiques à la
-// fréquence de la navigation tant que la page reste ouverte.
+// fréquence de la navigation tant que la page reste ouverte, et ouvre la
+// fenêtre de confirmation de « Terminer la navigation ».
 (function () {
   "use strict";
   var geo = navigator.geolocation;
@@ -69,6 +70,24 @@
       });
     });
   });
+
+  // « Terminer la navigation » (RG-NAV-13, D-178) : fenêtre de confirmation
+  // après le clic ; sans fenêtre possible, le formulaire part et le serveur
+  // pose la même question sur une page.
+  var terminer = document.getElementById("terminer");
+  var fenetre = document.getElementById("confirmer-fin");
+  if (terminer && fenetre && typeof fenetre.showModal === "function") {
+    terminer.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      fenetre.showModal();
+    });
+    Array.prototype.forEach.call(fenetre.querySelectorAll("[data-fermer]"), function (a) {
+      a.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        fenetre.close();
+      });
+    });
+  }
 
   // RG-SOS-14 : avertissement quand plus aucun ami n'est coché.
   var sansSos = document.getElementById("sans-sos");
