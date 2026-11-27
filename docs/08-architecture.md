@@ -93,7 +93,7 @@ Les propositions ont été validées ([D-96](07-decisions.md#d-96)) ; ce qui res
 
 ### 3.6 Services externes appelés par le serveur
 
-- Météo marine : API de Météo-France ([D-88](07-decisions.md#d-88)) ; conditions d'accès (clé, quotas) à vérifier ([Q-39](06-questions-ouvertes.md#q-39)).
+- Météo marine : API de Météo-France ([D-88](07-decisions.md#d-88)) ; accès, échec et conservation : [RG-NAV-38](02-regles-metier.md#rg-nav-38) ([D-172](07-decisions.md#d-172)).
 - Cartes du SHOM : [Q-23](06-questions-ouvertes.md#q-23).
 - Géocodage inverse (nom du lieu, RG-NAV-16, RG-JRN-10) : Nominatim (OpenStreetMap), appelé par le serveur avec un cache des noms, en respectant sa limite d'usage ([D-96](07-decisions.md#d-96)).
 

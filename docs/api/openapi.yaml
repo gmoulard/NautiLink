@@ -60,7 +60,7 @@ x-traitements:
     description: 'Géocodage inverse par Nominatim avec cache (D-96) pour le lieu de départ, d''arrivée et de chaque position ; distance = somme des distances entre positions successives.'
     x-regles: [RG-NAV-16, RG-NAV-31, RG-JRN-10]
   - nom: 'Météo de début et de fin'
-    description: 'Relevée auprès de l''API de Météo-France au point de départ et d''arrivée (Q-39).'
+    description: 'Relevée auprès de l''API de Météo-France au point de départ et d''arrivée (RG-NAV-28, RG-NAV-38).'
     x-regles: [RG-NAV-28]
   - nom: 'E-mails'
     description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur ; contenu des e-mails SOS et de début : RG-SOS-17, RG-NOT-05 ; e-mail SOS non accepté par le relais : relancé chaque minute pendant 24 heures (RG-SOS-18).'
@@ -1703,7 +1703,7 @@ components:
 
     Meteo:
       type: object
-      description: 'RG-NAV-28 ; contenu exact selon l''API de Météo-France (Q-39).'
+      description: 'RG-NAV-28 ; contenu exact selon l''API de Météo-France (RG-NAV-38).'
       properties:
         releveeLe: {type: string, format: date-time}
         ventVitesseNoeuds: {type: number}

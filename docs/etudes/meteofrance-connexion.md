@@ -1,8 +1,8 @@
 # Connexion à l'API de Météo-France
 
-Créer le compte, obtenir les codes d'accès (identifiant d'application, jeton), les ranger et les utiliser pour la météo de chaque navigation ([RG-NAV-28](../02-regles-metier.md#rg-nav-28), [D-88](../07-decisions.md#d-88), [Q-39](../06-questions-ouvertes.md#q-39)).
+Créer le compte, obtenir les codes d'accès (identifiant d'application, jeton), les ranger et les utiliser pour la météo de chaque navigation ([RG-NAV-28](../02-regles-metier.md#rg-nav-28), [D-88](../07-decisions.md#d-88), [D-172](../07-decisions.md#d-172)).
 
-> **État** : rédigé le 2026-11-25 sans accès direct au portail (injoignable depuis l'environnement de rédaction), d'après la FAQ du portail et la documentation Open Data de Météo-France vues par une recherche web (sources en fin de page). Les points marqués **à vérifier** se confirment en ouvrant le compte ; reporter alors le constat ici et dans Q-39.
+> **État** : rédigé le 2026-11-25 sans accès direct au portail (injoignable depuis l'environnement de rédaction), d'après la FAQ du portail et la documentation Open Data de Météo-France vues par une recherche web (sources en fin de page). Les points marqués **à vérifier** se confirment en ouvrant le compte ; reporter alors le constat ici.
 
 ## 1. Ce dont NautiLink a besoin
 
@@ -37,12 +37,12 @@ Le portail propose deux façons de s'identifier, pour une « application » cré
 | Durée | Pas d'expiration de l'identifiant ; jeton court | Choisie à la création, 3 ans au plus selon la documentation (**à vérifier**) |
 | Risque | Rien à renouveler à la main | Panne le jour où la clé expire, si personne ne l'a renouvelée |
 
-Proposition (non validée) : identifiant d'application OAuth2, pour qu'aucune date d'expiration ne coupe la météo en pleine saison.
+Retenu le 2026-11-27 ([D-172](../07-decisions.md#d-172)) : identifiant d'application OAuth2, pour qu'aucune date d'expiration ne coupe la météo en pleine saison.
 
 ## 5. Ranger les codes
 
 - **Jamais** dans le dépôt, dans un ticket, dans un e-mail ni dans une conversation avec un assistant.
-- Production (Raspberry Pi sous pi-appliance) : variable d'environnement du serveur, comme les autres secrets (08-architecture.md §6) ; comment la poser : § 5.1. Nom proposé (non validé) : `NAUTILINK_METEOFRANCE`, qui contient l'identifiant d'application encodé tel que le portail le donne pour l'en-tête `Authorization: Basic` (identifiant et secret en base64 : un codage, pas un chiffrement).
+- Production (Raspberry Pi sous pi-appliance) : variable d'environnement du serveur, comme les autres secrets (08-architecture.md §6) ; comment la poser : § 5.1. Nom retenu ([D-172](../07-decisions.md#d-172)) : `NAUTILINK_METEOFRANCE`, qui contient l'identifiant d'application encodé tel que le portail le donne pour l'en-tête `Authorization: Basic` (identifiant et secret en base64 : un codage, pas un chiffrement).
 - Développement : variable posée dans le terminal du développeur, jamais écrite dans un fichier suivi par Git.
 - Test : pas de code ; le serveur de test ne relève pas la météo (aucun envoi réel, 08-architecture.md §6).
 - Sans variable posée, le serveur ne relève pas la météo et la page de la navigation ne l'affiche pas, sans erreur.
@@ -71,7 +71,7 @@ NAUTILINK_METEOFRANCE: "${NAUTILINK_METEOFRANCE:-}"
 
 ## 6. Utilisation par le serveur
 
-Proposition (non validée) pour les points 4 à 6 : comportement en cas d'échec et conservation, à trancher dans Q-39.
+Points 4 à 6 : tranchés le 2026-11-27 ([D-172](../07-decisions.md#d-172), RG-NAV-38) ; nouveaux essais pendant 1 heure en cas d'échec.
 
 1. **Obtenir un jeton** (OAuth2) : `POST https://portail-api.meteofrance.fr/token` avec le corps `grant_type=client_credentials` et l'en-tête `Authorization: Basic <identifiant d'application>`. La réponse contient `access_token` et sa durée (`expires_in`, environ 3 600 secondes). **À vérifier** : adresse exacte du point `/token`.
 2. **Garder le jeton en mémoire** jusqu'à quelques minutes avant son expiration, puis en redemander un. Un refus 401 fait aussi redemander un jeton, une fois.
@@ -86,7 +86,7 @@ Proposition (non validée) pour les points 4 à 6 : comportement en cas d'échec
 - Clé d'API (si ce choix est fait) : noter sa date d'expiration dans le TODO et la renouveler un mois avant.
 - Changement de responsable : transférer le compte ou créer un nouvel identifiant sous le compte du projet.
 
-## 8. Avant de cocher Q-39
+## 8. Avant la mise en service
 
 - [x] Compte créé et validé (2026-11-26).
 - [ ] Conditions d'utilisation lues : usage serveur, gratuité, mention de la source.
@@ -125,7 +125,7 @@ Jeton généré sur le portail par le porteur du projet, utilisé sans être rec
 
 ## 10. Prochaines étapes
 
-Dans cet ordre ; reporter chaque constat dans ce document et dans [Q-39](../06-questions-ouvertes.md#q-39).
+Dans cet ordre ; reporter chaque constat dans ce document.
 
 1. ~~**Jeton**~~ (fait le 2026-11-27, § 9.1 ; reste à faire demander le jeton par l'identifiant d'application, sans le portail) : les quatre souscriptions faites, (re)générer le jeton ou vérifier que l'identifiant d'application couvre bien les quatre API (un jeton créé avant une souscription ne vaut pas pour elle, § 3). Essai depuis un poste, sans écrire le secret dans un fichier suivi par Git : demander un jeton (§ 6, étape 1) et noter ici l'adresse exacte du point `/token` constatée.
 2. **Conditions d'utilisation** : les lire et cocher la ligne du § 8 (usage par un serveur pour une application publique, gratuité après la bêta, mention de la source « Météo-France »).
@@ -135,7 +135,7 @@ Dans cet ordre ; reporter chaque constat dans ce document et dans [Q-39](../06-q
    - API « Environnement » : noter ce qu'elle apporte à RG-NAV-28 ; si rien, la souscription peut être retirée.
    Si l'une des trois données manque, revenir vers le porteur du projet (D-88 à revoir).
    Décisions du 2026-11-27 ([D-168](../07-decisions.md#d-168), puis [D-169](../07-decisions.md#d-169)) : AROME pour le vent et la pression ; MFWAM (paquet `SP1`, GRIB2) pour l'état de la mer, décodé par le serveur. Les souscriptions « Environnement » et « ARPEGE » (sauf besoin hors de la zone d'AROME) peuvent être retirées ; garder « Package Modèles de vague et surcote ». Décodage côté serveur : la lecture marche avec `eccodes` (bibliothèque C, avec la compression CCSDS de `libaec`) ; bibliothèques Go sans dépendance C annoncées pour le modèle 5.42, non encore essayées : `dmarkham/grib2` (MIT, valeur au point le plus proche), `knoweather/simple-grib` (MIT), `pspoerri/go-tiled-eccodes` (MIT), `shyrmapp/aec` (Apache-2.0, décompression seule) ; toutes récentes et peu utilisées : à vérifier sur un vrai fichier contre `eccodes` avant de choisir (TODO-4.10).
-4. **Décisions à prendre avec le porteur du projet** (Q-39) : type de code (identifiant OAuth2, proposé au § 4), nom de la variable (`NAUTILINK_METEOFRANCE`, proposé au § 5), comportement en cas d'échec et conservation (§ 6, points 4 à 6), API retenue pour chaque donnée d'après l'étape 3. Puis trancher Q-39 (`D-nn`, règles, selon « Trancher une question » de `CLAUDE.md`).
+4. ~~**Décisions à prendre avec le porteur du projet**~~ (tranchées le 2026-11-27, [D-172](../07-decisions.md#d-172)) : type de code (identifiant OAuth2, proposé au § 4), nom de la variable (`NAUTILINK_METEOFRANCE`, proposé au § 5), comportement en cas d'échec et conservation (§ 6, points 4 à 6), API retenue pour chaque donnée d'après l'étape 3. 
 5. **Code du serveur** : action [TODO-4.10](../TODO.md) : client Météo-France (jeton en mémoire, file d'appels, nouvel essai), relevé au début et à la fin de chaque navigation, colonnes `meteo_depart` et `meteo_arrivee`, affichage sur la page de la navigation de l'Application web et dans le PDF, essais avec un faux Météo-France ; sans variable posée, aucun relevé et aucune erreur.
 6. **Mise en service** : poser la variable sur pi-appliance (§ 5.1, avant ou après TODO-2.85 de pi-appliance), démarrer puis terminer une navigation d'essai et constater la météo sur sa page ; cocher le § 8.
 
