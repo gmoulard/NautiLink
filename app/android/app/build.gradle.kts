@@ -59,7 +59,10 @@ android {
                 storeFile = cleProduction
                 storePassword = System.getenv("NAUTILINK_KEYSTORE_PASSWORD")
                 keyAlias = System.getenv("NAUTILINK_KEY_ALIAS")
-                keyPassword = System.getenv("NAUTILINK_KEY_PASSWORD")
+                // Clé PKCS12 de keytool : même mot de passe que le fichier ;
+                // ANDROID_KEY_PASSWORD absent ou vide : celui du fichier.
+                keyPassword = System.getenv("NAUTILINK_KEY_PASSWORD")?.takeIf { it.isNotEmpty() }
+                    ?: System.getenv("NAUTILINK_KEYSTORE_PASSWORD")
             }
         }
     }
