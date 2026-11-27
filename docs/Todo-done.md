@@ -51,6 +51,7 @@ Actions de la [feuille de route](TODO.md) réalisées et validées (`[x]`), reti
 ## 6. Étape 3 — Application web
 
 - [x] **TODO-6.14**: Page de la navigation de l'Application web ([D-178](07-decisions.md#d-178), [RG-WEB-08](02-regles-metier.md#rg-web-08)) : « Météo marine » et « Terminer la navigation » en boutons turquoise ; plus de case à cocher : fenêtre de confirmation après le clic (`<dialog>` ouvert par `server/web/static/conduite.js`), page `server/web/fin.html` sans JavaScript (2026-11-27 ; rendus et confirmation constatés dans Chromium à 1280 et 390 px ; essais Go).
+- [x] **TODO-6.15**: « Exporter en CSV » et « Exporter en YAML » sur la page d'une navigation de l'Application web ([D-180](07-decisions.md#d-180), [RG-WEB-09](02-regles-metier.md#rg-web-09)) : `server/web_exports.go`, `<chemin>/navigations/{id}/csv` et `/yaml`, mêmes droits que le PDF (2026-11-27 ; fichiers téléchargés dans Chromium et relus par un lecteur CSV et un lecteur YAML ; essais Go avec PostgreSQL, refus sans accès).
 
 ## 8. Lancement
 

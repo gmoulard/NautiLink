@@ -140,7 +140,7 @@ Page d'accueil après connexion, appelée « Log de nav » ([D-23](07-decisions.
 ### 6.2 Page d'une navigation
 
 - informations générales et fiche du bateau (RG-NAV-16, RG-PAR-08) ;
-- export PDF, pour le navigateur et les suiveurs (RG-NAV-19) ;
+- export PDF, CSV et YAML, pour le navigateur et les suiveurs (RG-NAV-19, RG-WEB-09) ;
 - carte : dernière position, positions successives, tracé, dates et heures, événements ;
 - journal de bord chronologique avec photos et notes vocales lisibles (RG-JRN-02, RG-JRN-03) ;
 - alertes SOS de la navigation ;

@@ -92,6 +92,7 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 | `<chemin>/navigations/<id>` | Page d'une navigation (TODO-6.2) : informations, carte, alertes SOS, journal, bateau, suiveurs ; `…/direct` : partie relue toutes les 30 secondes pendant la navigation ; `…/suiveurs/<id>/retrait`, `…/suppression` (navigateur) |
 | `<chemin>/navigations/<id>/modification`, `…/evenements/<id>`, `…/evenements/<id>/suppression`, `…/ajouts` | Formulaires du navigateur (TODO-6.3) : nom, destination, bateau, heures ; texte et suppression des notes, photos, notes vocales et ajouts ; ajout complémentaire (texte, photo, note vocale) |
 | `<chemin>/navigations/<id>/pdf` | Export PDF de la navigation, pour le navigateur et ses suiveurs (TODO-6.4) |
+| `<chemin>/navigations/<id>/csv`, `<chemin>/navigations/<id>/yaml` | Exports CSV (une ligne par événement) et YAML (fiche et journal), mêmes droits que le PDF (TODO-6.15) |
 | `<chemin>/corbeille` | Corbeille : navigations supprimées, « Restaurer » (TODO-4.8) |
 | `<chemin>/api/v1/…` | API ([`openapi.yaml`](../docs/api/openapi.yaml)) |
 | `<chemin>/admin/` | Espace administrateur : `connexion`, `utilisateurs`, `bateaux`, `annonces`, `journal` (TODO-7.1) |
