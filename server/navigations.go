@@ -299,6 +299,7 @@ type navigationJSON struct {
 	DureeMinutes              int              `json:"dureeMinutes"`
 	DistanceMetres            float64          `json:"distanceMetres"`
 	DernierePosition          *lieuJSON        `json:"dernierePosition"`
+	MeteoMarine               string           `json:"meteoMarine"` // RG-NAV-37
 	SupprimeeDefinitivementLe *time.Time       `json:"supprimeeDefinitivementLe,omitempty"`
 	Version                   int              `json:"version,omitempty"`
 	Navigateur                *personneJSON    `json:"navigateur,omitempty"`
@@ -393,6 +394,7 @@ func (a *app) resumer(ctx context.Context, n navLigne, role string) (navigationJ
 	}
 	r.DistanceMetres = math.Round(r.DistanceMetres)
 	r.DernierePosition = precedente
+	r.MeteoMarine = lienMeteoMarine(precedente)
 	if !n.enCours() {
 		r.LieuArrivee = precedente
 	}
@@ -412,7 +414,7 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 	r.FinEnregistree = n.finEnr
 	r.FrequenceMinutes = n.frequence
 	r.PersonnesABord = n.personnes
-	r.MeteoDepart, r.MeteoArrivee = n.meteoDepart, n.meteoArrivee // RG-NAV-28 : Météo-France, Q-39
+	r.MeteoDepart, r.MeteoArrivee = n.meteoDepart, n.meteoArrivee // RG-NAV-28, RG-NAV-38 : Météo-France
 	r.ClotureAutomatiqueLe = n.cloture
 	var p personneJSON
 	if err := a.b.pool.QueryRow(ctx, "SELECT id, nom, telephone, email FROM utilisateurs WHERE id = $1", n.navigateur).

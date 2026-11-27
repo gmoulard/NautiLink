@@ -1766,6 +1766,7 @@ components:
         dureeMinutes: {type: integer}
         distanceMetres: {type: number}
         dernierePosition: {$ref: '#/components/schemas/Lieu'}
+        meteoMarine: {type: string, format: uri, description: 'Lien « Météo marine » (RG-NAV-37) : recherche de Météo-France sur le lieu de la dernière position (https://meteofrance.com/recherche/<lieu>), sinon https://meteofrance.com/meteo-marine.'}
         supprimeeDefinitivementLe: {type: [string, 'null'], format: date-time, description: Corbeille seulement.}
 
     Navigation:

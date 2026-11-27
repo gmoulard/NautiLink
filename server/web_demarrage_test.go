@@ -226,4 +226,31 @@ func TestLiensRelectureWeb(t *testing.T) {
 	if page := rendu(t, "navigation.html", donneesNavEssai(true, false)); strings.Contains(page, "Météo marine") {
 		t.Error("navigation terminée : lien « Météo marine » affiché")
 	}
+	d := donneesNavEssai(true, true)
+	nd := d.D.(donneesNavigation)
+	nd.N.MeteoMarine = lienMeteoMarine(&lieuJSON{Nom: ptr("Lorient")})
+	d.D = nd
+	if page := rendu(t, "navigation.html", d); !strings.Contains(page, `<a class="lien" href="https://meteofrance.com/recherche/Lorient">Météo marine</a>`) {
+		t.Error("navigation en cours : lien « Météo marine » sans la commune de la dernière position")
+	}
+}
+
+// TestLienMeteoMarine : RG-NAV-37, D-169 : recherche de Météo-France sur le
+// lieu de la dernière position, encodé dans l'adresse ; sinon page générale.
+func TestLienMeteoMarine(t *testing.T) {
+	for _, c := range []struct {
+		lieu    *lieuJSON
+		attendu string
+	}{
+		{nil, "https://meteofrance.com/meteo-marine"},
+		{&lieuJSON{}, "https://meteofrance.com/meteo-marine"},
+		{&lieuJSON{Nom: ptr("  ")}, "https://meteofrance.com/meteo-marine"},
+		{&lieuJSON{Nom: ptr("Lorient")}, "https://meteofrance.com/recherche/Lorient"},
+		{&lieuJSON{Nom: ptr("Île de Groix")}, "https://meteofrance.com/recherche/%C3%8Ele%20de%20Groix"},
+		{&lieuJSON{Nom: ptr("Saint-Pierre/Quiberon")}, "https://meteofrance.com/recherche/Saint-Pierre%2FQuiberon"},
+	} {
+		if got := lienMeteoMarine(c.lieu); got != c.attendu {
+			t.Errorf("lienMeteoMarine(%v) = %q, attendu %q", c.lieu, got, c.attendu)
+		}
+	}
 }

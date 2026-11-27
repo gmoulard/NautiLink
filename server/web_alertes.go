@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 // Pages « Alertes SOS » et « Assistance » de la gestion du compte
@@ -18,10 +20,22 @@ import (
 const (
 	adresseEquipe = "https://github.com/gmoulard/NautiLink/issues" // RG-COM-09, D-138
 	adresseMemo   = "https://gmoulard.github.io/NautiLink/securite.html"
-	// Prévision marine de Météo-France (RG-NAV-37, D-166), adresse vérifiée
-	// le 2026-11-26 ; ouverture sur la position actuelle : Q-103.
-	adresseMeteoMarine = "https://meteofrance.com/meteo-marine"
+	// Prévision marine de Météo-France (RG-NAV-37, D-166, D-169), adresses
+	// vérifiées le 2026-11-26 et le 2026-11-27 : page générale, et recherche
+	// de Météo-France sur la commune la plus proche de la dernière position.
+	adresseMeteoMarine    = "https://meteofrance.com/meteo-marine"
+	adresseMeteoRecherche = "https://meteofrance.com/recherche/"
 )
+
+// lienMeteoMarine : lien « Météo marine » (RG-NAV-37, TODO-4.11) : la
+// recherche de Météo-France sur le lieu de la dernière position connue,
+// celui du journal (RG-JRN-10) ; sans lieu connu, la page générale.
+func lienMeteoMarine(derniere *lieuJSON) string {
+	if derniere == nil || derniere.Nom == nil || strings.TrimSpace(*derniere.Nom) == "" {
+		return adresseMeteoMarine
+	}
+	return adresseMeteoRecherche + url.PathEscape(strings.TrimSpace(*derniere.Nom))
+}
 
 var libellesStatutSms = map[string]string{
 	"en_attente": "en attente", "accepte_pour_envoi": "accepté pour envoi",

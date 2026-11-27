@@ -16,7 +16,7 @@
 <section class="carte" aria-labelledby="titre-conduite">
 <h2 id="titre-conduite">Pendant la navigation</h2>
 <p><a class="bouton sos" href="{{$.Base}}/sos?navigation={{.N.ID}}">Envoyer un SOS</a></p>
-<p><a class="lien" href="{{meteoMarine}}">Météo marine</a> <span class="aide">(prévision marine de Météo-France)</span></p>
+<p><a class="lien" href="{{or .N.MeteoMarine meteoMarine}}">Météo marine</a> <span class="aide">(prévision marine de Météo-France)</span></p>
 {{if .AvecTelephone}}<p class="aide">Le téléphone associé au bateau envoie les positions automatiques de cette navigation.</p>
 {{else}}<p class="aide" id="positions-auto" data-adresse="{{$.Base}}/navigations/{{.N.ID}}/position" data-frequence="{{.N.FrequenceMinutes}}" aria-live="polite">Positions automatiques à la fréquence de la navigation ({{.Frequence}}) tant que cette page reste ouverte : elles s'arrêtent si vous la fermez ou si l'écran se met en veille.</p>{{end}}
 <form class="avec-position" method="post" action="{{$.Base}}/navigations/{{.N.ID}}/position">
