@@ -40,4 +40,4 @@ Ces termes ont le même sens dans tous les documents du dépôt. Un document qui
 | **Abonnement** | Offre payante qui lève la limite du quota gratuit, par compte : 15 € payés une fois, pour 10 ans (RG-ECO-06). |
 | **Corbeille** | État d'une navigation supprimée, restaurable pendant 30 jours. |
 | **Administrateur** | Personne de l'équipe NautiLink qui utilise l'espace administrateur, distinct de l'espace utilisateur. |
-| **Suiveur**, **Contact SOS** | Anciens termes, remplacés par *ami* ([D-176](07-decisions.md#d-176)) ; ils restent dans les décisions passées et dans les noms de champs de l'API gardés pour les applications déjà installées. |
+| **Suiveur**, **Contact SOS** | Anciens termes, remplacés par *ami* ([D-176](07-decisions.md#d-176), [D-187](07-decisions.md#d-187)) ; ils ne restent que dans l'historique (décisions, actions réalisées, études datées) ; ni l'API, ni la base, ni les écrans ne les emploient plus ([D-186](07-decisions.md#d-186), [D-188](07-decisions.md#d-188)). |

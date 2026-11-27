@@ -131,7 +131,7 @@ def texte(police, chaine, x_centre, ligne, largeur, espace=0.0):
 
 ANNEAU = (CX, 495, 385)
 INTERIEUR = (CX, 495, 285)
-SUIVEURS = [(372, 370, 64), (CX, 210, 76), (884, 370, 64)]
+AMIS = [(372, 370, 64), (CX, 210, 76), (884, 370, 64)]
 REPERE = (CX, 345, 60, 452)  # centre, rayon de la tête, pointe
 
 
@@ -153,7 +153,7 @@ def pointes():
     return [nord, ouest, est]
 
 
-def suiveur(cx, cy, R, i):
+def ami(cx, cy, R, i):
     rc = R - 10  # le buste rejoint le cercle
     tete = f'<circle cx="{cx}" cy="{cy - 0.2 * R:.1f}" r="{0.3 * R:.1f}"/>'
     corps = (f'<ellipse cx="{cx}" cy="{cy + 0.68 * R:.1f}" rx="{0.64 * R:.1f}" '
@@ -277,16 +277,16 @@ def symbole(P):
         for a, b in ((146, 214), (-34, 34)):
             corps.append(f'<path d="{arc(cx, cy, r, a, b)}" fill="none" stroke="{c}" '
                          f'stroke-opacity="{o}" stroke-width="15" stroke-linecap="round"/>')
-    # anneau, pointes, arcs entre suiveurs
+    # anneau, pointes, arcs entre amis
     for d in anneau_traces():
         corps.append(f'<path d="{d}" fill="none" stroke="{P["anneau"]}" stroke-width="14"/>')
     for d in pointes():
         corps.append(f'<path d="{d}" fill="{P["trait"]}"/>')
     for d in arcs_interieurs():
         corps.append(f'<path d="{d}" fill="none" stroke="{P["trait"]}" stroke-width="11"/>')
-    # suiveurs
-    for i, (x, y, R) in enumerate(SUIVEURS):
-        clip, perso = suiveur(x, y, R, i)
+    # amis
+    for i, (x, y, R) in enumerate(AMIS):
+        clip, perso = ami(x, y, R, i)
         defs.append(clip)
         corps.append(f'<circle cx="{x}" cy="{y}" r="{R - 6.5}" fill="none" '
                      f'stroke="{P["trait"]}" stroke-width="13"/>')

@@ -86,7 +86,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 ### <a id="q-27"></a>Q-27 — Autres langues
 
 - Priorité : plus tard.
-- Décidé (D-90) : français et anglais au lancement ; langue du téléphone par défaut, modifiable dans les paramètres ; messages envoyés aux suiveurs et aux contacts SOS dans la langue du navigateur (RG-PRM-03, RG-PRM-04).
+- Décidé (D-90) : français et anglais au lancement ; langue du téléphone par défaut, modifiable dans les paramètres ; messages envoyés aux amis dans la langue du navigateur (RG-PRM-03, RG-PRM-04).
 - Essai dans le prototype (TODO-9.2) : textes des écrans dans `app/lib/l10n/app_fr.arb` (français, langue de référence) et `app_en.arb` (anglais), code généré par `flutter gen-l10n`.
 - Décidé (D-93) : sur l'Application web, langue du navigateur Internet par défaut (RG-PRM-03).
 - Reste : relecture de la traduction anglaise ; ajout d'autres langues après le lancement, sans gestion des langues dans l'espace administrateur (RG-ADM-04).

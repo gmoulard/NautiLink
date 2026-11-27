@@ -173,10 +173,12 @@ Les domaines prioritaires (SOS, modèle économique, partage) viennent en premie
 
 ## 11. Contacts (RG-CTC)
 
-- **TS-CTC-01** ([RG-CTC-01](../02-regles-metier.md#rg-ctc-01)) — Étant donné un nouvel ami avec nom et numéro, quand le navigateur l'enregistre, alors aucune case de rôle n'est proposée (ni « Suiveur » ni « Contact SOS ») et l'ami est listé à l'écran de démarrage ; un ami sans numéro ni e-mail est refusé ([D-176](../07-decisions.md#d-176)).
+- **TS-CTC-01** ([RG-CTC-01](../02-regles-metier.md#rg-ctc-01)) — Étant donné un nouvel ami avec nom et numéro, quand le navigateur l'enregistre, alors aucune case de rôle n'est proposée et l'ami est listé à l'écran de démarrage ; un ami sans numéro ni e-mail est refusé ([D-176](../07-decisions.md#d-176)) ; aucun écran, e-mail, SMS ni PDF ne nomme un autre rôle que celui d'ami ([D-187](../07-decisions.md#d-187)).
 - **TS-CTC-02** ([RG-CTC-04](../02-regles-metier.md#rg-ctc-04)) — Étant donné un nouvel ami, quand le navigateur l'ajoute en choisissant un périmètre, alors une invitation part et l'ami suit les navigations à son acceptation ; quand le navigateur retire ses accès globalement, alors l'ami est retiré de toutes les navigations et reste dans la liste.
+- **TS-CTC-06** ([RG-CTC-04](../02-regles-metier.md#rg-ctc-04)) — Étant donné un navigateur dont l'adresse n'est pas confirmée, quand il ajoute un ami depuis l'application mobile, alors l'invitation est refusée et l'ami est gardé sans invitation (« inviter: false ») ; une fois l'adresse confirmée, il peut l'inviter ([D-185](../07-decisions.md#d-185), [D-186](../07-decisions.md#d-186)).
+- **TS-CTC-07** ([RG-CTC-01](../02-regles-metier.md#rg-ctc-01)) — Étant donné une application d'avant la 0.5.1, quand elle envoie un contact avec un ancien champ de rôle, alors le serveur le refuse avec un message qui demande de mettre l'application à jour ([D-186](../07-decisions.md#d-186)).
 - **TS-CTC-03** ([RG-CTC-05](../02-regles-metier.md#rg-ctc-05)) — Étant donné un ami avec e-mail et sans numéro, quand le navigateur déclenche un SOS, alors l'ami reçoit l'e-mail SOS et aucun SMS ne lui est adressé.
-- **TS-CTC-04** ([RG-CTC-02](../02-regles-metier.md#rg-ctc-02)) — Étant donné la liste de contacts, quand le navigateur ajoute, modifie, supprime un contact ou change ses cases depuis le Web puis depuis l'application mobile, alors chaque opération est acceptée.
+- **TS-CTC-04** ([RG-CTC-02](../02-regles-metier.md#rg-ctc-02)) — Étant donné la liste de contacts, quand le navigateur ajoute, modifie, supprime un contact depuis le Web puis depuis l'application mobile, alors chaque opération est acceptée.
 - **TS-CTC-05** ([RG-CTC-03](../02-regles-metier.md#rg-ctc-03)) — Étant donné un contact ajouté sur le Web, quand l'application mobile est lancée avec Internet, alors le contact figure dans sa copie locale, consultable ensuite hors connexion.
 
 ## 12. Paramètres (RG-PRM)

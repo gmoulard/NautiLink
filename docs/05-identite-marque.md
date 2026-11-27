@@ -40,7 +40,7 @@ NautiLink ne se présente pas comme une simple application GPS ou de cartographi
 
 ### 5.2 Éléments
 
-Un bateau (le navigateur), un repère GPS (sa position), plusieurs silhouettes (les suiveurs), des ondes ou lignes de connexion (le partage). Éviter un voilier ou une boussole seuls, qui ne traduisent pas le partage.
+Un bateau (le navigateur), un repère GPS (sa position), plusieurs silhouettes (les amis), des ondes ou lignes de connexion (le partage). Éviter un voilier ou une boussole seuls, qui ne traduisent pas le partage.
 
 ### 5.3 Style
 
@@ -78,7 +78,7 @@ Choix graphiques, validés avec le redessin ([D-117](07-decisions.md#d-117)) :
 - Version claire : le blanc devient bleu marine `#082B46`, le cyan de « Link », du souligné et des vagues devient turquoise `#13A6AD` (le cyan est illisible sur blanc), les ondes autour du repère sont en bleu `#0E6BA8` ; le repère reste orange.
 - Versions monochromes : le point blanc du repère devient un trou ; un filet vide sépare la coque et les vagues.
 - Icônes iPhone sombre et teintée (iOS 18) : produites dans `assets/logo/icones/`, pas encore déclarées dans `Contents.json` (format Flutter gardé tel quel) ; à brancher avec l'application iPhone (LOT-16).
-- Le symbole reste détaillé : en très petit (favicon, 20 à 29 px), les suiveurs et les ondes se lisent mal.
+- Le symbole reste détaillé : en très petit (favicon, 20 à 29 px), les silhouettes des amis et les ondes se lisent mal.
 
 ## 6. Couleurs
 
