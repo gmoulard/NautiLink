@@ -1,4 +1,4 @@
-/* Feuille commune du site de présentation NautiLink (toutes les pages sauf securite.html, qui a ses propres styles).
+/* Feuille commune du site de présentation NautiLink (toutes les pages ; securite.html y ajoute les styles du mémo, gardés dans la page pour l'application, D-161).
    Identité graphique du 2026-11-26 (D-157) et mise en page de l'étude docs/etudes/Nautilinkimages261126.png (D-161) :
    valeurs dans docs/05-identite-marque.md §15. */
 :root {

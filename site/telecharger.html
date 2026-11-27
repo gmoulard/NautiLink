@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Télécharger NautiLink</title>
-<meta name="description" content="Installer NautiLink et la démonstration V0 sur Android et iPhone, sans passer par les stores.">
+<meta name="description" content="Installer NautiLink sur Android et iPhone, sans passer par les stores.">
 <link rel="icon" href="assets/logo-nautilink.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,6 @@
       <a href="abonnement.html">Tarifs</a>
       <a href="faq.html">FAQ</a>
       <a href="securite.html">Sécurité en mer</a>
-      <a href="app/">Démonstration</a>
       <a href="a-propos.html">À propos</a>
       <a class="button" href="telecharger.html" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4-5.7 5.7-5.7-5.7 1.4-1.4 3.3 3.3zM4 18h16v2H4z"/></svg>Télécharger</a>
     </nav>
@@ -38,11 +37,7 @@
       <span class="kicker">Télécharger</span>
       <h1>Installer NautiLink</h1>
       <p>NautiLink n'est pas encore publiée sur Google Play ni sur l'App Store. Vous l'installez directement depuis ce site.</p>
-      <p>Deux applications sont proposées :</p>
-      <ul>
-        <li><b>NautiLink</b>, la version de production, en bêta : votre compte sur le serveur de NautiLink, vos bateaux, vos navigations ; la dernière construction publiée ici est la production ;</li>
-        <li><b>NautiLink démo</b>, la démonstration V0 : des données d'exemple pour découvrir tous les écrans, sans compte ; rien n'est réellement envoyé. Elle est terminée et ne change plus.</li>
-      </ul>
+      <p><b>NautiLink</b> est en bêta : votre compte sur le serveur de NautiLink, vos bateaux, vos navigations ; la dernière construction publiée ici est la version de production.</p>
       <p class="note">NautiLink est en version bêta et n'est pas un équipement de sécurité. N'en dépendez pas en mer : en cas de détresse, canal 16 de la VHF ou 196.</p>
     </div>
   </section>
@@ -68,53 +63,29 @@
       <p class="muted commit">Version V@VERSION_APK_PROD@, build @BUILD_APK_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK_PROD@">@COMMIT_APK_PROD_COURT@</a>.</p>
       <a class="button" href="downloads/nautilink-ios-non-signe.ipa">Télécharger NautiLink pour iPhone (IPA non signé)</a>
       <p class="muted commit">Version V@VERSION_IPA_PROD@, build @BUILD_IPA_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA_PROD@">@COMMIT_IPA_PROD_COURT@</a>.</p>
-      <p class="muted">L'installation se fait comme pour l'application de démonstration : voir <a href="#android">Android</a> et <a href="#iphone">iPhone (2. Application iPhone non signée)</a>. Sur Android, NautiLink et NautiLink démo s'installent l'une à côté de l'autre.</p>
-    </div>
-  </section>
-
-  <section id="demo">
-    <div class="wrap narrow legal">
-      <span class="kicker">Démonstration V0</span>
-      <h2>La démonstration V0, terminée</h2>
-      <p>La démonstration V0 montre tous les écrans de NautiLink avec des données d'exemple : le navigateur à bord et le suiveur sur l'Application web. Elle est terminée : elle reste disponible ici sans changer, construite toujours à partir du même commit.</p>
-      <a class="button" href="app/">Ouvrir la démonstration Web V0</a>
-      <p class="muted">Sur téléphone : <a href="#android">APK Android</a> et <a href="#iphone">iPhone</a> ci-dessous.</p>
+      <p class="muted">Comment l'installer : voir <a href="#android">Android</a> et <a href="#iphone">iPhone</a> ci-dessous.</p>
     </div>
   </section>
 
   <section id="android">
     <div class="wrap narrow legal">
       <span class="kicker">Android</span>
-      <h2>Installer l'APK de démonstration V0</h2>
-      <a class="button" href="downloads/nautilink-demo.apk">Télécharger l'APK de démonstration V0</a>
-      <p class="muted commit">Version V@VERSION_APK@, build @BUILD_APK@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK@">@COMMIT_APK_COURT@</a>.</p>
+      <h2>Installer NautiLink sur Android</h2>
       <ol class="steps">
-        <li>Ouvrez cette page sur votre téléphone Android et touchez le bouton de téléchargement (production ou démonstration V0).</li>
+        <li>Ouvrez cette page sur votre téléphone Android et touchez « Télécharger NautiLink pour Android » ci-dessus.</li>
         <li>Ouvrez le fichier téléchargé. Android demande d'autoriser votre navigateur à installer des applications : touchez « Paramètres », activez « Autoriser cette source », puis revenez.</li>
         <li>Touchez « Installer ». Google Play Protect peut prévenir que l'application n'est pas connue, car elle n'est pas publiée sur Google Play : choisissez d'installer quand même si vous faites confiance à ce site.</li>
         <li>Ouvrez NautiLink et acceptez l'avertissement.</li>
       </ol>
-      <p class="muted">NautiLink (production) est signée avec une clé fixe : une nouvelle version s'installe par-dessus la précédente, sans perdre la session ni les envois en attente. Seule exception : la première version signée avec cette clé demande de désinstaller une dernière fois l'ancienne. La démonstration V0 reste signée avec une clé de test : pour la réinstaller, désinstallez-la d'abord.</p>
+      <p class="muted">NautiLink est signée avec une clé fixe : une nouvelle version s'installe par-dessus la précédente, sans perdre la session ni les envois en attente. Seule exception : la première version signée avec cette clé demande de désinstaller une dernière fois l'ancienne.</p>
     </div>
   </section>
 
   <section id="iphone">
     <div class="wrap narrow legal">
       <span class="kicker">iPhone</span>
-      <h2>Démonstration V0 : deux façons, sans l'App Store</h2>
-
-      <h3>1. Sur l'écran d'accueil (le plus simple)</h3>
-      <p>La démonstration Web s'ouvre comme une application, sans compte ni installation.</p>
-      <ol class="steps">
-        <li>Ouvrez <a href="app/">la démonstration Web</a> dans <b>Safari</b> sur votre iPhone.</li>
-        <li>Touchez le bouton de partage, puis « Sur l'écran d'accueil ».</li>
-        <li>Touchez « Ajouter » : l'icône NautiLink apparaît avec vos applications.</li>
-      </ol>
-
-      <h3>2. Application iPhone non signée (pour les curieux)</h3>
-      <p>Apple n'autorise l'installation hors App Store qu'avec une signature. Le fichier proposé ici n'est pas signé : vous le signez vous-même avec votre identifiant Apple, grâce à un outil d'installation sur ordinateur comme AltStore ou Sideloadly.</p>
-      <a class="button" href="downloads/nautilink-demo-ios-non-signe.ipa">Télécharger l'IPA de démonstration V0 non signé</a>
-      <p class="muted commit">Version V@VERSION_IPA@, build @BUILD_IPA@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA@">@COMMIT_IPA_COURT@</a>.</p>
+      <h2>Installer NautiLink sur iPhone, sans l'App Store</h2>
+      <p>Apple n'autorise l'installation hors App Store qu'avec une signature. Le fichier proposé ici (« Télécharger NautiLink pour iPhone (IPA non signé) » ci-dessus) n'est pas signé : vous le signez vous-même avec votre identifiant Apple, grâce à un outil d'installation sur ordinateur comme AltStore ou Sideloadly.</p>
       <ol class="steps">
         <li>Sur votre ordinateur, installez <a href="https://altstore.io/" target="_blank" rel="noopener">AltStore</a> ou <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a> en suivant leurs instructions.</li>
         <li>Branchez l'iPhone, ouvrez l'outil, choisissez le fichier IPA téléchargé et connectez-vous avec votre identifiant Apple.</li>
