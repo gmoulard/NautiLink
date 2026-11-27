@@ -24,7 +24,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-12 | Web : consultation des navigations | TODO-6.1, TODO-6.2, TODO-6.3, TODO-6.4 | LOT-7, LOT-9 | [~] |
 | LOT-13 | Web : compte, suiveur, abonnement | TODO-6.5, TODO-6.6, TODO-6.7, TODO-6.8, TODO-6.9 | LOT-12 | [~] |
 | LOT-14 | Administration | TODO-7.1 | LOT-3, LOT-8 | [~] |
-| LOT-15 | Marque et publication Android | TODO-3.15, TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5, TODO-8.6 | LOT-3, LOT-11 | [~] |
+| LOT-15 | Marque et publication Android | TODO-3.15, TODO-8.1, TODO-8.2, TODO-8.3, TODO-8.4, TODO-8.5, TODO-8.6, TODO-8.7 | LOT-3, LOT-11 | [~] |
 | LOT-16 | Application iPhone | TODO-10.3, TODO-10.4, TODO-10.5, TODO-10.6, TODO-10.7, TODO-10.8 | LOT-11, LOT-13, LOT-15 ; demande explicite de l'utilisateur ([D-155](07-decisions.md#d-155)) | [!] |
 | LOT-17 | Évolutions futures | TODO-9.1, TODO-9.2, TODO-9.3 | LOT-13, LOT-14 | [ ] |
 | LOT-18 | Demandes du 2026-11-26 : nom, pied de page, paramètres, chef de bord, incidents | TODO-3.17, TODO-3.19, TODO-4.9, TODO-5.10, TODO-5.11 | LOT-11 | [ ] |
@@ -288,6 +288,9 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 - [~] **TODO-8.6**: Demande du 2026-11-25 (boîte de réception) : lien vers le dépôt <https://github.com/gmoulard/NautiLink> sur le site de présentation. Dépend de : TODO-8.5.
   - Critères d'acceptation : lien présent en pied de chaque page de `site/` et vérifié sur le site en ligne.
   - Fait (2026-11-25) : lien « Code source sur GitHub » en pied de page de `index.html`, `telecharger.html`, `abonnement.html`, `securite.html` et `avertissement.html`. Reste : vérification sur le site en ligne.
+- [~] **TODO-8.7**: Demande du 2026-11-27 : étude du renommage de NautiLink en NaviLink ([Q-26](06-questions-ouvertes.md#q-26)). Dépend de : TODO-8.2.
+  - Critères d'acceptation : étude relue par l'utilisateur ; renommage décidé ou écarté par une décision `D-nn`.
+  - Fait (2026-11-27) : [étude](etudes/renommage-navilink.md) (inventaire, étapes de l'utilisateur et de Claude, choix proposés). Reste : vérification du nom NaviLink par l'utilisateur, choix du § 5, décision.
 - [ ] **TODO-8.4**: Publication sur Google Play. Dépend de : TODO-2.1, TODO-5.1 à TODO-5.8, TODO-8.3.
   - Critères d'acceptation : application acceptée par Google Play avec les autorisations SMS et localisation en arrière-plan.
 

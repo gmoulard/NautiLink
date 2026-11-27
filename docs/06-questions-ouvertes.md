@@ -67,6 +67,7 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Étude : [nom NautiLink](etudes/nom-nautilink.md) (2026-11-25) : pas d'homonyme exact repéré parmi les applications ; quasi-homonyme Nauti-Link (conseil en cession d'entreprises du nautisme, France) ; bases de marques, domaines et comptes non consultés.
 - Décidé (D-87) : le nom NautiLink est gardé, sous réserve des vérifications ci-dessous.
 - Reste : consulter les bases de marques INPI, EUIPO et OMPI ; obtenir un avis juridique (cas Nauti-Link) ; puis réserver les domaines et les comptes libres.
+- Envisagé le 2026-11-27 : renommer en NaviLink, non décidé ; [étude du renommage](etudes/renommage-navilink.md) (inventaire, étapes, choix proposés ; quasi-homonyme Navlink à vérifier).
 
 ### <a id="q-30"></a>Q-30 — Maquettes et accessibilité
 

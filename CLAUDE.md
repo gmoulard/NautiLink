@@ -31,6 +31,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Notes vocales : format audio, transcription | `docs/etudes/notes-vocales.md` |
 | Compte et codes d'accès de l'API Météo-France (météo des navigations) | `docs/etudes/meteofrance-connexion.md` |
 | Disponibilité du nom NautiLink : marques, domaines, réseaux sociaux | `docs/etudes/nom-nautilink.md` |
+| Renommer NautiLink en NaviLink : inventaire, étapes | `docs/etudes/renommage-navilink.md` |
 | Cartes et données du SHOM sur la carte du Web : licences, WMTS | `docs/etudes/shom-cartes.md` |
 | Plusieurs versions de l'Application web : déploiement, compatibilité | `docs/etudes/versions-web.md` |
 
