@@ -37,7 +37,7 @@
   <label class="case"><input type="checkbox" name="email" value="{{.ID}}" {{if .Cochee}}checked{{end}} {{if .Sos}}data-sos{{end}}><span>E-mail{{if .SansEmail}} <span class="aide">(aucune adresse connue)</span>{{end}}</span></label></li>
 {{end}}</ul>
 {{else}}<p class="aide">Aucun ami dans votre liste.</p>{{end}}
-<p class="erreur" id="sans-sos" {{if not .SansContactSos}}hidden{{end}}>Aucun ami coché : personne ne recevra votre alerte SOS.</p>
+<p class="erreur" id="sans-sos" {{if not .SansAmiAlerte}}hidden{{end}}>Aucun ami coché : personne ne recevra votre alerte SOS.</p>
 <p><a class="lien" href="{{$.Base}}/contacts">Ajouter une personne</a></p>
 </section>
 <section class="carte" aria-labelledby="titre-position">

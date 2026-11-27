@@ -141,7 +141,6 @@ void main() {
       await toucher(tester, 'Démarrer navigation');
       await toucher(tester, 'J\'ai compris');
       // Claire : numéro sans adresse : « SMS » coché, « E-mail » impossible.
-      expect(find.text('suiveur · contact SOS'), findsNothing);
       // TODO-5.14 : tableau sans bordure, cases « E-mail » et « SMS ».
       expect(find.byKey(const Key('alerted-table')), findsOneWidget);
       final email = tester.widget<Checkbox>(
@@ -250,7 +249,7 @@ void main() {
       await toucher(tester, 'Envoyer position');
       expect(find.text('Position envoyée'), findsWidgets);
       expect(find.text('Serveur : envoyé'), findsOneWidget);
-      // RG-SMS-03 : SMS ordinaire prérempli, aux suiveurs de la navigation.
+      // RG-SMS-03 : SMS ordinaire prérempli, aux amis de la navigation.
       expect(
         find.text(
           'SMS : prérempli dans l\'application SMS, appuyez sur « Envoyer »',
@@ -504,7 +503,7 @@ void main() {
       await toucher(tester, 'J\'ai compris');
       await reveal(tester, find.byKey(const Key('ios-start-warning')));
       expect(find.byKey(const Key('ios-start-warning')), findsOneWidget);
-      // Claire est contact SOS sans e-mail : elle ne sera pas prévenue.
+      // Claire est ami sans e-mail : elle ne sera pas prévenue.
       expect(
         find.text('Amis sans e-mail, qui ne seront pas prévenus : Claire'),
         findsOneWidget,
@@ -559,9 +558,8 @@ void main() {
       expect(ajout['nom'], 'Paul');
       expect(ajout['perimetre'], 'navigation');
       expect(ajout['navigationId'], navId);
-      // D-176 : plus d'anciens champs « suiveur » et « contactSos ».
-      expect(ajout.containsKey('suiveur'), isFalse);
-      expect(ajout.containsKey('contactSos'), isFalse);
+      // D-186 : l'ami est invité ; « inviter » ne part pas.
+      expect(ajout.containsKey('inviter'), isFalse);
       // Q-102 : sans adresse, « E-mail » est décoché (alertes du serveur) ;
       // « SMS » est coché.
       expect((c as Map)['personnesAlertees'], isNot(contains(ajout['id'])));

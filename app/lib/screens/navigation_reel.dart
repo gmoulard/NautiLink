@@ -1816,7 +1816,7 @@ class _SosReelScreenState extends State<SosReelScreen> {
       position = pos;
       alerteId = id;
     });
-    // 2. SMS aux contacts SOS (Android, RG-SOS-05 à RG-SOS-08, RG-SOS-16),
+    // 2. SMS aux amis (Android, RG-SOS-05 à RG-SOS-08, RG-SOS-16),
     // 3. alerte au serveur, sans qu'une étape attende l'autre (RG-SOS-04).
     final envoi = d.conduite.envoyerSos(
       id: id,

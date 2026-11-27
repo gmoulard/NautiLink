@@ -41,7 +41,7 @@ func TestRenduAlertesAssistance(t *testing.T) {
 }
 
 // TestPagesAlertesAssistance : avec PostgreSQL : TS-SOS-19 sur le Web ; le
-// suiveur de périmètre navigateur voit l'alerte (RG-SOS-20), un autre compte
+// ami de périmètre navigateur voit l'alerte (RG-SOS-20), un autre compte
 // non.
 func TestPagesAlertesAssistance(t *testing.T) {
 	e := nouvelEssai(t)
@@ -61,7 +61,7 @@ func TestPagesAlertesAssistance(t *testing.T) {
 		}
 	}
 	if page := e.webConnecte("lea@exemple.org").envoyer("GET", "/nautilink/alertes-sos", nil).Body.String(); !strings.Contains(page, "alerte de Navigateur") {
-		t.Fatalf("historique du suiveur : %s", page)
+		t.Fatalf("historique de l'ami : %s", page)
 	}
 	if page := e.webConnecte("autre@exemple.org").envoyer("GET", "/nautilink/alertes-sos", nil).Body.String(); !strings.Contains(page, "Aucune alerte SOS.") {
 		t.Fatalf("historique d'un autre compte : %s", page)

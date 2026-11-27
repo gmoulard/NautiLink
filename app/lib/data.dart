@@ -35,7 +35,7 @@ class Contact {
   String? phone;
   String? email;
   bool follower;
-  bool sos; // RG-CTC-05 : contact SOS seulement avec un numéro.
+  bool sos; // RG-CTC-05 : SMS SOS seulement avec un numéro.
 }
 
 class Position {
@@ -292,7 +292,7 @@ class AppState extends ChangeNotifier {
   /// Nombre de personnes à bord de la navigation précédente (RG-NAV-27).
   int lastPersonsOnBoard = 1;
 
-  /// Contacts alertés par défaut : suiveurs et contacts SOS (RG-NAV-25).
+  /// Amis alertés par défaut (RG-NAV-25).
   List<Contact> get alertable =>
       contacts.where((c) => c.follower || c.sos).toList();
 
@@ -301,7 +301,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Contacts SOS alertés pendant la navigation en cours.
+  /// Amis alertés pendant la navigation en cours.
   List<Contact> get sosContactsNow {
     final v = current;
     return contacts

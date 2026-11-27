@@ -20,7 +20,7 @@ enum IssueSms {
   /// Réglages de la navigation : ce type de SMS ne part pas (RG-SMS-02).
   desactive,
 
-  /// Aucun suiveur de la navigation avec un numéro (RG-SMS-01).
+  /// Aucun ami de la navigation avec un numéro (RG-SMS-01).
   sansDestinataire,
 
   /// Envoyé automatiquement, avec la permission d'envoi de SMS (RG-SMS-03, D-158).
@@ -159,7 +159,7 @@ class SmsNavigation {
   /// Amis avec un numéro, qui reçoivent les SMS de la navigation
   /// (RG-SMS-01, D-176), sans ceux dont « SMS » est décoché au démarrage
   /// (RG-NAV-25, Q-102).
-  List<DestinataireSms> suiveurs(NavigationLocale n) => [
+  List<DestinataireSms> amisSms(NavigationLocale n) => [
     for (final c in contacts())
       if (c.recevoirSms &&
           (c.telephone?.trim().isNotEmpty ?? false) &&
@@ -167,20 +167,20 @@ class SmsNavigation {
         DestinataireSms(c.telephone!.trim(), contactId: c.id),
   ];
 
-  /// Destinataires d'un SMS de navigation : les suiveurs si les paramètres
+  /// Destinataires d'un SMS de navigation : les amis si les paramètres
   /// le prévoient (RG-SMS-01, RG-SMS-02), et toujours le navigateur, pour la
-  /// trace, même sans suiveur et même si ce type de SMS est désactivé
+  /// trace, même sans ami et même si ce type de SMS est désactivé
   /// (RG-SMS-08, D-159).
   List<DestinataireSms> destinataires(
     NavigationLocale n,
     String type,
     ParametresGeneraux? defaut,
-  ) => [if (prevu(n, type, defaut)) ...suiveurs(n), ?_copie];
+  ) => [if (prevu(n, type, defaut)) ...amisSms(n), ?_copie];
 
   /// Amis prévenus par SMS SOS : ceux cochés « SMS » au démarrage
   /// (RG-NAV-25, Q-102), tous hors navigation ; seulement avec un numéro
   /// (RG-SOS-05, RG-CTC-05, D-176).
-  List<DestinataireSms> contactsSos(NavigationLocale? n) => [
+  List<DestinataireSms> amisSos(NavigationLocale? n) => [
     for (final c in contacts())
       if ((c.telephone?.trim().isNotEmpty ?? false) &&
           (n == null || n.recoitSms(c.id)))
@@ -265,7 +265,7 @@ class SmsNavigation {
   /// (D-158), sinon ouvert prérempli (RG-SMS-03) : début, position manuelle,
   /// note, photo (MMS si prévu, RG-SMS-05), note vocale, incident ou avarie
   /// (RG-JRN-11), fin ; adressé aux
-  /// suiveurs de la navigation et au navigateur (copie, RG-SMS-08).
+  /// amis de la navigation et au navigateur (copie, RG-SMS-08).
   Future<(IssueSms, int)> ordinaire(
     NavigationLocale n,
     String type, {
@@ -395,7 +395,7 @@ class SmsNavigation {
   }
 
   /// SMS SOS (RG-SOS-05 à RG-SOS-08, RG-SOS-16) : avec la permission, les deux
-  /// SMS partent automatiquement aux contacts SOS et au navigateur (copie),
+  /// SMS partent automatiquement aux amis et au navigateur (copie),
   /// retentés chaque minute, statuts envoyés au serveur (RG-SOS-12) ; sans
   /// elle, le premier et le second SMS s'ouvrent préremplis (RG-AND-04,
   /// RG-SOS-23). Rend l'issue et le nombre de destinataires.
@@ -406,7 +406,7 @@ class SmsNavigation {
     required String second,
   }) async {
     if (!disponible) return (IssueSms.aucun, 0);
-    final d = contactsSos(navigation);
+    final d = amisSos(navigation);
     if (d.isEmpty) return (IssueSms.sansDestinataire, 0);
     final tous = [...d, ?_copie];
     if (await canal.autorise()) {

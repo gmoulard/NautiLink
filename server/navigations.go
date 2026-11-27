@@ -218,15 +218,15 @@ func (a *app) navigation(ctx context.Context, q lecteur, id string) (navLigne, e
 	return lireNav(q.QueryRow(ctx, "SELECT "+colonnesNav+" FROM navigations WHERE id = $1", id))
 }
 
-// conditionSuiveur : la navigation n (alias) est visible du suiveur $1 :
+// conditionAmi : la navigation n (alias) est visible de l'ami $1 :
 // accès de périmètre navigateur, ou de périmètre navigation sur elle
 // (RG-PAR-02), sans retrait de cette navigation (RG-PAR-06), hors corbeille
 // (RG-NAV-20). Périmètre navigateur : toutes ses navigations, y compris
 // celles terminées avant l'accès (RG-PAR-09, D-111).
-const conditionSuiveur = `n.supprimee_le IS NULL AND n.navigateur_id <> $1
-	AND EXISTS (SELECT 1 FROM acces ac WHERE ac.suiveur_id = $1 AND ac.navigateur_id = n.navigateur_id
+const conditionAmi = `n.supprimee_le IS NULL AND n.navigateur_id <> $1
+	AND EXISTS (SELECT 1 FROM acces ac WHERE ac.ami_id = $1 AND ac.navigateur_id = n.navigateur_id
 		AND (ac.perimetre = 'navigateur' OR ac.navigation_id = n.id))
-	AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = n.id AND r.suiveur_id = $1)`
+	AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = n.id AND r.ami_id = $1)`
 
 // navigationVue : la navigation et le rôle de l'utilisateur ; introuvable
 // sans accès (le serveur ne distingue pas les deux).
@@ -239,18 +239,18 @@ func (a *app) navigationVue(ctx context.Context, utilisateur, id string) (navLig
 		return n, "navigateur", nil
 	}
 	var ok bool
-	if err := a.b.pool.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM navigations n WHERE n.id = $2 AND "+conditionSuiveur+")",
+	if err := a.b.pool.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM navigations n WHERE n.id = $2 AND "+conditionAmi+")",
 		utilisateur, id).Scan(&ok); err != nil {
 		return n, "", err
 	}
 	if !ok {
 		return n, "", errIntrouvable()
 	}
-	return n, "suiveur", nil
+	return n, "ami", nil
 }
 
 // navigationDuNavigateur : modifications réservées au navigateur ; un
-// suiveur est en lecture seule (RG-PAR-07, RG-PAR-08).
+// ami est en lecture seule (RG-PAR-07, RG-PAR-08).
 func (a *app) navigationDuNavigateur(ctx context.Context, utilisateur, id string) (navLigne, error) {
 	n, role, err := a.navigationVue(ctx, utilisateur, id)
 	if err == nil && role != "navigateur" {
@@ -315,8 +315,7 @@ type navigationJSON struct {
 	Fiche                     *bateauJSON      `json:"fiche,omitempty"`
 	AppareilID                string           `json:"appareilId,omitempty"`         // téléphone qui l'a démarrée (RG-NAV-39), pour son navigateur
 	TelephonesRejoints        []string         `json:"telephonesRejoints,omitempty"` // téléphones qui l'ont rejointe (RG-NAV-39)
-	Suiveurs                  []personneJSON   `json:"suiveurs,omitempty"`
-	ContactsSos               []personneJSON   `json:"contactsSos,omitempty"`
+	Amis                      []amiJSON        `json:"amis,omitempty"`               // RG-PAR-08, D-186
 	AdressePage               string           `json:"adressePage,omitempty"`
 	decalage                  *int             // fuseau du téléphone au début (RG-PRM-07), pour l'affichage Web
 	destinationTexte          string           // destination en texte, pour le log de nav de l'Application web (D-156)
@@ -406,10 +405,18 @@ func (a *app) resumer(ctx context.Context, n navLigne, role string) (navigationJ
 	return r, nil
 }
 
-// detailler : page d'une navigation : fiche du bateau et amis (RG-PAR-08,
-// D-176) : « suiveurs », comptes qui suivent la navigation, et
-// « contactsSos », les autres amis du navigateur (noms gardés pour les
-// applications déjà installées).
+// amiJSON : ami de la page d'une navigation (RG-PAR-08, D-186) : « suit »
+// quand il a un compte qui suit cette navigation ; son identifiant est alors
+// celui du compte (retrait de cette navigation, RG-PAR-06), sinon celui du
+// contact.
+type amiJSON struct {
+	personneJSON
+	Suit bool `json:"suit"`
+}
+
+// detailler : page d'une navigation : fiche du bateau et une seule liste
+// « amis » (RG-PAR-08, D-176, D-186) : d'abord les comptes qui suivent la
+// navigation, puis les autres amis du navigateur.
 func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigationJSON, error) {
 	r, err := a.resumer(ctx, n, role)
 	if err != nil {
@@ -440,12 +447,14 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 			return r, err
 		}
 	}
-	if r.Suiveurs, err = a.suiveursDe(ctx, n); err != nil {
+	amis, err := a.amisQuiSuivent(ctx, n)
+	if err != nil {
 		return r, err
 	}
 	var suivent []string
-	for _, s := range r.Suiveurs {
+	for _, s := range amis {
 		suivent = append(suivent, s.ID)
+		r.Amis = append(r.Amis, amiJSON{personneJSON: s, Suit: true})
 	}
 	lignes, err := a.b.pool.Query(ctx, `SELECT id, nom, telephone, email FROM contacts
 		WHERE navigateur_id = $1 AND supprime_le IS NULL
@@ -453,11 +462,12 @@ func (a *app) detailler(ctx context.Context, n navLigne, role string) (navigatio
 	if err != nil {
 		return r, err
 	}
-	r.ContactsSos, err = pgx.CollectRows(lignes, func(l pgx.CollectableRow) (personneJSON, error) {
-		var p personneJSON
+	autres, err := pgx.CollectRows(lignes, func(l pgx.CollectableRow) (amiJSON, error) {
+		var p amiJSON
 		err := l.Scan(&p.ID, &p.Nom, &p.Telephone, &p.Email)
 		return p, err
 	})
+	r.Amis = append(r.Amis, autres...)
 	return r, err
 }
 
@@ -484,12 +494,12 @@ func texteChef(c *string) (*string, error) {
 	return &t, nil
 }
 
-// suiveursDe : comptes ayant accès à la navigation (RG-PAR-02, RG-PAR-06).
-func (a *app) suiveursDe(ctx context.Context, n navLigne) ([]personneJSON, error) {
+// amisQuiSuivent : comptes ayant accès à la navigation (RG-PAR-02, RG-PAR-06).
+func (a *app) amisQuiSuivent(ctx context.Context, n navLigne) ([]personneJSON, error) {
 	lignes, err := a.b.pool.Query(ctx, `SELECT DISTINCT u.id, u.nom, u.telephone, u.email FROM acces ac
-		JOIN utilisateurs u ON u.id = ac.suiveur_id
+		JOIN utilisateurs u ON u.id = ac.ami_id
 		WHERE ac.navigateur_id = $1 AND (ac.perimetre = 'navigateur' OR ac.navigation_id = $2)
-		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2 AND r.suiveur_id = u.id)
+		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2 AND r.ami_id = u.id)
 		ORDER BY u.nom, u.id`, n.navigateur, n.id)
 	if err != nil {
 		return nil, err
@@ -910,17 +920,17 @@ func (a *app) evenementModifiable(ctx context.Context, utilisateur, navID, id st
 // ------------------------------------------------------------------ liste
 
 // navigations : GET /v1/navigations : en cours d'abord, puis de la plus
-// récente à la plus ancienne ; comme navigateur et comme suiveur.
+// récente à la plus ancienne ; comme navigateur et comme ami.
 func (a *app) navigations(ctx context.Context, utilisateur, role, etat, bateau string, decalage int) ([]navigationJSON, int, error) {
 	const parPage = 50
 	conditions := []string{}
 	switch role {
 	case "navigateur":
 		conditions = append(conditions, "n.navigateur_id = $1 AND n.supprimee_le IS NULL")
-	case "suiveur":
-		conditions = append(conditions, conditionSuiveur)
+	case "ami":
+		conditions = append(conditions, conditionAmi)
 	default:
-		conditions = append(conditions, "((n.navigateur_id = $1 AND n.supprimee_le IS NULL) OR ("+conditionSuiveur+"))")
+		conditions = append(conditions, "((n.navigateur_id = $1 AND n.supprimee_le IS NULL) OR ("+conditionAmi+"))")
 	}
 	switch etat {
 	case "en_cours":
@@ -952,7 +962,7 @@ func (a *app) navigations(ctx context.Context, utilisateur, role, etat, bateau s
 	}
 	liste := []navigationJSON{}
 	for _, n := range navs {
-		r := "suiveur"
+		r := "ami"
 		if n.navigateur == utilisateur {
 			r = "navigateur"
 		}
@@ -1320,19 +1330,19 @@ func (a *app) routesNavigations(mux *http.ServeMux, v string) {
 		return nil
 	}))
 
-	mux.HandleFunc("GET "+v+"/navigations/{navigationId}/suiveurs", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
+	mux.HandleFunc("GET "+v+"/navigations/{navigationId}/amis", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
 		n, _, err := a.navigationVue(r.Context(), s.utilisateur, r.PathValue("navigationId"))
 		if err != nil {
 			return err
 		}
-		l, err := a.suiveursDe(r.Context(), n)
+		l, err := a.amisQuiSuivent(r.Context(), n)
 		if err != nil {
 			return err
 		}
 		ecrireJSON(w, http.StatusOK, l)
 		return nil
 	}))
-	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/suiveurs/{utilisateurId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
+	mux.HandleFunc("DELETE "+v+"/navigations/{navigationId}/amis/{utilisateurId}", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
 		if err := a.retirerDeLaNavigation(r.Context(), s.utilisateur, r.PathValue("navigationId"), r.PathValue("utilisateurId")); err != nil {
 			return err
 		}
@@ -1392,22 +1402,22 @@ func (a *app) supprimerEvenement(ctx context.Context, utilisateur, navID, id str
 	return err
 }
 
-// retirerDeLaNavigation : retrait d'un suiveur de cette navigation seulement,
+// retirerDeLaNavigation : retrait d'un ami de cette navigation seulement,
 // effet immédiat (RG-PAR-06) ; API et page de la navigation sur le Web.
-func (a *app) retirerDeLaNavigation(ctx context.Context, utilisateur, navID, suiveur string) error {
+func (a *app) retirerDeLaNavigation(ctx context.Context, utilisateur, navID, ami string) error {
 	n, err := a.navigationModifiable(ctx, utilisateur, navID)
 	if err != nil {
 		return err
 	}
-	if !estUUID(suiveur) {
+	if !estUUID(ami) {
 		return errIntrouvable()
 	}
-	if _, err := a.b.pool.Exec(ctx, `INSERT INTO retraits_navigation (navigation_id, suiveur_id)
-		SELECT $1, $2 WHERE EXISTS (SELECT 1 FROM utilisateurs WHERE id = $2) ON CONFLICT DO NOTHING`, n.id, suiveur); err != nil {
+	if _, err := a.b.pool.Exec(ctx, `INSERT INTO retraits_navigation (navigation_id, ami_id)
+		SELECT $1, $2 WHERE EXISTS (SELECT 1 FROM utilisateurs WHERE id = $2) ON CONFLICT DO NOTHING`, n.id, ami); err != nil {
 		return err
 	}
-	_, err = a.b.pool.Exec(ctx, "DELETE FROM acces WHERE navigateur_id = $1 AND suiveur_id = $2 AND navigation_id = $3",
-		n.navigateur, suiveur, n.id)
+	_, err = a.b.pool.Exec(ctx, "DELETE FROM acces WHERE navigateur_id = $1 AND ami_id = $2 AND navigation_id = $3",
+		n.navigateur, ami, n.id)
 	return err
 }
 

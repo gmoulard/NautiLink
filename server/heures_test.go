@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Heures envoyées aux suiveurs et aux contacts SOS : heure locale du
+// Heures envoyées aux amis : heure locale du
 // téléphone puis UTC (RG-PRM-07, D-146).
 func TestHeureEnvoyee(t *testing.T) {
 	plusUn, moinsQuatre := 60, -240

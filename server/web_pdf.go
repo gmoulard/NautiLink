@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"net/http"
-	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -133,7 +132,7 @@ func exportPDF(d donneesNavigation, evts []evenementJSON, photos map[string][]by
 		ligne("Immatriculation", b.Immatriculation)
 		ligne("Port d'attache", b.PortAttache)
 	}
-	noms := func(l []personneJSON) string {
+	noms := func(l []amiJSON) string {
 		var s []string
 		for _, p := range l {
 			s = append(s, p.Nom)
@@ -144,7 +143,7 @@ func exportPDF(d donneesNavigation, evts []evenementJSON, photos map[string][]by
 		return strings.Join(s, ", ")
 	}
 	titre("Amis")
-	ligne("Amis", noms(append(slices.Clone(n.Suiveurs), n.ContactsSos...))) // D-176
+	ligne("Amis", noms(n.Amis)) // D-176, D-186
 
 	const largeurCarte, hauteurCarte = largeurA4 - 2*margePDF, 300.0
 	doc.besoin(hauteurCarte + 80) // titre et carte sur la même page

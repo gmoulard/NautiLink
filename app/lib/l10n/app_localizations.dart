@@ -239,7 +239,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseFollowerTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Le suiveur, sur la plateforme Web'**
+  /// **'L\'ami, sur la plateforme Web'**
   String get chooseFollowerTitle;
 
   /// No description provided for @chooseFollowerText.
@@ -403,24 +403,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'J\'ai compris'**
   String get understood;
-
-  /// No description provided for @contactsDefault.
-  ///
-  /// In fr, this message translates to:
-  /// **'Par défaut, chaque contact est à la fois suiveur et contact SOS.'**
-  String get contactsDefault;
-
-  /// No description provided for @roleFollower.
-  ///
-  /// In fr, this message translates to:
-  /// **'Suiveur'**
-  String get roleFollower;
-
-  /// No description provided for @roleSos.
-  ///
-  /// In fr, this message translates to:
-  /// **'Contact SOS'**
-  String get roleSos;
 
   /// No description provided for @phoneRequired.
   ///
@@ -902,18 +884,6 @@ abstract class AppLocalizations {
   /// **'Personnes alertées'**
   String get alertedPersons;
 
-  /// No description provided for @alertedRoleFollower.
-  ///
-  /// In fr, this message translates to:
-  /// **'suiveur'**
-  String get alertedRoleFollower;
-
-  /// No description provided for @alertedRoleSos.
-  ///
-  /// In fr, this message translates to:
-  /// **'contact SOS'**
-  String get alertedRoleSos;
-
   /// No description provided for @addPerson.
   ///
   /// In fr, this message translates to:
@@ -929,7 +899,7 @@ abstract class AppLocalizations {
   /// No description provided for @noSosChecked.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun contact SOS coché : personne ne recevra vos SMS SOS.'**
+  /// **'Aucun ami coché : personne ne recevra vos SMS SOS.'**
   String get noSosChecked;
 
   /// No description provided for @sendStart.
@@ -941,7 +911,7 @@ abstract class AppLocalizations {
   /// No description provided for @addPersonText.
   ///
   /// In fr, this message translates to:
-  /// **'La personne rejoint vos contacts, suiveur et contact SOS par défaut, et sera alertée pendant cette navigation.'**
+  /// **'La personne rejoint vos amis et sera alertée pendant cette navigation.'**
   String get addPersonText;
 
   /// No description provided for @name.
@@ -965,7 +935,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneNeededForSos.
   ///
   /// In fr, this message translates to:
-  /// **'Un numéro de téléphone est nécessaire pour être contact SOS.'**
+  /// **'Un numéro de téléphone est nécessaire pour recevoir les SMS SOS.'**
   String get phoneNeededForSos;
 
   /// No description provided for @add.
@@ -977,7 +947,7 @@ abstract class AppLocalizations {
   /// No description provided for @smsPrefilled.
   ///
   /// In fr, this message translates to:
-  /// **'SMS prérempli pour vos suiveurs'**
+  /// **'SMS prérempli pour vos amis'**
   String get smsPrefilled;
 
   /// No description provided for @smsDisabled.
@@ -1223,7 +1193,7 @@ abstract class AppLocalizations {
   /// No description provided for @sosConfirmText.
   ///
   /// In fr, this message translates to:
-  /// **'Vos contacts SOS recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.'**
+  /// **'Vos amis recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.'**
   String get sosConfirmText;
 
   /// No description provided for @sosProblem.
@@ -1283,7 +1253,7 @@ abstract class AppLocalizations {
   /// No description provided for @sosServerDetail.
   ///
   /// In fr, this message translates to:
-  /// **'Alerte reçue · e-mail aux suiveurs'**
+  /// **'Alerte reçue · e-mail aux amis'**
   String get sosServerDetail;
 
   /// No description provided for @dashboard.
@@ -1307,7 +1277,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterFollower.
   ///
   /// In fr, this message translates to:
-  /// **'Comme suiveur'**
+  /// **'Comme ami'**
   String get filterFollower;
 
   /// No description provided for @inProgress.
@@ -2250,7 +2220,7 @@ abstract class AppLocalizations {
   /// No description provided for @menuFollowed.
   ///
   /// In fr, this message translates to:
-  /// **'Navigations suivies'**
+  /// **'Mes amis en mer'**
   String get menuFollowed;
 
   /// No description provided for @followNoVoyage.
@@ -2264,12 +2234,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Amis'**
   String get followFollowers;
-
-  /// No description provided for @followSosContacts.
-  ///
-  /// In fr, this message translates to:
-  /// **'Contacts SOS'**
-  String get followSosContacts;
 
   /// No description provided for @followBoatSheet.
   ///
@@ -2484,7 +2448,7 @@ abstract class AppLocalizations {
   /// No description provided for @pushTitle.
   ///
   /// In fr, this message translates to:
-  /// **'Notifications des navigations suivies'**
+  /// **'Notifications de mes amis en mer'**
   String get pushTitle;
 
   /// No description provided for @pushStart.
@@ -2523,7 +2487,7 @@ abstract class AppLocalizations {
   /// **'Invitation envoyée par SMS, avec la copie à votre numéro.'**
   String get inviteSmsSent;
 
-  /// Heure envoyée aux suiveurs et contacts SOS (RG-PRM-07) : heure locale du téléphone, puis UTC.
+  /// Heure envoyée aux amis (RG-PRM-07) : heure locale du téléphone, puis UTC.
   ///
   /// In fr, this message translates to:
   /// **'{local} ({utc} UTC)'**

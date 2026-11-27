@@ -58,7 +58,7 @@ String etatInvitationLabel(AppLocalizations l, String etat) => switch (etat) {
 // Contacts
 // ======================================================================
 
-/// Contacts : une seule liste, cases « Suiveur » et « Contact SOS »
+/// Contacts : une seule liste d'amis, sans case de rôle
 /// (RG-CTC-01, RG-CTC-05) ; dans la vraie application, ajout, fiche du
 /// contact, invitations et accès (RG-CTC-02, RG-CTC-04, RG-PAR-02 à RG-PAR-06),
 /// copie locale utilisable hors connexion (RG-CTC-03, RG-COM-06).
@@ -99,9 +99,8 @@ class ContactsScreen extends StatelessWidget {
               ),
             ),
           ),
-        // D-176 : un seul type de contact, l'ami ; la démonstration, figée
-        // (D-144), garde « Suiveur » et « Contact SOS ».
-        Text(demo ? l.contactsDefault : l.contactsFriends),
+        // D-176, D-187 : un seul type de contact, l'ami.
+        Text(l.contactsFriends),
         const SizedBox(height: 12),
         for (final c in depot.contacts) _CarteContact(contact: c),
         if (!demo) ...[
@@ -177,77 +176,11 @@ class _CarteContact extends StatelessWidget {
                   ],
                 ),
               ),
-            if (demo)
-              Row(
-                children: [
-                  Expanded(
-                    child: CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text(l.roleFollower),
-                      value: c.suiveur,
-                      onChanged: (v) => changerSuiveur(context, c, v ?? false),
-                    ),
-                  ),
-                  Expanded(
-                    child: CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Text(l.roleSos),
-                      subtitle: c.telephone == null
-                          ? Text(l.phoneRequired)
-                          : null,
-                      value: c.contactSos,
-                      // RG-CTC-05 : « Contact SOS » demande un numéro.
-                      onChanged: c.telephone == null
-                          ? null
-                          : (v) => depot.modifierContact(c.id, {
-                              'contactSos': v ?? false,
-                            }),
-                    ),
-                  ),
-                ],
-              ),
           ],
         ),
       ),
     );
   }
-}
-
-/// Case « Suiveur » : la cocher envoie une invitation avec le périmètre
-/// choisi, refusée tant que l'adresse n'est pas confirmée ; la décocher
-/// retire le suiveur de toutes les navigations (RG-CTC-04, RG-CPT-09, RG-PAR-06).
-Future<void> changerSuiveur(
-  BuildContext context,
-  ContactNl c,
-  bool suiveur,
-) async {
-  final depot = DepotScope.of(context);
-  final l = AppLocalizations.of(context);
-  if (depot.demonstration) {
-    await depot.modifierContact(c.id, {'suiveur': suiveur});
-    return;
-  }
-  if (!suiveur) {
-    if (c.etatInvitation == 'acceptee' &&
-        !await _confirmer(context, l.followerRemoveConfirm(c.nom))) {
-      return;
-    }
-    await depot.modifierContact(c.id, {'suiveur': false});
-    return;
-  }
-  if (depot.profil?.emailVerifie == false) {
-    _message(context, l.followerNeedsVerifiedEmail);
-    return;
-  }
-  final p = await choisirPerimetre(context);
-  if (p == null) return;
-  await depot.modifierContact(c.id, {
-    'suiveur': true,
-    'perimetre': p.perimetre,
-    'navigationId': p.navigationId,
-  });
 }
 
 typedef Perimetre = ({String perimetre, String? navigationId});
@@ -277,7 +210,7 @@ class _DialoguePerimetreState extends State<_DialoguePerimetre> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final navigations = DepotScope.of(context).navigations
-        .where((n) => !n.commeSuiveur)
+        .where((n) => !n.commeAmi)
         .toList();
     if (navigationId == null && navigations.isNotEmpty) {
       navigationId = navigations.first.id;
@@ -520,7 +453,7 @@ class _ContactScreenState extends State<ContactScreen> {
 
   AccesNl? _accesDe(ContactNl c) {
     for (final a in _acces ?? const <AccesNl>[]) {
-      if (c.utilisateurId != null && a.suiveurId == c.utilisateurId) return a;
+      if (c.utilisateurId != null && a.amiId == c.utilisateurId) return a;
     }
     return null;
   }
@@ -587,7 +520,7 @@ class _ContactScreenState extends State<ContactScreen> {
               border: const OutlineInputBorder(),
             ),
           ),
-          // D-176 : ni « Suiveur » ni « Contact SOS » : nom, téléphone,
+          // D-176 : pas de case de rôle : nom, téléphone,
           // e-mail, puis le périmètre à l'enregistrement.
           if (nouveau && !verifie)
             Padding(

@@ -17,7 +17,7 @@ import (
 // Avant D-156 : page ouverte dès la connexion (demande du 2026-11-26) ; en haut les
 // navigations en cours, les miennes et celles que je suis ; en dessous
 // l'historique, de la plus récente à la plus ancienne, filtrable « comme
-// navigateur » / « comme suiveur » ; pour chacune nom, bateau, date et heure
+// navigateur » / « comme ami » ; pour chacune nom, bateau, date et heure
 // de départ, lieux de départ et d'arrivée, durée, distance (RG-NAV-16) ;
 // aperçu au survol sur ordinateur, au toucher sur mobile (CSS seul).
 
@@ -169,7 +169,7 @@ func parBateau(listes ...[]ligneNav) []groupeBateau {
 type donneesTableau struct {
 	EnCours, Historique []ligneNav
 	Bateaux             []groupeBateau
-	Role                string     // filtre : "", navigateur ou suiveur (D-156 : en cours compris)
+	Role                string     // filtre : "", navigateur ou ami (D-156 : en cours compris)
 	Suivant             int        // décalage de la page suivante de l'historique, 0 sans suite
 	Quota               *quotaJSON // résumé du quota (RG-ECO-09)
 	Disponible          string
@@ -245,7 +245,7 @@ func (a *app) lignesDe(ctx context.Context, navs []navigationJSON) ([]ligneNav, 
 
 // tableauDeBord : données de la page d'accueil d'un utilisateur connecté.
 func (a *app) tableauDeBord(ctx context.Context, utilisateur, role string, decalage int) (donneesTableau, error) {
-	if role != "navigateur" && role != "suiveur" {
+	if role != "navigateur" && role != "ami" {
 		role = ""
 	}
 	d := donneesTableau{Role: role}

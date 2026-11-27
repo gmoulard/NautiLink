@@ -35,7 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final all = state.voyages.where(
       (v) => switch (filter) {
         'navigateur' => !v.asFollower,
-        'suiveur' => v.asFollower,
+        'ami' => v.asFollower,
         _ => true,
       },
     );
@@ -66,7 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           label: Text(l.filterNavigator),
                         ),
                         ButtonSegment(
-                          value: 'suiveur',
+                          value: 'ami',
                           label: Text(l.filterFollower),
                         ),
                       ],

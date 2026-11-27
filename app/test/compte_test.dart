@@ -17,14 +17,21 @@ import 'faux_serveur.dart';
 /// Faux serveur avec les contacts, les invitations, les accès, les
 /// paramètres et l'historique des alertes SOS tenus en mémoire (TODO-5.7).
 class FauxServeurCompte extends FauxServeurNautiLink {
+  static const _champsAmi = {
+    'id',
+    'nom',
+    'telephone',
+    'email',
+    'perimetre',
+    'navigationId',
+    'inviter',
+  };
   final contacts = <String, Map<String, Object?>>{
     'c1': {
       'id': 'c1',
       'nom': 'Claire',
       'telephone': '+33612345678',
       'email': 'claire@example.org',
-      'suiveur': true,
-      'contactSos': true,
       'perimetre': 'navigateur',
       'etatInvitation': 'acceptee',
       'utilisateurId': 'u2',
@@ -34,7 +41,7 @@ class FauxServeurCompte extends FauxServeurNautiLink {
   final acces = <Map<String, Object?>>[
     {
       'id': 'a1',
-      'suiveur': {'id': 'u2', 'nom': 'Claire'},
+      'ami': {'id': 'u2', 'nom': 'Claire'},
       'perimetre': 'navigateur',
       'navigationId': null,
     },
@@ -69,21 +76,25 @@ class FauxServeurCompte extends FauxServeurNautiLink {
     if (chemin == '/v1/contacts' && r.method == 'POST') {
       final id = m['id'] as String;
       if (contacts.containsKey(id)) return reponse(200, contacts[id]);
-      if (m['suiveur'] != false && !emailVerifie) {
+      // D-186 : seuls champs d'un ami ; « inviter: false » : sans invitation.
+      final inconnus = m.keys.where((k) => !_champsAmi.contains(k));
+      if (inconnus.isNotEmpty) {
+        return erreur(422, 'invalide', 'Champ « ${inconnus.first} » inconnu.');
+      }
+      final inviter = m['inviter'] != false;
+      if (inviter && !emailVerifie) {
         return erreur(
           403,
           'email_non_verifie',
           'Confirmez d\'abord votre adresse e-mail.',
         );
       }
-      if (m['suiveur'] != false && m['perimetre'] == null) {
-        return erreur(422, 'invalide', 'Choisissez ce que le suiveur verra.');
+      if (inviter && m['perimetre'] == null) {
+        return erreur(422, 'invalide', 'Choisissez ce que votre ami verra.');
       }
       final k = {
-        ...m,
-        'contactSos': m['contactSos'] != false && m['telephone'] != null,
-        'suiveur': m['suiveur'] != false,
-        'etatInvitation': m['suiveur'] != false ? 'envoyee' : 'aucune',
+        ...Map.of(m)..remove('inviter'),
+        'etatInvitation': inviter ? 'envoyee' : 'aucune',
       };
       contacts[id] = k;
       return reponse(201, k);
@@ -96,17 +107,13 @@ class FauxServeurCompte extends FauxServeurNautiLink {
         contacts.remove(id);
         return reponse(204);
       }
-      if (m['contactSos'] == true &&
-          (m.containsKey('telephone') ? m['telephone'] : k['telephone']) ==
-              null) {
-        return erreur(
-          422,
-          'contact_sos_sans_telephone',
-          'Un contact SOS doit avoir un numéro de téléphone.',
-        );
+      final inconnus = m.keys.where(
+        (k) => !_champsAmi.contains(k) || k == 'inviter' || k == 'id',
+      );
+      if (inconnus.isNotEmpty) {
+        return erreur(422, 'invalide', 'Champ « ${inconnus.first} » inconnu.');
       }
       k.addAll(m);
-      if (m['suiveur'] == false) k['etatInvitation'] = 'aucune';
       return reponse(200, k);
     }
     if (chemin == '/v1/invitations' && r.method == 'GET') {
@@ -129,7 +136,6 @@ class FauxServeurCompte extends FauxServeurNautiLink {
         'etat': 'envoyee',
       };
       invitations.add(i);
-      k['suiveur'] = true;
       k['etatInvitation'] = 'envoyee';
       k['perimetre'] = m['perimetre'];
       return reponse(201, i);
@@ -149,8 +155,7 @@ class FauxServeurCompte extends FauxServeurNautiLink {
       if (r.method == 'DELETE') {
         acces.remove(a);
         for (final k in contacts.values) {
-          if (k['utilisateurId'] == (a['suiveur'] as Map)['id']) {
-            k['suiveur'] = false;
+          if (k['utilisateurId'] == (a['ami'] as Map)['id']) {
             k['etatInvitation'] = 'aucune';
           }
         }
@@ -158,7 +163,7 @@ class FauxServeurCompte extends FauxServeurNautiLink {
       }
       a.addAll(m);
       for (final k in contacts.values) {
-        if (k['utilisateurId'] == (a['suiveur'] as Map)['id']) {
+        if (k['utilisateurId'] == (a['ami'] as Map)['id']) {
           k['perimetre'] = m['perimetre'];
         }
       }
@@ -280,26 +285,23 @@ void main() {
         telephone: '+33698765432',
         perimetre: 'navigateur',
       );
-      await d.modifierContact('c1', {'contactSos': false});
+      await d.modifierContact('c1', {'nom': 'Claire M.'});
       final marc = d.contacts.firstWhere((c) => c.id == id);
-      expect(marc.contactSos, isTrue);
+      expect(marc.telephone, '+33698765432');
       expect(marc.enAttente, isTrue);
-      expect(d.contacts.firstWhere((c) => c.id == 'c1').contactSos, isFalse);
+      expect(d.contacts.firstWhere((c) => c.id == 'c1').nom, 'Claire M.');
       expect(d.compte.enAttente.length, 2);
 
       // Après un redémarrage de l'application, toujours là.
       final d2 = serveur.depotSur(session, base);
       await d2.ouvrir();
-      expect(d2.contacts.map((c) => c.nom), ['Claire', 'Marc']);
-      expect(d2.contacts.where((c) => c.contactSos).map((c) => c.nom), [
-        'Marc',
-      ]);
+      expect(d2.contacts.map((c) => c.nom), ['Claire M.', 'Marc']);
 
       serveur.coupe = false;
       await d2.actualiser();
       expect(d2.compte.enAttente, isEmpty);
       expect(serveur.corps['POST /v1/contacts'], containsPair('id', id));
-      expect(serveur.corps['PATCH /v1/contacts/c1'], {'contactSos': false});
+      expect(serveur.corps['PATCH /v1/contacts/c1'], {'nom': 'Claire M.'});
       expect(serveur.contacts[id]!['nom'], 'Marc');
       expect(d2.contacts.every((c) => !c.enAttente), isTrue);
 
@@ -327,16 +329,13 @@ void main() {
       expect(serveur.contacts['c1']!['nom'], 'Claire M.');
       expect(d.compte.enAttente, isEmpty);
 
-      await d.modifierContact('c1', {'telephone': null, 'contactSos': true});
+      await d.modifierContact('c1', {'role': 'ami'});
       expect(d.compte.enAttente, isEmpty);
-      expect(
-        d.compte.dernierRefus,
-        'Un contact SOS doit avoir un numéro de téléphone.',
-      );
+      expect(d.compte.dernierRefus, 'Champ « role » inconnu.');
       d.dispose();
     });
 
-    test('adresse non confirmée : le suiveur n\'est pas invité, le contact SOS est gardé (RG-CPT-09)', () async {
+    test('adresse non confirmée : l\'ami est ajouté sans invitation, par « inviter: false » (RG-CPT-09, D-185, D-186)', () async {
       final d = serveur.depotSur(session, base);
       await d.ouvrir();
       await d.connexion('marin@example.org', 'secret123');
@@ -346,8 +345,9 @@ void main() {
         telephone: '06 98 76 54 32',
         perimetre: 'navigateur',
       );
-      expect(serveur.contacts[id]!['suiveur'], false);
-      expect(serveur.contacts[id]!['contactSos'], true);
+      expect(serveur.corps['POST /v1/contacts'], containsPair('inviter', false));
+      expect(serveur.contacts[id]!['etatInvitation'], 'aucune');
+      expect(serveur.contacts[id]!['telephone'], '06 98 76 54 32');
       expect(d.compte.dernierRefus, 'Confirmez d\'abord votre adresse e-mail.');
       d.dispose();
     });
@@ -418,7 +418,7 @@ void main() {
         'navigationId': 'n1',
       });
       await d.compte.retirerAcces('a1');
-      expect(d.contacts.firstWhere((c) => c.id == 'c1').suiveur, isFalse);
+      expect(d.contacts.firstWhere((c) => c.id == 'c1').etatInvitation, 'aucune');
 
       serveur.coupe = true;
       await expectLater(d.compte.invitations(), throwsA(isA<HorsConnexion>()));
@@ -489,15 +489,13 @@ void main() {
     }
 
     testWidgets(
-      'contacts : des amis, sans cases « Suiveur » ni « Contact SOS », ajout avec le périmètre, invitation par téléphone par SMS (D-176)',
+      'contacts : des amis, sans case de rôle, ajout avec le périmètre, invitation par téléphone par SMS (D-176)',
       (tester) async {
         await ouvrir(tester);
         await menu(tester, 'Contacts');
         expect(find.text('Claire'), findsOneWidget);
         expect(find.text('Invitation acceptée'), findsOneWidget);
         expect(find.byType(CheckboxListTile), findsNothing);
-        expect(find.textContaining('Suiveur'), findsNothing);
-        expect(find.textContaining('Contact SOS'), findsNothing);
         expect(
           find.textContaining('Chaque contact est un ami'),
           findsOneWidget,
@@ -523,8 +521,7 @@ void main() {
         final post = serveur.corps['POST /v1/contacts'] as Map;
         expect(post['perimetre'], 'navigation');
         expect(post['navigationId'], 'n1');
-        expect(post.containsKey('suiveur'), isFalse);
-        expect(post.containsKey('contactSos'), isFalse);
+        expect(post.containsKey('inviter'), isFalse);
         expect(find.text('Marc'), findsOneWidget);
 
         // Fiche du contact : invitation par téléphone, lien et SMS (Android).

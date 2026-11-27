@@ -35,7 +35,7 @@ type donneesDemarrage struct {
 	PersonnesABord int
 	ChefDeBord     string
 	Personnes      []personneAlertee
-	SansContactSos bool
+	SansAmiAlerte  bool
 	QuotaEpuise    string // RG-ECO-04 : explication et heure de disponibilité
 }
 
@@ -137,12 +137,12 @@ func (a *app) donneesDuDemarrage(ctx context.Context, utilisateur, nom string, s
 		return d, err
 	}
 	// Tous les amis sont alertés, SOS compris (RG-NAV-25, D-176).
-	d.SansContactSos = true
+	d.SansAmiAlerte = true
 	for _, c := range contacts {
 		pa := personneAlertee{ID: c.ID, Nom: c.Nom, Sos: true, Cochee: saisie == nil || slices.Contains(cochees, c.ID),
 			SansEmail: c.Email == nil && c.UtilisateurID == nil}
 		if pa.Sos && pa.Cochee {
-			d.SansContactSos = false
+			d.SansAmiAlerte = false
 		}
 		d.Personnes = append(d.Personnes, pa)
 	}

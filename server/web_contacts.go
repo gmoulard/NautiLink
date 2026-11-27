@@ -39,7 +39,7 @@ func (a *app) routesWebContacts(mux *http.ServeMux, c string) {
 		if err != nil {
 			return err
 		}
-		recus, err := a.listeAcces(r.Context(), s.utilisateur, "suiveur")
+		recus, err := a.listeAcces(r.Context(), s.utilisateur, "ami")
 		if err != nil {
 			return err
 		}
@@ -81,7 +81,7 @@ func (a *app) routesWebContacts(mux *http.ServeMux, c string) {
 	}
 
 	mux.HandleFunc("GET "+c+"/contacts", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
-		return liste(w, r, s, d, contactJSON{Suiveur: true, ContactSos: true})
+		return liste(w, r, s, d, contactJSON{})
 	}))
 	mux.HandleFunc("POST "+c+"/contacts", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
 		k, _, err := a.creerContact(r.Context(), r, s.utilisateur, champsContact(r))

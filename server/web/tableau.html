@@ -19,7 +19,7 @@
 <p class="filtres">Afficher :
   <a class="lien{{if eq .Role ""}} actif{{end}}" href="{{$.Base}}/"{{if eq .Role ""}} aria-current="page"{{end}}>Toutes</a> ·
   <a class="lien{{if eq .Role "navigateur"}} actif{{end}}" href="{{$.Base}}/?role=navigateur"{{if eq .Role "navigateur"}} aria-current="page"{{end}}>Comme navigateur</a> ·
-  <a class="lien{{if eq .Role "suiveur"}} actif{{end}}" href="{{$.Base}}/?role=suiveur"{{if eq .Role "suiveur"}} aria-current="page"{{end}}>Comme ami</a></p>
+  <a class="lien{{if eq .Role "ami"}} actif{{end}}" href="{{$.Base}}/?role=ami"{{if eq .Role "ami"}} aria-current="page"{{end}}>Comme ami</a></p>
 {{range $i, $g := .Bateaux}}
 <section class="log" aria-labelledby="log-{{$i}}">
 <h2 id="log-{{$i}}">Log de nav de {{$g.Nom}}</h2>
@@ -34,10 +34,10 @@
 
 {{define "ligne-navigation"}}{{with .L}}
 <li class="navigation{{if eq .N.Etat "en_cours"}} en-cours{{end}}">
-  <a class="titre-log" href="{{$.Base}}/navigations/{{.N.ID}}">{{.Titre}}</a>{{if eq .N.Etat "en_cours"}} <span class="etiquette">En cours</span>{{end}}{{if eq .N.Role "suiveur"}} <span class="aide">· suivie</span>{{end}}
+  <a class="titre-log" href="{{$.Base}}/navigations/{{.N.ID}}">{{.Titre}}</a>{{if eq .N.Etat "en_cours"}} <span class="etiquette">En cours</span>{{end}}{{if eq .N.Role "ami"}} <span class="aide">· suivie</span>{{end}}
   <div class="bulle" role="tooltip">
     <p><b>{{.N.Nom}}</b></p>
-    <p class="aide">{{if eq .N.Role "suiveur"}}Vous suivez cette navigation{{else}}Votre navigation{{end}} · {{.N.Bateau.Nom}}</p>
+    <p class="aide">{{if eq .N.Role "ami"}}Vous suivez cette navigation{{else}}Votre navigation{{end}} · {{.N.Bateau.Nom}}</p>
     <dl class="resume">
       <dt>Départ</dt><dd>{{.Depart}}{{if .LieuDepart}}, {{.LieuDepart}}{{end}}</dd>
       {{if .N.Fin}}<dt>Arrivée</dt><dd>{{.Fin}}{{if .LieuArrivee}}, {{.LieuArrivee}}{{end}}</dd>{{end}}

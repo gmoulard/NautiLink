@@ -10,7 +10,7 @@ import (
 // Pages « Alertes SOS » et « Assistance » de la gestion du compte
 // (TODO-6.5, cahier des charges 6.3), comme sur l'application mobile
 // (TODO-5.7). Historique des alertes (RG-SOS-12, RG-SOS-13) : celles du
-// navigateur et, pour un suiveur, celles qu'il voit (RG-PAR-07, RG-SOS-20),
+// navigateur et, pour un ami, celles qu'il voit (RG-PAR-07, RG-SOS-20),
 // avec la position transmise (RG-SOS-09 à RG-SOS-11), le statut de chaque
 // SMS et les e-mails envoyés ; heures au format de RG-PRM-07, dans le fuseau
 // du déclenchement. Assistance : « Écrire à l'équipe NautiLink »

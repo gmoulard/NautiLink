@@ -173,7 +173,7 @@ func fondEssai(t *testing.T, l, h int) []byte {
 	return b.Bytes()
 }
 
-// TestPDFWeb : avec PostgreSQL : PDF du navigateur et du suiveur
+// TestPDFWeb : avec PostgreSQL : PDF du navigateur et de l'ami
 // (RG-NAV-19, RG-PAR-08), refusé sans accès ; fond de carte téléchargé par
 // le serveur (faux serveur de dalles).
 func TestPDFWeb(t *testing.T) {

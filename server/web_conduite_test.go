@@ -16,7 +16,7 @@ func TestRenduConduite(t *testing.T) {
 		t.Error("navigateur, navigation en cours : formulaires absents")
 	}
 	if s := rendu(t, "navigation.html", donneesNavEssai(false, true)); strings.Contains(s, "Pendant la navigation") {
-		t.Error("suiveur : formulaires de conduite affichés")
+		t.Error("ami : formulaires de conduite affichés")
 	}
 	if s := rendu(t, "navigation.html", donneesNavEssai(true, false)); strings.Contains(s, "Pendant la navigation") {
 		t.Error("navigation terminée : formulaires de conduite affichés")
@@ -30,7 +30,7 @@ func TestRenduConduite(t *testing.T) {
 }
 
 // TestConduiteWeb : avec PostgreSQL : TS-WEB-01, TS-WEB-02 : note, photo,
-// fin et SOS depuis l'Application web, sans SMS ; refus pour un suiveur.
+// fin et SOS depuis l'Application web, sans SMS ; refus pour un ami.
 func TestConduiteWeb(t *testing.T) {
 	e := nouvelEssai(t)
 	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
@@ -55,7 +55,7 @@ func TestConduiteWeb(t *testing.T) {
 		t.Fatalf("envoi vide : %d", rec.Code)
 	}
 	if rec := webLea.envoyerFichier(base+"/conduite", map[string]string{"texte": "x"}, nil); rec.Code != 403 {
-		t.Fatalf("note d'un suiveur : %d", rec.Code)
+		t.Fatalf("note d'un ami : %d", rec.Code)
 	}
 	_, j := e.appel("GET", "/navigations/"+id+"/evenements", nav, nil)
 	types := map[string]bool{}
@@ -70,7 +70,7 @@ func TestConduiteWeb(t *testing.T) {
 	}
 
 	// SOS pendant la navigation : dernière position du journal, e-mail au
-	// suiveur, alerte inscrite au journal (RG-WEB-02).
+	// ami, alerte inscrite au journal (RG-WEB-02).
 	if page := web.envoyer("GET", "/nautilink/sos?navigation="+id, nil).Body.String(); !strings.Contains(page, `name="navigationId" value="`+id+`"`) {
 		t.Fatalf("boîte du SOS : %s", page)
 	}
@@ -80,14 +80,14 @@ func TestConduiteWeb(t *testing.T) {
 		t.Fatalf("SOS : %d %s", rec.Code, rec.Body.String())
 	}
 	if e.courrier.nombre() == n0 || !strings.Contains(e.courrier.dernier(t, "lea@exemple.org"), "Voie d'eau") {
-		t.Fatal("SOS : e-mail du suiveur absent")
+		t.Fatal("SOS : e-mail de l'ami absent")
 	}
 	_, l := e.liste("GET", "/alertes-sos?navigationId="+id, nav, nil)
 	if len(l) != 1 || l[0]["naturePosition"] != "derniere_connue" || func() bool { s, _ := l[0]["sms"].([]any); return len(s) != 0 }() {
 		t.Fatalf("alerte : %v", l)
 	}
 	if rec := webLea.envoyer("POST", "/nautilink/sos", map[string]string{"navigationId": id}); rec.Code != 403 {
-		t.Fatalf("SOS d'un suiveur sur la navigation : %d", rec.Code)
+		t.Fatalf("SOS d'un ami sur la navigation : %d", rec.Code)
 	}
 
 	// Fin : boutons turquoise, fenêtre de confirmation (D-178) ; sans

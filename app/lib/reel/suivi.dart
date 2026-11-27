@@ -57,7 +57,7 @@ class EvenementSuivi {
   }
 }
 
-/// Personne (schéma `Personne`) : navigateur, suiveurs, contacts SOS.
+/// Personne (schéma `Personne`) : navigateur, amis.
 class PersonneSuivi {
   const PersonneSuivi(this.nom, {this.email, this.telephone});
   final String nom;
@@ -79,8 +79,7 @@ class DetailNavigation {
     required this.resume,
     required this.brut,
     this.navigateur,
-    this.suiveurs = const [],
-    this.contactsSos = const [],
+    this.amis = const [],
     this.fiche,
     this.lieuDepart,
     this.lieuArrivee,
@@ -91,8 +90,9 @@ class DetailNavigation {
   final ResumeNavigation resume;
   final Map<String, Object?> brut;
   final PersonneSuivi? navigateur;
-  final List<PersonneSuivi> suiveurs;
-  final List<PersonneSuivi> contactsSos;
+
+  /// Amis de la navigation, une seule liste (RG-PAR-08, D-186).
+  final List<PersonneSuivi> amis;
   final Map<String, Object?>? fiche;
   final String? lieuDepart;
   final String? lieuArrivee;
@@ -116,8 +116,7 @@ class DetailNavigation {
       resume: r,
       brut: j,
       navigateur: PersonneSuivi.depuisJson(j['navigateur']),
-      suiveurs: personnes(j['suiveurs']),
-      contactsSos: personnes(j['contactsSos']),
+      amis: personnes(j['amis']),
       fiche: f is Map<String, Object?> ? f : null,
       lieuDepart: _lieu(j['lieuDepart']),
       lieuArrivee: _lieu(j['lieuArrivee']),

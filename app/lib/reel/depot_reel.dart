@@ -162,7 +162,7 @@ class DepotReel extends Depot {
   late final EnvoisSms envoisSms;
   late final SmsNavigation sms;
 
-  /// Notifications push du suiveur (RG-IOS-06, RG-AND-08) ; vides sans
+  /// Notifications push de l'ami (RG-IOS-06, RG-AND-08) ; vides sans
   /// configuration Firebase.
   final NotificationsPush? notifications;
   StreamSubscription<String>? _jetons;

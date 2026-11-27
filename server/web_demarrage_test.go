@@ -61,9 +61,9 @@ func TestRenduDemarrage(t *testing.T) {
 	if strings.Contains(page, " style=") || strings.Contains(page, "onclick") || strings.Contains(page, "<script>") {
 		t.Error("démarrage : script ou style en ligne, refusé par la politique de sécurité")
 	}
-	dd.SansContactSos, dd.Personnes = true, nil
+	dd.SansAmiAlerte, dd.Personnes = true, nil
 	if page := rendu(t, "demarrer.html", &donneesPage{Base: "/nautilink", Connecte: true, EmailVerifie: true, D: dd}); !strings.Contains(page, `<p class="erreur" id="sans-sos" >`) {
-		t.Error("sans contact SOS : avertissement caché")
+		t.Error("sans ami : avertissement caché")
 	}
 	dd.QuotaEpuise = "Quota épuisé."
 	if page := rendu(t, "demarrer.html", &donneesPage{Base: "/nautilink", Connecte: true, EmailVerifie: true, D: dd}); !strings.Contains(page, "Quota épuisé.") ||
@@ -92,7 +92,7 @@ func TestRenduDemarrage(t *testing.T) {
 		t.Error("navigation rattachée au téléphone : positions automatiques du Web")
 	}
 	if page := rendu(t, "navigation.html", donneesNavEssai(false, true)); strings.Contains(page, "conduite.js") {
-		t.Error("suiveur : script de conduite chargé")
+		t.Error("ami : script de conduite chargé")
 	}
 	if page := rendu(t, "tableau.html", &donneesPage{Base: "/nautilink", Connecte: true, D: donneesTableau{}}); !strings.Contains(page, `href="/nautilink/demarrer"`) {
 		t.Error("tableau de bord : « Démarrer navigation » absent")
@@ -109,9 +109,9 @@ func TestRenduDemarrage(t *testing.T) {
 func TestDemarrageWeb(t *testing.T) {
 	e := nouvelEssai(t)
 	nav, bateau, tel := e.marin("nav@exemple.org", "Paul", "Alizé")
-	code, k := e.appel("POST", "/contacts", nav, map[string]any{"nom": "Marc", "telephone": "06 99 88 77 66", "email": "marc@exemple.org", "suiveur": false})
+	code, k := e.appel("POST", "/contacts", nav, map[string]any{"nom": "Marc", "telephone": "06 99 88 77 66", "email": "marc@exemple.org", "inviter": false})
 	if code != 201 {
-		t.Fatalf("contact SOS : %d %v", code, k)
+		t.Fatalf("ami : %d %v", code, k)
 	}
 	marc := k["id"].(string)
 	lea := e.compte("lea@exemple.org", "Léa")
@@ -124,7 +124,7 @@ func TestDemarrageWeb(t *testing.T) {
 			t.Fatalf("écran de démarrage : %q absent", attendu)
 		}
 	}
-	if strings.Count(page, `name="email"`) != 2 { // le contact SOS et le suiveur
+	if strings.Count(page, `name="email"`) != 2 { // les deux amis
 		t.Fatalf("écran de démarrage : personnes alertées : %s", page)
 	}
 	rec := web.envoyer("POST", "/nautilink/demarrer", map[string]string{"bateauId": bateau, "frequence": "30", "personnesABord": "3",

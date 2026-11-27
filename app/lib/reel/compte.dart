@@ -104,9 +104,6 @@ class GestionCompte {
       nom: nom == null || nom.isEmpty ? (email ?? tel ?? '') : nom,
       telephone: tel,
       email: email,
-      suiveur: c['suiveur'] != false,
-      // Sans numéro, « Contact SOS » est décoché (RG-CTC-05).
-      contactSos: c['contactSos'] != false && tel != null,
       perimetre: c['perimetre'] as String?,
       navigationId: c['navigationId'] as String?,
       enAttente: true,
@@ -117,24 +114,19 @@ class GestionCompte {
     final tel = c.containsKey('telephone')
         ? c['telephone'] as String?
         : k.telephone;
-    final suiveur = c['suiveur'] is bool ? c['suiveur'] as bool : k.suiveur;
     return ContactNl(
       id: k.id,
       nom: c['nom'] is String ? c['nom'] as String : k.nom,
       telephone: tel,
       email: c.containsKey('email') ? c['email'] as String? : k.email,
-      suiveur: suiveur,
-      contactSos:
-          (c['contactSos'] is bool ? c['contactSos'] as bool : k.contactSos) &&
-          tel != null,
       perimetre: c.containsKey('perimetre')
           ? c['perimetre'] as String?
           : k.perimetre,
       navigationId: c.containsKey('navigationId')
           ? c['navigationId'] as String?
           : k.navigationId,
-      etatInvitation: suiveur ? k.etatInvitation : 'aucune',
-      utilisateurId: suiveur ? k.utilisateurId : null,
+      etatInvitation: k.etatInvitation,
+      utilisateurId: k.utilisateurId,
       enAttente: true,
     );
   }
@@ -189,8 +181,7 @@ class GestionCompte {
   }) async {
     id ??= _uuid.v4();
     String? texte(String? v) => v == null || v.trim().isEmpty ? null : v.trim();
-    // D-176 : plus d'anciens champs « suiveur » et « contactSos » ; l'ami
-    // reçoit l'invitation avec le périmètre choisi.
+    // D-186 : l'ami reçoit l'invitation avec le périmètre choisi.
     await _ajouter(
       ModificationCompte('contact_ajout', id, {
         'id': id,
@@ -260,17 +251,16 @@ class GestionCompte {
           r = await api.appel('POST', '/v1/contacts', json: m.champs);
         } on ErreurApi catch (e) {
           // Adresse du navigateur non confirmée : l'invitation est refusée,
-          // l'ami est gardé sans invitation (RG-CPT-09, D-136) : seul cas où
-          // part encore l'ancien champ `suiveur: false`, que l'API garde
-          // pour ajouter un ami sans invitation.
-          if (e.code != 'email_non_verifie' || m.champs['suiveur'] == false) {
+          // l'ami est gardé sans invitation, par `inviter: false`
+          // (RG-CPT-09, D-136, D-185, D-186).
+          if (e.code != 'email_non_verifie' || m.champs['inviter'] == false) {
             rethrow;
           }
           dernierRefus = e.message;
           r = await api.appel(
             'POST',
             '/v1/contacts',
-            json: {...m.champs, 'suiveur': false}
+            json: {...m.champs, 'inviter': false}
               ..remove('perimetre')
               ..remove('navigationId'),
           );
@@ -362,7 +352,7 @@ class GestionCompte {
     await _relireContacts();
   }
 
-  /// Accès donnés par le navigateur à ses suiveurs (RG-PAR-02).
+  /// Accès donnés par le navigateur à ses amis (RG-PAR-02).
   Future<List<AccesNl>> accesDonnes() async {
     final r = await api.appel(
       'GET',
@@ -389,8 +379,8 @@ class GestionCompte {
     await _relireContacts();
   }
 
-  /// Retire le suiveur de toutes les navigations présentes et futures, avec
-  /// effet immédiat ; son contact n'est plus « Suiveur » (RG-PAR-06, RG-CTC-04).
+  /// Retire l'ami de toutes les navigations présentes et futures, avec
+  /// effet immédiat ; il reste dans la liste, sans invitation active (RG-PAR-06, RG-CTC-04).
   Future<void> retirerAcces(String accesId) async {
     await api.appel('DELETE', '/v1/acces/$accesId');
     await _relireContacts();

@@ -117,7 +117,7 @@ abstract class Depot extends ChangeNotifier {
   /// Navigation en cours du navigateur sur ce téléphone (« Reprendre la dernière navigation », RG-NAV-12).
   ResumeNavigation? get navigationEnCours {
     for (final n in navigations) {
-      if (n.enCours && !n.commeSuiveur) return n;
+      if (n.enCours && !n.commeAmi) return n;
     }
     return null;
   }

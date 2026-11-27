@@ -74,10 +74,10 @@ void main() {
   setUp(monter);
 
   test('amis de la navigation : numéro, « Recevoir les SMS », cochés (RG-SMS-01, RG-NAV-25, D-176)', () {
-    expect(sms.suiveurs(navigation()).map((d) => d.contactId), ['c1']);
-    expect(sms.contactsSos(navigation()).map((d) => d.contactId), ['c1', 'c2']);
+    expect(sms.amisSms(navigation()).map((d) => d.contactId), ['c1']);
+    expect(sms.amisSos(navigation()).map((d) => d.contactId), ['c1', 'c2']);
     // Hors navigation : tous les amis avec un numéro.
-    expect(sms.contactsSos(null).length, 3);
+    expect(sms.amisSos(null).length, 3);
     // D-176 : les anciens rôles ne comptent plus, chaque contact est un ami.
     final ancien = SmsNavigation(
       canal: canal,
@@ -88,8 +88,6 @@ void main() {
           id: 'c1',
           nom: 'Jo',
           telephone: '+33633333333',
-          suiveur: false,
-          contactSos: false,
         ),
       ],
       bateaux: () => const [],
@@ -97,8 +95,8 @@ void main() {
       pageNavigation: (id) => 'https://essai.example/navigations/$id',
       statutsSos: (a, s) async {},
     );
-    expect(ancien.suiveurs(navigation()).length, 1);
-    expect(ancien.contactsSos(navigation()).length, 1);
+    expect(ancien.amisSms(navigation()).length, 1);
+    expect(ancien.amisSos(navigation()).length, 1);
   });
 
   test('heures envoyées : heure locale puis UTC (RG-PRM-07, D-146)', () async {
@@ -169,7 +167,7 @@ void main() {
     );
   });
 
-  test('SMS prérempli : suiveurs et copie au navigateur ; type désactivé (RG-SMS-02, RG-SMS-03, RG-SMS-08)', () async {
+  test('SMS prérempli : amis et copie au navigateur ; type désactivé (RG-SMS-02, RG-SMS-03, RG-SMS-08)', () async {
     final (i, nombre) = await sms.ordinaire(
       navigation(),
       'note',
@@ -186,16 +184,16 @@ void main() {
         frequenceParDefaut: 60,
       ),
     );
-    // Type désactivé pour les suiveurs : le navigateur reçoit quand même le
+    // Type désactivé pour les amis : le navigateur reçoit quand même le
     // SMS, pour la trace (RG-SMS-08, D-159).
     final r = await sms.ordinaire(off, 'note', note: 'x');
     expect(r.$1, IssueSms.prerempli);
     expect(canal.preremplis.last.$1, ['+33600000000']);
   });
 
-  test('trace : sans suiveur, SMS au navigateur seul, positions automatiques comprises (D-159)', () async {
+  test('trace : sans ami, SMS au navigateur seul, positions automatiques comprises (D-159)', () async {
     canal.autorisee = true;
-    final sansSuiveur = NavigationLocale(
+    final sansAmi = NavigationLocale(
       id: 'nav2',
       nom: 'Solo',
       bateauId: 'b1',
@@ -215,8 +213,8 @@ void main() {
       type: 'position_automatique',
       heure: DateTime(2026, 11, 26, 10),
     );
-    expect(await sms.positionAutomatique(sansSuiveur, e), IssueSms.automatique);
-    expect((await sms.ordinaire(sansSuiveur, 'fin')).$1, IssueSms.automatique);
+    expect(await sms.positionAutomatique(sansAmi, e), IssueSms.automatique);
+    expect((await sms.ordinaire(sansAmi, 'fin')).$1, IssueSms.automatique);
     expect(canal.envoyes.map((s) => s.$2), ['+33600000000', '+33600000000']);
   });
 

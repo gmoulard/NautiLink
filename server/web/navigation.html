@@ -106,10 +106,10 @@
 
 <section class="carte" aria-labelledby="titre-personnes">
 <h2 id="titre-personnes">Amis</h2>
-{{if or .N.Suiveurs .N.ContactsSos}}<ul class="personnes">
-{{range .N.Suiveurs}}<li>{{.Nom}}{{if $.D.Navigateur}}{{if not $.D.Corbeille}}
-  <form class="enligne" method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/suiveurs/{{.ID}}/retrait"><button class="secondaire" type="submit">Retirer de cette navigation</button></form>{{end}}{{end}}</li>
-{{end}}{{range .N.ContactsSos}}<li>{{.Nom}}</li>{{end}}</ul>{{else}}<p class="aide">Aucun ami.</p>{{end}}
+{{if .N.Amis}}<ul class="personnes">
+{{range .N.Amis}}<li>{{.Nom}}{{if .Suit}}{{if $.D.Navigateur}}{{if not $.D.Corbeille}}
+  <form class="enligne" method="post" action="{{$.Base}}/navigations/{{$.D.N.ID}}/amis/{{.ID}}/retrait"><button class="secondaire" type="submit">Retirer de cette navigation</button></form>{{end}}{{end}}{{end}}</li>
+{{end}}</ul>{{else}}<p class="aide">Aucun ami.</p>{{end}}
 </section>
 
 {{if .Navigateur}}{{if not .EnCours}}{{if not .Corbeille}}

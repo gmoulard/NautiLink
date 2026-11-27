@@ -59,20 +59,20 @@ func TestCorbeille(t *testing.T) {
 	}
 	webLea := e.webConnecte("lea@exemple.org")
 	if code := webLea.envoyer("DELETE", "/nautilink/api/v1/navigations/"+id, nil).Code; code != 403 {
-		t.Fatalf("suppression par un suiveur : %d", code)
+		t.Fatalf("suppression par un ami : %d", code)
 	}
 	if code := apiWeb("DELETE", "/navigations/"+id); code != 204 {
 		t.Fatalf("mise à la corbeille : %d", code)
 	}
 
-	// Suiveurs sans accès ; absente des listes du navigateur.
+	// Amis sans accès ; absente des listes du navigateur.
 	for _, j := range []string{lea, bob} {
 		if code, _ := e.appel("GET", "/navigations/"+id, j, nil); code != 404 {
-			t.Fatalf("suiveur, navigation dans la corbeille : %d", code)
+			t.Fatalf("ami, navigation dans la corbeille : %d", code)
 		}
 	}
-	if _, l := e.appel("GET", "/navigations?role=suiveur", lea, nil); len(l["navigations"].([]any)) != 0 {
-		t.Fatalf("liste du suiveur : %v", l)
+	if _, l := e.appel("GET", "/navigations?role=ami", lea, nil); len(l["navigations"].([]any)) != 0 {
+		t.Fatalf("liste de l'ami : %v", l)
 	}
 	if _, l := e.appel("GET", "/navigations", nav, nil); len(l["navigations"].([]any)) != 0 {
 		t.Fatalf("liste du navigateur : %v", l)
@@ -83,7 +83,7 @@ func TestCorbeille(t *testing.T) {
 		t.Fatalf("corbeille : %v", c)
 	}
 	if _, c := e.liste("GET", "/corbeille", lea, nil); len(c) != 0 {
-		t.Fatalf("corbeille du suiveur : %v", c)
+		t.Fatalf("corbeille de l'ami : %v", c)
 	}
 
 	// Page visible du navigateur, sans modification ; les envois du
@@ -113,7 +113,7 @@ func TestCorbeille(t *testing.T) {
 		t.Fatalf("corbeille après une suppression rejouée : %v", c)
 	}
 
-	// Restauration dans les 30 jours : les suiveurs retrouvent l'accès.
+	// Restauration dans les 30 jours : les amis retrouvent l'accès.
 	horloge(e, suppression.Add(29*24*time.Hour))
 	if code, n := e.appel("POST", "/navigations/"+id+"/restauration", nav, nil); code != 200 || n["etat"] != "terminee" {
 		t.Fatalf("restauration : %d %v", code, n)
@@ -123,7 +123,7 @@ func TestCorbeille(t *testing.T) {
 	}
 	for _, j := range []string{lea, bob} {
 		if code, _ := e.appel("GET", "/navigations/"+id, j, nil); code != 200 {
-			t.Fatalf("suiveur après restauration : %d", code)
+			t.Fatalf("ami après restauration : %d", code)
 		}
 	}
 
@@ -134,7 +134,7 @@ func TestCorbeille(t *testing.T) {
 		t.Fatalf("seconde mise à la corbeille : %d", code)
 	}
 	if code, _ := e.appel("POST", "/navigations/"+id+"/restauration", lea, nil); code != 404 {
-		t.Fatalf("restauration par un suiveur : %d", code)
+		t.Fatalf("restauration par un ami : %d", code)
 	}
 	horloge(e, suppression.Add(30*24*time.Hour-time.Minute))
 	if err := e.a.purgerLaCorbeille(t.Context()); err != nil {

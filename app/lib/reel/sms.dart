@@ -156,7 +156,7 @@ Future<bool> Function(List<String> numeros, String texte) ouvrirSmsPrerempli =
       mode: LaunchMode.externalApplication,
     );
 
-/// Destinataire d'un SMS : un contact (suiveur ou contact SOS), ou la copie
+/// Destinataire d'un SMS : un ami, ou la copie
 /// au navigateur (RG-SMS-08), sans contact.
 class DestinataireSms {
   const DestinataireSms(this.numero, {this.contactId});

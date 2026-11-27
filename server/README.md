@@ -6,7 +6,7 @@ Réalisé :
 
 - comptes (TODO-4.1) : création par e-mail avec acceptation de l'avertissement bêta, vérification de l'adresse par e-mail, connexion, mot de passe oublié (lien d'une heure, toutes les sessions fermées, RG-CPT-10), sessions (90 jours sans usage sur mobile, 1 heure sur le Web avec la case « Rester connecté », RG-CPT-08), profil ; Google et Apple prêts (rattachement à un compte existant si l'adresse est garantie vérifiée, RG-CPT-11), désactivés sans identifiants clients ;
 - bateaux (TODO-4.2) : téléphones des utilisateurs, fiches des bateaux, photo, téléphone associé ;
-- contacts, invitations et accès des suiveurs (TODO-4.3) ;
+- contacts, invitations et accès des amis (TODO-4.3) ;
 - paramètres généraux synchronisés (TODO-4.4) ;
 - Application web (pages servies par le serveur, en français, sans JavaScript sauf la mise à jour en direct de la page d'une navigation) : inscription, connexion (case « Rester connecté », 1 heure sans usage, RG-CPT-08), déconnexion, tableau de bord (TODO-6.1), « Mon compte », « Bateaux », « Contacts », « Paramètres », « Quota et abonnement » avec paiement Stripe (TODO-6.7), « Alertes SOS », « Corbeille », « Assistance » (TODO-6.5), page d'invitation, menu « Administration » pour les administrateurs (TODO-6.9, RG-WEB-03), conduite d'une navigation en cours (note, photo, note vocale, fin) et « Envoyer un SOS » par Internet (TODO-6.8, RG-WEB-01, RG-WEB-02) ;
 - espace administrateur (TODO-7.1, en cours) : `<chemin>/admin/`, session distincte (1 heure sans usage, case « Rester connecté »), utilisateurs, contacts, bateaux et rattachement, annonces en bandeau, statistiques, supervision, journal de chaque action gardé 3 ans ; administrateurs désignés par `NAUTILINK_ADMINS` (RG-ADM-07).
@@ -80,18 +80,18 @@ Le schéma est créé puis mis à jour au démarrage ([`migrations.go`](migratio
 
 | Adresse | Contenu |
 |---------|---------|
-| `<chemin>/` | Accueil de l'Application web ; une fois connecté, tableau de bord (TODO-6.1) : navigations en cours, historique filtrable (`?role=navigateur` ou `suiveur`, `?curseur=` pour les plus anciennes), aperçu |
+| `<chemin>/` | Accueil de l'Application web ; une fois connecté, tableau de bord (TODO-6.1) : navigations en cours, historique filtrable (`?role=navigateur` ou `ami`, `?curseur=` pour les plus anciennes), aperçu |
 | `<chemin>/inscription`, `<chemin>/connexion`, `<chemin>/deconnexion` | Création de compte, connexion, déconnexion |
 | `<chemin>/verification?jeton=…` | Lien de vérification de l'adresse e-mail |
 | `<chemin>/mot-de-passe-oublie`, `<chemin>/mot-de-passe?jeton=…` | « Mot de passe oublié ? » et lien reçu par e-mail pour choisir un nouveau mot de passe |
 | `<chemin>/compte` | « Mon compte » : nom, téléphone, langue, e-mails et notifications |
 | `<chemin>/bateaux`, `<chemin>/bateaux/<id>` | Bateaux : liste, ajout, fiche, photo, téléphone associé |
-| `<chemin>/contacts`, `<chemin>/contacts/<id>` | Contacts, lien d'invitation, mes suiveurs, navigateurs suivis |
-| `<chemin>/parametres` | Paramètres généraux : SMS envoyés aux suiveurs, fréquence des positions |
+| `<chemin>/contacts`, `<chemin>/contacts/<id>` | Contacts, lien d'invitation, mes amis, navigateurs suivis |
+| `<chemin>/parametres` | Paramètres généraux : SMS envoyés aux amis, fréquence des positions |
 | `<chemin>/invitation?jeton=…` | Lien d'invitation : connexion ou création d'un compte, puis acceptation |
-| `<chemin>/navigations/<id>` | Page d'une navigation (TODO-6.2) : informations, carte, alertes SOS, journal, bateau, suiveurs ; `…/direct` : partie relue toutes les 30 secondes pendant la navigation ; `…/suiveurs/<id>/retrait`, `…/suppression` (navigateur) |
+| `<chemin>/navigations/<id>` | Page d'une navigation (TODO-6.2) : informations, carte, alertes SOS, journal, bateau, amis ; `…/direct` : partie relue toutes les 30 secondes pendant la navigation ; `…/amis/<id>/retrait`, `…/suppression` (navigateur) |
 | `<chemin>/navigations/<id>/modification`, `…/evenements/<id>`, `…/evenements/<id>/suppression`, `…/ajouts` | Formulaires du navigateur (TODO-6.3) : nom, destination, bateau, heures ; texte et suppression des notes, photos, notes vocales et ajouts ; ajout complémentaire (texte, photo, note vocale) |
-| `<chemin>/navigations/<id>/pdf` | Export PDF de la navigation, pour le navigateur et ses suiveurs (TODO-6.4) |
+| `<chemin>/navigations/<id>/pdf` | Export PDF de la navigation, pour le navigateur et ses amis (TODO-6.4) |
 | `<chemin>/navigations/<id>/csv`, `<chemin>/navigations/<id>/yaml` | Exports CSV (une ligne par événement) et YAML (fiche et journal), mêmes droits que le PDF (TODO-6.15) |
 | `<chemin>/corbeille` | Corbeille : navigations supprimées, « Restaurer » (TODO-4.8) |
 | `<chemin>/api/v1/…` | API ([`openapi.yaml`](../docs/api/openapi.yaml)) |

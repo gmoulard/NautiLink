@@ -144,7 +144,7 @@ func TestRenduModifier(t *testing.T) {
 		}
 	}
 	if s := rendu(t, "navigation.html", donneesNavEssai(false, false)); strings.Contains(s, "Modifier") || strings.Contains(s, "Ajouter au journal") {
-		t.Error("suiveur : formulaires de modification affichés")
+		t.Error("ami : formulaires de modification affichés")
 	}
 }
 
@@ -284,14 +284,14 @@ func TestJournalWeb(t *testing.T) {
 		t.Fatalf("journal après les ajouts : %s", page)
 	}
 
-	// Suiveur : rien de modifiable.
+	// Ami : rien de modifiable.
 	lea := e.compte("lea@exemple.org", "Léa")
 	e.suivre(nav, lea, "lea@exemple.org", "navigateur", "")
 	webLea := e.webConnecte("lea@exemple.org")
 	if rec := webLea.envoyer("POST", base+"/modification", map[string]string{"nom": "Pirate"}); rec.Code != 403 {
-		t.Fatalf("modification par un suiveur : %d", rec.Code)
+		t.Fatalf("modification par un ami : %d", rec.Code)
 	}
 	if rec := webLea.envoyerFichier(base+"/ajouts", map[string]string{"texte": "x"}, nil); rec.Code != 403 {
-		t.Fatalf("ajout par un suiveur : %d", rec.Code)
+		t.Fatalf("ajout par un ami : %d", rec.Code)
 	}
 }

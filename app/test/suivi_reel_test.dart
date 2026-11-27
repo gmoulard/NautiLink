@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'faux_serveur.dart';
 import 'reel_widget_test.dart' show setPhone;
 
-/// Vue suiveur de la vraie application, sur Android et iPhone (RG-IOS-05,
+/// Vue ami de la vraie application, sur Android et iPhone (RG-IOS-05,
 /// RG-AND-09, D-143).
 void main() {
   late FauxServeurNautiLink serveur;
@@ -28,7 +28,7 @@ void main() {
 
   for (final plateforme in ['android', 'ios']) {
     testWidgets(
-      'navigations suivies : tableau de bord, page avec carte, journal, alerte SOS, mise à jour ($plateforme)',
+      'mes amis en mer : tableau de bord, page avec carte, journal, alerte SOS, mise à jour ($plateforme)',
       (tester) async {
         setPhone(tester);
         final session = await tester.runAsync(StockageSession.ouvrir);
@@ -55,7 +55,7 @@ void main() {
 
         await tester.tap(find.byType(PopupMenuButton<String>));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('Navigations suivies'));
+        await tester.tap(find.text('Mes amis en mer'));
         await attendre(tester);
         // Navigations en cours d'abord, puis l'historique (D-23).
         expect(find.text('En cours'), findsOneWidget);
@@ -77,11 +77,9 @@ void main() {
         expect(find.text('Alertes SOS de la navigation'), findsOneWidget);
         expect(find.textContaining('Voie d\'eau'), findsOneWidget);
         expect(find.text('Fiche du bateau'), findsOneWidget);
-        // D-176 : une seule liste « Amis », plus de « Suiveurs » ni de
-        // « Contacts SOS » ; RG-NAV-29 : mention des fonds de carte.
-        expect(find.textContaining('Amis ('), findsOneWidget);
-        expect(find.textContaining('Contacts SOS'), findsNothing);
-        expect(find.textContaining('Suiveurs'), findsNothing);
+        // D-176, D-186 : une seule liste « Amis » ; RG-NAV-29 : mention des
+        // fonds de carte.
+        expect(find.text('Amis (2)'), findsOneWidget);
         expect(find.byKey(const Key('map-attribution')), findsOneWidget);
         expect(find.textContaining('Photo'), findsWidgets);
 

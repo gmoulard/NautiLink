@@ -16,14 +16,14 @@ import 'pied.dart';
 import 'dashboard.dart' show SeaMap;
 import 'navigation.dart' show fmtSeconds;
 
-/// Vue suiveur de la vraie application, sur Android et iPhone (RG-IOS-05,
+/// Vue ami de la vraie application, sur Android et iPhone (RG-IOS-05,
 /// RG-AND-09) : tableau de bord des navigations, comme sur le Web (cahier
 /// des charges §6.1), et page d'une navigation avec la carte, en lecture
 /// seule (§6.2, §6.4, RG-PAR-07, RG-PAR-08).
 
 /// Tableau de bord : navigations en cours en haut (les miennes et celles que
 /// je suis), puis l'historique, filtrable « comme navigateur » / « comme
-/// suiveur » (D-23).
+/// ami » (D-23).
 class SuiviReelScreen extends StatefulWidget {
   const SuiviReelScreen({super.key});
 
@@ -90,7 +90,7 @@ class _SuiviReelScreenState extends State<SuiviReelScreen> {
               fmtDuration(l, Duration(minutes: n.dureeMinutes!)),
             if (n.distanceMetres != null)
               l.distanceNm((n.distanceMetres! / 1852).toStringAsFixed(1)),
-            if (n.commeSuiveur) l.filterFriend,
+            if (n.commeAmi) l.filterFriend,
           ].whereType<String>().join(' · '),
         ),
         trailing: n.enCours ? Text(l.live) : null,
@@ -115,7 +115,7 @@ class _SuiviReelScreenState extends State<SuiviReelScreen> {
                 for (final (v, t) in [
                   (null, l.filterAll),
                   ('navigateur', l.filterNavigator),
-                  ('suiveur', l.filterFriend),
+                  ('ami', l.filterFriend),
                 ])
                   ChoiceChip(
                     label: Text(t),
@@ -154,7 +154,7 @@ class _SuiviReelScreenState extends State<SuiviReelScreen> {
 
 /// Page d'une navigation, en lecture seule : informations, fiche du bateau,
 /// carte et tracé, journal avec photos et notes vocales, alertes SOS,
-/// suiveurs et contacts SOS ; mise à jour pendant une navigation en cours.
+/// amis ; mise à jour pendant une navigation en cours.
 class NavigationSuivieScreen extends StatefulWidget {
   const NavigationSuivieScreen({
     super.key,
@@ -268,7 +268,7 @@ class _NavigationSuivieScreenState extends State<NavigationSuivieScreen> {
                   child: CarteSuivi(trace: s.trace, enCours: r.enCours),
                 ),
                 const SizedBox(height: 16),
-                // RG-PAR-08 : fiche du bateau, suiveurs et contacts SOS.
+                // RG-PAR-08 : fiche du bateau et amis.
                 if (fiche != null)
                   ExpansionTile(
                     tilePadding: EdgeInsets.zero,
@@ -289,18 +289,17 @@ class _NavigationSuivieScreenState extends State<NavigationSuivieScreen> {
                           ),
                     ],
                   ),
-                // D-176 : une seule liste « Amis » (anciens champs
-                // `suiveurs` et `contactsSos` de l'API).
-                if (d.suiveurs.isNotEmpty || d.contactsSos.isNotEmpty)
+                // D-176, D-186 : une seule liste « Amis ».
+                if (d.amis.isNotEmpty)
                   ExpansionTile(
                     key: const Key('follow-friends'),
                     tilePadding: EdgeInsets.zero,
                     title: Text(
                       '${l.followFollowers} '
-                      '(${d.suiveurs.length + d.contactsSos.length})',
+                      '(${d.amis.length})',
                     ),
                     children: [
-                      for (final p in [...d.suiveurs, ...d.contactsSos])
+                      for (final p in d.amis)
                         ListTile(
                           dense: true,
                           title: Text(p.nom),

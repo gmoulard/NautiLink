@@ -55,7 +55,7 @@ func TestAlerteSos(t *testing.T) {
 	e := nouvelEssai(t)
 	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
 	contact := func(nom, telephone, email string) string {
-		corps := map[string]any{"nom": nom, "telephone": telephone, "suiveur": false}
+		corps := map[string]any{"nom": nom, "telephone": telephone, "inviter": false}
 		if email != "" {
 			corps["email"] = email
 		}
@@ -150,9 +150,9 @@ func TestAlerteSos(t *testing.T) {
 	if code, r := e.appel("PUT", "/alertes-sos/"+sos, nav, al2); code != 409 || r["code"] != "evenement_different" {
 		t.Fatalf("SOS différent : %d %v", code, r)
 	}
-	// Un suiveur n'envoie pas de SOS pour la navigation d'un autre.
+	// Un ami n'envoie pas de SOS pour la navigation d'un autre.
 	if code, _ := e.appel("PUT", "/alertes-sos/"+uuid(t), lea, al); code != 403 {
-		t.Fatalf("SOS par un suiveur : %d", code)
+		t.Fatalf("SOS par un ami : %d", code)
 	}
 	// Enregistré dans le journal, non modifiable (RG-JRN-02, RG-JRN-07).
 	_, j := e.appel("GET", "/navigations/"+id+"/evenements", lea, nil)
@@ -187,11 +187,11 @@ func TestAlerteSos(t *testing.T) {
 		t.Fatalf("statut invalide : %d", code)
 	}
 	if code, _ := e.appelBrut("PUT", "/alertes-sos/"+sos+"/sms", lea, statuts); code != 404 {
-		t.Fatalf("statuts par un suiveur : %d", code)
+		t.Fatalf("statuts par un ami : %d", code)
 	}
 	_, l := e.liste("GET", "/alertes-sos?navigationId="+id, lea, nil)
 	if len(l) != 1 || len(l[0]["sms"].([]any)) != 2 {
-		t.Fatalf("historique vu du suiveur : %v", l)
+		t.Fatalf("historique vu de l'ami : %v", l)
 	}
 	for _, s := range l[0]["sms"].([]any) {
 		if m := s.(map[string]any); m["telephone"] == "06 11 11 11 11" && m["statut"] != "livraison_confirmee" {

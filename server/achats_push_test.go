@@ -158,14 +158,14 @@ func TestAchatsIntegres(t *testing.T) {
 	}
 }
 
-// Notifications push des suiveurs (RG-IOS-06, RG-AND-08, D-84) : SOS, début,
+// Notifications push des amis (RG-IOS-06, RG-AND-08, D-84) : SOS, début,
 // fin, photo, position en retard ; préférence respectée sauf pour le SOS ;
 // jeton périmé oublié.
 func TestNotificationsPush(t *testing.T) {
 	e := nouvelEssai(t)
 	f := brancherServices(t, e)
 	nav, bateau, tel := e.marin("nav@exemple.org", "Yann", "Mistral")
-	s1 := e.compte("s1@exemple.org", "Suiveur Android")
+	s1 := e.compte("s1@exemple.org", "Ami Android")
 	s2 := e.compte("s2@exemple.org", "Suiveuse iPhone")
 	e.suivre(nav, s1, "s1@exemple.org", "navigateur", "")
 	e.suivre(nav, s2, "s2@exemple.org", "navigateur", "")
@@ -196,7 +196,7 @@ func TestNotificationsPush(t *testing.T) {
 	if txt := e.courrier.texte(n0, "s1@exemple.org", "démarré"); !strings.Contains(txt, heureEnvoyee(t0, &soixante, true)) {
 		t.Fatalf("heure de l'e-mail de début : %q", txt)
 	}
-	// Photo : seulement le suiveur Android.
+	// Photo : seulement l'ami Android.
 	photo := map[string]any{"id": uuid(t), "type": "photo", "heureAcquisition": heure(t0.Add(time.Minute)), "numeroOrdre": 2,
 		"origine": "android", "fichier": map[string]any{"typeMedia": "image/jpeg", "tailleOctets": 1000}}
 	if code, r := e.appel("PUT", "/navigations/"+id+"/evenements/"+photo["id"].(string), nav, photo); code != 201 {

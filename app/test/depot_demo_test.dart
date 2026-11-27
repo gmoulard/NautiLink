@@ -18,7 +18,7 @@ void main() {
       expect(d.navigations.length, s.voyages.length);
       // En cours d'abord : la navigation suivie de Paul.
       expect(d.navigations.first.enCours, isTrue);
-      expect(d.navigations.first.commeSuiveur, isTrue);
+      expect(d.navigations.first.commeAmi, isTrue);
       expect(d.navigationEnCours, isNull);
       expect(d.quota.disponibleMinutes, AppState.quotaMinutes - s.usedMinutes);
       expect(d.contacts.map((c) => c.nom), contains('Claire (sœur)'));

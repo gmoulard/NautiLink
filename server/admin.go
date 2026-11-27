@@ -439,7 +439,7 @@ type statistiquesJSON struct {
 	Bateaux              int `json:"bateaux"`
 	BateauxAvecTelephone int `json:"bateauxAvecTelephone"`
 	Contacts             int `json:"contacts"`
-	Suiveurs             int `json:"suiveurs"`
+	AccesAmis            int `json:"accesAmis"`
 	AnnoncesEnCours      int `json:"annoncesEnCours"`
 }
 
@@ -456,7 +456,7 @@ func (a *app) statistiques(ctx context.Context) (statistiquesJSON, error) {
 		(SELECT count(*) FROM acces),
 		(SELECT count(*) FROM annonces WHERE fin_le IS NULL OR fin_le > now())`).Scan(
 		&s.Utilisateurs, &s.EmailsConfirmes, &s.Inscrits7Jours, &s.Actifs30Jours, &s.Bateaux, &s.BateauxAvecTelephone,
-		&s.Contacts, &s.Suiveurs, &s.AnnoncesEnCours)
+		&s.Contacts, &s.AccesAmis, &s.AnnoncesEnCours)
 	return s, err
 }
 

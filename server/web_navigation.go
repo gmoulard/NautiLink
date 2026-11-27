@@ -10,9 +10,9 @@ import (
 // générales et fiche du bateau (RG-NAV-16, RG-NAV-27, RG-PAR-08), carte
 // (RG-NAV-29, RG-NAV-31), journal de bord chronologique avec photos et notes
 // vocales (RG-JRN-02, RG-JRN-03, RG-JRN-09, RG-JRN-10), alertes SOS
-// (RG-SOS-13), suiveurs et contacts SOS (RG-PAR-08) ; pour le navigateur :
-// retrait d'un suiveur de cette navigation (RG-PAR-06) et « Supprimer »
-// (RG-NAV-20). Lecture seule pour un suiveur (RG-PAR-07). Pendant une
+// (RG-SOS-13), amis (RG-PAR-08, D-186) ; pour le navigateur :
+// retrait d'un ami de cette navigation (RG-PAR-06) et « Supprimer »
+// (RG-NAV-20). Lecture seule pour un ami (RG-PAR-07). Pendant une
 // navigation en cours, static/navigation.js relit toutes les 30 secondes la
 // partie « en direct » de la page avec le curseur « depuis » du journal
 // (08-architecture.md §4).
@@ -226,8 +226,8 @@ func (a *app) routesWebNavigations(mux *http.ServeMux, c string) {
 		a.rendre(w, "navigation-direct", d)
 		return nil
 	}))
-	mux.HandleFunc("POST "+c+"/navigations/{id}/suiveurs/{suiveur}/retrait", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
-		if err := a.retirerDeLaNavigation(r.Context(), s.utilisateur, r.PathValue("id"), r.PathValue("suiveur")); err != nil {
+	mux.HandleFunc("POST "+c+"/navigations/{id}/amis/{ami}/retrait", a.web(true, func(w http.ResponseWriter, r *http.Request, s *session, d *donneesPage) error {
+		if err := a.retirerDeLaNavigation(r.Context(), s.utilisateur, r.PathValue("id"), r.PathValue("ami")); err != nil {
 			return err
 		}
 		http.Redirect(w, r, c+"/navigations/"+r.PathValue("id")+"?ok=retire", http.StatusSeeOther)

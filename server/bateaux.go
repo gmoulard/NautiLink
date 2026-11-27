@@ -198,7 +198,7 @@ func (a *app) bateaux(ctx context.Context, utilisateur string) ([]bateauJSON, er
 	return pgx.CollectRows(lignes, func(l pgx.CollectableRow) (bateauJSON, error) { return lireBateau(l) })
 }
 
-// bateauVisible : fiche visible du propriétaire et des suiveurs du
+// bateauVisible : fiche visible du propriétaire et des amis du
 // propriétaire (RG-PAR-08) ; sinon introuvable.
 func (a *app) bateauVisible(ctx context.Context, utilisateur, id string) (bateauJSON, error) {
 	if !estUUID(id) {

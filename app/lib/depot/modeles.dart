@@ -61,7 +61,7 @@ class ResumeNavigation {
     this.fin,
     this.bateauId,
     this.bateauNom,
-    this.commeSuiveur = false,
+    this.commeAmi = false,
     this.dureeMinutes,
     this.distanceMetres,
   });
@@ -72,7 +72,7 @@ class ResumeNavigation {
   final DateTime? fin;
   final String? bateauId;
   final String? bateauNom;
-  final bool commeSuiveur;
+  final bool commeAmi;
   final int? dureeMinutes;
   final double? distanceMetres;
 
@@ -89,7 +89,7 @@ class ResumeNavigation {
       fin: _heure(j['fin']),
       bateauId: bateau is Map ? bateau['id'] as String? : null,
       bateauNom: bateau is Map ? bateau['nom'] as String? : null,
-      commeSuiveur: j['role'] == 'suiveur',
+      commeAmi: j['role'] == 'ami',
       dureeMinutes: (j['dureeMinutes'] as num?)?.toInt(),
       distanceMetres: (j['distanceMetres'] as num?)?.toDouble(),
     );
@@ -102,7 +102,7 @@ class ResumeNavigation {
     'debut': heureRfc3339(debut),
     'fin': fin == null ? null : heureRfc3339(fin!),
     'bateau': {'id': bateauId, 'nom': bateauNom},
-    'role': commeSuiveur ? 'suiveur' : 'navigateur',
+    'role': commeAmi ? 'ami' : 'navigateur',
     'dureeMinutes': dureeMinutes,
     'distanceMetres': distanceMetres,
   };
@@ -176,15 +176,13 @@ class BateauNl {
   };
 }
 
-/// Contact du navigateur (schéma `Contact`, RG-CTC-01).
+/// Ami du navigateur (schéma `Contact`, RG-CTC-01, D-186).
 class ContactNl {
   const ContactNl({
     required this.id,
     required this.nom,
     this.telephone,
     this.email,
-    this.suiveur = true,
-    this.contactSos = true,
     this.perimetre,
     this.navigationId,
     this.etatInvitation = 'aucune',
@@ -196,8 +194,6 @@ class ContactNl {
   final String nom;
   final String? telephone;
   final String? email;
-  final bool suiveur;
-  final bool contactSos;
 
   /// Périmètre de l'accès : `navigation` ou `navigateur` (RG-PAR-02).
   final String? perimetre;
@@ -206,14 +202,14 @@ class ContactNl {
   /// État de la dernière invitation : aucune, envoyee, acceptee, annulee.
   final String etatInvitation;
 
-  /// Compte du suiveur, une fois l'invitation acceptée.
+  /// Compte de l'ami, une fois l'invitation acceptée.
   final String? utilisateurId;
 
   /// Modification faite sur le téléphone, pas encore reçue par le serveur
   /// (RG-COM-06, D-136).
   final bool enAttente;
 
-  /// Faux quand le suiveur a refusé les SMS dans son profil (RG-SMS-01).
+  /// Faux quand l'ami a refusé les SMS dans son profil (RG-SMS-01).
   final bool recevoirSms;
 
   static ContactNl? depuisJson(Object? j) {
@@ -223,8 +219,6 @@ class ContactNl {
       nom: (j['nom'] as String?) ?? '',
       telephone: j['telephone'] as String?,
       email: j['email'] as String?,
-      suiveur: j['suiveur'] != false,
-      contactSos: j['contactSos'] != false,
       perimetre: j['perimetre'] as String?,
       navigationId: j['navigationId'] as String?,
       etatInvitation: (j['etatInvitation'] as String?) ?? 'aucune',
@@ -239,8 +233,6 @@ class ContactNl {
     'nom': nom,
     'telephone': telephone,
     'email': email,
-    'suiveur': suiveur,
-    'contactSos': contactSos,
     'perimetre': perimetre,
     'navigationId': navigationId,
     'etatInvitation': etatInvitation,
@@ -292,33 +284,33 @@ class InvitationNl {
   }
 }
 
-/// Accès donné à un suiveur (schéma `Acces`, RG-PAR-02).
+/// Accès donné à un ami (schéma `Acces`, RG-PAR-02).
 class AccesNl {
   const AccesNl({
     required this.id,
-    required this.suiveurId,
-    required this.suiveurNom,
+    required this.amiId,
+    required this.amiNom,
     required this.perimetre,
-    this.suiveurEmail,
+    this.amiEmail,
     this.navigationId,
     this.accordeLe,
   });
   final String id;
-  final String suiveurId;
-  final String suiveurNom;
-  final String? suiveurEmail;
+  final String amiId;
+  final String amiNom;
+  final String? amiEmail;
   final String perimetre;
   final String? navigationId;
   final DateTime? accordeLe;
 
   static AccesNl? depuisJson(Object? j) {
     if (j is! Map || j['id'] is! String) return null;
-    final s = j['suiveur'];
+    final s = j['ami'];
     return AccesNl(
       id: j['id'] as String,
-      suiveurId: s is Map ? (s['id'] as String?) ?? '' : '',
-      suiveurNom: s is Map ? (s['nom'] as String?) ?? '' : '',
-      suiveurEmail: s is Map ? s['email'] as String? : null,
+      amiId: s is Map ? (s['id'] as String?) ?? '' : '',
+      amiNom: s is Map ? (s['nom'] as String?) ?? '' : '',
+      amiEmail: s is Map ? s['email'] as String? : null,
       perimetre: (j['perimetre'] as String?) ?? 'navigateur',
       navigationId: j['navigationId'] as String?,
       accordeLe: _heure(j['accordeLe']),
@@ -528,7 +520,7 @@ class ProfilNl {
   /// Langue des messages envoyés (RG-PRM-04) : `fr` ou `en`.
   final String? langue;
 
-  /// Identifiant du compte (navigations suivies, RG-AND-09).
+  /// Identifiant du compte (« Mes amis en mer », RG-AND-09).
   final String? id;
 
   /// Notifications push voulues, par type (RG-IOS-06) : debut, fin, photo,

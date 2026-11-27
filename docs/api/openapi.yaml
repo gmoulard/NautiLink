@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: API NautiLink
-  version: 0.1.0
+  version: 0.2.0
   summary: 'API HTTPS entre les applications mobiles, l''Application web, l''espace administrateur et le serveur NautiLink.'
   description: |
     Description de l'API du serveur NautiLink (TODO-3.2). **Validée** : voir
@@ -65,7 +65,7 @@ x-traitements:
   - nom: 'E-mails'
     description: 'Invitation, nouvel accès, alerte SOS, début de navigation, chacun avec copie au navigateur, dans la langue du navigateur ; contenu des e-mails SOS et de début : RG-SOS-17, RG-NOT-05 ; e-mail SOS non accepté par le relais : relancé chaque minute pendant 24 heures (RG-SOS-18).'
     x-regles: [RG-NOT-01, RG-NOT-02, RG-NOT-03, RG-NOT-05, RG-SOS-06, RG-SOS-15, RG-SOS-17, RG-SOS-18, RG-SOS-21, RG-PRM-04, RG-PAR-04]
-  - nom: 'Notifications push des suiveurs'
+  - nom: 'Notifications push des amis'
     description: 'APNs (iPhone) et FCM (Android) — SOS, début, fin, nouvelle photo, position en retard (aucune position reçue pendant deux fois la fréquence, une seule notification jusqu''à la position suivante).'
     x-regles: [RG-IOS-06, RG-AND-08, RG-NOT-02]
   - nom: 'Purge de la corbeille'
@@ -384,7 +384,7 @@ paths:
       - {$ref: '#/components/parameters/BateauId'}
     get:
       tags: [Appareils et bateaux]
-      summary: 'Fiche bateau (propriétaire, ou suiveur d''une de ses navigations).'
+      summary: 'Fiche bateau (propriétaire, ou ami d''une de ses navigations).'
       x-regles: [RG-BAT-01, RG-PAR-08]
       responses:
         '200':
@@ -483,9 +483,10 @@ paths:
         Un seul type de contact, l'ami (D-176) : il est alerté des messages et du SOS par les canaux
         cochés au démarrage et reçoit une invitation à suivre les navigations, qui demande le
         périmètre : par e-mail si l'adresse est connue, sinon par téléphone (lien rendu par
-        `GET /v1/invitations`). Les anciens champs `suiveur` et `contactSos` des applications déjà
-        installées restent acceptés : `suiveur: false` ajoute l'ami sans invitation ;
-        `contactSos` est sans effet (plus de refus `contact_sos_sans_telephone`). Identifiant tiré par le client pour un ajout hors connexion : un
+        `GET /v1/invitations`), sauf avec `inviter: false` : ami ajouté sans invitation, par exemple
+        quand l'adresse du navigateur n'est pas encore confirmée (D-185, D-186). Tout autre champ que
+        ceux de `ContactModifiable`, dont les anciens champs de rôle des applications d'avant la 0.5.0,
+        est refusé (422, D-186). Identifiant tiré par le client pour un ajout hors connexion : un
         renvoi rend le contact existant (200), sans doublon. Sans nom, le contact prend son e-mail ou
         son numéro comme nom.
       x-regles: [RG-CTC-01, RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-NAV-26]
@@ -515,9 +516,8 @@ paths:
       description: |
         Seuls les champs envoyés sont modifiés : la dernière modification reçue l'emporte, champ par
         champ, sans refus si le contact a changé entre-temps sur un autre support (RG-COM-04).
-        `contactSos` vaut toujours « a un numéro ». Ancien champ `suiveur` des applications déjà
-        installées : `false` retire l'ami de toutes les navigations, immédiatement, et annule
-        l'invitation en attente (RG-PAR-06) ; `true` envoie une nouvelle invitation.
+        Les accès se changent par les invitations et les accès (`/v1/invitations`, `/v1/acces`), plus
+        par le contact ; `inviter` et tout champ inconnu sont refusés (422, D-186).
       x-regles: [RG-CTC-02, RG-CTC-04, RG-CTC-05, RG-PAR-06, RG-CTC-03, RG-COM-04]
       requestBody:
         required: true
@@ -592,7 +592,7 @@ paths:
       summary: 'Accepter une invitation, une fois connecté (le lien mène à la connexion ou à la création d''un compte).'
       description: |
         Le lien d'invitation ouvre la page Web `/invitation?jeton=…`. Accès accordé ; e-mail « nouvel
-        accès » au suiveur, avec copie au navigateur. Rejouée par le même compte : 200, rien de plus.
+        accès » à l'ami, avec copie au navigateur. Rejouée par le même compte : 200, rien de plus.
         Acceptée par un autre compte : 409 `invitation_deja_acceptee` ; sa propre invitation : 422.
       x-regles: [RG-PAR-01, RG-PAR-05, RG-NOT-02, RG-NOT-03]
       requestBody:
@@ -616,12 +616,12 @@ paths:
   /v1/acces:
     get:
       tags: [Contacts et partage]
-      summary: 'Accès donnés par le navigateur (role=navigateur) ou reçus comme suiveur (role=suiveur).'
+      summary: 'Accès donnés par le navigateur (role=navigateur) ou reçus comme ami (role=ami).'
       x-regles: [RG-PAR-02, RG-PAR-07]
       parameters:
         - name: role
           in: query
-          schema: {type: string, enum: [navigateur, suiveur], default: navigateur}
+          schema: {type: string, enum: [navigateur, ami], default: navigateur}
       responses:
         '200':
           description: 'Accès.'
@@ -658,26 +658,26 @@ paths:
               schema: {$ref: '#/components/schemas/Acces'}
     delete:
       tags: [Contacts et partage]
-      summary: 'Retirer le suiveur de toutes les navigations présentes et futures ; effet immédiat ; son contact n''est plus « Suiveur » (RG-CTC-04).'
+      summary: 'Retirer l''ami de toutes les navigations présentes et futures ; effet immédiat ; il reste dans la liste des amis, sans invitation active (RG-CTC-04).'
       x-regles: [RG-PAR-06]
       responses:
         '204': {description: Accès retiré.}
-  /v1/navigations/{navigationId}/suiveurs:
+  /v1/navigations/{navigationId}/amis:
     parameters:
       - {$ref: '#/components/parameters/NavigationId'}
     get:
       tags: [Contacts et partage]
-      summary: 'Suiveurs de la navigation (visibles du navigateur et des suiveurs).'
+      summary: 'Amis qui suivent la navigation (visibles du navigateur et de ses amis).'
       x-regles: [RG-PAR-08]
       responses:
         '200':
-          description: 'Suiveurs.'
+          description: 'Amis qui suivent la navigation.'
           content:
             application/json:
               schema:
                 type: array
                 items: {$ref: '#/components/schemas/Personne'}
-  /v1/navigations/{navigationId}/suiveurs/{utilisateurId}:
+  /v1/navigations/{navigationId}/amis/{utilisateurId}:
     parameters:
       - {$ref: '#/components/parameters/NavigationId'}
       - name: utilisateurId
@@ -686,10 +686,10 @@ paths:
         schema: {type: string, format: uuid}
     delete:
       tags: [Contacts et partage]
-      summary: 'Retirer un suiveur de cette navigation seulement ; effet immédiat.'
+      summary: 'Retirer un ami de cette navigation seulement ; effet immédiat.'
       x-regles: [RG-PAR-06]
       responses:
-        '204': {description: Suiveur retiré.}
+        '204': {description: Ami retiré.}
 
   # ------------------------------------------------------------- Paramètres
   /v1/parametres:
@@ -726,13 +726,13 @@ paths:
   /v1/navigations:
     get:
       tags: [Navigations]
-      summary: 'Navigations du compte comme navigateur et comme suiveur (tableau de bord, « Navigations enregistrées »).'
+      summary: 'Navigations du compte comme navigateur et comme ami (tableau de bord, « Navigations enregistrées »).'
       description: 'Les navigations en cours d''abord, puis l''historique de la plus récente à la plus ancienne. Le suivi est gratuit.'
       x-regles: [RG-PAR-07, RG-PAR-09, RG-ECO-08, RG-NAV-16, RG-NAV-18, RG-BAT-03, RG-IOS-05]
       parameters:
         - name: role
           in: query
-          schema: {type: string, enum: [navigateur, suiveur]}
+          schema: {type: string, enum: [navigateur, ami]}
         - name: etat
           in: query
           schema: {type: string, enum: [en_cours, terminee]}
@@ -798,8 +798,8 @@ paths:
         '409': {$ref: '#/components/responses/Conflit'}
     get:
       tags: [Navigations]
-      summary: 'Page d''une navigation (navigateur ou suiveur ayant accès).'
-      description: 'Comprend la fiche du bateau et les amis du navigateur (RG-PAR-08, D-176). Introuvable pour un suiveur quand elle est dans la corbeille ou quand son accès est retiré.'
+      summary: 'Page d''une navigation (navigateur ou ami ayant accès).'
+      description: 'Comprend la fiche du bateau et les amis du navigateur (RG-PAR-08, D-176). Introuvable pour un ami quand elle est dans la corbeille ou quand son accès est retiré.'
       x-regles: [RG-NAV-16, RG-NAV-27, RG-NAV-28, RG-PAR-01, RG-PAR-07, RG-PAR-08, RG-NAV-20, RG-PAR-06,
         RG-ECO-08, RG-IOS-05]
       responses:
@@ -937,7 +937,7 @@ paths:
       - {$ref: '#/components/parameters/NavigationId'}
     get:
       tags: [Navigations]
-      summary: 'Export PDF (navigateur et suiveurs).'
+      summary: 'Export PDF (navigateur et amis).'
       x-regles: [RG-NAV-19, RG-PAR-08]
       responses:
         '200':
@@ -999,7 +999,7 @@ paths:
         identifiant et contenu différent → 409 `evenement_different`. Accepté de tout téléphone du
         compte (D-182). Le fichier d'une photo ou d'une
         note vocale suit par `PUT /v1/fichiers/{evenementId}`. Refusé au-delà de 20 photos
-        (`limite_photos`). Une nouvelle photo déclenche la notification push des suiveurs ; une
+        (`limite_photos`). Une nouvelle photo déclenche la notification push des amis ; une
         position remet à zéro le délai de « position en retard ». Ajouts depuis le Web : navigation
         terminée, navigateur seulement. Après une clôture automatique, un événement acquis avant
         l'heure de clôture est gardé, un événement acquis après est refusé (409
@@ -1072,7 +1072,7 @@ paths:
         '422': {$ref: '#/components/responses/Invalide'}
     get:
       tags: [Journal de bord]
-      summary: 'Lire une photo ou écouter une note vocale (navigateur et suiveurs ayant accès).'
+      summary: 'Lire une photo ou écouter une note vocale (navigateur et amis ayant accès).'
       description: 'Réservé aux comptes ayant accès. Le lien des SMS de photo et de note vocale mène à la page de la navigation sur l''Application web, après connexion ; aucun accès sans compte (RG-SMS-09).'
       x-regles: [RG-JRN-04, RG-JRN-09, RG-PAR-01, RG-PAR-07, RG-SMS-05, RG-SMS-06, RG-SMS-09]
       responses:
@@ -1464,7 +1464,7 @@ components:
         application/json:
           schema: {$ref: '#/components/schemas/Erreur'}
     Interdit:
-      description: 'Droit insuffisant (suiveur en lecture seule, pas propriétaire, événement non modifiable…).'
+      description: 'Droit insuffisant (ami en lecture seule, pas propriétaire, événement non modifiable…).'
       content:
         application/json:
           schema: {$ref: '#/components/schemas/Erreur'}
@@ -1579,7 +1579,7 @@ components:
         emailsDebut: {type: boolean, description: E-mails de début de navigation (RG-NOT-02).}
         push:
           type: object
-          description: 'Types de notifications push du suiveur ; le SOS n''est pas désactivable (RG-IOS-06, RG-AND-08).'
+          description: 'Types de notifications push de l''ami ; le SOS n''est pas désactivable (RG-IOS-06, RG-AND-08).'
           properties:
             debut: {type: boolean, default: true}
             fin: {type: boolean, default: true}
@@ -1633,8 +1633,7 @@ components:
         nom: {type: string}
         telephone: {type: [string, 'null']}
         email: {type: [string, 'null'], format: email}
-        suiveur: {type: boolean, default: true, deprecated: true, description: 'Ancien champ, gardé pour les applications déjà installées (D-176) : faux, l''ami n''est pas invité ou ses accès sont retirés.'}
-        contactSos: {type: boolean, deprecated: true, description: 'Ancien champ (D-176) : accepté et sans effet à l''envoi ; rendu vrai quand l''ami a un numéro.'}
+        inviter: {type: boolean, default: true, writeOnly: true, description: 'À l''ajout seulement : faux, l''ami est ajouté sans invitation (D-185, D-186).'}
         perimetre: {$ref: '#/components/schemas/Perimetre'}
         navigationId: {type: [string, 'null'], format: uuid}
 
@@ -1644,10 +1643,10 @@ components:
         - type: object
           properties:
             version: {type: integer}
-            utilisateurId: {type: [string, 'null'], format: uuid, description: 'Compte du suiveur, une fois l''invitation acceptée.'}
-            etatInvitation: {type: string, enum: [aucune, envoyee, acceptee, annulee]}
+            utilisateurId: {type: [string, 'null'], format: uuid, description: 'Compte de l''ami, une fois l''invitation acceptée.'}
+            etatInvitation: {type: string, enum: [aucune, envoyee, acceptee, annulee], description: 'État de la dernière invitation ; « aucune » sans invitation active (ami ajouté sans invitation ou accès retirés, D-186).'}
             modifieLe: {type: string, format: date-time}
-            recevoirSms: {type: boolean, description: 'Faux quand le suiveur a refusé les SMS dans son profil (« Recevoir les SMS », RG-SMS-01) ; vrai sans compte rattaché.'}
+            recevoirSms: {type: boolean, description: 'Faux quand l''ami a refusé les SMS dans son profil (« Recevoir les SMS », RG-SMS-01) ; vrai sans compte rattaché.'}
 
     ListeContacts:
       type: object
@@ -1686,7 +1685,7 @@ components:
       properties:
         id: {type: string, format: uuid}
         navigateur: {$ref: '#/components/schemas/Personne'}
-        suiveur: {$ref: '#/components/schemas/Personne'}
+        ami: {$ref: '#/components/schemas/Personne'}
         perimetre: {$ref: '#/components/schemas/Perimetre'}
         navigationId: {type: [string, 'null'], format: uuid}
         accordeLe: {type: string, format: date-time}
@@ -1804,7 +1803,7 @@ components:
       properties:
         id: {type: string, format: uuid}
         nom: {type: string}
-        role: {type: string, enum: [navigateur, suiveur]}
+        role: {type: string, enum: [navigateur, ami]}
         etat: {type: string, enum: [en_cours, terminee, corbeille]}
         appareilId: {type: string, format: uuid, description: 'Pour son navigateur : téléphone qui a démarré la navigation (absent : démarrée sur le Web, sans téléphone) ; un autre téléphone peut la rejoindre (RG-NAV-39).'}
         bateau: {type: object, properties: {id: {type: string, format: uuid}, nom: {type: string}}}
@@ -1843,14 +1842,17 @@ components:
               type: array
               description: 'Pour son navigateur : téléphones du compte qui ont rejoint la navigation (RG-NAV-39).'
               items: {type: string, format: uuid}
-            suiveurs:
+            amis:
               type: array
-              description: 'Amis qui suivent la navigation (D-176 ; nom gardé pour les applications déjà installées).'
-              items: {$ref: '#/components/schemas/Personne'}
-            contactsSos:
-              type: array
-              description: 'Autres amis du navigateur (D-176 ; nom gardé). La page affiche les deux listes en une seule, « Amis ».'
-              items: {$ref: '#/components/schemas/Personne'}
+              description: 'Une seule liste, « Amis » (RG-PAR-08, D-176, D-186) : d''abord les amis qui suivent la navigation, puis les autres amis du navigateur.'
+              items: {$ref: '#/components/schemas/AmiNavigation'}
+
+    AmiNavigation:
+      allOf:
+        - {$ref: '#/components/schemas/Personne'}
+        - type: object
+          properties:
+            suit: {type: boolean, description: 'Vrai : compte qui suit cette navigation ; `id` est alors celui du compte (`DELETE /v1/navigations/{navigationId}/amis/{utilisateurId}`), sinon celui du contact.'}
 
     Evenement:
       type: object

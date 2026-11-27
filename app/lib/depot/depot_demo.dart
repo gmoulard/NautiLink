@@ -47,7 +47,7 @@ class DepotDemo extends Depot {
           fin: v.end,
           bateauId: v.boat.name,
           bateauNom: v.boat.name,
-          commeSuiveur: v.asFollower,
+          commeAmi: v.asFollower,
           dureeMinutes: v.duration.inMinutes,
           distanceMetres: v.distanceNm * 1852,
         ),
@@ -84,8 +84,6 @@ class DepotDemo extends Depot {
         nom: c.name,
         telephone: c.phone,
         email: c.email,
-        suiveur: c.follower,
-        contactSos: c.sos,
       ),
   ];
 
@@ -138,15 +136,10 @@ class DepotDemo extends Depot {
   @override
   Future<void> deconnecter() async {}
 
-  /// Cases « Suiveur » et « Contact SOS » des contacts d'exemple ; rien n'est envoyé.
+  /// Les contacts d'exemple sont des amis, sans case à cocher (D-176,
+  /// D-187) ; rien n'est envoyé.
   @override
   Future<void> modifierContact(String id, Map<String, Object?> champs) async {
-    for (final c in state.contacts.where((c) => c.name == id)) {
-      if (champs['suiveur'] is bool) c.follower = champs['suiveur'] as bool;
-      if (champs['contactSos'] is bool && c.phone != null) {
-        c.sos = champs['contactSos'] as bool;
-      }
-    }
     state.touch();
   }
 

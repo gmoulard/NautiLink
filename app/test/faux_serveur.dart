@@ -215,7 +215,7 @@ class FauxServeurNautiLink {
       );
       return reponse(204);
     }
-    // Navigation suivie s1 (vue suiveur, RG-IOS-05, RG-AND-09).
+    // Navigation suivie s1 (vue ami, RG-IOS-05, RG-AND-09).
     if (r.method == 'GET' && chemin == '/v1/navigations/s1/evenements') {
       final depuis = r.url.queryParameters['depuis'];
       return reponse(200, {
@@ -232,7 +232,7 @@ class FauxServeurNautiLink {
       return reponse(200, {
         'id': 's1',
         'nom': 'Mistral — Glénan',
-        'role': 'suiveur',
+        'role': 'ami',
         'etat': journalSuivi.any((e) => e['type'] == 'fin')
             ? 'terminee'
             : 'en_cours',
@@ -246,10 +246,8 @@ class FauxServeurNautiLink {
           'type': 'voilier',
           'portAttache': 'Concarneau',
         },
-        'suiveurs': [
-          {'id': 'u1', 'nom': 'Marin'},
-        ],
-        'contactsSos': [
+        'amis': [
+          {'id': 'u1', 'nom': 'Marin', 'suit': true},
           {'id': 'u8', 'nom': 'Anne', 'telephone': '+33699999999'},
         ],
       });
@@ -388,7 +386,7 @@ class FauxServeurNautiLink {
               {
                 'id': 's1',
                 'nom': 'Mistral — Glénan',
-                'role': 'suiveur',
+                'role': 'ami',
                 'etat': 'en_cours',
                 'bateau': {'id': 'b9', 'nom': 'Mistral'},
                 'debut': '2026-11-26T08:00:00+01:00',
@@ -456,8 +454,6 @@ class FauxServeurNautiLink {
               'id': 'c1',
               'nom': 'Claire',
               'telephone': '+33612345678',
-              'suiveur': true,
-              'contactSos': true,
             },
           ],
           'supprimes': [],

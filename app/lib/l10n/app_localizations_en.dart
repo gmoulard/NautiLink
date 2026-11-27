@@ -86,7 +86,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'The mobile app: start a voyage, send your position, take notes, trigger an SOS.';
 
   @override
-  String get chooseFollowerTitle => 'The follower, on the web platform';
+  String get chooseFollowerTitle => 'The friend, on the web platform';
 
   @override
   String get chooseFollowerText =>
@@ -177,16 +177,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get understood => 'I understand';
-
-  @override
-  String get contactsDefault =>
-      'By default, each contact is both a follower and an SOS contact.';
-
-  @override
-  String get roleFollower => 'Follower';
-
-  @override
-  String get roleSos => 'SOS contact';
 
   @override
   String get phoneRequired => 'Number required';
@@ -465,12 +455,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alertedPersons => 'People alerted';
 
   @override
-  String get alertedRoleFollower => 'follower';
-
-  @override
-  String get alertedRoleSos => 'SOS contact';
-
-  @override
   String get addPerson => 'Add a person';
 
   @override
@@ -478,14 +462,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSosChecked =>
-      'No SOS contact checked: nobody will receive your SOS text messages.';
+      'No friend checked: nobody will receive your SOS text messages.';
 
   @override
   String get sendStart => 'Start of voyage';
 
   @override
   String get addPersonText =>
-      'The person joins your contacts, as follower and SOS contact by default, and will be alerted during this voyage.';
+      'The person joins your friends and will be alerted during this voyage.';
 
   @override
   String get name => 'Name';
@@ -498,13 +482,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneNeededForSos =>
-      'A phone number is needed to be an SOS contact.';
+      'A phone number is needed to receive SOS text messages.';
 
   @override
   String get add => 'Add';
 
   @override
-  String get smsPrefilled => 'Text message prefilled for your followers';
+  String get smsPrefilled => 'Text message prefilled for your friends';
 
   @override
   String get smsDisabled => 'Text messages off';
@@ -634,7 +618,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sosConfirmText =>
-      'Your SOS contacts will receive your position and the boat\'s details. Also alert the rescue services: VHF channel 16 or 196.';
+      'Your friends will receive your position and the boat\'s details. Also alert the rescue services: VHF channel 16 or 196.';
 
   @override
   String get sosProblem => 'Problem encountered (optional)';
@@ -667,7 +651,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sosServer => 'Server';
 
   @override
-  String get sosServerDetail => 'Alert received · e-mail to followers';
+  String get sosServerDetail => 'Alert received · e-mail to friends';
 
   @override
   String get dashboard => 'Dashboard';
@@ -679,7 +663,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterNavigator => 'As skipper';
 
   @override
-  String get filterFollower => 'As follower';
+  String get filterFollower => 'As friend';
 
   @override
   String get inProgress => 'In progress';
@@ -1287,16 +1271,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Without Internet, the SOS alert cannot leave the iPhone. It will be sent automatically as soon as the connection returns. Alert the rescue services now: VHF channel 16 or 196.';
 
   @override
-  String get menuFollowed => 'Followed voyages';
+  String get menuFollowed => 'My friends at sea';
 
   @override
   String get followNoVoyage => 'No voyage to follow for now.';
 
   @override
   String get followFollowers => 'Friends';
-
-  @override
-  String get followSosContacts => 'SOS contacts';
 
   @override
   String get followBoatSheet => 'Boat sheet';
@@ -1414,7 +1395,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get pushTitle => 'Notifications of followed voyages';
+  String get pushTitle => 'Notifications from my friends at sea';
 
   @override
   String get pushStart => 'Voyage start';

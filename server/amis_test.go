@@ -9,8 +9,8 @@ import (
 
 // TestAucunRoleAffiche : un seul type de contact, l'ami (D-176, TODO-4.13) :
 // aucune page de l'Application web ni de l'espace administrateur n'affiche
-// « Suiveur » ou « Contact SOS » ; les noms de champs et d'adresses
-// (`.Suiveur`, `/suiveurs/`, `role=suiveur`) ne sont pas du texte affiché.
+// les anciens rôles « Suiveur » ou « Contact SOS » (D-187) ;
+// le code des gabarits n'est pas du texte affiché.
 func TestAucunRoleAffiche(t *testing.T) {
 	code := regexp.MustCompile(`(?s)\{\{.*?\}\}|<[^>]*>|<!--.*?-->`)
 	interdit := regexp.MustCompile(`(?i)suiveur|contacts? sos`)

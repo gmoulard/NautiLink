@@ -22,7 +22,7 @@ import (
 // l'abonnement ou la confirmation de l'adresse e-mail (RG-SOS-03,
 // RG-CPT-09) ; elle est rejouable sans doublon (08-architecture.md §5).
 // Contenu des e-mails : RG-SOS-17 ; relance des e-mails en échec : RG-SOS-18 ;
-// historique vu des suiveurs : RG-SOS-20 (D-118, D-119, D-121).
+// historique vu des amis : RG-SOS-20 (D-118, D-119, D-121).
 // SOS après la fin : RG-SOS-19, D-120 ; personnes ajoutées pendant la
 // navigation : RG-SOS-21, D-122.
 
@@ -312,7 +312,7 @@ func texteOuVide(p *string) string {
 // ------------------------------------------------------------------ historique
 
 // alertes : GET /v1/alertes-sos (RG-SOS-12, RG-SOS-13) : alertes du
-// navigateur, et pour un suiveur celles des navigations qu'il voit
+// navigateur, et pour un ami celles des navigations qu'il voit
 // (RG-PAR-07) et, hors navigation, celles des navigateurs qu'il suit avec
 // le périmètre navigateur (RG-SOS-20).
 func (a *app) alertes(ctx context.Context, utilisateur, bateau, navigation string) ([]alerteSosJSON, error) {
@@ -321,8 +321,8 @@ func (a *app) alertes(ctx context.Context, utilisateur, bateau, navigation strin
 	}
 	lignes, err := a.b.pool.Query(ctx, "SELECT "+colonnesAlerte+` FROM alertes_sos al
 		WHERE (al.navigateur_id = $1
-			OR (al.navigation_id IS NOT NULL AND EXISTS (SELECT 1 FROM navigations n WHERE n.id = al.navigation_id AND `+conditionSuiveur+`))
-			OR (al.navigation_id IS NULL AND EXISTS (SELECT 1 FROM acces ac WHERE ac.suiveur_id = $1
+			OR (al.navigation_id IS NOT NULL AND EXISTS (SELECT 1 FROM navigations n WHERE n.id = al.navigation_id AND `+conditionAmi+`))
+			OR (al.navigation_id IS NULL AND EXISTS (SELECT 1 FROM acces ac WHERE ac.ami_id = $1
 				AND ac.navigateur_id = al.navigateur_id AND ac.perimetre = 'navigateur')))
 		AND ($2 = '' OR al.bateau_id::text = $2) AND ($3 = '' OR al.navigation_id::text = $3)
 		ORDER BY al.heure_declenchement DESC, al.id`, utilisateur, strings.ToLower(bateau), strings.ToLower(navigation))
@@ -377,15 +377,15 @@ type donneesSos struct {
 // destinatairesSos : amis qui suivent la navigation, ou de périmètre
 // navigateur hors navigation (RG-SOS-06, RG-SOS-15), et tous les amis dont
 // l'e-mail est connu (D-176), sans les personnes décochées au démarrage (RG-NAV-25) ; un
-// suiveur dont l'accès a été accordé après le démarrage n'a pas pu être
-// décoché, de même qu'un contact SOS créé après le démarrage : ils sont
+// ami dont l'accès a été accordé après le démarrage n'a pas pu être
+// décoché, de même qu'un ami créé après le démarrage : ils sont
 // prévenus (RG-SOS-21, D-122). Une adresse ne reçoit qu'un e-mail. La copie
 // au navigateur (RG-NOT-03) est à part.
 func (a *app) destinatairesSos(ctx context.Context, navigateur string, navigation *string, alertees []string) ([]string, error) {
-	lignes, err := a.b.pool.Query(ctx, `SELECT u.email FROM acces ac JOIN utilisateurs u ON u.id = ac.suiveur_id
+	lignes, err := a.b.pool.Query(ctx, `SELECT u.email FROM acces ac JOIN utilisateurs u ON u.id = ac.ami_id
 		WHERE ac.navigateur_id = $1 AND u.id <> $1
 		AND (ac.perimetre = 'navigateur' OR ($2::uuid IS NOT NULL AND ac.navigation_id = $2::uuid))
-		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2::uuid AND r.suiveur_id = u.id)
+		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2::uuid AND r.ami_id = u.id)
 		AND ($3::text[] IS NULL OR ac.contact_id IS NULL OR ac.contact_id::text = ANY($3::text[])
 			OR ac.accorde_le > (SELECT creee_le FROM navigations WHERE id = $2::uuid))
 		UNION ALL
@@ -512,7 +512,7 @@ func enLangue(lng, fr, en string) string {
 	return fr
 }
 
-// heureEnvoyee : heure d'un message envoyé aux suiveurs et aux contacts SOS
+// heureEnvoyee : heure d'un message envoyé aux amis
 // (RG-PRM-07, D-146) : heure locale du téléphone du navigateur ([decalage]
 // en minutes), puis UTC entre parenthèses ; avec la date locale en tête si
 // [avecDate], et la date UTC dans la parenthèse quand elle diffère. Sans
@@ -621,10 +621,10 @@ func copieSos(d donneesSos, dests []string, sujet, texte string) (string, string
 // <navigateur> de vous décocher » (D-182) ; sauf les personnes décochées au
 // démarrage (RG-NAV-25) ; copie au navigateur (RG-NOT-03).
 func (a *app) emailsDebut(ctx context.Context, n navLigne) error {
-	lignes, err := a.b.pool.Query(ctx, `SELECT u.email FROM acces ac JOIN utilisateurs u ON u.id = ac.suiveur_id
+	lignes, err := a.b.pool.Query(ctx, `SELECT u.email FROM acces ac JOIN utilisateurs u ON u.id = ac.ami_id
 		WHERE ac.navigateur_id = $1 AND u.id <> $1 AND u.emails_debut
 		AND (ac.perimetre = 'navigateur' OR ac.navigation_id = $2)
-		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2 AND r.suiveur_id = u.id)
+		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2 AND r.ami_id = u.id)
 		AND ($3::text[] IS NULL OR ac.contact_id IS NULL OR ac.contact_id::text = ANY($3::text[]))`, n.navigateur, n.id, n.alertees)
 	if err != nil {
 		return err

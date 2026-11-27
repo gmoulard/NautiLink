@@ -109,7 +109,7 @@ class _StartScreenState extends State<StartScreen> {
               value: alerted!.contains(c.name),
               onChanged: (v) => setState(() => v == true ? alerted!.add(c.name) : alerted!.remove(c.name)),
               title: Text(c.name),
-              subtitle: Text([if (c.follower) l.alertedRoleFollower, if (c.sos) l.alertedRoleSos].join(' · ')),
+              subtitle: Text([c.phone, c.email].whereType<String>().join(' · ')),
             ),
           Align(
             alignment: Alignment.centerLeft,

@@ -128,14 +128,21 @@ func TestNavigationComplete(t *testing.T) {
 		}
 	}
 
-	// Suiveur de périmètre navigateur : lecture seule.
+	// Ami de périmètre navigateur : lecture seule.
 	lea := e.compte("lea@exemple.org", "Léa")
 	e.suivre(nav, lea, "lea@exemple.org", "navigateur", "")
-	if code, _ := e.appel("GET", "/navigations/"+id, lea, nil); code != 200 {
-		t.Fatalf("lecture par le suiveur : %d", code)
+	code, page := e.appel("GET", "/navigations/"+id, lea, nil)
+	if code != 200 {
+		t.Fatalf("lecture par l'ami : %d", code)
+	}
+	// Une seule liste « amis » (RG-PAR-08, D-186) : l'ami qui suit, avec
+	// l'identifiant de son compte.
+	if amis, _ := page["amis"].([]any); len(amis) != 1 || amis[0].(map[string]any)["suit"] != true ||
+		amis[0].(map[string]any)["id"] != e.id(lea) {
+		t.Fatalf("amis de la navigation : %v", page)
 	}
 	if code, _ := e.appel("PUT", "/navigations/"+id+"/evenements/"+uuid(t), lea, position(uuid(t), t0, 9, 1, 1)); code != 403 {
-		t.Fatalf("écriture par le suiveur : %d", code)
+		t.Fatalf("écriture par l'ami : %d", code)
 	}
 	if code, _ := e.appel("GET", "/navigations/"+id, autre, nil); code != 404 {
 		t.Fatalf("lecture sans accès : %d", code)
@@ -200,14 +207,14 @@ func TestNavigationComplete(t *testing.T) {
 		t.Fatalf("ajout : %d", code)
 	}
 
-	// Listes : comme navigateur et comme suiveur.
-	_, l := e.appel("GET", "/navigations?role=suiveur", lea, nil)
-	if ns := l["navigations"].([]any); len(ns) != 1 || ns[0].(map[string]any)["role"] != "suiveur" {
-		t.Fatalf("liste du suiveur : %v", l)
+	// Listes : comme navigateur et comme ami.
+	_, l := e.appel("GET", "/navigations?role=ami", lea, nil)
+	if ns := l["navigations"].([]any); len(ns) != 1 || ns[0].(map[string]any)["role"] != "ami" {
+		t.Fatalf("liste de l'ami : %v", l)
 	}
 	// Retrait de cette navigation seulement (RG-PAR-06).
 	leaID := e.id(lea)
-	if code, _ := e.appel("DELETE", "/navigations/"+id+"/suiveurs/"+leaID, nav, nil); code != 204 {
+	if code, _ := e.appel("DELETE", "/navigations/"+id+"/amis/"+leaID, nav, nil); code != 204 {
 		t.Fatalf("retrait d'une navigation : %d", code)
 	}
 	if code, _ := e.appel("GET", "/navigations/"+id, lea, nil); code != 404 {
@@ -216,8 +223,8 @@ func TestNavigationComplete(t *testing.T) {
 	_ = autreBateau
 }
 
-// suivre : invitation par e-mail acceptée par le suiveur.
-func (e *essai) suivre(nav, suiveur, email, perimetre, navigation string) {
+// suivre : invitation par e-mail acceptée par l'ami.
+func (e *essai) suivre(nav, ami, email, perimetre, navigation string) {
 	e.t.Helper()
 	corps := map[string]any{"canal": "email", "email": email, "perimetre": perimetre}
 	if navigation != "" {
@@ -227,7 +234,7 @@ func (e *essai) suivre(nav, suiveur, email, perimetre, navigation string) {
 		e.t.Fatalf("invitation : %d %v", code, r)
 	}
 	jeton := jetonDuTexte(e.t, e.courrier.dernier(e.t, email))
-	if code, r := e.appel("POST", "/invitations/acceptation", suiveur, map[string]any{"jetonInvitation": jeton}); code != 200 && code != 201 {
+	if code, r := e.appel("POST", "/invitations/acceptation", ami, map[string]any{"jetonInvitation": jeton}); code != 200 && code != 201 {
 		e.t.Fatalf("acceptation : %d %v", code, r)
 	}
 }
@@ -250,12 +257,12 @@ func TestNavigationPerimetreEtFichiers(t *testing.T) {
 	if code, _ := e.appel("GET", "/bateaux/"+bateau, tom, nil); code != 404 {
 		t.Fatalf("fiche hors navigation, périmètre navigation : %d", code)
 	}
-	_, l := e.liste("GET", "/navigations/"+id+"/suiveurs", nav, nil)
+	_, l := e.liste("GET", "/navigations/"+id+"/amis", nav, nil)
 	if len(l) != 1 || l[0]["nom"] != "Tom" {
-		t.Fatalf("suiveurs : %v", l)
+		t.Fatalf("amis : %v", l)
 	}
 
-	// Photo : événement, puis fichier ; lu par le suiveur.
+	// Photo : événement, puis fichier ; lu par l'ami.
 	photo := uuid(t)
 	ev := map[string]any{"id": photo, "type": "photo", "heureAcquisition": heure(time.Now()), "fichier": map[string]any{"typeMedia": "image/jpeg"}}
 	if code, _ := e.appel("PUT", "/navigations/"+id+"/evenements/"+photo, nav, ev); code != 201 {

@@ -16,10 +16,10 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// Notifications push des suiveurs (RG-IOS-06, RG-AND-08, D-44, D-84, D-86,
+// Notifications push des amis (RG-IOS-06, RG-AND-08, D-44, D-84, D-86,
 // D-92) : alerte SOS (en plus de l'e-mail), début et fin de navigation,
 // nouvelle photo, position en retard. Firebase Cloud Messaging pour Android,
-// APNs pour l'iPhone. Le suiveur peut désactiver chaque type, sauf le SOS
+// APNs pour l'iPhone. L'ami peut désactiver chaque type, sauf le SOS
 // (préférences `push` du profil). Sans identifiants, rien n'est envoyé.
 
 type envoiPush struct {
@@ -195,8 +195,8 @@ var colonnePush = map[string]string{
 	"sos":                "true",
 }
 
-// notifier : notification [typ] aux suiveurs d'une navigation (ou, hors
-// navigation, aux suiveurs de périmètre navigateur, RG-SOS-15), sur chacun
+// notifier : notification [typ] aux amis d'une navigation (ou, hors
+// navigation, aux amis de périmètre navigateur, RG-SOS-15), sur chacun
 // de leurs téléphones, sans les personnes décochées au démarrage
 // (RG-NAV-25). Lancé sans faire attendre l'appelant.
 func (a *app) notifier(navigateur string, navigation *string, typ string, texte func(langue string) (string, string)) {
@@ -224,10 +224,10 @@ func (a *app) notifierMaintenant(ctx context.Context, navigateur string, navigat
 		return fmt.Errorf("type inconnu %q", typ)
 	}
 	lignes, err := a.b.pool.Query(ctx, `SELECT DISTINCT ap.id, ap.plateforme, ap.jeton_push, u.langue
-		FROM acces ac JOIN utilisateurs u ON u.id = ac.suiveur_id JOIN appareils ap ON ap.utilisateur_id = u.id
+		FROM acces ac JOIN utilisateurs u ON u.id = ac.ami_id JOIN appareils ap ON ap.utilisateur_id = u.id
 		WHERE ac.navigateur_id = $1 AND u.id <> $1 AND coalesce(ap.jeton_push, '') <> '' AND `+col+`
 		AND (ac.perimetre = 'navigateur' OR ($2::uuid IS NOT NULL AND ac.navigation_id = $2::uuid))
-		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2::uuid AND r.suiveur_id = u.id)
+		AND NOT EXISTS (SELECT 1 FROM retraits_navigation r WHERE r.navigation_id = $2::uuid AND r.ami_id = u.id)
 		AND ($2::uuid IS NULL OR ac.contact_id IS NULL OR NOT EXISTS (SELECT 1 FROM navigations n
 			WHERE n.id = $2::uuid AND n.personnes_alertees IS NOT NULL AND NOT ac.contact_id = ANY(n.personnes_alertees)
 			AND ac.accorde_le <= n.creee_le))`, navigateur, navigation)

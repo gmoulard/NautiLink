@@ -142,9 +142,9 @@ func TestRenduTableau(t *testing.T) {
 		return l
 	}
 	enCours := []ligneNav{ligne(navEssai("Alizé — Glénan", "en_cours", "navigateur"), "Alizé")}
-	hist := []ligneNav{ligne(navEssai("Mistral — Groix", "terminee", "suiveur"), "Mistral"), ligne(navEssai("Alizé — Houat", "terminee", "navigateur"), "Alizé")}
+	hist := []ligneNav{ligne(navEssai("Mistral — Groix", "terminee", "ami"), "Mistral"), ligne(navEssai("Alizé — Houat", "terminee", "navigateur"), "Alizé")}
 	d := &donneesPage{Base: "/nautilink", Connecte: true, EmailVerifie: true, Nom: "Paul", D: donneesTableau{
-		EnCours: enCours, Historique: hist, Bateaux: parBateau(enCours, hist), Role: "suiveur", Suivant: 50}}
+		EnCours: enCours, Historique: hist, Bateaux: parBateau(enCours, hist), Role: "ami", Suivant: 50}}
 	page := rendu(t, "tableau.html", d)
 	filtre, alize, mistral := strings.Index(page, "Afficher :"), strings.Index(page, "Log de nav de Alizé"), strings.Index(page, "Log de nav de Mistral")
 	glenan, houat := strings.Index(page, "Alizé — Glénan"), strings.Index(page, "Alizé — Houat")
@@ -152,10 +152,10 @@ func TestRenduTableau(t *testing.T) {
 		t.Fatalf("ordre : filtre %d, Alizé %d, Mistral %d, en cours %d, terminée %d", filtre, alize, mistral, glenan, houat)
 	}
 	for _, attendu := range []string{"Bonjour Paul", "Comme navigateur", "Comme ami",
-		`href="/nautilink/?role=suiveur" aria-current="page"`, "Vous suivez cette navigation", "Votre navigation",
+		`href="/nautilink/?role=ami" aria-current="page"`, "Vous suivez cette navigation", "Votre navigation",
 		"20-nov-26 09:00-11:05 UTC 5 milles", "20-nov-26 09:00-en cours UTC", "En cours",
 		"2 h 05", "9,3 km (5,0 milles)", "2026-11-20 09:00 UTC", `class="bulle"`, "<polyline",
-		`href="/nautilink/navigations/11111111-0000-4000-8000-000000000001"`, "?curseur=50&amp;role=suiveur",
+		`href="/nautilink/navigations/11111111-0000-4000-8000-000000000001"`, "?curseur=50&amp;role=ami",
 		"https://tile.openstreetmap.org/", "https://tiles.openseamap.org/seamark/", "Fond de carte © les contributeurs d'OpenStreetMap · balisage © OpenSeaMap"} {
 		if !strings.Contains(page, attendu) {
 			t.Errorf("%q absent du log de nav", attendu)
@@ -194,7 +194,7 @@ func TestTableauDeBordWeb(t *testing.T) {
 	}
 	page := web.envoyer("GET", "/nautilink/", nil).Body.String()
 	if !strings.Contains(page, "Log de nav de Alizé") || !strings.Contains(page, "/navigations/"+enCours) || !strings.Contains(page, "/navigations/"+terminee) {
-		t.Fatalf("tableau de bord du suiveur : %s", page)
+		t.Fatalf("tableau de bord de l'ami : %s", page)
 	}
 	if strings.Index(page, enCours) > strings.Index(page, terminee) {
 		t.Fatal("navigation en cours après l'historique")

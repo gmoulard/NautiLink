@@ -6,16 +6,16 @@ import 'package:flutter/foundation.dart';
 
 import '../config.dart';
 
-/// Notifications push du suiveur (RG-IOS-06, RG-AND-08) : jeton du
+/// Notifications push de l'ami (RG-IOS-06, RG-AND-08) : jeton du
 /// téléphone remis au serveur (`jetonPush` de `PUT /v1/appareils/{id}`) et
-/// navigation ouverte quand le suiveur touche une notification (RG-AND-09).
+/// navigation ouverte quand l'ami touche une notification (RG-AND-09).
 abstract class NotificationsPush {
   /// Jeton FCM sur Android, jeton APNs sur iPhone (le serveur passe par
   /// APNs, D-86) ; vide sans autorisation.
   Future<String?> jeton();
 
   /// Demande l'autorisation d'afficher les notifications (RG-AND-02 : au
-  /// moment où elle sert, à l'ouverture des navigations suivies).
+  /// moment où elle sert, à l'ouverture de « Mes amis en mer »).
   Future<bool> demander();
 
   /// Nouveau jeton à remettre au serveur.

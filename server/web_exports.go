@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"net/http"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -107,7 +106,7 @@ func (y *yaml) lieu(retrait int, cle string, l *lieuJSON) {
 	}
 }
 
-func (y *yaml) noms(retrait int, cle string, l []personneJSON) {
+func (y *yaml) noms(retrait int, cle string, l []amiJSON) {
 	if len(l) == 0 {
 		y.champ(retrait, cle, "[]")
 		return
@@ -158,7 +157,7 @@ func exportYAML(d donneesNavigation) []byte {
 		y.texte(2, "immatriculation", b.Immatriculation)
 		y.texte(2, "portAttache", b.PortAttache)
 	}
-	y.noms(1, "amis", append(slices.Clone(n.Suiveurs), n.ContactsSos...)) // D-176
+	y.noms(1, "amis", n.Amis) // D-176, D-186
 
 	if len(d.Alertes) == 0 {
 		y.champ(0, "alertesSos", "[]")

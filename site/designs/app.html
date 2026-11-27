@@ -258,7 +258,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
         </div>
         <div class="scrim"><div class="dialog">
           <div class="dt">✓ Note envoyée</div>
-          <div style="font-size:11px">Serveur : <span class="ok">envoyé</span><br>SMS : prêt pour 2 suiveurs, à envoyer d'un appui<br>Copie au navigateur : oui</div>
+          <div style="font-size:11px">Serveur : <span class="ok">envoyé</span><br>SMS : prêt pour 2 amis, à envoyer d'un appui<br>Copie au navigateur : oui</div>
           <div class="timer">Se ferme seule dans 0:52</div>
           <div class="acts"><span>OK</span></div>
         </div></div>
@@ -292,7 +292,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
         <div class="body"><div class="btn sos">SOS · Envoyer un SOS</div></div>
         <div class="scrim"><div class="dialog">
           <div class="dt" style="color:var(--sos)">Envoyer un SOS ?</div>
-          <div style="font-size:11px">Vos contacts SOS recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.</div>
+          <div style="font-size:11px">Vos amis recevront votre position et la fiche du bateau. Alertez aussi les secours : canal 16 de la VHF ou 196.</div>
           <div class="acts"><span style="color:var(--muted)">Annuler</span><span class="danger">Confirmer le SOS</span></div>
         </div></div>
       </div></div>
@@ -309,7 +309,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
             <div><span class="ok">✓</span>Claire · SMS SOS accepté pour envoi</div>
             <div><span class="ok">✓</span>Marc · SMS SOS accepté pour envoi</div>
             <div><span class="ok">✓</span>Copie au navigateur · SMS et e-mail</div>
-            <div><span class="ok">✓</span>Serveur · e-mail aux suiveurs</div>
+            <div><span class="ok">✓</span>Serveur · e-mail aux amis</div>
           </div>
           <div style="flex:1"></div>
           <div class="btn">Retour</div>
@@ -339,14 +339,14 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
         <div class="status"><span>18:24</span><span>Wi-Fi</span></div>
         <div class="appbar"><span>← Contacts</span></div>
         <div class="body">
-          <div class="hint" style="text-align:left">Par défaut, chaque contact est suiveur et contact SOS.</div>
-          <div class="card"><b>Claire (sœur)</b><br><small style="color:var(--muted)">06 12 34 56 78 · claire@example.org</small><div class="chips" style="margin-top:5px"><span class="chip on">✓ Suiveur</span><span class="chip on">✓ Contact SOS</span></div></div>
-          <div class="card"><b>Marc (voisin de ponton)</b><br><small style="color:var(--muted)">06 98 76 54 32</small><div class="chips" style="margin-top:5px"><span class="chip on">✓ Suiveur</span><span class="chip on">✓ Contact SOS</span></div></div>
-          <div class="card"><b>Inès</b><br><small style="color:var(--muted)">ines@example.org</small><div class="chips" style="margin-top:5px"><span class="chip on">✓ Suiveur</span><span class="chip">Contact SOS · numéro requis</span></div></div>
+          <div class="hint" style="text-align:left">Chaque contact est un ami.</div>
+          <div class="card"><b>Claire (sœur)</b><br><small style="color:var(--muted)">06 12 34 56 78 · claire@example.org</small></div>
+          <div class="card"><b>Marc (voisin de ponton)</b><br><small style="color:var(--muted)">06 98 76 54 32</small></div>
+          <div class="card"><b>Inès</b><br><small style="color:var(--muted)">ines@example.org</small></div>
           <div class="btn">+ Ajouter un contact</div>
         </div>
       </div></div>
-      <figcaption><b>9. Contacts</b><span>Une seule liste, cases « Suiveur » et « Contact SOS » cochées par défaut.</span><code>RG-CTC-01 · RG-CTC-04 · RG-CTC-05</code></figcaption>
+      <figcaption><b>9. Contacts</b><span>Une seule liste d'amis, sans case de rôle.</span><code>RG-CTC-01 · RG-CTC-04 · RG-CTC-05</code></figcaption>
     </figure>
 
     <figure>
@@ -379,7 +379,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
         <div class="appbar"><span>← Alertes SOS</span></div>
         <div class="body">
           <div class="card"><b style="color:var(--sos)">SOS · 21 nov. 2026, 15:02</b><br><small style="color:var(--muted)">Alizé · 47° 25,10' N, 003° 06,42' W</small>
-            <div class="log" style="margin-top:5px"><div><span class="ok">✓</span>Claire · livraison confirmée</div><div><span class="ok">✓</span>Marc · accepté pour envoi</div><div><span class="ok">✓</span>E-mail aux suiveurs</div></div></div>
+            <div class="log" style="margin-top:5px"><div><span class="ok">✓</span>Claire · livraison confirmée</div><div><span class="ok">✓</span>Marc · accepté pour envoi</div><div><span class="ok">✓</span>E-mail aux amis</div></div></div>
           <div class="card"><b style="color:var(--sos)">SOS · 3 août 2026, 10:47</b><br><small style="color:var(--muted)">Petit Pingouin · dernière position connue</small></div>
         </div>
       </div></div>
@@ -412,7 +412,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
         <div class="web">
           <div class="top"><img src="../assets/logo-nautilink.png" alt="" width="22" height="22" style="border-radius:6px"><b>Nauti<em>Link</em></b><nav><span>Tableau de bord</span><span>Bateaux</span><span>Contacts</span><span>Quota</span></nav></div>
           <div class="main">
-            <div class="seg"><span class="on">Toutes</span><span>Comme navigateur</span><span>Comme suiveur</span></div>
+            <div class="seg"><span class="on">Toutes</span><span>Comme navigateur</span><span>Comme ami</span></div>
             <span class="kicker">En cours</span>
             <div class="vcard"><span class="ico">⛵</span><div><b>Héloïse — Houat</b><small>Paul (ami) · depuis 1 h 25 · 4,8 milles · suivie</small></div><span class="live">EN DIRECT</span></div>
             <span class="kicker">Historique</span>
@@ -422,14 +422,14 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
           <div class="sponsor"><img src="../assets/sponsor-srt.png" alt="Guidon de la SRT">Sponsorisée par la SRT</div>
         </div>
       </div>
-      <figcaption style="max-width:none"><b>13. Tableau de bord</b><span>Navigations en cours en tête, historique, filtre navigateur / suiveur.</span><code>D-23 · RG-NAV-16 · RG-PAR-07</code></figcaption>
+      <figcaption style="max-width:none"><b>13. Tableau de bord</b><span>Navigations en cours en tête, historique, filtre navigateur / ami.</span><code>D-23 · RG-NAV-16 · RG-PAR-07</code></figcaption>
     </figure>
 
     <figure style="justify-items:stretch">
       <div class="browser">
         <div class="chrome"><i></i><i></i><i></i><span class="url">app.nautilink · Héloïse — Houat</span></div>
         <div class="web">
-          <div class="top"><img src="../assets/logo-nautilink.png" alt="" width="22" height="22" style="border-radius:6px"><b>Héloïse — Houat</b><nav><span>Exporter en PDF</span><span>Suiveurs</span></nav></div>
+          <div class="top"><img src="../assets/logo-nautilink.png" alt="" width="22" height="22" style="border-radius:6px"><b>Héloïse — Houat</b><nav><span>Exporter en PDF</span><span>Amis</span></nav></div>
           <div class="main">
             <div class="split">
               <div class="map">
@@ -455,7 +455,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
           <div class="sponsor"><img src="../assets/sponsor-srt.png" alt="Guidon de la SRT">Sponsorisée par la SRT</div>
         </div>
       </div>
-      <figcaption style="max-width:none"><b>14. Suivre une navigation</b><span>Carte du tracé avec dernière position, informations, journal ; lecture seule pour le suiveur.</span><code>RG-PAR-07 · RG-PAR-08 · RG-NAV-19</code></figcaption>
+      <figcaption style="max-width:none"><b>14. Suivre une navigation</b><span>Carte du tracé avec dernière position, informations, journal ; lecture seule pour l'ami.</span><code>RG-PAR-07 · RG-PAR-08 · RG-NAV-19</code></figcaption>
     </figure>
 
     <figure style="justify-items:stretch">
@@ -489,7 +489,7 @@ figcaption code { font: 500 .75rem var(--mono); color: var(--accent); }
           <div class="top"><img src="../assets/logo-nautilink.png" alt="" width="22" height="22" style="border-radius:6px"><b>Nauti<em>Link</em></b><nav><span>Tableau de bord</span><span>Bateaux</span><span>Contacts</span><span>Quota</span></nav></div>
           <div class="main">
             <span class="kicker">Corbeille</span>
-            <div class="note" style="font-size:11px">Les navigations supprimées sont restaurables pendant 30 jours, puis supprimées définitivement. Les suiveurs n'y ont plus accès ; leur temps reste décompté du quota.</div>
+            <div class="note" style="font-size:11px">Les navigations supprimées sont restaurables pendant 30 jours, puis supprimées définitivement. Les amis n'y ont plus accès ; leur temps reste décompté du quota.</div>
             <table class="tbl">
               <thead><tr><th>Navigation</th><th>Supprimée le</th><th>Suppression définitive</th><th></th></tr></thead>
               <tbody>

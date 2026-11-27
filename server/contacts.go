@@ -19,19 +19,22 @@ type contactJSON struct {
 	Nom            string    `json:"nom"`
 	Telephone      *string   `json:"telephone"`
 	Email          *string   `json:"email"`
-	Suiveur        bool      `json:"suiveur"`
-	ContactSos     bool      `json:"contactSos"`
 	Perimetre      *string   `json:"perimetre"`
 	NavigationID   *string   `json:"navigationId"`
 	Version        int       `json:"version"`
 	UtilisateurID  *string   `json:"utilisateurId"`
 	EtatInvitation string    `json:"etatInvitation"`
 	ModifieLe      time.Time `json:"modifieLe"`
-	// RecevoirSms : faux quand le suiveur a refusé les SMS dans son profil
+	// RecevoirSms : faux quand l'ami a refusé les SMS dans son profil
 	// (« Recevoir les SMS », RG-SMS-01) ; vrai sans compte rattaché.
 	RecevoirSms bool `json:"recevoirSms"`
-	navigateur  string
-	supprime    bool
+	// Invite : colonne `invite` de la base, gardée pour le serveur seul
+	// (D-186) : faux quand l'ami a été ajouté sans invitation
+	// (`inviter: false`) ou que ses accès ont été retirés (RG-PAR-06) ;
+	// l'API ne la montre plus.
+	Invite     bool `json:"-"`
+	navigateur string
+	supprime   bool
 }
 
 type personneJSON struct {
@@ -57,20 +60,23 @@ type invitationJSON struct {
 type accesJSON struct {
 	ID           string       `json:"id"`
 	Navigateur   personneJSON `json:"navigateur"`
-	Suiveur      personneJSON `json:"suiveur"`
+	Ami          personneJSON `json:"ami"`
 	Perimetre    string       `json:"perimetre"`
 	NavigationID *string      `json:"navigationId"`
 	AccordeLe    time.Time    `json:"accordeLe"`
 }
 
-const colonnesContact = `c.id, c.navigateur_id, c.nom, c.telephone, c.email, c.suiveur, c.telephone IS NOT NULL, c.perimetre,
+// colonnesContact : sans invitation active (ami ajouté sans invitation ou
+// accès retirés), l'état de l'invitation est « aucune » (D-186).
+const colonnesContact = `c.id, c.navigateur_id, c.nom, c.telephone, c.email, c.invite, c.perimetre,
 	c.navigation_id, c.version, c.utilisateur_id, c.modifie_le, c.supprime_le IS NOT NULL,
-	coalesce((SELECT i.etat FROM invitations i WHERE i.contact_id = c.id ORDER BY i.creee_le DESC LIMIT 1), 'aucune'),
+	CASE WHEN c.invite THEN coalesce((SELECT i.etat FROM invitations i WHERE i.contact_id = c.id ORDER BY i.creee_le DESC LIMIT 1), 'aucune')
+		ELSE 'aucune' END,
 	coalesce((SELECT u.telephone IS NULL OR u.recevoir_sms FROM utilisateurs u WHERE u.id = c.utilisateur_id), true)`
 
 func lireContact(l pgx.Row) (contactJSON, error) {
 	var c contactJSON
-	err := l.Scan(&c.ID, &c.navigateur, &c.Nom, &c.Telephone, &c.Email, &c.Suiveur, &c.ContactSos, &c.Perimetre,
+	err := l.Scan(&c.ID, &c.navigateur, &c.Nom, &c.Telephone, &c.Email, &c.Invite, &c.Perimetre,
 		&c.NavigationID, &c.Version, &c.UtilisateurID, &c.ModifieLe, &c.supprime, &c.EtatInvitation, &c.RecevoirSms)
 	return c, err
 }
@@ -108,13 +114,22 @@ func texteOuNul(p *string) *string {
 	return &t
 }
 
+// champsAmi : seuls champs d'un ami ; tout autre champ, dont les anciens
+// champs de rôle des applications d'avant la 0.5.0, est refusé (D-186).
+var champsAmi = map[string]bool{"id": true, "nom": true, "telephone": true, "email": true,
+	"perimetre": true, "navigationId": true, "inviter": true}
+
 // appliquerContact : champs présents dans c (RG-CTC-01, RG-CTC-05). Chaque
-// contact est un ami, sans rôle à choisir (D-176) : à la création il est
-// invité (suiveur) ; « contactSos » vaut toujours « a un numéro ». Les champs
-// « suiveur » et « contactSos » des applications déjà installées restent
-// acceptés : « suiveur » invite ou retire les accès comme avant (RG-PAR-06),
-// « contactSos » est sans effet : tout ami est alerté du SOS.
+// contact est un ami, sans rôle à choisir (D-176, D-186) : à la création il
+// est invité, sauf avec « inviter: false » (adresse du navigateur pas encore
+// confirmée, D-185) ; « inviter » ne sert qu'à l'ajout.
 func appliquerContact(k *contactJSON, c champs, creation bool) error {
+	for nom := range c {
+		if !champsAmi[nom] {
+			return errInvalide("Champ « " + nom + " » inconnu : cette version de l'application NautiLink n'est plus " +
+				"prise en charge, mettez-la à jour (version 0.5.1 ou suivante).")
+		}
+	}
 	for nom, v := range map[string]**string{"telephone": &k.Telephone, "email": &k.Email, "perimetre": &k.Perimetre, "navigationId": &k.NavigationID} {
 		if c.a(nom) {
 			var t *string
@@ -155,20 +170,15 @@ func appliquerContact(k *contactJSON, c champs, creation bool) error {
 		return errInvalide("Indiquez un numéro de téléphone ou une adresse e-mail.")
 	}
 	if creation {
-		k.Suiveur = true
-	}
-	if c.a("suiveur") {
-		if err := c.lire("suiveur", &k.Suiveur); err != nil {
-			return err
+		k.Invite = true
+		if c.a("inviter") {
+			if err := c.lire("inviter", &k.Invite); err != nil {
+				return err
+			}
 		}
+	} else if c.a("inviter") {
+		return errInvalide("« inviter » ne sert qu'à l'ajout d'un ami ; pour l'inviter ensuite : POST /v1/invitations.")
 	}
-	if c.a("contactSos") {
-		var sos bool
-		if err := c.lire("contactSos", &sos); err != nil {
-			return err
-		}
-	}
-	k.ContactSos = k.Telephone != nil
 	if k.Nom == "" {
 		if k.Email != nil {
 			k.Nom = *k.Email
@@ -206,8 +216,8 @@ func (a *app) contacts(ctx context.Context, navigateur string, depuis int64) (li
 }
 
 // creerContact : ajout depuis le Web, l'application mobile ou l'écran de
-// démarrage (RG-CTC-02, RG-NAV-26). Cocher « Suiveur » envoie une invitation
-// avec le périmètre choisi (RG-CTC-04). L'identifiant peut être tiré par le
+// démarrage (RG-CTC-02, RG-NAV-26). L'ami reçoit une invitation avec le
+// périmètre choisi (RG-CTC-04), sauf avec « inviter: false » (D-186). L'identifiant peut être tiré par le
 // client pour un ajout hors connexion : un renvoi ne crée pas de doublon.
 func (a *app) creerContact(ctx context.Context, r *http.Request, navigateur string, c champs) (contactJSON, bool, error) {
 	var k contactJSON
@@ -222,7 +232,7 @@ func (a *app) creerContact(ctx context.Context, r *http.Request, navigateur stri
 	if err := appliquerContact(&k, c, true); err != nil {
 		return k, false, err
 	}
-	if k.Suiveur {
+	if k.Invite {
 		if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
 			return k, false, err
 		}
@@ -233,9 +243,11 @@ func (a *app) creerContact(ctx context.Context, r *http.Request, navigateur stri
 	}
 	defer tx.Rollback(ctx)
 	var id string
-	err = tx.QueryRow(ctx, `INSERT INTO contacts (id, navigateur_id, nom, telephone, email, suiveur, contact_sos, perimetre, navigation_id)
-		VALUES (coalesce(nullif($1, '')::uuid, gen_random_uuid()), $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
-		k.ID, navigateur, k.Nom, k.Telephone, k.Email, k.Suiveur, k.ContactSos, k.Perimetre, texteOuNul(k.NavigationID)).Scan(&id)
+	// avec_telephone : colonne qui ne sert plus (D-186), remplie pour sa
+	// contrainte NOT NULL.
+	err = tx.QueryRow(ctx, `INSERT INTO contacts (id, navigateur_id, nom, telephone, email, invite, avec_telephone, perimetre, navigation_id)
+		VALUES (coalesce(nullif($1, '')::uuid, gen_random_uuid()), $2, $3, $4, $5, $6, $4::text IS NOT NULL, $7, $8) RETURNING id`,
+		k.ID, navigateur, k.Nom, k.Telephone, k.Email, k.Invite, k.Perimetre, texteOuNul(k.NavigationID)).Scan(&id)
 	if estDoublon(err) {
 		return k, false, &erreurAPI{http.StatusConflict, "invalide", "Cet identifiant de contact est déjà pris.", 0}
 	}
@@ -243,7 +255,7 @@ func (a *app) creerContact(ctx context.Context, r *http.Request, navigateur stri
 		return k, false, err
 	}
 	var envoi func()
-	if k.Suiveur {
+	if k.Invite {
 		if _, envoi, err = a.inviterContact(ctx, tx, r, navigateur, id); err != nil {
 			return k, false, err
 		}
@@ -258,10 +270,9 @@ func (a *app) creerContact(ctx context.Context, r *http.Request, navigateur stri
 	return k, true, err
 }
 
-// modifierContact : seuls les champs présents changent (RG-COM-04).
-// Décocher « Suiveur » retire le suiveur de toutes les navigations et annule
-// l'invitation en attente (RG-CTC-04, RG-PAR-06) ; le recocher envoie une
-// nouvelle invitation.
+// modifierContact : seuls les champs présents changent (RG-COM-04). Les
+// accès se changent par les invitations et les accès (RG-PAR-02 à
+// RG-PAR-06), plus par le contact (D-186).
 func (a *app) modifierContact(ctx context.Context, r *http.Request, navigateur, id string, c champs) (contactJSON, error) {
 	tx, err := a.b.pool.Begin(ctx)
 	if err != nil {
@@ -278,44 +289,25 @@ func (a *app) modifierContact(ctx context.Context, r *http.Request, navigateur, 
 	if err != nil {
 		return k, err
 	}
-	etaitSuiveur := k.Suiveur
 	if err := appliquerContact(&k, c, false); err != nil {
 		return k, err
 	}
-	if k.Suiveur && !etaitSuiveur {
-		if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
-			return k, err
-		}
-	}
-	if _, err := tx.Exec(ctx, `UPDATE contacts SET nom = $3, telephone = $4, email = $5, suiveur = $6, contact_sos = $7,
-		perimetre = $8, navigation_id = $9, version = version + 1, modification = nextval('modifications'), modifie_le = now()
-		WHERE id = $1 AND navigateur_id = $2`, id, navigateur, k.Nom, k.Telephone, k.Email, k.Suiveur, k.ContactSos,
+	if _, err := tx.Exec(ctx, `UPDATE contacts SET nom = $3, telephone = $4, email = $5, avec_telephone = $4::text IS NOT NULL,
+		perimetre = $6, navigation_id = $7, version = version + 1, modification = nextval('modifications'), modifie_le = now()
+		WHERE id = $1 AND navigateur_id = $2`, id, navigateur, k.Nom, k.Telephone, k.Email,
 		k.Perimetre, texteOuNul(k.NavigationID)); err != nil {
-		return k, err
-	}
-	var envoi func()
-	switch {
-	case etaitSuiveur && !k.Suiveur:
-		err = retirerSuiveur(ctx, tx, navigateur, k)
-	case !etaitSuiveur && k.Suiveur:
-		_, envoi, err = a.inviterContact(ctx, tx, r, navigateur, id)
-	}
-	if err != nil {
 		return k, err
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return k, err
 	}
-	if envoi != nil {
-		envoi()
-	}
 	return a.contact(ctx, a.b.pool, navigateur, id)
 }
 
-// retirerSuiveur : retrait immédiat de toutes les navigations présentes et
+// retirerAccesDuContact : retrait immédiat de toutes les navigations présentes et
 // futures, invitations en attente annulées (RG-PAR-06).
-func retirerSuiveur(ctx context.Context, tx pgx.Tx, navigateur string, k contactJSON) error {
-	if _, err := tx.Exec(ctx, `DELETE FROM acces WHERE navigateur_id = $1 AND (contact_id = $2 OR suiveur_id = $3)`,
+func retirerAccesDuContact(ctx context.Context, tx pgx.Tx, navigateur string, k contactJSON) error {
+	if _, err := tx.Exec(ctx, `DELETE FROM acces WHERE navigateur_id = $1 AND (contact_id = $2 OR ami_id = $3)`,
 		navigateur, k.ID, k.UtilisateurID); err != nil {
 		return err
 	}
@@ -335,7 +327,7 @@ func (a *app) supprimerContact(ctx context.Context, navigateur, id string) error
 	if err != nil {
 		return err
 	}
-	if err := retirerSuiveur(ctx, tx, navigateur, k); err != nil {
+	if err := retirerAccesDuContact(ctx, tx, navigateur, k); err != nil {
 		return err
 	}
 	if _, err := tx.Exec(ctx, `UPDATE contacts SET supprime_le = now(), modification = nextval('modifications'),
@@ -460,7 +452,7 @@ func (a *app) nouvelleInvitation(ctx context.Context, r *http.Request, navigateu
 	if corps.Canal != "email" && corps.Canal != "telephone" {
 		return invitationJSON{}, errInvalide("Canal invalide : email ou telephone.")
 	}
-	modif := champs{"suiveur": enJSON(true), "perimetre": enJSON(corps.Perimetre), "navigationId": enJSON(texteOuNul(&corps.NavigationID))}
+	modif := champs{"perimetre": enJSON(corps.Perimetre), "navigationId": enJSON(texteOuNul(&corps.NavigationID))}
 	if corps.Email != "" {
 		modif["email"] = enJSON(corps.Email)
 	}
@@ -483,15 +475,16 @@ func (a *app) nouvelleInvitation(ctx context.Context, r *http.Request, navigateu
 	} else if err := appliquerContact(&k, modif, true); err != nil {
 		return invitationJSON{}, err
 	}
+	k.Invite = true
 	if err := a.perimetreValide(ctx, navigateur, k.Perimetre, k.NavigationID); err != nil {
 		return invitationJSON{}, err
 	}
-	if err := tx.QueryRow(ctx, `INSERT INTO contacts (id, navigateur_id, nom, telephone, email, suiveur, contact_sos, perimetre, navigation_id)
-		VALUES (coalesce(nullif($1, '')::uuid, gen_random_uuid()), $2, $3, $4, $5, true, $6, $7, $8)
-		ON CONFLICT (id) DO UPDATE SET telephone = EXCLUDED.telephone, email = EXCLUDED.email, suiveur = true,
-			perimetre = EXCLUDED.perimetre, navigation_id = EXCLUDED.navigation_id, version = contacts.version + 1,
+	if err := tx.QueryRow(ctx, `INSERT INTO contacts (id, navigateur_id, nom, telephone, email, invite, avec_telephone, perimetre, navigation_id)
+		VALUES (coalesce(nullif($1, '')::uuid, gen_random_uuid()), $2, $3, $4, $5, true, $4::text IS NOT NULL, $6, $7)
+		ON CONFLICT (id) DO UPDATE SET telephone = EXCLUDED.telephone, email = EXCLUDED.email, avec_telephone = EXCLUDED.avec_telephone,
+			invite = true, perimetre = EXCLUDED.perimetre, navigation_id = EXCLUDED.navigation_id, version = contacts.version + 1,
 			modification = nextval('modifications'), modifie_le = now()
-		RETURNING id`, k.ID, navigateur, k.Nom, k.Telephone, k.Email, k.ContactSos, k.Perimetre, texteOuNul(k.NavigationID)).Scan(&k.ID); err != nil {
+		RETURNING id`, k.ID, navigateur, k.Nom, k.Telephone, k.Email, k.Perimetre, texteOuNul(k.NavigationID)).Scan(&k.ID); err != nil {
 		return invitationJSON{}, err
 	}
 	i, envoi, err := a.inviter(ctx, tx, r, navigateur, k, corps.Canal)
@@ -552,9 +545,9 @@ func (a *app) invitationParJeton(ctx context.Context, jeton string) (id, navigat
 }
 
 // accepterInvitation : l'accès est accordé dès que l'invité est connecté
-// (RG-PAR-01, RG-PAR-05) ; e-mail « nouvel accès » au suiveur, copie au
+// (RG-PAR-01, RG-PAR-05) ; e-mail « nouvel accès » à l'ami, copie au
 // navigateur (RG-NOT-02, RG-NOT-03).
-func (a *app) accepterInvitation(ctx context.Context, suiveur, jeton string) (accesJSON, error) {
+func (a *app) accepterInvitation(ctx context.Context, ami, jeton string) (accesJSON, error) {
 	tx, err := a.b.pool.Begin(ctx)
 	if err != nil {
 		return accesJSON{}, err
@@ -571,31 +564,31 @@ func (a *app) accepterInvitation(ctx context.Context, suiveur, jeton string) (ac
 	if err != nil {
 		return accesJSON{}, err
 	}
-	if navigateur == suiveur {
+	if navigateur == ami {
 		return accesJSON{}, errInvalide("Vous ne pouvez pas accepter votre propre invitation.")
 	}
 	if etat == "acceptee" {
-		if acceptePar != nil && *acceptePar == suiveur {
-			return a.accesDuSuiveur(ctx, navigateur, suiveur, navigation)
+		if acceptePar != nil && *acceptePar == ami {
+			return a.accesDeLAmi(ctx, navigateur, ami, navigation)
 		}
 		return accesJSON{}, &erreurAPI{http.StatusConflict, "invitation_deja_acceptee", "Cette invitation a déjà été acceptée.", 0}
 	}
-	if _, err := tx.Exec(ctx, `INSERT INTO acces (navigateur_id, suiveur_id, perimetre, navigation_id, contact_id)
-		VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`, navigateur, suiveur, perimetre, navigation, contact); err != nil {
+	if _, err := tx.Exec(ctx, `INSERT INTO acces (navigateur_id, ami_id, perimetre, navigation_id, contact_id)
+		VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`, navigateur, ami, perimetre, navigation, contact); err != nil {
 		return accesJSON{}, err
 	}
 	if _, err := tx.Exec(ctx, `UPDATE invitations SET etat = 'acceptee', acceptee_le = now(), acceptee_par = $2 WHERE id = $1`,
-		id, suiveur); err != nil {
+		id, ami); err != nil {
 		return accesJSON{}, err
 	}
 	if _, err := tx.Exec(ctx, `UPDATE contacts SET utilisateur_id = $2, modification = nextval('modifications'), modifie_le = now()
-		WHERE id = $1`, contact, suiveur); err != nil {
+		WHERE id = $1`, contact, ami); err != nil {
 		return accesJSON{}, err
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return accesJSON{}, err
 	}
-	ac, err := a.accesDuSuiveur(ctx, navigateur, suiveur, navigation)
+	ac, err := a.accesDeLAmi(ctx, navigateur, ami, navigation)
 	if err != nil {
 		return ac, err
 	}
@@ -603,13 +596,13 @@ func (a *app) accepterInvitation(ctx context.Context, suiveur, jeton string) (ac
 	if perimetre == "navigation" {
 		portee = "une de ses navigations"
 	}
-	if ac.Suiveur.Email != nil {
-		a.courriel(*ac.Suiveur.Email, "NautiLink : vous suivez maintenant "+ac.Navigateur.Nom,
-			"Bonjour "+ac.Suiveur.Nom+",\n\n"+ac.Navigateur.Nom+" vous a donné accès à "+portee+" sur NautiLink.\n\nNautiLink — Version bêta\n")
+	if ac.Ami.Email != nil {
+		a.courriel(*ac.Ami.Email, "NautiLink : vous suivez maintenant "+ac.Navigateur.Nom,
+			"Bonjour "+ac.Ami.Nom+",\n\n"+ac.Navigateur.Nom+" vous a donné accès à "+portee+" sur NautiLink.\n\nNautiLink — Version bêta\n")
 	}
 	if ac.Navigateur.Email != nil {
-		a.courriel(*ac.Navigateur.Email, "NautiLink : copie — "+ac.Suiveur.Nom+" suit maintenant vos navigations",
-			"Bonjour "+ac.Navigateur.Nom+",\n\nCopie : "+ac.Suiveur.Nom+" a accepté votre invitation et suit "+
+		a.courriel(*ac.Navigateur.Email, "NautiLink : copie — "+ac.Ami.Nom+" suit maintenant vos navigations",
+			"Bonjour "+ac.Navigateur.Nom+",\n\nCopie : "+ac.Ami.Nom+" a accepté votre invitation et suit "+
 				strings.Replace(portee, "ses", "vos", 1)+".\n\nNautiLink — Version bêta\n")
 	}
 	return ac, nil
@@ -619,25 +612,25 @@ func (a *app) accepterInvitation(ctx context.Context, suiveur, jeton string) (ac
 
 const selectAcces = `SELECT a.id, n.id, n.nom, n.telephone, n.email, s.id, s.nom, s.telephone, s.email,
 	a.perimetre, a.navigation_id, a.accorde_le FROM acces a
-	JOIN utilisateurs n ON n.id = a.navigateur_id JOIN utilisateurs s ON s.id = a.suiveur_id `
+	JOIN utilisateurs n ON n.id = a.navigateur_id JOIN utilisateurs s ON s.id = a.ami_id `
 
 func lireAcces(l pgx.Row) (accesJSON, error) {
 	var ac accesJSON
 	err := l.Scan(&ac.ID, &ac.Navigateur.ID, &ac.Navigateur.Nom, &ac.Navigateur.Telephone, &ac.Navigateur.Email,
-		&ac.Suiveur.ID, &ac.Suiveur.Nom, &ac.Suiveur.Telephone, &ac.Suiveur.Email, &ac.Perimetre, &ac.NavigationID, &ac.AccordeLe)
+		&ac.Ami.ID, &ac.Ami.Nom, &ac.Ami.Telephone, &ac.Ami.Email, &ac.Perimetre, &ac.NavigationID, &ac.AccordeLe)
 	return ac, err
 }
 
-func (a *app) accesDuSuiveur(ctx context.Context, navigateur, suiveur string, navigation *string) (accesJSON, error) {
-	return lireAcces(a.b.pool.QueryRow(ctx, selectAcces+`WHERE a.navigateur_id = $1 AND a.suiveur_id = $2
-		AND a.navigation_id IS NOT DISTINCT FROM $3`, navigateur, suiveur, navigation))
+func (a *app) accesDeLAmi(ctx context.Context, navigateur, ami string, navigation *string) (accesJSON, error) {
+	return lireAcces(a.b.pool.QueryRow(ctx, selectAcces+`WHERE a.navigateur_id = $1 AND a.ami_id = $2
+		AND a.navigation_id IS NOT DISTINCT FROM $3`, navigateur, ami, navigation))
 }
 
-// listeAcces : accès donnés (role navigateur) ou reçus (role suiveur).
+// listeAcces : accès donnés (role navigateur) ou reçus (role ami).
 func (a *app) listeAcces(ctx context.Context, utilisateur, role string) ([]accesJSON, error) {
 	colonne := "a.navigateur_id"
-	if role == "suiveur" {
-		colonne = "a.suiveur_id"
+	if role == "ami" {
+		colonne = "a.ami_id"
 	}
 	lignes, err := a.b.pool.Query(ctx, selectAcces+"WHERE "+colonne+" = $1 ORDER BY a.accorde_le", utilisateur)
 	if err != nil {
@@ -671,9 +664,9 @@ func (a *app) changerPerimetre(ctx context.Context, navigateur, id string, perim
 	return a.accesDonne(ctx, navigateur, id)
 }
 
-// retirerAcces : retrait du suiveur de toutes les navigations présentes et
-// futures, effet immédiat (RG-PAR-06) ; son contact n'est plus « Suiveur »
-// (RG-CTC-04).
+// retirerAcces : retrait de l'ami de toutes les navigations présentes et
+// futures, effet immédiat (RG-PAR-06) ; son contact reste dans la liste,
+// sans invitation active (RG-CTC-04, D-186).
 func (a *app) retirerAcces(ctx context.Context, navigateur, id string) error {
 	ac, err := a.accesDonne(ctx, navigateur, id)
 	if err != nil {
@@ -684,23 +677,23 @@ func (a *app) retirerAcces(ctx context.Context, navigateur, id string) error {
 		return err
 	}
 	defer tx.Rollback(ctx)
-	if _, err := tx.Exec(ctx, "DELETE FROM acces WHERE navigateur_id = $1 AND suiveur_id = $2", navigateur, ac.Suiveur.ID); err != nil {
+	if _, err := tx.Exec(ctx, "DELETE FROM acces WHERE navigateur_id = $1 AND ami_id = $2", navigateur, ac.Ami.ID); err != nil {
 		return err
 	}
-	if _, err := tx.Exec(ctx, `UPDATE contacts SET suiveur = false, version = version + 1, modification = nextval('modifications'),
-		modifie_le = now() WHERE navigateur_id = $1 AND utilisateur_id = $2 AND suiveur`, navigateur, ac.Suiveur.ID); err != nil {
+	if _, err := tx.Exec(ctx, `UPDATE contacts SET invite = false, version = version + 1, modification = nextval('modifications'),
+		modifie_le = now() WHERE navigateur_id = $1 AND utilisateur_id = $2 AND invite`, navigateur, ac.Ami.ID); err != nil {
 		return err
 	}
 	return tx.Commit(ctx)
 }
 
-// suitLeNavigateur : vrai si suiveur a un accès de périmètre navigateur
+// suitLeNavigateur : vrai si l'ami a un accès de périmètre navigateur
 // donné par navigateur (RG-PAR-02) : il voit alors ses fiches de bateau
 // (RG-PAR-08).
-func (a *app) suitLeNavigateur(ctx context.Context, suiveur, navigateur string) bool {
+func (a *app) suitLeNavigateur(ctx context.Context, ami, navigateur string) bool {
 	var ok bool
-	_ = a.b.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM acces WHERE suiveur_id = $1 AND navigateur_id = $2
-		AND perimetre = 'navigateur')`, suiveur, navigateur).Scan(&ok)
+	_ = a.b.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM acces WHERE ami_id = $1 AND navigateur_id = $2
+		AND perimetre = 'navigateur')`, ami, navigateur).Scan(&ok)
 	return ok
 }
 
@@ -800,8 +793,8 @@ func (a *app) routesContacts(mux *http.ServeMux, v string) {
 
 	mux.HandleFunc("GET "+v+"/acces", a.api(true, func(w http.ResponseWriter, r *http.Request, s *session) error {
 		role := r.URL.Query().Get("role")
-		if role != "" && role != "navigateur" && role != "suiveur" {
-			return errInvalide("Rôle invalide : navigateur ou suiveur.")
+		if role != "" && role != "navigateur" && role != "ami" {
+			return errInvalide("Rôle invalide : navigateur ou ami.")
 		}
 		l, err := a.listeAcces(r.Context(), s.utilisateur, role)
 		if err != nil {

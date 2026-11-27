@@ -10,8 +10,8 @@ import (
 // Corbeille des navigations (TODO-4.8, RG-NAV-20, RG-NAV-21) : le navigateur
 // met depuis le Web une navigation terminée dans la corbeille ; elle y reste
 // restaurable 30 jours (dureeCorbeille), puis la tâche de fond la supprime
-// définitivement. Pendant ce temps, ses suiveurs n'y ont plus accès
-// (conditionSuiveur) et son temps reste décompté du quota (intervallesDe).
+// définitivement. Pendant ce temps, ses amis n'y ont plus accès
+// (conditionAmi) et son temps reste décompté du quota (intervallesDe).
 //
 // Dans la corbeille, le navigateur voit encore la page de la navigation, mais
 // ne la modifie plus avant de l'avoir restaurée ; les envois du téléphone

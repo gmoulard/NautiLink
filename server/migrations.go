@@ -355,6 +355,17 @@ var migrations = []string{
 		PRIMARY KEY (navigation_id, appareil_id)
 	);
 	CREATE INDEX navigations_rejointes_appareil ON navigations_rejointes (appareil_id);`,
+	// 16 — D-187, D-188 : que des amis, jusque dans la base. Colonnes
+	// renommées, sans perte de données : « invite » (ami invité, accès non
+	// retiré), « avec_telephone » (ancienne case qui ne sert plus, remplie
+	// par « a un numéro »), « ami_id » des accès et des retraits.
+	`ALTER TABLE contacts RENAME COLUMN suiveur TO invite;
+	ALTER TABLE contacts RENAME COLUMN contact_sos TO avec_telephone;
+	ALTER TABLE acces RENAME COLUMN suiveur_id TO ami_id;
+	ALTER TABLE acces RENAME CONSTRAINT acces_suiveur_id_fkey TO acces_ami_id_fkey;
+	ALTER INDEX acces_suiveur RENAME TO acces_ami;
+	ALTER TABLE retraits_navigation RENAME COLUMN suiveur_id TO ami_id;
+	ALTER TABLE retraits_navigation RENAME CONSTRAINT retraits_navigation_suiveur_id_fkey TO retraits_navigation_ami_id_fkey;`,
 }
 
 // cleVerrou : verrou consultatif PostgreSQL qui empêche deux serveurs de

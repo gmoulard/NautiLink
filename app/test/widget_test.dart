@@ -177,7 +177,7 @@ void main() {
     await tapText(tester, 'Ajouter');
     await reveal(tester, find.text('Yann'));
     expect(find.text('Yann'), findsOneWidget);
-    expect(find.text('suiveur · contact SOS'), findsWidgets);
+    expect(find.text('06 11 22 33 44'), findsWidgets);
 
     await tapText(tester, 'Début de navigation');
     // SOS avec problème rencontré (RG-SOS-02, RG-SOS-07).

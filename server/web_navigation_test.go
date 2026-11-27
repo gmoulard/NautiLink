@@ -82,7 +82,7 @@ func TestJournalPresente(t *testing.T) {
 	}
 	for _, j := range journalPresente(journalEssai(), nil, false) {
 		if j.Modifiable {
-			t.Fatal("suiveur : rien de modifiable")
+			t.Fatal("ami : rien de modifiable")
 		}
 	}
 }
@@ -94,8 +94,7 @@ func donneesNavEssai(navigateur, enCours bool) *donneesPage {
 	}
 	n.Navigateur = &personneJSON{Nom: "Paul"}
 	n.Fiche = &bateauJSON{ID: "22222222-0000-4000-8000-000000000002", Nom: "Alizé", Type: "voilier", PortAttache: "Lorient", AUnePhoto: true}
-	n.Suiveurs = []personneJSON{{ID: "33333333-0000-4000-8000-000000000003", Nom: "Léa"}}
-	n.ContactsSos = []personneJSON{{Nom: "Secours"}}
+	n.Amis = []amiJSON{{personneJSON: personneJSON{ID: "33333333-0000-4000-8000-000000000003", Nom: "Léa"}, Suit: true}, {personneJSON: personneJSON{Nom: "Secours"}}}
 	n.PersonnesABord, n.Version = 3, 2
 	evts := journalEssai()
 	d := donneesNavigation{N: n, Navigateur: navigateur, EnCours: enCours, Destination: "Glénan", Frequence: libelleFrequence(60),
@@ -108,7 +107,7 @@ func donneesNavEssai(navigateur, enCours bool) *donneesPage {
 
 // TestRenduNavigation : cahier des charges 6.2 ; RG-NAV-29 (mentions de
 // source), RG-JRN-09 (photo en grand, note vocale à écouter), RG-PAR-07
-// (suiveur en lecture seule), RG-NAV-20 (suppression confirmée).
+// (ami en lecture seule), RG-NAV-20 (suppression confirmée).
 func TestRenduNavigation(t *testing.T) {
 	page := rendu(t, "navigation.html", donneesNavEssai(true, false))
 	for _, attendu := range []string{"<h1>Alizé — Glénan</h1>", "Navigation terminée", "Personnes à bord</dt><dd>3",
@@ -133,13 +132,13 @@ func TestRenduNavigation(t *testing.T) {
 		t.Error("journal hors de l'ordre chronologique")
 	}
 
-	suiveur := rendu(t, "navigation.html", donneesNavEssai(false, true))
-	if strings.Contains(suiveur, "/suppression") || strings.Contains(suiveur, "/retrait") {
-		t.Error("suiveur : formulaires du navigateur affichés")
+	ami := rendu(t, "navigation.html", donneesNavEssai(false, true))
+	if strings.Contains(ami, "/suppression") || strings.Contains(ami, "/retrait") {
+		t.Error("ami : formulaires du navigateur affichés")
 	}
 	for _, attendu := range []string{"Navigation en cours", "/nautilink/static/navigation.js", `data-etat="en_cours"`,
 		`aria-live="polite"`, "Dernière position"} {
-		if !strings.Contains(suiveur, attendu) {
+		if !strings.Contains(ami, attendu) {
 			t.Errorf("%q absent de la page en cours", attendu)
 		}
 	}
@@ -168,8 +167,8 @@ func TestSecuriteCarte(t *testing.T) {
 }
 
 // TestPageNavigationWeb : avec PostgreSQL : page du navigateur et du
-// suiveur, mise à jour en direct (une position envoyée par le téléphone
-// apparaît), retrait d'un suiveur, accès refusé sans accès.
+// ami, mise à jour en direct (une position envoyée par le téléphone
+// apparaît), retrait d'un ami, accès refusé sans accès.
 func TestPageNavigationWeb(t *testing.T) {
 	e := nouvelEssai(t)
 	nav, bateau, tel := e.marin("nav@exemple.org", "Navigateur", "Alizé")
@@ -213,17 +212,17 @@ func TestPageNavigationWeb(t *testing.T) {
 		t.Fatalf("nouvelle position : %d %s", rec.Code, rec.Body.String())
 	}
 
-	// Suiveur : lecture seule.
+	// Ami : lecture seule.
 	webLea := e.webConnecte("lea@exemple.org")
 	p := webLea.envoyer("GET", "/nautilink/navigations/"+id, nil).Body.String()
 	if !strings.Contains(p, "Alizé — Glénan") || strings.Contains(p, "/retrait") || strings.Contains(p, "/suppression") {
-		t.Fatalf("page du suiveur : %s", p)
+		t.Fatalf("page de l'ami : %s", p)
 	}
-	if rec := webLea.envoyer("POST", "/nautilink/navigations/"+id+"/suiveurs/"+e.id(lea)+"/retrait", map[string]string{}); rec.Code != 403 {
-		t.Fatalf("retrait par un suiveur : %d", rec.Code)
+	if rec := webLea.envoyer("POST", "/nautilink/navigations/"+id+"/amis/"+e.id(lea)+"/retrait", map[string]string{}); rec.Code != 403 {
+		t.Fatalf("retrait par un ami : %d", rec.Code)
 	}
 	// Retrait de cette navigation (RG-PAR-06) : plus d'accès.
-	if rec := web.envoyer("POST", "/nautilink/navigations/"+id+"/suiveurs/"+e.id(lea)+"/retrait", map[string]string{}); rec.Code != 303 {
+	if rec := web.envoyer("POST", "/nautilink/navigations/"+id+"/amis/"+e.id(lea)+"/retrait", map[string]string{}); rec.Code != 303 {
 		t.Fatalf("retrait : %d", rec.Code)
 	}
 	if rec := webLea.envoyer("GET", "/nautilink/navigations/"+id, nil); rec.Code != 404 {

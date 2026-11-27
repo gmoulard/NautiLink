@@ -198,7 +198,7 @@ class HomeScreen extends StatelessWidget {
         if (demo)
           PopupMenuItem(value: 'web', child: Text(l.menuDashboard))
         else ...[
-          // Vue suiveur, sur Android et iPhone (RG-IOS-05, RG-AND-09).
+          // Vue ami, sur Android et iPhone (RG-IOS-05, RG-AND-09).
           PopupMenuItem(value: 'suivi', child: Text(l.menuFollowed)),
           PopupMenuItem(value: 'sos', child: Text(l.menuSosHistory)),
           PopupMenuItem(value: 'assistance', child: Text(l.menuAssistance)),
@@ -364,7 +364,7 @@ class SavedVoyagesScreen extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final depot = DepotScope.of(context);
     final recue = depot is DepotReel ? depot.navigationsRecuesLe : null;
-    final mine = depot.navigations.where((n) => !n.commeSuiveur).toList();
+    final mine = depot.navigations.where((n) => !n.commeAmi).toList();
     return Scaffold(
       appBar: AppBar(title: Text(l.savedVoyages)),
       body: RefreshIndicator(
