@@ -42,6 +42,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/07-decisions.md`](docs/07-decisions.md) | Journal des arbitrages, numérotés `D-…`. |
 | [`docs/08-architecture.md`](docs/08-architecture.md) | Architecture technique : applications Flutter, serveur Go, PostgreSQL, fichiers, e-mails, notifications push ; décisions et propositions. |
 | [`docs/09-versions.md`](docs/09-versions.md) | Versions du serveur, de l'application et du site, numéros de build, matrice de compatibilité. |
+| [`docs/10-charte-interfaces.md`](docs/10-charte-interfaces.md) | Règles graphiques des interfaces : couleurs par rôle, typographie, composants, carte, tailles d'écran, accessibilité. |
 | [`docs/api/openapi.yaml`](docs/api/openapi.yaml) | Description de l'API du serveur (OpenAPI 3.1) : chaque opération cite les règles `RG-…` qu'elle sert ; proposition non validée. |
 | [`docs/TODO.md`](docs/TODO.md) | Feuille de route : actions `TODO-x.y`, états, dépendances, critères d'acceptation. |
 | [`docs/Todo-done.md`](docs/Todo-done.md) | Actions réalisées et validées. |

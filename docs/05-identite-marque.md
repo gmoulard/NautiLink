@@ -100,17 +100,11 @@ Couleurs du thème sombre : §14 ([D-97](07-decisions.md#d-97)). Valeurs en vigu
 
 ## 7. Typographie
 
-- **Montserrat SemiBold** : titres, éléments de marque.
-- **Inter Regular** : texte courant.
-- **Inter Medium** : boutons, informations importantes.
+Inter partout depuis le 2026-11-26 (§15, [D-157](07-decisions.md#d-157)) ; Montserrat ne sert plus qu'au nom et à la signature du logo (§5.5). Tailles et graisses par interface : [charte des interfaces](10-charte-interfaces.md) §4.
 
 ## 8. Style des interfaces
 
-- Thème clair : fonds blancs ou gris très clair, bleu marine pour titres et zones principales.
-- Thème sombre : couleurs du §14 ([D-97](07-decisions.md#d-97)).
-- Turquoise pour les actions, rouge pour le SOS.
-- Icônes simples, boutons assez grands pour une utilisation à bord.
-- Cartes et informations GPS clairement présentées (Web).
+Règles graphiques du site, de l'Application web et de l'application mobile (couleurs par rôle, typographie, composants, carte, tailles d'écran, accessibilité) : [10-charte-interfaces.md](10-charte-interfaces.md). Valeurs des couleurs : §15.
 
 ## 9. Ton
 
@@ -189,7 +183,7 @@ Choisie le 2026-11-26 ([D-157](07-decisions.md#d-157)) d'après l'étude [Nautil
 | Fond de page | dégradé ciel `#DDEFFB` vers `#F4FAFE` | `#0F2438` vers `#08172A` |
 | Cartes, champs | blanc, coins arrondis (16 à 18 px), ombre douce | `#15314D` |
 | Filets | `#D6E6F2` | `#24476A` |
-| Boutons d'action | turquoise `#17A2B0`, texte blanc, en pilule ; sur le site et dans l'Application web, fond turquoise foncé `#0B7F86` pour le contraste AA du texte blanc et du texte turquoise sur blanc ([D-161](07-decisions.md#d-161), RG-PRM-05) ; le turquoise `#17A2B0` reste pour les traits, soulignés et décors | `#2BC0C6`, texte `#08172A` |
+| Boutons d'action | turquoise `#17A2B0`, texte blanc, en pilule ; sur le site, dans l'Application web et dans l'application mobile, fond turquoise foncé `#0B7F86` pour le contraste AA du texte blanc et du texte turquoise sur blanc ([D-161](07-decisions.md#d-161), RG-PRM-05) ; le turquoise `#17A2B0` reste pour les traits, soulignés et décors | `#2BC0C6`, texte `#08172A` |
 | Liens | bleu `#1565C0` | `#5AAEE6` |
 | SOS | rouge `#D94343` | `#E35D5D` |
 | Avertissement bêta | texte rouge `#B3261E` sur rose `#FDE8E8`, précédé de ⚠ | `#FFB4AB` sur `#3A1518` |

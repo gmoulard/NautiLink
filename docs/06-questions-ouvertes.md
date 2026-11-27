@@ -74,6 +74,12 @@ Tout ce qui n'est pas encore décidé est ici, et seulement ici. Chaque question
 - Décidé (D-95) : WCAG 2.2 niveau AA (RG-PRM-05).
 - Reste : validation des [maquettes](../site/designs/app.html) des écrans Android et Web.
 
+### <a id="q-94"></a>Q-94 — Couleurs des points de la carte
+
+- Priorité : avant la validation de l'identité graphique (TODO-3.20).
+- Constat (2026-11-27, [charte des interfaces](10-charte-interfaces.md) §7) : la carte d'une navigation de l'Application web garde les couleurs du design « Radar de pluie » (tracé `#0E6BA8`, départ `#13A6AD`, arrivée `#0E2A47`) et marque les incidents en orange `#E8833A`, alors que l'orange est réservé au repère GPS du logo ([D-98](07-decisions.md#d-98)).
+- Proposition (non validée) : tracé en bleu des liens `#1565C0`, départ en turquoise `#17A2B0`, arrivée en bleu marine `#0B2A55` ; incident en violet `#7B4FB0` ou en rouge à pastille creuse, pour ne pas reprendre l'orange ; même jeu de couleurs dans l'application mobile.
+
 ## 5. Évolutions futures
 
 ### <a id="q-23"></a>Q-23 — Cartes marines du SHOM

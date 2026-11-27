@@ -12,6 +12,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Enchaînement des écrans | `docs/03-parcours-utilisateur.md` |
 | Quota, abonnement | `docs/04-modele-economique.md` |
 | Couleurs, polices, ton, logo | `docs/05-identite-marque.md` |
+| Règles graphiques des interfaces (composants, tailles, carte, contrastes) | `docs/10-charte-interfaces.md` |
 | Ce qui n'est pas décidé | `docs/06-questions-ouvertes.md` (`Q-nn`) |
 | Pourquoi une règle est ainsi | `docs/07-decisions.md` (`D-nn`) |
 | Architecture technique : serveur, base, fichiers, e-mails, push | `docs/08-architecture.md` |
@@ -40,7 +41,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 2. `07-decisions.md` (la plus récente l'emporte)
 3. `01-cahier-des-charges.md`
 4. `03-parcours-utilisateur.md`, `04-modele-economique.md`
-5. `05-identite-marque.md` pour l'apparence uniquement
+5. `05-identite-marque.md`, puis `10-charte-interfaces.md`, pour l'apparence uniquement
 
 Un écart entre documents est un défaut : le signaler et le corriger, ne pas choisir silencieusement.
 
