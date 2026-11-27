@@ -32,6 +32,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-20 | Demandes du 2026-11-27 : Application web | TODO-6.14, TODO-6.15, TODO-6.16, TODO-6.17, TODO-6.18 | aucun | [~] |
 | LOT-21 | Demandes du 2026-11-27 : look et écrans de l'application mobile | TODO-3.21, TODO-5.14, TODO-5.15 | LOT-19 | [~] |
 | LOT-22 | Demandes du 2026-11-27 : site vitrine | TODO-3.22 | aucun | [~] |
+| LOT-23 | Fin de la compatibilité avec les applications d'avant la 0.5.0 | TODO-4.15 | LOT-19, LOT-21 | [ ] |
 
 ## 0. Ménage du dépôt
 
@@ -172,6 +173,8 @@ Tout est réalisé : voir [Actions réalisées](Todo-done.md).
 
 ## 5. Étape 2 — Android
 
+- [ ] **TODO-4.15**: Retirer la compatibilité avec les applications d'avant la 0.5.0 ([D-186](07-decisions.md#d-186)) : serveur (`server/contacts.go`, `server/navigations.go` et le reste), API (`docs/api/openapi.yaml`), Application web et application mobile (`app/lib/reel/compte.dart`, `suivi_reel.dart`…) : plus de champs `suiveur` ni `contactSos`, une liste `amis`, ajout sans invitation par `inviter: false` ; règles et scénarios de tests à jour. Dépend de : aucune.
+  - Critères d'acceptation : `grep -rn "contactSos\|contactsSos\|\"suiveur\"" server app/lib docs/api` ne trouve plus que des mentions historiques ; essais Go et Flutter réussis, dont l'ajout d'un ami sans invitation avec une adresse non confirmée ; application 0.5.1 ou suivante.
 - [~] **TODO-5.1**: Connexion (RG-CPT-02, RG-CPT-08, RG-CPT-12), association du téléphone, écran d'accueil avec les trois boutons et le SOS (cahier des charges 5.1, 5.2, RG-SOS-15), mémo sécurité en mer intégré (RG-SOS-22). Dépend de : TODO-4.2, TODO-3.3.
   - Critères d'acceptation : essai sur un vrai téléphone, écran conforme à la maquette.
   - Fait (2026-11-25) (`app/`, D-127) : socle de la vraie application dans le projet du prototype, mode choisi à la construction (`--dart-define=NAUTILINK_MODE=demo|reel`, démonstration par défaut ; le workflow du site construit les deux, D-129) et adresse du serveur (`NAUTILINK_API`) ; dépôt de données commun (`lib/depot/`) avec une implémentation de démonstration (données d'exemple de `lib/data.dart`, prototype inchangé) et une réelle (`lib/reel/`) ; client de l'API avec jeton porteur, renouvellement unique sur 401 et erreurs JSON, jetons et identifiant du téléphone dans les préférences (RG-CPT-12) ; base locale SQLite et file d'attente (RG-COM-05 : enregistrement d'abord, UUID v4, `numeroOrdre`, SOS d'abord, lots de 200, fichiers après leur événement, sortie sur 200 ou 201, délais croissants) ; écran de connexion par e-mail et mot de passe, création du compte avec l'avertissement à cocher (RG-CPT-06) et nouvelle version acceptée sur 428 (RG-CPT-07), « Mot de passe oublié ? » (RG-CPT-10), « Recevoir un nouveau lien » (RG-CPT-09), « Version bêta », déconnexion qui garde la file (RG-CPT-08) ; téléphone enregistré (`PUT /v1/appareils/{id}`) et associé aux bateaux sans téléphone (D-132) ; accueil branché sur le serveur (navigation en cours, quota avec l'heure du dernier état reçu, « Navigations enregistrées ») et hors connexion selon RG-COM-06 (D-133, D-135) ; mémo sécurité en mer copié de `site/securite.html` à chaque construction et ouvert dans l'application sur Android et iPhone (RG-SOS-22) ; essais unitaires avec un faux serveur, essai de bout en bout contre `server/` et PostgreSQL réussi.
