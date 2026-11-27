@@ -1,6 +1,6 @@
 # CLAUDE.md — NautiLink
 
-Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + serveur), avec le site de présentation et un prototype de démonstration Flutter (`app/`, données d'exemple, sans serveur). Tout est rédigé en français. La spécification fait foi sur le prototype.
+Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + serveur), avec le site de présentation (site vitrine), le serveur et l'application Flutter (`app/` : vraie application branchée sur le serveur ; la démonstration V0, figée, D-144). Tout est rédigé en français. La spécification fait foi sur le code.
 
 ## Où trouver quoi
 
@@ -21,7 +21,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Ce qu'il reste à faire, dans quel ordre | `docs/TODO.md` (`TODO-x.y`), `docs/Todo-done.md` |
 | Demandes en vrac de l'utilisateur | `docs/Todo-ithem-for-todo.md` |
 | Textes affichés aux utilisateurs (avertissement bêta) | `docs/textes/` |
-| Prototype de démonstration (Flutter : Android, iPhone, Web) | `app/` (`lib/`, `test/`), voir `app/README.md` ; Flutter 3.47.9 |
+| Application mobile (Flutter : Android, iPhone ; vraie application avec `--dart-define=NAUTILINK_MODE=reel`) | `app/` (`lib/`, `test/`), voir `app/README.md` ; Flutter 3.47.9 |
 | Serveur central (Go, hébergé sur pi-appliance, D-62) | `server/`, voir `server/README.md` ; image publiée par `.github/workflows/serveur.yml` |
 | Site de présentation (GitHub Pages) | `site/` (`index.html`, `telecharger.html`, `abonnement.html`, `securite.html`, `avertissement.html`, `faq.html`, `a-propos.html`, `style.css`), publié par `.github/workflows/pages.yml` |
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
@@ -50,7 +50,7 @@ Un écart entre documents est un défaut : le signaler et le corriger, ne pas ch
 - **Ne rien inventer.** Un comportement non décidé va dans `06-questions-ouvertes.md` (avec une proposition marquée non validée), jamais directement dans les règles. Pour trancher, demander à l'utilisateur (skill `clarify-request`).
 - **Identifiants stables.** `RG-…`, `Q-nn`, `D-nn` ne sont jamais renumérotés ni réutilisés. Nouvelle règle : numéro suivant du domaine. Règle abandonnée : la barrer avec un renvoi vers la décision.
 - **Ancres** : chaque identifiant porte une ancre HTML minuscule (`<a id="rg-nav-05"></a>`, `<a id="q-12"></a>`, `<a id="d-07"></a>`) pour les liens entre fichiers.
-- **Vocabulaire** du glossaire uniquement : *navigateur*, *suiveur*, *navigation*, *contact SOS*, *destinataire SMS*, *accès* de périmètre *navigation* ou *navigateur*, etc. Nouveau terme : l'ajouter au glossaire.
+- **Vocabulaire** du glossaire uniquement : *navigateur*, *ami* (qui remplace *suiveur* et *contact SOS*, D-176), *navigation*, *accès* de périmètre *navigation* ou *navigateur*, etc. Nouveau terme : l'ajouter au glossaire.
 - **Libellés d'interface** entre guillemets français, tels qu'affichés : « Démarrer navigation », « Envoyer un SOS ».
 - Noms de fichiers : minuscules, sans accents ni espaces, préfixe numérique pour l'ordre de lecture ; exception : `TODO.md`, `Todo-done.md` et `Todo-ithem-for-todo.md`, noms imposés par le skill `todo`.
 - Markdown GitHub ; schémas en Mermaid.

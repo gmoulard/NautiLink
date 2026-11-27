@@ -2,29 +2,28 @@
 
 *Your sea, your safety, your story.*
 
-**Site : <https://gmoulard.github.io/NautiLink/>**
+**Site : <https://nautilink.moulard.org/>**
 
 NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS), une application iPhone équivalente sans SMS, et une Application web pour suivre, consulter et gérer les navigations avec ses proches.
 
 NautiLink est sponsorisée par la SRT ([srtoulon.fr](https://srtoulon.fr/)).
 
-Ce dépôt contient la **spécification fonctionnelle**, le **site de présentation** et un **prototype de démonstration** (Flutter, données d'exemple, sans serveur).
+Ce dépôt contient la **spécification fonctionnelle**, le **site de présentation** et le **serveur** (Go) et l'**application mobile** (Flutter, Android et iPhone).
 
-## Site et démonstrations
+## Site et téléchargements
 
 | | Adresse |
 |---|---|
-| **Site de présentation** | **<https://gmoulard.github.io/NautiLink/>** |
-| Télécharger les démonstrations (APK Android, IPA iPhone non signé) | <https://gmoulard.github.io/NautiLink/telecharger.html> |
-| Démonstration Web (installable sur l'écran d'accueil) | <https://gmoulard.github.io/NautiLink/app/> |
-| Version gratuite et abonnement | <https://gmoulard.github.io/NautiLink/abonnement.html> |
-| Propositions de design (11 maquettes) | <https://gmoulard.github.io/NautiLink/designs/> |
-| Maquettes de l'application Android et Web (design « Radar de pluie ») | <https://gmoulard.github.io/NautiLink/designs/app.html> |
-| Variantes du design « Météo marine » (10 maquettes) | <https://gmoulard.github.io/NautiLink/designs/meteo.html> |
-| Mémo sécurité en mer | <https://gmoulard.github.io/NautiLink/securite.html> |
-| Questions fréquentes | <https://gmoulard.github.io/NautiLink/faq.html> |
-| À propos | <https://gmoulard.github.io/NautiLink/a-propos.html> |
-| Avertissement bêta | <https://gmoulard.github.io/NautiLink/avertissement.html> |
+| **Site de présentation** | **<https://nautilink.moulard.org/index.html>** |
+| Installer l'application (Android, iPhone) | <https://nautilink.moulard.org/telecharger.html#application> |
+| Version gratuite et abonnement | <https://nautilink.moulard.org/abonnement.html> |
+| Propositions de design (11 maquettes) | <https://nautilink.moulard.org/designs/> |
+| Maquettes de l'application Android et Web (design « Radar de pluie ») | <https://nautilink.moulard.org/designs/app.html> |
+| Variantes du design « Météo marine » (10 maquettes) | <https://nautilink.moulard.org/designs/meteo.html> |
+| Mémo sécurité en mer | <https://nautilink.moulard.org/securite.html> |
+| Questions fréquentes | <https://nautilink.moulard.org/faq.html> |
+| À propos | <https://nautilink.moulard.org/a-propos.html> |
+| Avertissement bêta | <https://nautilink.moulard.org/avertissement.html> |
 
 Aucune publication dans les stores. Le site est construit et publié par le workflow « Site GitHub Pages » à chaque modification de `site/` ou `app/` sur `main` ; il faut que GitHub Pages soit activé (Settings → Pages → Source : GitHub Actions).
 
@@ -58,7 +57,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/etudes/versions-web.md`](docs/etudes/versions-web.md) | Étude : plusieurs versions de l'Application web, déploiement et compatibilité. |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images ; fichiers du logo (vectoriels, déclinaisons, icônes) dans [`docs/assets/logo/`](docs/assets/logo/). |
-| [`app/`](app/) | Prototype de démonstration Flutter (Android, iPhone, Web), voir son [README](app/README.md). |
+| [`app/`](app/) | Application mobile Flutter (Android, iPhone), voir son [README](app/README.md). |
 | [`server/`](server/) | Serveur central en Go (squelette, TODO-3.7), image Docker et `compose.yaml` pour pi-appliance, voir son [README](server/README.md). |
 | [`site/`](site/) | Site de présentation publié sur GitHub Pages (accueil, mémo sécurité en mer, avertissement), par le workflow `.github/workflows/pages.yml`. |
 
