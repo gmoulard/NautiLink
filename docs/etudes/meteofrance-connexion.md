@@ -49,7 +49,7 @@ Retenu le 2026-11-27 ([D-172](../07-decisions.md#d-172)) : identifiant d'applica
 
 ### 5.1 Poser le code sur pi-appliance
 
-Le serveur est installé par « Docker Compose libre » (service `nautilink`, [`server/compose.yaml`](../../server/compose.yaml)). Dans les deux cas ci-dessous, le fichier Compose doit reprendre la variable, dans `environment` du service `nautilink` (à ajouter avec le client Météo-France, TODO-4.10) :
+Le serveur est installé par « Docker Compose libre » (service `nautilink`, [`server/compose.yaml`](../../server/compose.yaml)). Dans les deux cas ci-dessous, le fichier Compose doit reprendre la variable, dans `environment` du service `nautilink` (ajoutée le 2026-11-27 avec le client Météo-France, TODO-4.10) :
 
 ```yaml
 NAUTILINK_METEOFRANCE: "${NAUTILINK_METEOFRANCE:-}"
@@ -136,7 +136,7 @@ Dans cet ordre ; reporter chaque constat dans ce document.
    Si l'une des trois données manque, revenir vers le porteur du projet (D-88 à revoir).
    Décisions du 2026-11-27 ([D-168](../07-decisions.md#d-168), puis [D-169](../07-decisions.md#d-169)) : AROME pour le vent et la pression ; MFWAM (paquet `SP1`, GRIB2) pour l'état de la mer, décodé par le serveur. Les souscriptions « Environnement » et « ARPEGE » (sauf besoin hors de la zone d'AROME) peuvent être retirées ; garder « Package Modèles de vague et surcote ». Décodage côté serveur : la lecture marche avec `eccodes` (bibliothèque C, avec la compression CCSDS de `libaec`) ; bibliothèques Go sans dépendance C annoncées pour le modèle 5.42, non encore essayées : `dmarkham/grib2` (MIT, valeur au point le plus proche), `knoweather/simple-grib` (MIT), `pspoerri/go-tiled-eccodes` (MIT), `shyrmapp/aec` (Apache-2.0, décompression seule) ; toutes récentes et peu utilisées : à vérifier sur un vrai fichier contre `eccodes` avant de choisir (TODO-4.10).
 4. ~~**Décisions à prendre avec le porteur du projet**~~ (tranchées le 2026-11-27, [D-172](../07-decisions.md#d-172)) : type de code (identifiant OAuth2, proposé au § 4), nom de la variable (`NAUTILINK_METEOFRANCE`, proposé au § 5), comportement en cas d'échec et conservation (§ 6, points 4 à 6), API retenue pour chaque donnée d'après l'étape 3. 
-5. **Code du serveur** : action [TODO-4.10](../TODO.md) : client Météo-France (jeton en mémoire, file d'appels, nouvel essai), relevé au début et à la fin de chaque navigation, colonnes `meteo_depart` et `meteo_arrivee`, affichage sur la page de la navigation de l'Application web et dans le PDF, essais avec un faux Météo-France ; sans variable posée, aucun relevé et aucune erreur.
+5. **Code du serveur** (fait le 2026-11-27 : `server/meteo.go`, lecture GRIB2 et CCSDS en Go seul dans `server/grib2.go`, vérifiée contre eccodes sur des fichiers CCSDS fabriqués par `server/testdata/fabrique-grib2.py` ; reste la vérification sur un vrai fichier MFWAM) : action [TODO-4.10](../TODO.md) : client Météo-France (jeton en mémoire, file d'appels, nouvel essai), relevé au début et à la fin de chaque navigation, colonnes `meteo_depart` et `meteo_arrivee`, affichage sur la page de la navigation de l'Application web et dans le PDF, essais avec un faux Météo-France ; sans variable posée, aucun relevé et aucune erreur.
 6. **Mise en service** : poser la variable sur pi-appliance (§ 5.1, avant ou après TODO-2.85 de pi-appliance), démarrer puis terminer une navigation d'essai et constater la météo sur sa page ; cocher le § 8.
 
 ## Sources

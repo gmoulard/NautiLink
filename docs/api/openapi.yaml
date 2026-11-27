@@ -1703,13 +1703,18 @@ components:
 
     Meteo:
       type: object
-      description: 'RG-NAV-28 ; contenu exact selon l''API de Météo-France (RG-NAV-38).'
+      description: 'RG-NAV-28, RG-NAV-38 : prévision de Météo-France à l''heure du départ ou de l''arrivée, au point de départ ou d''arrivée ; une donnée absente n''a pas été obtenue (hors du domaine du modèle, ou Météo-France sans réponse pendant 1 heure).'
+      required: [releveeLe, heurePrevision, source]
       properties:
-        releveeLe: {type: string, format: date-time}
-        ventVitesseNoeuds: {type: number}
-        ventDirectionDegres: {type: number}
-        etatMer: {type: string}
-        pressionHpa: {type: number}
+        releveeLe: {type: string, format: date-time, description: 'Heure du relevé par le serveur.'}
+        heurePrevision: {type: string, format: date-time, description: 'Heure de la prévision : celle du départ ou de l''arrivée, arrondie à l''heure.'}
+        source: {type: string, description: '« Météo-France ».'}
+        indisponible: {type: boolean, description: 'Rien obtenu : la page affiche « Météo indisponible ».'}
+        ventVitesseNoeuds: {type: number, description: 'Vent à 10 m, modèle AROME.'}
+        ventDirectionDegres: {type: integer, description: 'D''où vient le vent, en degrés.'}
+        pressionHpa: {type: number, description: 'Pression au niveau de la mer, modèle AROME.'}
+        hauteurVaguesMetres: {type: number, description: 'Hauteur significative des vagues, modèle MFWAM.'}
+        etatMer: {type: string, description: 'Terme de l''échelle de Douglas pour cette hauteur (« peu agitée »…).'}
 
     DemarrageNavigation:
       type: object

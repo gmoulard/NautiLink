@@ -60,6 +60,8 @@ func exportPDF(d donneesNavigation, evts []evenementJSON, photos map[string][]by
 	ligne("Fin", d.L.Fin)
 	ligne("Lieu de départ", d.L.LieuDepart)
 	ligne("Lieu d'arrivée", d.L.LieuArrivee)
+	ligne("Météo au départ", d.L.MeteoDepart)
+	ligne("Météo à l'arrivée", d.L.MeteoArrivee)
 	ligne("Destination", d.Destination)
 	ligne("Durée", d.L.Duree)
 	ligne("Distance", d.L.Distance)

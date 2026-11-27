@@ -49,6 +49,9 @@ services:
       # dans .env seulement ; vides : achat fermé.
       NAUTILINK_STRIPE_CLE: "${NAUTILINK_STRIPE_CLE:-}"
       NAUTILINK_STRIPE_SECRET_RAPPEL: "${NAUTILINK_STRIPE_SECRET_RAPPEL:-}"
+      # Météo des navigations (RG-NAV-38, D-172) : identifiant d'application
+      # OAuth2 de Météo-France, dans .env seulement ; vide : pas de météo.
+      NAUTILINK_METEOFRANCE: "${NAUTILINK_METEOFRANCE:-}"
     # Le serveur réessaie toutes les 5 secondes tant que la base n'est pas prête
     # (premier démarrage plus long sur le Pi) : pas d'attente de « healthy ».
     depends_on:

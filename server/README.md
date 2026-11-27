@@ -59,6 +59,7 @@ GARDER=1 ./essai-test.sh # garde l'environnement lancé
 | `NAUTILINK_ADMINS` | Adresses e-mail des administrateurs, séparées par des virgules (RG-ADM-07) ; le compte doit exister et son adresse être confirmée ; vide : espace administrateur fermé | vide |
 | `NAUTILINK_APPLE_CLIENTS` | Identifiants clients Apple acceptés (identifiant de l'application, Services ID), séparés par des virgules ; vide : connexion Apple désactivée | vide |
 | `NAUTILINK_NOMINATIM` | Service de géocodage inverse pour les noms de lieux (D-96), une requête par seconde au plus, avec cache. Sur le Pi : `https://nominatim.openstreetmap.org` ; vide : coordonnées à la place des noms | vide |
+| `NAUTILINK_METEOFRANCE` | Identifiant d'application OAuth2 de Météo-France, encodé pour l'en-tête `Authorization: Basic` tel que le portail le donne (RG-NAV-38, D-172) : météo du départ et de l'arrivée de chaque navigation (AROME, MFWAM). Posé par la console de pi-appliance ou dans `.env`, jamais dans le dépôt ; vide : pas de météo relevée, sans erreur. |
 | `NAUTILINK_PRODUIT` | Identifiant de l'achat unique de 10 ans, le même sur Google Play et l'App Store (RG-ECO-06) | `nautilink_abonnement_10_ans` |
 | `NAUTILINK_GOOGLE_PLAY_COMPTE` | Fichier JSON du compte de service Google qui a accès à la Google Play Developer API ; vide : achat Google Play refusé (`achat_non_configure`) | vide |
 | `NAUTILINK_GOOGLE_PLAY_PAQUET` | Nom du paquet Android | `fr.nautilink.nautilink` |

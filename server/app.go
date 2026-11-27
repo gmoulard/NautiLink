@@ -37,6 +37,7 @@ type app struct {
 	achats *achatsIntegres
 	stripe *stripe
 	push   *envoiPush
+	meteo  *meteoFrance // météo des navigations (meteo.go)
 }
 
 func nouvelleApp(cfg config, b *base) *app {
@@ -56,6 +57,7 @@ func nouvelleApp(cfg config, b *base) *app {
 	a.achats = nouveauxAchats(cfg)
 	a.stripe = nouveauStripe(cfg)
 	a.push = nouvelEnvoiPush(cfg)
+	a.meteo = nouvelleMeteoFrance(cfg)
 	return a
 }
 

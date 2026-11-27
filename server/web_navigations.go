@@ -134,6 +134,8 @@ type ligneNav struct {
 	LieuArrivee      string
 	Duree, Distance  string
 	Derniere, HeureD string
+	MeteoDepart      string // RG-NAV-28 ; vide sans relevé
+	MeteoArrivee     string
 	Apercu           *carte
 }
 
@@ -207,6 +209,7 @@ func (a *app) ligneDe(ctx context.Context, n navigationJSON) (ligneNav, error) {
 	if n.Fin != nil {
 		l.Fin = heureWeb(*n.Fin, n.decalage)
 	}
+	l.MeteoDepart, l.MeteoArrivee = meteoTexte(n.MeteoDepart, n.decalage), meteoTexte(n.MeteoArrivee, n.decalage)
 	if d := n.DernierePosition; d != nil && d.Position != nil {
 		l.Derniere, l.HeureD = lieuTexte(d), heureWeb(d.Position.HeureAcquisition, n.decalage)
 	}

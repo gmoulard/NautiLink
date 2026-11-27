@@ -31,6 +31,10 @@ type config struct {
 	// inverse (D-96), ex. https://nominatim.openstreetmap.org ; vide : pas de
 	// nom de lieu, les coordonnées en tiennent lieu (RG-NAV-16, RG-JRN-10).
 	Nominatim string
+	// MeteoFrance : NAUTILINK_METEOFRANCE, identifiant d'application OAuth2
+	// de Météo-France encodé pour « Authorization: Basic » (RG-NAV-38,
+	// D-172), jamais écrit dans le dépôt ; vide : pas de météo relevée.
+	MeteoFrance string
 
 	// Achats intégrés (RG-ECO-11, TODO-5.8, TODO-10.6) ; vides : achat refusé
 	// avec le code achat_non_configure.
@@ -70,6 +74,7 @@ func configDepuisEnv() config {
 		AppleClients:    liste(os.Getenv("NAUTILINK_APPLE_CLIENTS")),
 		Admins:          liste(strings.ToLower(os.Getenv("NAUTILINK_ADMINS"))),
 		Nominatim:       strings.TrimRight(strings.TrimSpace(os.Getenv("NAUTILINK_NOMINATIM")), "/"),
+		MeteoFrance:     strings.TrimSpace(os.Getenv("NAUTILINK_METEOFRANCE")),
 
 		Produit:            env("NAUTILINK_PRODUIT", "nautilink_abonnement_10_ans"),
 		GooglePlayCompte:   os.Getenv("NAUTILINK_GOOGLE_PLAY_COMPTE"),
