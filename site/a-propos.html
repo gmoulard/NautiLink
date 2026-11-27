@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>À propos de NautiLink</title>
+<meta name="description" content="À propos de NautiLink : le projet, son sponsor la SRT, la version bêta et le code source.">
+<link rel="icon" href="assets/logo-nautilink.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Contenu repris du README et de LICENSE, D-171. -->
+
+<header class="topnav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/logo-nautilink.png" alt="" width="64" height="64">
+      <span><span class="name">NautiLink<span class="badge">Version bêta</span></span><span class="sig">Your sea, your safety, your story.</span></span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <a class="home" href="index.html" aria-label="Accueil"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg></a>
+      <a href="index.html#fonctions">Fonctionnalités</a>
+      <a href="abonnement.html">Tarifs</a>
+      <a href="faq.html">FAQ</a>
+      <a href="securite.html">Sécurité en mer</a>
+      <a href="app/">Démonstration</a>
+      <a href="a-propos.html" aria-current="page">À propos</a>
+      <a class="button" href="telecharger.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4-5.7 5.7-5.7-5.7 1.4-1.4 3.3 3.3zM4 18h16v2H4z"/></svg>Télécharger</a>
+    </nav>
+  </div>
+</header>
+
+<main class="text">
+  <section>
+    <div class="wrap narrow legal">
+      <span class="kicker">À propos</span>
+      <h1>NautiLink</h1>
+      <p class="slogan">Your sea, your safety, your story.</p>
+      <p>NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS), une application iPhone équivalente sans SMS, et une Application web pour suivre, consulter et gérer les navigations avec ses proches.</p>
+      <h2>Sponsor</h2>
+      <p>NautiLink est sponsorisée par la SRT (<a href="https://srtoulon.fr/" target="_blank" rel="noopener">srtoulon.fr</a>).</p>
+      <h2>Version bêta</h2>
+      <p>NautiLink est en version bêta et n'est pas un équipement de sécurité. <a href="avertissement.html">Lire l'avertissement</a></p>
+      <h2>Code source</h2>
+      <p>La spécification, le site, l'application et le serveur sont visibles sur <a href="https://github.com/gmoulard/NautiLink">GitHub</a>, pour information seulement : tous droits réservés, aucune licence n'est accordée. La version du site est indiquée en pied de page.</p>
+    </div>
+  </section>
+</main>
+<div class="wrap notice">
+  <div class="beta" role="note">
+    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2 1 21h22zm-1 7h2v6h-2zm0 8h2v2h-2z"/></svg>
+    <p>NautiLink est en version bêta et n'est pas un équipement de sécurité : il ne remplace ni le matériel de sécurité obligatoire, ni les procédures officielles d'alerte. <a href="avertissement.html">Lire l'avertissement</a><b>En cas de détresse : canal 16 de la VHF, 196 ou 112.</b></p>
+  </div>
+  <aside class="sponsor" aria-label="Sponsor">
+    <img src="assets/sponsor-srt.png" alt="Guidon de la SRT" width="71" height="48">
+    <p>Sponsorisée<br>par la <a href="https://srtoulon.fr/" target="_blank" rel="noopener">SRT</a></p>
+  </aside>
+</div>
+
+<div class="waves" aria-hidden="true">
+  <svg viewBox="0 0 1200 70" preserveAspectRatio="none" focusable="false">
+    <path class="wave-1" d="M0 30 C150 5 300 5 450 25 S750 50 900 28 S1100 5 1200 20 V70 H0Z"/>
+    <path class="wave-2" d="M0 45 C200 22 350 30 500 42 S800 60 950 40 S1120 28 1200 38 V70 H0Z"/>
+    <path class="wave-3" d="M0 58 C180 45 380 50 560 58 S880 70 1040 56 S1150 50 1200 54 V70 H0Z"/>
+  </svg>
+</div>
+<footer>
+  <div class="wrap">
+    <p><b>NautiLink</b> · Your sea, your safety, your story. · <a href="index.html">Accueil</a> · <a href="avertissement.html">Avertissement</a> · <a href="https://github.com/gmoulard/NautiLink">Code source sur GitHub</a></p>
+    <p class="commit">Tous droits réservés · <a href="https://github.com/gmoulard/NautiLink">https://github.com/gmoulard/NautiLink</a> · V@VERSION@ · build @BUILD@ · commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT@">@COMMIT_COURT@</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

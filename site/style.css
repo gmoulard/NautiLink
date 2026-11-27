@@ -22,10 +22,6 @@
   --sea-1: #4D9BD6;
   --sea-2: #1F6FB5;
   --sea-3: #0D4F8C;
-  --hill: #9DBFD8;
-  --hull: #F7FAFC;
-  --sail: #FFFFFF;
-  --sail-shade: #D5E3EE;
   --wave-1: #A9D3EE;
   --wave-2: #4B9BD8;
   --footer: #0D4F8C;
@@ -41,7 +37,7 @@
     --navy: #0E2A43; --teal: #2BC0C6; --action: #2BC0C6; --action-hover: #5ED3D8; --action-fg: #08172A;
     --link: #5AAEE6; --icon: #5AAEE6; --alert: #E35D5D; --alert-text: #FFB4AB; --alert-bg: #3A1518; --alert-line: #6B2A30;
     --sky: #0F2438; --page: #08172A; --surface: #15314D; --fg: #E3EEF7; --muted: #9BB4C9; --line: #24476A;
-    --sea-1: #1B5384; --sea-2: #123F68; --sea-3: #0A2A48; --hill: #1E4466; --hull: #C9D8E4; --sail: #DCE7F0; --sail-shade: #9FB6C9;
+    --sea-1: #1B5384; --sea-2: #123F68; --sea-3: #0A2A48;
     --wave-1: #1B4A73; --wave-2: #123F68; --footer: #0A2A48; --footer-fg: #E3EEF7;
     --shadow: 0 8px 24px rgba(0, 0, 0, .35);
     color-scheme: dark;
@@ -88,29 +84,16 @@ p { margin: 0; }
 .button.large { font-size: 1.1rem; padding: .8rem 1.8rem; }
 .button .ico { width: 1.2em; height: 1.2em; }
 
-/* Bandeau mer et voilier */
-.hero { position: relative; overflow: hidden; background: linear-gradient(180deg, #CFE8F8, #EAF5FC 80%); }
-.hero .wrap { position: relative; z-index: 1; padding-block: 3rem 0; display: grid; gap: 1rem; justify-items: start; }
-.hero h1 { font-size: clamp(1.9rem, 4.6vw, 3.2rem); }
+/* Bandeau mer et voilier : photo docs/etudes/IMG_20230508_112008.jpg de l'utilisateur, réduite à 2000 px (assets/mer-voilier.jpg) */
+.hero { position: relative; overflow: hidden; min-height: clamp(380px, 44vw, 560px);
+  background: url(assets/mer-voilier.jpg) 68% 100% / cover no-repeat, #CFE8F8; }
+.hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(244,250,254,.55), rgba(244,250,254,0) 60%); }
+.hero .wrap { position: relative; z-index: 1; padding-block: 3rem 3rem; display: grid; gap: 1rem; justify-items: start; }
+.hero h1 { font-size: clamp(1.9rem, 4.6vw, 3.2rem); color: #0B2A55; }
 .hero h1 span { display: block; }
 .bar { width: 110px; height: 4px; border-radius: 4px; background: var(--teal); }
-.hero .slogan { font-style: italic; font-weight: 500; font-size: clamp(1.1rem, 2.3vw, 1.45rem); }
+.hero .slogan { font-style: italic; font-weight: 500; font-size: clamp(1.1rem, 2.3vw, 1.45rem); color: #0B2A55; }
 .hero .button { margin-top: .4rem; }
-.hero .sea { position: relative; width: 100%; height: clamp(190px, 25vw, 290px); margin-top: -40px; }
-.hero .sea svg { width: 100%; height: 100%; }
-@media (prefers-color-scheme: dark) { .hero { background: linear-gradient(180deg, #0F2438, #12304C 80%); } }
-.hill { fill: var(--hill); }
-.sea-stop-1 { stop-color: var(--sea-1); }
-.sea-stop-2 { stop-color: var(--sea-2); }
-.sea-stop-3 { stop-color: var(--sea-3); }
-.glint { stroke: #FFFFFF; stroke-width: 2; stroke-linecap: round; opacity: .5; }
-.hull { fill: var(--hull); }
-.hull-line { fill: #0B2A55; }
-.mast { stroke: #0B2A55; stroke-width: 4; }
-.sail { fill: var(--sail); }
-.sail-shade { fill: var(--sail-shade); }
-.wake { fill: none; stroke: #FFFFFF; stroke-width: 2.5; stroke-linecap: round; opacity: .7; }
-.far-sail { fill: var(--sail); opacity: .85; }
 
 /* Rangée des six fonctions */
 .strip { background: var(--surface); box-shadow: var(--shadow); position: relative; z-index: 1; }
@@ -129,11 +112,10 @@ p { margin: 0; }
 .card h2 { font-size: clamp(1.3rem, 2.3vw, 1.55rem); }
 .card .button { justify-self: start; }
 .card.prepare { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
-.card.prepare .art { background: linear-gradient(180deg, #CFE8F8, var(--sea-1) 60%, var(--sea-3)); display: grid; place-items: center; min-height: 200px; }
-.card.prepare .art svg { width: 62%; max-width: 140px; height: auto; }
+.card.prepare .art { background: url(assets/carte-winch.jpg) center / cover no-repeat, var(--sea-1); min-height: 200px; } /* découpé dans l'étude, D-171 */
 .card.simple { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 210px); align-items: center; }
 .card.simple .art { padding: 1rem 1.2rem 1rem 0; }
-.card.simple .art svg { width: 100%; height: auto; }
+.card.simple .art img { display: block; width: 100%; height: auto; border-radius: 12px; } /* découpé dans l'étude, D-171 */
 .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
 .checks li { display: flex; gap: .6rem; align-items: flex-start; }
 .checks .ico { width: 24px; height: 24px; color: var(--action); margin-top: .1rem; }
@@ -181,6 +163,11 @@ main.text h1 { font-size: clamp(1.8rem, 4.2vw, 2.5rem); }
 .legal h3 { font-size: 1.05rem; margin-top: .5rem; }
 .legal .button { justify-self: start; }
 .legal ul { margin: 0; padding-left: 1.3rem; display: grid; gap: .35rem; }
+/* FAQ (D-171) */
+.faq { border-top: 1px solid var(--line); padding-top: .9rem; }
+.faq summary { cursor: pointer; font-weight: 700; color: var(--fg); list-style-position: outside; }
+.faq summary:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; border-radius: 4px; }
+.faq p { margin: .6rem 0 0; }
 ol.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: .45rem; }
 code { font-size: .9em; background: var(--page); border: 1px solid var(--line); border-radius: 4px; padding: 0 .25rem; }
 .note { background: var(--page); border-left: 4px solid var(--teal); border-radius: 12px; padding: 1rem 1.2rem; }

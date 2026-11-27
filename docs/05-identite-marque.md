@@ -196,7 +196,7 @@ Choisie le 2026-11-26 ([D-157](07-decisions.md#d-157)) d'après l'étude [Nautil
 
 - **Typographie** : Inter partout ; titres en Inter ExtraBold (800), resserrés ; signature « Your sea, your safety, your story. » en Inter italique.
 - **En-tête** : logo en carré arrondi devant « NautiLink » en gras, signature à côté ; barre blanche translucide, fixée en haut. Site : en-tête blanc, logo de 64 px, nom en gros, signature en italique dessous, mention « Version bêta », menu avec icône maison (page courante soulignée en turquoise) et bouton « Télécharger » ; fixé en haut sur ordinateur seulement.
-- **Décor** : bandeau d'accueil en ciel et mer, vagues (dessins SVG) sous le bandeau et au-dessus du pied de page ; pas de photo pour l'instant (les images de l'étude sont des maquettes). Site : voilier, mer, carte et appareils dessinés en SVG dans la page, icônes SVG en ligne, aucune image externe ([D-161](07-decisions.md#d-161)).
+- **Décor** : bandeau d'accueil en ciel et mer, vagues (dessins SVG) sous le bandeau et au-dessus du pied de page. Site : bandeau d'accueil en photo de mer et de voilier fournie par l'utilisateur (`site/assets/mer-voilier.jpg`, titre et signature en bleu marine sur le ciel dans les deux thèmes, [D-170](07-decisions.md#d-170)) ; photos des cartes (winch, téléphone et ordinateur) découpées dans l'étude ([D-171](07-decisions.md#d-171)) ; icônes SVG en ligne ([D-161](07-decisions.md#d-161)).
 - **Mise en page** : cartes blanches arrondies et ombrées ; rangée d'icônes des fonctions (sécurité, partage, journal, SOS, sans Internet, photos) ; bandeau d'avertissement bêta rouge avec la mention du sponsor.
 - Le turquoise reste réservé aux actions, le rouge au SOS et aux alertes (§6).
 

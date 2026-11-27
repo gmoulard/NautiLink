@@ -22,6 +22,8 @@ Ce dépôt contient la **spécification fonctionnelle**, le **site de présentat
 | Maquettes de l'application Android et Web (design « Radar de pluie ») | <https://gmoulard.github.io/NautiLink/designs/app.html> |
 | Variantes du design « Météo marine » (10 maquettes) | <https://gmoulard.github.io/NautiLink/designs/meteo.html> |
 | Mémo sécurité en mer | <https://gmoulard.github.io/NautiLink/securite.html> |
+| Questions fréquentes | <https://gmoulard.github.io/NautiLink/faq.html> |
+| À propos | <https://gmoulard.github.io/NautiLink/a-propos.html> |
 | Avertissement bêta | <https://gmoulard.github.io/NautiLink/avertissement.html> |
 
 Aucune publication dans les stores. Le site est construit et publié par le workflow « Site GitHub Pages » à chaque modification de `site/` ou `app/` sur `main` ; il faut que GitHub Pages soit activé (Settings → Pages → Source : GitHub Actions).
