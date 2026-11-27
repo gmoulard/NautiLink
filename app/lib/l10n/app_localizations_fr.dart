@@ -1473,4 +1473,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get hidePassword => 'Masquer le mot de passe';
+
+  @override
+  String get mapAttribution =>
+      'Fond de carte © les contributeurs d\'OpenStreetMap · balisage © OpenSeaMap';
 }

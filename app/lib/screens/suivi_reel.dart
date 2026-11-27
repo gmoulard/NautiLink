@@ -422,20 +422,41 @@ class CarteSuivi extends StatelessWidget {
               ),
             ],
           ),
-          const Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: EdgeInsets.all(6),
-              child: Text(
-                '© OpenStreetMap · © OpenSeaMap',
-                style: TextStyle(fontSize: 10, color: NlColors.ink),
-              ),
-            ),
-          ),
+          const MentionCarte(),
         ],
       ),
     );
   }
+}
+
+/// Mention des fonds de carte, sur toutes les cartes (RG-NAV-29, D-180) :
+/// « Fond de carte © les contributeurs d'OpenStreetMap · balisage ©
+/// OpenSeaMap », en bas de la carte, sur un fond clair arrondi.
+class MentionCarte extends StatelessWidget {
+  const MentionCarte({super.key});
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.bottomCenter,
+    child: Padding(
+      padding: const EdgeInsets.all(6),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: NlColors.white.withValues(alpha: .85),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          child: Text(
+            AppLocalizations.of(context).mapAttribution,
+            key: const Key('map-attribution'),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 10, color: NlColors.ink),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// Ligne du journal : photo affichée, note vocale à écouter (RG-JRN-03).

@@ -1463,4 +1463,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hidePassword => 'Hide password';
+
+  @override
+  String get mapAttribution =>
+      'Map data © OpenStreetMap contributors · seamarks © OpenSeaMap';
 }

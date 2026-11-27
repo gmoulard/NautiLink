@@ -499,52 +499,55 @@ class _StartReelScreenState extends State<StartReelScreen> {
           (alertees!.contains(c.id) ||
               (smsCircuit && alerteesSms!.contains(c.id))),
     );
-    Widget choix(
+    // TODO-5.14 : personnes dans un tableau sans bordure, colonnes nom,
+    // « E-mail » et « SMS » (SMS sur Android seulement, RG-IOS-02).
+    final petit = Theme.of(context).textTheme.bodySmall;
+    TableRow choix(
       String id,
       String nom, {
       required bool email,
       required bool sms,
       String? note,
-    }) => ListTile(
-      key: Key('alerted-$id'),
-      contentPadding: EdgeInsets.zero,
-      title: note == null
-          ? Text(nom)
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(nom),
-                Text(note, style: Theme.of(context).textTheme.bodySmall),
-              ],
-            ),
-      subtitle: Wrap(
-        spacing: 8,
-        children: [
-          FilterChip(
+    }) => TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: note == null
+              ? Text(nom)
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(nom),
+                    Text(note, style: petit),
+                  ],
+                ),
+        ),
+        Center(
+          child: Checkbox(
             key: Key('alert-email-$id'),
-            avatar: const Icon(Icons.alternate_email, size: 18),
-            label: Text(l.alertByEmail),
-            selected: alertees!.contains(id),
-            onSelected: email
+            value: alertees!.contains(id),
+            onChanged: email
                 ? (v) => setState(
-                    () => v ? alertees!.add(id) : alertees!.remove(id),
+                    () => v == true ? alertees!.add(id) : alertees!.remove(id),
                   )
                 : null,
           ),
-          if (smsCircuit)
-            FilterChip(
+        ),
+        if (smsCircuit)
+          Center(
+            child: Checkbox(
               key: Key('alert-sms-$id'),
-              avatar: const Icon(Icons.sms_outlined, size: 18),
-              label: Text(l.alertBySms),
-              selected: alerteesSms!.contains(id),
-              onSelected: sms
+              value: alerteesSms!.contains(id),
+              onChanged: sms
                   ? (v) => setState(
-                      () => v ? alerteesSms!.add(id) : alerteesSms!.remove(id),
+                      () => v == true
+                          ? alerteesSms!.add(id)
+                          : alerteesSms!.remove(id),
                     )
                   : null,
             ),
-        ],
-      ),
+          ),
+      ],
     );
     return Scaffold(
       appBar: AppBar(title: Text(l.startVoyage)),
@@ -683,14 +686,8 @@ class _StartReelScreenState extends State<StartReelScreen> {
                   onChanged: (v) => setState(() => frequence = v),
                 ),
                 const SizedBox(height: 20),
-                // RG-NAV-25 : personnes alertées, toutes cochées.
-                Text(
-                  l.alertedPersons,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                // TODO-5.13 (demande du 2026-11-26) : « Début de navigation »
-                // avec la liste des personnes alertées, juste au-dessus d'elle.
-                const SizedBox(height: 8),
+                // TODO-5.13, TODO-5.14 : « Début de navigation » au-dessus des
+                // personnes alertées, puis « Paramètres de cette navigation ».
                 FilledButton(
                   key: const Key('start-send'),
                   onPressed: envoi ? null : _demarrer,
@@ -702,24 +699,59 @@ class _StartReelScreenState extends State<StartReelScreen> {
                         )
                       : Text(l.sendStart),
                 ),
-                const SizedBox(height: 8),
-                if (alertables.isEmpty) Text(l.noAlertablePerson),
-                // Q-102 : un sélecteur « E-mail » et un « SMS » par personne,
-                // sans distinguer suiveur et contact SOS.
-                for (final c in alertables)
-                  choix(
-                    c.id,
-                    c.nom,
-                    email: _emailPossible(c),
-                    sms: _smsPossible(c),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    key: const Key('start-settings'),
+                    icon: const Icon(Icons.tune),
+                    label: Text(l.voyageSettings),
+                    onPressed: () => _reglages(depot),
                   ),
-                for (final x in nouvelles)
-                  choix(
-                    x.id,
-                    x.c.name,
-                    email: x.c.email?.trim().isNotEmpty ?? false,
-                    sms: x.c.phone?.trim().isNotEmpty ?? false,
-                    note: l.addPersonPending,
+                ),
+                const SizedBox(height: 8),
+                // RG-NAV-25 : personnes alertées, toutes cochées.
+                Text(
+                  l.alertedPersons,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 4),
+                if (alertables.isEmpty && nouvelles.isEmpty)
+                  Text(l.noAlertablePerson)
+                else
+                  // Q-102 : une case « E-mail » et une « SMS » par personne.
+                  Table(
+                    key: const Key('alerted-table'),
+                    columnWidths: const {
+                      0: FlexColumnWidth(),
+                      1: FixedColumnWidth(64),
+                      2: FixedColumnWidth(64),
+                    },
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: [
+                      TableRow(
+                        children: [
+                          const SizedBox.shrink(),
+                          Center(child: Text(l.alertByEmail, style: petit)),
+                          if (smsCircuit)
+                            Center(child: Text(l.alertBySms, style: petit)),
+                        ],
+                      ),
+                      for (final c in alertables)
+                        choix(
+                          c.id,
+                          c.nom,
+                          email: _emailPossible(c),
+                          sms: _smsPossible(c),
+                        ),
+                      for (final x in nouvelles)
+                        choix(
+                          x.id,
+                          x.c.name,
+                          email: x.c.email?.trim().isNotEmpty ?? false,
+                          sms: x.c.phone?.trim().isNotEmpty ?? false,
+                          note: l.addPersonPending,
+                        ),
+                    ],
                   ),
                 Align(
                   alignment: Alignment.centerLeft,
@@ -728,14 +760,6 @@ class _StartReelScreenState extends State<StartReelScreen> {
                     icon: const Icon(Icons.person_add_alt),
                     label: Text(l.addPerson),
                     onPressed: _ajouterPersonne,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton.icon(
-                    icon: const Icon(Icons.tune),
-                    label: Text(l.voyageSettings),
-                    onPressed: () => _reglages(depot),
                   ),
                 ),
                 // RG-IOS-02, RG-IOS-04 : sur iPhone, SOS par Internet seulement ;
@@ -1254,9 +1278,9 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
       Row(
         children: [
           Expanded(
-            child: FilledButton.icon(
-              icon: const Icon(Icons.edit_note),
-              label: Text(l.noteButton),
+            child: BoutonCompact(
+              icon: Icons.edit_note,
+              label: l.noteButton,
               onPressed: envoi
                   ? null
                   : () {
@@ -1273,9 +1297,9 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: FilledButton.icon(
-              icon: const Icon(Icons.photo_camera_outlined),
-              label: Text(l.photoButton),
+            child: BoutonCompact(
+              icon: Icons.photo_camera_outlined,
+              label: l.photoButton,
               onPressed: envoi || medias == null
                   ? null
                   : () {
@@ -1298,9 +1322,9 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: FilledButton.icon(
-              icon: const Icon(Icons.mic_none),
-              label: Text(l.voiceButton),
+            child: BoutonCompact(
+              icon: Icons.mic_none,
+              label: l.voiceButton,
               onPressed: envoi || medias == null
                   ? null
                   : () => _envoyer(l.voiceSent, 'note_vocale', () async {
@@ -1507,6 +1531,42 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
       },
     );
   }
+}
+
+/// Bouton « NOTE », « Photo » ou « Vocal » de l'écran de navigation : icône
+/// au-dessus du libellé, qui tient sur une ligne et se réduit au besoin, sans
+/// jamais être coupé (TODO-5.14 : « Phot / o » constaté à 390 px).
+class BoutonCompact extends StatelessWidget {
+  const BoutonCompact({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => FilledButton(
+    style: FilledButton.styleFrom(
+      minimumSize: const Size.fromHeight(64),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+    ),
+    onPressed: onPressed,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 24),
+        const SizedBox(height: 2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(label, maxLines: 1, softWrap: false),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Les deux chronomètres de l'écran de navigation dans une même zone
@@ -2143,6 +2203,8 @@ class _DestinationCarteScreenState extends State<DestinationCarteScreen> {
                       ),
                     ],
                   ),
+                // RG-NAV-29, D-180 : mention des fonds de carte.
+                const MentionCarte(),
               ],
             ),
           ),

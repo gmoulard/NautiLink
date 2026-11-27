@@ -31,6 +31,25 @@ class HomeScreen extends StatelessWidget {
     final quota = depot.quota;
     final enCours = depot.navigationEnCours;
     final profil = depot.profil;
+    // D-178, TODO-5.14 : dans la vraie application, les trois boutons de
+    // l'accueil sont de la même couleur (SOS à part) ; la démonstration,
+    // figée (D-144), garde « Reprendre » et « Navigations enregistrées » en
+    // contour.
+    Widget bouton({
+      required VoidCallback? onPressed,
+      required IconData icon,
+      required String label,
+    }) => demo
+        ? OutlinedButton.icon(
+            onPressed: onPressed,
+            icon: Icon(icon),
+            label: Text(label),
+          )
+        : FilledButton.icon(
+            onPressed: onPressed,
+            icon: Icon(icon),
+            label: Text(label),
+          );
     final contenu = <Widget>[
       if (!demo && profil != null && !profil.emailVerifie) ...[
         _EmailNonVerifie(email: profil.email),
@@ -53,7 +72,7 @@ class HomeScreen extends StatelessWidget {
         label: Text(l.startVoyage),
       ),
       const SizedBox(height: 12),
-      OutlinedButton.icon(
+      bouton(
         onPressed: (demo ? state.current == null : enCours == null)
             ? null
             : () => demo
@@ -63,11 +82,11 @@ class HomeScreen extends StatelessWidget {
                       ),
                     )
                   : openNavigationReel(context),
-        icon: const Icon(Icons.restore),
-        label: Text(l.resumeVoyage),
+        icon: Icons.restore,
+        label: l.resumeVoyage,
       ),
       const SizedBox(height: 12),
-      OutlinedButton.icon(
+      bouton(
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => demo
@@ -75,8 +94,8 @@ class HomeScreen extends StatelessWidget {
                 : const SavedVoyagesScreen(),
           ),
         ),
-        icon: const Icon(Icons.history),
-        label: Text(l.savedVoyages),
+        icon: Icons.history,
+        label: l.savedVoyages,
       ),
       const SizedBox(height: 32),
       SosButton(

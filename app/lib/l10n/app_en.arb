@@ -425,5 +425,6 @@
   "homeSecurityRules": "Safety rules at sea",
   "loginSubtitle": "Access your NautiLink account",
   "showPassword": "Show password",
-  "hidePassword": "Hide password"
+  "hidePassword": "Hide password",
+  "mapAttribution": "Map data © OpenStreetMap contributors · seamarks © OpenSeaMap"
 }

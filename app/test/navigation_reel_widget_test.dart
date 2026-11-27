@@ -94,12 +94,12 @@ void main() {
         findsOneWidget,
       ); // un seul bateau : pas de choix
       expect(find.text('Claire'), findsOneWidget); // personne alertée, cochée
-      // TODO-5.13 : « Début de navigation » juste au-dessus de la liste des
-      // personnes alertées, sous son titre.
+      // TODO-5.13, TODO-5.14 : « Début de navigation » au-dessus des
+      // personnes alertées et de leur titre.
       final bouton = tester.getTopLeft(find.byKey(const Key('start-send'))).dy;
       expect(
         bouton,
-        greaterThan(tester.getTopLeft(find.text('Personnes alertées')).dy),
+        lessThan(tester.getTopLeft(find.text('Personnes alertées')).dy),
       );
       expect(bouton, lessThan(tester.getTopLeft(find.text('Claire')).dy));
       expect(
@@ -142,15 +142,27 @@ void main() {
       await toucher(tester, 'J\'ai compris');
       // Claire : numéro sans adresse : « SMS » coché, « E-mail » impossible.
       expect(find.text('suiveur · contact SOS'), findsNothing);
-      final email = tester.widget<FilterChip>(
+      // TODO-5.14 : tableau sans bordure, cases « E-mail » et « SMS ».
+      expect(find.byKey(const Key('alerted-table')), findsOneWidget);
+      final email = tester.widget<Checkbox>(
         find.byKey(const Key('alert-email-c1')),
       );
-      final smsChoix = tester.widget<FilterChip>(
+      final smsChoix = tester.widget<Checkbox>(
         find.byKey(const Key('alert-sms-c1')),
       );
-      expect(email.selected, isFalse);
-      expect(email.onSelected, isNull);
-      expect(smsChoix.selected, isTrue);
+      expect(email.value, isFalse);
+      expect(email.onChanged, isNull);
+      expect(smsChoix.value, isTrue);
+      // « Début de navigation », puis « Paramètres de cette navigation »,
+      // au-dessus de la liste.
+      final yDebut = tester.getTopLeft(find.text('Début de navigation')).dy;
+      final yParam = tester
+          .getTopLeft(find.byKey(const Key('start-settings')))
+          .dy;
+      final yListe = tester
+          .getTopLeft(find.byKey(const Key('alerted-table')))
+          .dy;
+      expect(yDebut < yParam && yParam < yListe, isTrue);
       // Décochée pour les SMS : pas de SMS de début pour elle.
       await reveal(tester, find.byKey(const Key('alert-sms-c1')));
       await tester.tap(find.byKey(const Key('alert-sms-c1')));

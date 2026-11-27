@@ -2576,6 +2576,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Masquer le mot de passe'**
   String get hidePassword;
+
+  /// No description provided for @mapAttribution.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fond de carte © les contributeurs d\'OpenStreetMap · balisage © OpenSeaMap'**
+  String get mapAttribution;
 }
 
 class _AppLocalizationsDelegate

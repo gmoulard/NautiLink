@@ -72,7 +72,7 @@ Connexion par e-mail et mot de passe, Google ou Apple (RG-CPT-02, RG-CPT-11) ; �
 
 ### 5.2 Écran d'accueil
 
-Trois boutons :
+Trois boutons, de la même couleur ([D-178](07-decisions.md#d-178)) :
 
 - **Démarrer navigation** ;
 - **Reprendre la dernière navigation** : ouvre l'écran de la navigation en cours (RG-NAV-12) ;
@@ -92,8 +92,7 @@ L'accueil donne enfin accès au mémo sécurité en mer du site de présentation
 - chef de bord, prérempli avec le nom du navigateur (RG-NAV-35, RG-NAV-36) ;
 - personnes alertées, avec leurs cases « E-mail » et « SMS » cochées, et « Ajouter une personne » (RG-NAV-25, RG-NAV-26) ;
 - fréquence préremplie : de 15 minutes à 10 jours (RG-NAV-05) ;
-- bouton **Paramètres** pour adapter les réglages à cette navigation (RG-NAV-06) ;
-- bouton **Début de navigation** (RG-NAV-08).
+- bouton **Début de navigation** (RG-NAV-08), au-dessus des personnes alertées, puis le lien **Paramètres de cette navigation** pour adapter les réglages à cette navigation (RG-NAV-06) ; les personnes alertées viennent dessous, en tableau sans bordure à trois colonnes : nom, « E-mail », « SMS » (TODO-5.14).
 
 Si le quota est épuisé sans abonnement, le démarrage est refusé avec l'explication et les choix possibles (RG-ECO-04).
 
