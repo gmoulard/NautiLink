@@ -1502,7 +1502,8 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                           style: Theme.of(context).textTheme.bodySmall,
                         )
                       else
-                        OutlinedButton(
+                        // Turquoise des boutons, comme sur l'Application web (D-178, D-185).
+                        FilledButton(
                           onPressed: envoi ? null : () => _terminer(depot),
                           child: Text(l.endVoyage),
                         ),
