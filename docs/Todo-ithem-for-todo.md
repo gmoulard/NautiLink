@@ -2,3 +2,4 @@
 - dans la web app;le bouton Terminer la navigation doit etre vert. Il ne faut pas de case a coché pour confimré, mais une fenettre de confirmation apres les clique
 - le pdf generé doit avoir le fond de carte Fond de carte © les contributeurs d'OpenStreetMap · balisage © OpenSeaMap. le logo NautiLink au debut et les pieds de pages clasique avec les liens actifs : NautiLink · Version bêta · Mémo sécurité en mer · Tous droits réservés · NautiLink · V0.0.1 · build 48 · commit 37f9d1d
 - dans la log de nav les carte doivent avoir le fond de carte Fond de carte © les contributeurs d'OpenStreetMap · balisage © OpenSeaMap
+- faire dans WebApp  export CSV et yaml
