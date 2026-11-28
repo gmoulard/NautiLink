@@ -173,6 +173,12 @@ Future<void> openStartReel(BuildContext context) async {
 }
 
 /// Écran de démarrage (cahier des charges §5.3) de la vraie application.
+/// Fond des cartes d'alerte, lisible en thème clair comme en sombre.
+Color _fondAlerte(BuildContext context) =>
+    Theme.of(context).brightness == Brightness.dark
+    ? NlColors.betaBgDark
+    : const Color(0xFFFBE9E9);
+
 class StartReelScreen extends StatefulWidget {
   const StartReelScreen({super.key, required this.bateaux});
   final List<BateauNl> bateaux;
@@ -763,7 +769,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
                 // amis sans e-mail, qui ne seront pas prévenus.
                 if (depot.plateforme == 'ios') ...[
                   Card(
-                    color: const Color(0xFFFBE9E9),
+                    color: _fondAlerte(context),
                     child: ListTile(
                       leading: const Icon(
                         Icons.phone_iphone,
@@ -776,7 +782,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
                       subtitle: () {
                         final sansEmail = [
                           for (final c in depot.contacts)
-                            if (c.email?.trim().isEmpty ?? true) c.nom,
+                            if (!_emailPossible(c)) c.nom,
                         ];
                         return sansEmail.isEmpty
                             ? null
@@ -805,7 +811,7 @@ class _StartReelScreenState extends State<StartReelScreen> {
                 // RG-SOS-14, RG-NAV-25 : avertissement sans ami coché.
                 if (aucunSos || !sosCoche)
                   Card(
-                    color: const Color(0xFFFBE9E9),
+                    color: _fondAlerte(context),
                     child: ListTile(
                       leading: const Icon(
                         Icons.warning_amber,
@@ -1434,7 +1440,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                       const SizedBox(height: 8),
                       if (refus != null)
                         Card(
-                          color: const Color(0xFFFBE9E9),
+                          color: _fondAlerte(context),
                           child: ListTile(
                             leading: const Icon(
                               Icons.error_outline,
@@ -1469,7 +1475,7 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
                           children: [
                             for (final s in depot.envoisSms.echecsPosition)
                               Card(
-                                color: const Color(0xFFFBE9E9),
+                                color: _fondAlerte(context),
                                 child: ListTile(
                                   leading: const Icon(
                                     Icons.sms_failed_outlined,
