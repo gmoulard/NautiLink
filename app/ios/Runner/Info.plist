@@ -24,6 +24,11 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- Chiffrement : seulement celui du système (HTTPS), aucun chiffrement
+	     propre dans app/lib : réponse « non » à la question d'Apple sur
+	     l'exportation, posée sinon à chaque envoi (D-194, TODO-10.9). -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

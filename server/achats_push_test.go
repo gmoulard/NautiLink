@@ -47,7 +47,7 @@ func (f *fauxServices) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`{"purchaseState":` + string(rune('0'+f.etatPlay)) + `,"orderId":"GPA.1234","acknowledgementState":0}`))
 	case strings.HasPrefix(r.URL.Path, "/inApps/v1/transactions/"):
 		charge, _ := json.Marshal(map[string]any{"transactionId": "t1", "originalTransactionId": "o1",
-			"productId": f.produit, "bundleId": "fr.nautilink.nautilink"})
+			"productId": f.produit, "bundleId": "org.moulard.nautilink"})
 		_, _ = w.Write([]byte(`{"signedTransactionInfo":"e30.` + base64.RawURLEncoding.EncodeToString(charge) + `.c2ln"}`))
 	case strings.Contains(r.URL.Path, "/messages:send"):
 		if strings.Contains(string(b), f.perime) && f.perime != "" {
@@ -100,7 +100,7 @@ func brancherServices(t *testing.T, e *essai) *fauxServices {
 		t.Fatal(err)
 	}
 	cfg := config{Produit: "nautilink_abonnement_10_ans", GooglePlayCompte: chemin, GooglePlayPaquet: "fr.nautilink.nautilink",
-		AppStoreCle: p8, AppStoreCleID: "CLE1", AppStoreEmetteur: "emetteur", AppleBundle: "fr.nautilink.nautilink",
+		AppStoreCle: p8, AppStoreCleID: "CLE1", AppStoreEmetteur: "emetteur", AppleBundle: "org.moulard.nautilink",
 		FCMCompte: chemin, APNsCle: p8, APNsCleID: "CLE2", APNsEquipe: "EQUIPE"}
 	e.a.achats = nouveauxAchats(cfg)
 	e.a.achats.urlPlay, e.a.achats.urlStore, e.a.achats.client = srv.URL, srv.URL, srv.Client()

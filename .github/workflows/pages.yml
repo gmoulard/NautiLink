@@ -11,7 +11,13 @@ name: Site GitHub Pages
 # application suit le code courant. Plus d'IPA de démonstration (D-191).
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
 #   site/downloads/COMMITS.txt                 « fichier commit version build » de chaque application
-# Aucune publication dans les stores (D-61).
+# Aucune publication sur Google Play (D-61). App Store (D-194, TODO-10.9) : le
+# job « ios » construit aussi une version signée et l'envoie à App Store Connect
+# quand les secrets APPLE_TEAM_ID, APP_STORE_CONNECT_KEY_ID,
+# APP_STORE_CONNECT_ISSUER_ID et APP_STORE_CONNECT_KEY_P8 sont posés (guide :
+# docs/etudes/app-store.md) ; sans eux l'étape est sautée, sans échec.
+# Adresse de l'App Store (site/app-store.txt, vide tant que l'application n'est
+# pas acceptée) : blocs « app-store » de site/index.html montrés ou retirés.
 # Versions (D-128, docs/09-versions.md) : site/VERSION pour le site, version de
 # app/pubspec.yaml pour l'application ; build = numéro d'exécution de ce workflow.
 #
@@ -147,6 +153,86 @@ jobs:
           path: app/${{ env.IPA_PROD }}
           if-no-files-found: error
           retention-days: 7
+      # Version signée pour l'App Store (D-194, TODO-10.9), après l'IPA non
+      # signée, toujours publiée sur le site. Signature automatique gérée par
+      # Apple (« cloud signing ») avec la clé d'API App Store Connect ; envoi à
+      # App Store Connect (TestFlight interne, puis soumission à la main).
+      # Un échec ici n'empêche pas la publication du site (continue-on-error) :
+      # il se lit dans le journal de l'étape et dans le résumé de l'exécution.
+      - name: App Store (version signée envoyée à App Store Connect, D-194)
+        continue-on-error: true
+        working-directory: app
+        env:
+          DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          # Contenu du fichier AuthKey_<id>.p8 tel quel (texte « -----BEGIN
+          # PRIVATE KEY----- … ») ; une version en base64 est aussi acceptée.
+          ASC_KEY_P8: ${{ secrets.APP_STORE_CONNECT_KEY_P8 }}
+        run: |
+          manquants=""
+          [ -n "$APPLE_TEAM_ID" ] || manquants="$manquants APPLE_TEAM_ID"
+          [ -n "$ASC_KEY_ID" ] || manquants="$manquants APP_STORE_CONNECT_KEY_ID"
+          [ -n "$ASC_ISSUER_ID" ] || manquants="$manquants APP_STORE_CONNECT_ISSUER_ID"
+          [ -n "$ASC_KEY_P8" ] || manquants="$manquants APP_STORE_CONNECT_KEY_P8"
+          if [ -n "$manquants" ]; then
+            echo "::notice title=App Store::Étape sautée : secrets absents :$manquants (guide : docs/etudes/app-store.md)"
+            exit 0
+          fi
+          # Clé d'API : seulement sur la machine de construction, effacée à la fin.
+          dossier="$HOME/.appstoreconnect/private_keys"
+          cle="$dossier/AuthKey_$ASC_KEY_ID.p8"
+          mkdir -p "$dossier"
+          trap 'rm -f "$cle"' EXIT
+          (
+            umask 077
+            if printf '%s' "$ASC_KEY_P8" | grep -q 'BEGIN PRIVATE KEY'; then
+              printf '%s\n' "$ASC_KEY_P8" > "$cle"
+            else
+              printf '%s' "$ASC_KEY_P8" | base64 --decode > "$cle"
+            fi
+          )
+          if ! grep -q 'BEGIN PRIVATE KEY' "$cle"; then
+            echo "::error title=App Store::APP_STORE_CONNECT_KEY_P8 n'est pas le contenu d'un fichier .p8"
+            exit 1
+          fi
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$cle"
+                -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          # Réglages Flutter (définitions, numéro de build, version de
+          # pubspec.yaml) sans construire : xcodebuild compile ensuite le code
+          # Dart en mode release, avec les mêmes définitions que l'IPA non signée.
+          flutter build ios --release --config-only $DEFINES --dart-define=NAUTILINK_MODE=reel
+          archive="$RUNNER_TEMP/NautiLink.xcarchive"
+          export_dir="$RUNNER_TEMP/app-store"
+          rm -rf "$archive" "$export_dir"
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$archive" \
+            "${AUTH[@]}" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            archive
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>export</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>teamID</key><string>$APPLE_TEAM_ID</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$archive" -exportPath "$export_dir" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" "${AUTH[@]}"
+          ipa=$(ls "$export_dir"/*.ipa | head -n 1)
+          echo "IPA de l'App Store : $ipa"
+          # altool lit la clé dans ~/.appstoreconnect/private_keys/AuthKey_<id>.p8.
+          xcrun altool --upload-app --type ios --file "$ipa" \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+          version=$(sed -nE 's/^version: *([^+ ]+).*/\1/p' pubspec.yaml)
+          echo "::notice title=App Store::Version $version, build $GITHUB_RUN_NUMBER envoyée à App Store Connect (traitement par Apple : 10 à 30 minutes, puis TestFlight)"
 
   build:
     needs: [choix, ios]
@@ -276,6 +362,20 @@ jobs:
           site_build=$(cat source/SITE_BUILD 2>/dev/null || echo inconnu)
           mkdir -p _site/downloads
           cp -r source/site/. _site/
+          # Adresse de l'App Store (D-194) : première ligne non commentée de
+          # site/app-store.txt ; absente, blocs « app-store » retirés des pages.
+          app_store=$(grep -v '^[[:space:]]*#' _site/app-store.txt 2>/dev/null | grep -m 1 . | tr -d '[:space:]' || true)
+          rm -f _site/app-store.txt
+          if [ -n "$app_store" ]; then
+            if ! printf '%s' "$app_store" | grep -qE '^https://apps\.apple\.com/[A-Za-z0-9/_.-]+$'; then
+              echo "::error::site/app-store.txt : adresse inattendue (attendu https://apps.apple.com/…) : $app_store"
+              exit 1
+            fi
+            sed -i -e "s|@APP_STORE@|$app_store|g" -e 's/ hidden data-app-store/ data-app-store/g' _site/*.html
+            echo "Lien de l'App Store : $app_store"
+          else
+            sed -i '/<!-- app-store:debut/,/<!-- app-store:fin -->/d' _site/*.html
+          fi
           cp -r source/web _site/app
           # COMMITS.txt : « fichier commit version build » de chaque application,
           # repris avec le fichier quand l'application n'est pas reconstruite

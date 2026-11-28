@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Droits de l'application iPhone (version de l'App Store, D-194, TODO-10.9).
+     Ignorés par l'IPA non signée (signée ensuite par Sideloadly ou AltStore,
+     qui ne permettent ni les notifications push ni la connexion Apple).
+     Capacités de l'identifiant org.moulard.nautilink : docs/etudes/app-store.md. -->
+<plist version="1.0">
+<dict>
+	<!-- Notifications push de l'ami (RG-IOS-06) ; « development » est remplacé
+	     par « production » à l'export pour l'App Store. -->
+	<key>aps-environment</key>
+	<string>development</string>
+	<!-- Connexion par Apple (RG-CPT-02, paquet sign_in_with_apple). -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+</dict>
+</plist>

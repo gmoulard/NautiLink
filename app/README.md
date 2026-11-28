@@ -7,7 +7,7 @@ Le prototype devient la vraie application, dans le même projet ([D-127](../docs
 | Mode | Construction | Données |
 |------|--------------|---------|
 | Démonstration (par défaut) | `flutter build …` ou `--dart-define=NAUTILINK_MODE=demo` | données d'exemple, aucun serveur, rien n'est réellement envoyé (ni SMS, ni e-mail, ni position) ; publiée sur le site (`nautilink-demo.apk`, IPA, démonstration Web) ; sur Android : `fr.nautilink.nautilink.demo`, « NautiLink démo » |
-| Vraie application | `--dart-define=NAUTILINK_MODE=reel` | serveur central, adresse `--dart-define=NAUTILINK_API=…` (par défaut `https://vdl.moulard.org/nautilink/api`) ; publiée sur le site (`nautilink.apk`, `nautilink-ios-non-signe.ipa`, D-129) ; sur Android : `fr.nautilink.nautilink`, « NautiLink » |
+| Vraie application | `--dart-define=NAUTILINK_MODE=reel` | serveur central, adresse `--dart-define=NAUTILINK_API=…` (par défaut `https://vdl.moulard.org/nautilink/api`) ; publiée sur le site (`nautilink.apk`, `nautilink-ios-non-signe.ipa`, D-129) ; sur Android : `fr.nautilink.nautilink`, « NautiLink » ; sur iPhone : `org.moulard.nautilink` (D-194), aussi envoyée à App Store Connect quand les secrets Apple sont posés ([guide](../docs/etudes/app-store.md)) |
 
 La spécification fait foi : [`docs/02-regles-metier.md`](../docs/02-regles-metier.md).
 

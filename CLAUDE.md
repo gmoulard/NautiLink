@@ -23,7 +23,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Textes affichés aux utilisateurs (avertissement bêta) | `docs/textes/` |
 | Application mobile (Flutter : Android, iPhone ; vraie application avec `--dart-define=NAUTILINK_MODE=reel`) | `app/` (`lib/`, `test/`), voir `app/README.md` ; Flutter 3.47.9 |
 | Serveur central (Go, hébergé sur pi-appliance, D-62) | `server/`, voir `server/README.md` ; image publiée par `.github/workflows/serveur.yml` |
-| Site de présentation (GitHub Pages) | `site/index.html`, page unique à sections (`#installer`, `#tarifs`, `#securite`, `#faq`, `#a-propos`, `#avertissement`, D-192), `style.css`, `memo.css` (styles du mémo sécurité) ; `memo.html`, page du mémo pour les applications, fabriquée par `app/outils/copier-memo.sh` avec la copie hors ligne de l'application (D-193) ; anciennes pages (`telecharger.html`, `abonnement.html`, `securite.html`, `faq.html`, `a-propos.html`, `avertissement.html`) en renvois vers leur section (`securite.html` vers `memo.html`) ; publié par `.github/workflows/pages.yml` |
+| Site de présentation (GitHub Pages) | `site/index.html`, page unique à sections (`#installer`, `#tarifs`, `#securite`, `#faq`, `#a-propos`, `#avertissement`, D-192), `style.css`, `memo.css` (styles du mémo sécurité) ; `memo.html`, page du mémo pour les applications, fabriquée par `app/outils/copier-memo.sh` avec la copie hors ligne de l'application (D-193) ; anciennes pages (`telecharger.html`, `abonnement.html`, `securite.html`, `faq.html`, `a-propos.html`, `avertissement.html`) en renvois vers leur section (`securite.html` vers `memo.html`) ; `app-store.txt`, adresse de l'application sur l'App Store, sans adresse tant qu'elle n'est pas acceptée (D-194) ; publié par `.github/workflows/pages.yml` |
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
 | Autorisations Android, versions visées, Google Play | `docs/etudes/autorisations-android.md` |
@@ -33,6 +33,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Disponibilité du nom NautiLink : marques, domaines, réseaux sociaux | `docs/etudes/nom-nautilink.md` |
 | Cartes et données du SHOM sur la carte du Web : licences, WMTS | `docs/etudes/shom-cartes.md` |
 | Plusieurs versions de l'Application web : déploiement, compatibilité | `docs/etudes/versions-web.md` |
+| Publier l'application iPhone sur l'App Store : identifiant, secrets du workflow, fiche, relecture | `docs/etudes/app-store.md` |
 
 ## Ordre de priorité en cas d'écart
 

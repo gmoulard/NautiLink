@@ -82,7 +82,7 @@ func configDepuisEnv() config {
 		AppStoreCle:        os.Getenv("NAUTILINK_APP_STORE_CLE"),
 		AppStoreCleID:      os.Getenv("NAUTILINK_APP_STORE_CLE_ID"),
 		AppStoreEmetteur:   os.Getenv("NAUTILINK_APP_STORE_EMETTEUR"),
-		AppleBundle:        env("NAUTILINK_APPLE_BUNDLE", "fr.nautilink.nautilink"),
+		AppleBundle:        env("NAUTILINK_APPLE_BUNDLE", "org.moulard.nautilink"),
 		AppStoreSandbox:    os.Getenv("NAUTILINK_APP_STORE_SANDBOX") == "1",
 		StripeCle:          os.Getenv("NAUTILINK_STRIPE_CLE"),
 		StripeSecretRappel: os.Getenv("NAUTILINK_STRIPE_SECRET_RAPPEL"),

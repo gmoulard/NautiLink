@@ -171,6 +171,9 @@
         <div class="feature">
           <h3>Install iPhone</h3>
           <p>Fichier IPA, à installer depuis un ordinateur : <a href="#iphone">comment faire</a>.</p>
+          <!-- app-store:debut : montré quand site/app-store.txt donne l'adresse de l'App Store (D-194), retiré sinon -->
+          <p hidden data-app-store><a class="button" href="@APP_STORE@">Télécharger dans l'App Store</a></p>
+          <!-- app-store:fin -->
           <a class="button" href="downloads/nautilink-ios-non-signe.ipa">Télécharger NautiLink pour iPhone</a>
           <p class="muted commit">Version V@VERSION_IPA_PROD@, build @BUILD_IPA_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA_PROD@">@COMMIT_IPA_PROD_COURT@</a>.</p>
         </div>
@@ -207,6 +210,13 @@
 
         <div class="legal" id="iphone">
           <span class="kicker">iPhone</span>
+          <!-- app-store:debut : montré quand site/app-store.txt donne l'adresse de l'App Store (D-194), retiré sinon -->
+          <div hidden data-app-store>
+            <h3>Installer NautiLink depuis l'App Store</h3>
+            <p>NautiLink est sur l'App Store : installez-la comme toute application, ses mises à jour arrivent seules.</p>
+            <p><a class="button" href="@APP_STORE@">Télécharger dans l'App Store</a></p>
+          </div>
+          <!-- app-store:fin -->
           <h3>Installer NautiLink sur iPhone, sans l'App Store</h3>
           <p>NautiLink arrivera plus tard sur l'App Store. En attendant, vous l'installez vous-même depuis un ordinateur (Windows ou Mac), avec votre identifiant Apple habituel : pas besoin de compte payant.</p>
           <p>Le fichier proposé ici n'est pas signé : c'est un outil d'installation gratuit, sur l'ordinateur, qui le signe à votre nom avec votre identifiant Apple, comme Apple l'exige.</p>

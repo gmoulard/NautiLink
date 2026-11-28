@@ -1,0 +1,5 @@
+# Adresse de NautiLink sur l'App Store (D-194, TODO-10.7), sur une ligne sans « # » :
+# par exemple https://apps.apple.com/fr/app/nautilink/id1234567890
+# Sans adresse (aujourd'hui), les blocs « Télécharger dans l'App Store » de
+# index.html sont retirés à la publication : rien ne change à l'écran.
+# Guide : docs/etudes/app-store.md, étape « Une fois l'application acceptée ».

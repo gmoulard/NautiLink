@@ -64,7 +64,7 @@ GARDER=1 ./essai-test.sh # garde l'environnement lancé
 | `NAUTILINK_GOOGLE_PLAY_COMPTE` | Fichier JSON du compte de service Google qui a accès à la Google Play Developer API ; vide : achat Google Play refusé (`achat_non_configure`) | vide |
 | `NAUTILINK_GOOGLE_PLAY_PAQUET` | Nom du paquet Android | `fr.nautilink.nautilink` |
 | `NAUTILINK_APP_STORE_CLE`, `NAUTILINK_APP_STORE_CLE_ID`, `NAUTILINK_APP_STORE_EMETTEUR` | Clé `.p8`, identifiant de la clé et « Issuer ID » de l'App Store Server API ; vides : achat App Store refusé | vides |
-| `NAUTILINK_APPLE_BUNDLE` | Identifiant de l'application iPhone (achats et notifications) | `fr.nautilink.nautilink` |
+| `NAUTILINK_APPLE_BUNDLE` | Identifiant de l'application iPhone (achats et notifications) | `org.moulard.nautilink` (D-194 ; Android garde `fr.nautilink.nautilink`) |
 | `NAUTILINK_APP_STORE_SANDBOX` | `1` : achats d'essai (environnement « sandbox ») | vide |
 | `NAUTILINK_STRIPE_CLE` | Clé secrète de l'API Stripe (`sk_test_…` en essai, `sk_live_…` en production), dans `.env` du Pi, jamais dans le dépôt ; vide : paiement Web refusé (`achat_non_configure`) | vide |
 | `NAUTILINK_STRIPE_SECRET_RAPPEL` | Secret de signature des avis Stripe (`whsec_…`), pour `POST <chemin>/api/v1/rappels/stripe` (événements `checkout.session.completed` et `checkout.session.async_payment_succeeded`) ; vide : avis refusés, l'abonnement s'ouvre alors au retour de la page de paiement | vide |

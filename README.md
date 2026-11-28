@@ -28,7 +28,7 @@ Ce dépôt contient la **spécification fonctionnelle**, le **site de présentat
 
 Le site tient sur une seule page à sections ([D-192](docs/07-decisions.md#d-192)) ; les anciennes adresses (`telecharger.html`, `abonnement.html`, `securite.html`, `faq.html`, `a-propos.html`, `avertissement.html`) restent valables et renvoient à leur section (`securite.html` à `memo.html`).
 
-Aucune publication dans les stores. Le site est construit et publié par le workflow « Site GitHub Pages » à chaque modification de `site/` ou `app/` sur `main` ; il faut que GitHub Pages soit activé (Settings → Pages → Source : GitHub Actions).
+Pas de publication sur Google Play ; l'application iPhone est en préparation pour l'App Store ([D-194](docs/07-decisions.md#d-194), [guide](docs/etudes/app-store.md)) : le même workflow l'envoie à App Store Connect quand les secrets Apple sont posés. Le site est construit et publié par le workflow « Site GitHub Pages » à chaque modification de `site/` ou `app/` sur `main` ; il faut que GitHub Pages soit activé (Settings → Pages → Source : GitHub Actions).
 
 ## Documents
 
@@ -58,6 +58,7 @@ Aucune publication dans les stores. Le site est construit et publié par le work
 | [`docs/etudes/nom-nautilink.md`](docs/etudes/nom-nautilink.md) | Étude : disponibilité du nom NautiLink, antériorité, domaines, réseaux sociaux. |
 | [`docs/etudes/shom-cartes.md`](docs/etudes/shom-cartes.md) | Étude : données du SHOM sur la carte de l'Application web, licences, service WMTS. |
 | [`docs/etudes/versions-web.md`](docs/etudes/versions-web.md) | Étude : plusieurs versions de l'Application web, déploiement et compatibilité. |
+| [`docs/etudes/app-store.md`](docs/etudes/app-store.md) | Mode d'emploi : publier l'application iPhone sur l'App Store (identifiant, App Store Connect, clé d'API, secrets du workflow, fiche, relecture, lien du site). |
 | [`docs/textes/avertissement-beta.md`](docs/textes/avertissement-beta.md) | Texte de l'avertissement : version bêta et responsabilité. |
 | [`docs/assets/`](docs/assets/) | Logo et images ; fichiers du logo (vectoriels, déclinaisons, icônes) dans [`docs/assets/logo/`](docs/assets/logo/). |
 | [`app/`](app/) | Application mobile Flutter (Android, iPhone), voir son [README](app/README.md). |
