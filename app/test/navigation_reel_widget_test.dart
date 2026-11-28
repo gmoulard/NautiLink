@@ -554,6 +554,33 @@ void main() {
   );
 
   testWidgets(
+    'iPhone : rejoindre une navigation d\'un autre téléphone du compte, sans SMS (D-177, D-184, RG-IOS-02)',
+    (tester) async {
+      serveur.navigationEnCours = true;
+      await connecter(tester, plateforme: 'ios');
+      await toucher(tester, 'Reprendre la dernière navigation');
+      await tester.tap(find.byKey(const Key('join-no')));
+      await attendre(tester);
+      expect(find.byKey(const Key('joined-info')), findsOneWidget);
+      expect(find.text('Terminer la navigation'), findsNothing);
+      final rejoindre = serveur.elements.firstWhere((e) => e.$1 == 'rejoindre');
+      expect(rejoindre.$2, 'n1');
+      await toucher(tester, 'Envoyer position');
+      await attendre(tester);
+      expect(
+        serveur.elements.where(
+          (e) =>
+              e.$1 == 'evenement' &&
+              (e.$3 as Map)['type'] == 'position_manuelle',
+        ),
+        isNotEmpty,
+      );
+      expect(sms.preremplis, isEmpty);
+      expect(sms.envoyes, isEmpty);
+    },
+  );
+
+  testWidgets(
     'iPhone : avertissement au démarrage, aucun SMS, SOS sans Internet (RG-IOS-02 à RG-IOS-04)',
     (tester) async {
       await connecter(tester, plateforme: 'ios');
@@ -565,6 +592,15 @@ void main() {
       expect(
         find.text('Amis sans e-mail, qui ne seront pas prévenus : Claire'),
         findsOneWidget,
+      );
+      // Pas de colonne « SMS » parmi les personnes alertées (RG-IOS-02).
+      expect(
+        find.byWidgetPredicate(
+          (w) =>
+              w.key is ValueKey<String> &&
+              (w.key as ValueKey<String>).value.startsWith('alert-sms-'),
+        ),
+        findsNothing,
       );
       await demarrer(tester);
       expect(find.text('Envoi de SMS'), findsNothing);

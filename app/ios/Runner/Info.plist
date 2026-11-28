@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>nautilink</string>
+	<string>NautiLink</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -66,9 +66,25 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<!-- Positions de la navigation et du SOS (RG-IOS-08). -->
+	<!-- Langues de l'application (app/lib/l10n) : boîtes du système dans la
+	     langue du téléphone. -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>fr</string>
+		<string>en</string>
+	</array>
+	<!-- Positions de la navigation et du SOS : autorisation « Pendant
+	     l'utilisation » seulement (RG-IOS-08, D-54) ; pas de clé « Toujours ». -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>NautiLink enregistre la position du bateau pendant la navigation, même écran éteint, et l'envoie avec le SOS.</string>
+	<!-- Photo du journal de bord (image_picker, appareil photo). -->
 	<key>NSCameraUsageDescription</key>
 	<string>NautiLink ajoute vos photos au journal de bord de la navigation.</string>
+	<!-- Exigée par image_picker pour la photothèque (l'application ne
+	     prend que l'appareil photo ; clé attendue par l'App Store). -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>NautiLink ajoute vos photos au journal de bord de la navigation.</string>
+	<!-- Notes vocales du journal de bord (record). -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>NautiLink enregistre vos notes vocales pour le journal de bord de la navigation.</string>
 	<key>UIBackgroundModes</key>
@@ -76,10 +92,8 @@
 		<!-- Positions automatiques en arrière-plan pendant une navigation
 		     démarrée à l'écran (RG-IOS-08, D-54). -->
 		<string>location</string>
-		<!-- Notifications push du suiveur (RG-IOS-06). -->
+		<!-- Notifications push de l'ami (RG-IOS-06). -->
 		<string>remote-notification</string>
 	</array>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>NautiLink enregistre la position du bateau pendant la navigation et l'envoie avec le SOS.</string>
 </dict>
 </plist>
