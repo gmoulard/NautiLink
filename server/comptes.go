@@ -21,7 +21,7 @@ import (
 // à la connexion suivante (RG-CPT-07).
 const (
 	versionAvertissement = "2026-11-24"
-	adresseAvertissement = "https://gmoulard.github.io/NautiLink/avertissement.html"
+	adresseAvertissement = "https://nautilink.moulard.org/index.html#avertissement" // section du site, page unique (D-192)
 	// Validité du lien de vérification de l'adresse e-mail (RG-CPT-09) et
 	// de celui du mot de passe oublié (RG-CPT-10).
 	dureeLienVerification = 7 * 24 * time.Hour

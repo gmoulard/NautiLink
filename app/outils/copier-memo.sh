@@ -1,9 +1,46 @@
 #!/bin/sh
-# Copie le mémo sécurité en mer du site dans les ressources de l'application
-# (RG-SOS-22, D-125) : le texte est rédigé une seule fois, dans site/securite.html.
+# Fabrique le mémo sécurité en mer de l'application (RG-SOS-22, D-125, D-192) :
+# le texte est rédigé une seule fois, dans la section #securite de site/index.html.
+# Le script en tire les sections placées entre les commentaires « memo:debut » et
+# « memo:fin » (le mémo, puis l'avertissement) et leurs styles (site/memo.css),
+# pour une page autonome lisible hors connexion, sans style.css ni images du site.
 # Lancé par le workflow « Site GitHub Pages » avant chaque construction ;
 # l'essai test/memo_test.dart échoue si la copie n'est plus à jour.
+# Usage : outils/copier-memo.sh [fichier de sortie]   (par défaut assets/memo/securite.html)
 set -eu
 ici=$(cd "$(dirname "$0")/.." && pwd)
-mkdir -p "$ici/assets/memo"
-cp "$ici/../site/securite.html" "$ici/assets/memo/securite.html"
+site="$ici/../site"
+sortie=${1:-"$ici/assets/memo/securite.html"}
+mkdir -p "$(dirname "$sortie")"
+if ! grep -q '<!-- memo:debut -->' "$site/index.html"; then
+  echo "copier-memo.sh : aucun commentaire memo:debut dans site/index.html" >&2
+  exit 1
+fi
+{
+  cat <<'FIN'
+<!doctype html>
+<html lang="fr" class="hors-site">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mémo sécurité en mer · NautiLink</title>
+<!-- Fichier fabriqué par app/outils/copier-memo.sh à partir de site/index.html et site/memo.css : ne pas le modifier. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+FIN
+  cat "$site/memo.css"
+  cat <<'FIN'
+</style>
+</head>
+<body>
+<main>
+FIN
+  sed -n '/<!-- memo:debut -->/,/<!-- memo:fin -->/p' "$site/index.html"
+  cat <<'FIN'
+</main>
+</body>
+</html>
+FIN
+} > "$sortie"

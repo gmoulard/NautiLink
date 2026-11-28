@@ -23,7 +23,7 @@ Dépôt de spécification fonctionnelle de NautiLink (Android + iPhone + Web + s
 | Textes affichés aux utilisateurs (avertissement bêta) | `docs/textes/` |
 | Application mobile (Flutter : Android, iPhone ; vraie application avec `--dart-define=NAUTILINK_MODE=reel`) | `app/` (`lib/`, `test/`), voir `app/README.md` ; Flutter 3.47.9 |
 | Serveur central (Go, hébergé sur pi-appliance, D-62) | `server/`, voir `server/README.md` ; image publiée par `.github/workflows/serveur.yml` |
-| Site de présentation (GitHub Pages) | `site/` (`index.html`, `telecharger.html`, `abonnement.html`, `securite.html`, `avertissement.html`, `faq.html`, `a-propos.html`, `style.css`), publié par `.github/workflows/pages.yml` |
+| Site de présentation (GitHub Pages) | `site/index.html`, page unique à sections (`#installer`, `#tarifs`, `#securite`, `#faq`, `#a-propos`, `#avertissement`, D-192), `style.css`, `memo.css` (mémo sécurité, aussi recopié dans l'application par `app/outils/copier-memo.sh`) ; anciennes pages (`telecharger.html`, `abonnement.html`, `securite.html`, `faq.html`, `a-propos.html`, `avertissement.html`) en renvois vers leur section ; publié par `.github/workflows/pages.yml` |
 | Envoi de SMS et MMS sur Android (Google Play, API, MMS) | `docs/etudes/sms-mms-android.md` |
 | GPS en arrière-plan sur Android, batterie, reprise | `docs/etudes/gps-arriere-plan-android.md` |
 | Autorisations Android, versions visées, Google Play | `docs/etudes/autorisations-android.md` |

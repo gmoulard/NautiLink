@@ -1,4 +1,4 @@
-/* Feuille commune du site de présentation NautiLink (toutes les pages ; securite.html y ajoute les styles du mémo, gardés dans la page pour l'application, D-161).
+/* Feuille du site de présentation NautiLink, page unique index.html (D-192) et pages de renvoi ; le mémo sécurité en mer a ses styles dans memo.css, chargé avant, aussi recopié dans l'application (D-161, RG-SOS-22).
    Identité graphique du 2026-11-26 (D-157) et mise en page de l'étude docs/etudes/Nautilinkimages261126.png (D-161) :
    valeurs dans docs/05-identite-marque.md §15. */
 :root {
@@ -69,12 +69,12 @@ p { margin: 0; }
 .topnav nav { display: flex; align-items: center; flex-wrap: wrap; gap: .25rem 1.2rem; }
 .topnav nav a { color: var(--fg); text-decoration: none; font-weight: 600; font-size: .98rem; min-height: 44px; display: inline-flex; align-items: center; gap: .35rem; border-bottom: 3px solid transparent; }
 .topnav nav a:hover { color: var(--link); }
-.topnav nav a[aria-current="page"] { border-bottom-color: var(--teal); }
+.topnav nav a[aria-current] { border-bottom-color: var(--teal); } /* section visible, au défilement (D-192) */
 .topnav nav a.home { min-width: 44px; justify-content: center; }
 .topnav nav a.home .ico { width: 1.7em; height: 1.7em; }
 .topnav nav a.button { border-bottom: 0; color: var(--action-fg); padding-inline: 1.3rem; }
-.topnav nav a.button[aria-current="page"] { outline: 3px solid var(--teal); outline-offset: 2px; }
-@media (min-width: 821px) { .topnav { position: sticky; top: 0; } }
+.topnav nav a.button[aria-current] { outline: 3px solid var(--teal); outline-offset: 2px; }
+@media (min-width: 821px) { .topnav { position: sticky; top: 0; } [id] { scroll-margin-top: 110px; } }
 
 /* Boutons */
 .button { display: inline-flex; align-items: center; gap: .55rem; min-height: 48px; font-weight: 700; text-decoration: none; border-radius: 999px; padding: .65rem 1.5rem; background: var(--action); color: var(--action-fg); box-shadow: 0 6px 16px rgba(11, 127, 134, .28); border: 0; }
@@ -153,14 +153,12 @@ main section { padding-top: 3rem; }
 .free { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
 .free li { background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); padding: .65rem 1rem; }
 
-/* Pages de texte (télécharger, abonnement, avertissement) */
-main.text section { padding-top: 1.5rem; }
-main.text section:first-child { padding-top: 2.2rem; }
-main.text .legal { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: clamp(1.2rem, 3vw, 2rem); width: calc(100% - 24px); }
-main.text h1 { font-size: clamp(1.8rem, 4.2vw, 2.5rem); }
-.legal { display: grid; gap: 1rem; }
-.legal h2 { font-size: 1.35rem; }
-.legal h3 { font-size: 1.05rem; margin-top: .5rem; }
+/* Blocs de texte des sections (installer, tarifs, FAQ, à propos, avertissement) */
+.legal { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: clamp(1.2rem, 3vw, 2rem); display: grid; gap: 1rem; min-width: 0; }
+.legal h3 { font-size: 1.2rem; margin-top: .5rem; }
+.legal .kicker + h3 { margin-top: 0; }
+.stack { display: grid; gap: 1.25rem; margin-top: 1.25rem; }
+.stack > * { max-width: 820px; }
 .legal .button { justify-self: start; }
 .legal ul { margin: 0; padding-left: 1.3rem; display: grid; gap: .35rem; }
 /* FAQ (D-171) */
@@ -173,6 +171,8 @@ code { font-size: .9em; background: var(--page); border: 1px solid var(--line); 
 .note { background: var(--page); border-left: 4px solid var(--teal); border-radius: 12px; padding: 1rem 1.2rem; }
 .note.danger { background: var(--alert-bg); border-left-color: var(--alert); color: var(--alert-text); font-weight: 600; }
 .commit { font-size: .85rem; }
+/* Pages de renvoi des anciennes adresses (D-192) */
+.renvoi { padding-block: 3rem; }
 
 /* Vagues et pied de page */
 .waves { margin-top: 2.5rem; height: 70px; }

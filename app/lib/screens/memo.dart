@@ -7,7 +7,8 @@ import '../data.dart';
 import '../l10n/app_localizations.dart';
 
 /// Mémo sécurité en mer intégré à l'application, lisible hors connexion
-/// (RG-SOS-22, D-125) : copie de `site/securite.html` faite à chaque
+/// (RG-SOS-22, D-125, D-192) : page tirée de la section #securite de
+/// `site/index.html` (et de son avertissement) à chaque
 /// construction par `outils/copier-memo.sh`.
 const securityMemoAsset = 'assets/memo/securite.html';
 

@@ -15,15 +15,17 @@ Ce dépôt contient la **spécification fonctionnelle**, le **site de présentat
 | | Adresse |
 |---|---|
 | **Site de présentation** | **<https://nautilink.moulard.org/index.html>** |
-| Installer l'application (Android, iPhone) | <https://nautilink.moulard.org/telecharger.html#application> |
-| Version gratuite et abonnement | <https://nautilink.moulard.org/abonnement.html> |
+| Installer l'application (Android, iPhone) | <https://nautilink.moulard.org/index.html#installer> |
+| Version gratuite et abonnement | <https://nautilink.moulard.org/index.html#tarifs> |
 | Propositions de design (11 maquettes) | <https://nautilink.moulard.org/designs/> |
 | Maquettes de l'application Android et Web (design « Radar de pluie ») | <https://nautilink.moulard.org/designs/app.html> |
 | Variantes du design « Météo marine » (10 maquettes) | <https://nautilink.moulard.org/designs/meteo.html> |
-| Mémo sécurité en mer | <https://nautilink.moulard.org/securite.html> |
-| Questions fréquentes | <https://nautilink.moulard.org/faq.html> |
-| À propos | <https://nautilink.moulard.org/a-propos.html> |
-| Avertissement bêta | <https://nautilink.moulard.org/avertissement.html> |
+| Mémo sécurité en mer | <https://nautilink.moulard.org/index.html#securite> |
+| Questions fréquentes | <https://nautilink.moulard.org/index.html#faq> |
+| À propos | <https://nautilink.moulard.org/index.html#a-propos> |
+| Avertissement bêta | <https://nautilink.moulard.org/index.html#avertissement> |
+
+Le site tient sur une seule page à sections ([D-192](docs/07-decisions.md#d-192)) ; les anciennes adresses (`telecharger.html`, `abonnement.html`, `securite.html`, `faq.html`, `a-propos.html`, `avertissement.html`) restent valables et renvoient à leur section.
 
 Aucune publication dans les stores. Le site est construit et publié par le workflow « Site GitHub Pages » à chaque modification de `site/` ou `app/` sur `main` ; il faut que GitHub Pages soit activé (Settings → Pages → Source : GitHub Actions).
 

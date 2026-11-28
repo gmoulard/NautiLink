@@ -18,8 +18,8 @@ import (
 // mémo sécurité en mer du site (RG-SOS-22).
 
 const (
-	adresseEquipe = "https://github.com/gmoulard/NautiLink/issues" // RG-COM-09, D-138
-	adresseMemo   = "https://gmoulard.github.io/NautiLink/securite.html"
+	adresseEquipe = "https://github.com/gmoulard/NautiLink/issues"      // RG-COM-09, D-138
+	adresseMemo   = "https://nautilink.moulard.org/index.html#securite" // section du site, page unique (D-192)
 	// Prévision marine de Météo-France (RG-NAV-37, D-166, D-169), adresses
 	// vérifiées le 2026-11-26 et le 2026-11-27 : page générale, et recherche
 	// de Météo-France sur la commune la plus proche de la dernière position.

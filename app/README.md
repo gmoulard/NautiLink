@@ -35,7 +35,7 @@ La spécification fait foi : [`docs/02-regles-metier.md`](../docs/02-regles-meti
 - menu de l'accueil (TODO-5.7) : « Contacts » : une seule liste d'amis, sans case de rôle ; ajout, modification, suppression, périmètre *navigateur* ou *navigation*, invitation par e-mail ou par téléphone (lien affiché, « Envoyer par SMS » prérempli sur Android, « Copier le lien » sur iPhone : D-137), annulation, changement de périmètre, retrait ; liste gardée sur le téléphone et modifiable hors connexion, envoyée au retour (D-136) ;
 - « Paramètres » : fréquence par défaut, SMS, types de SMS, photo en MMS, synchronisés champ par champ avec le Web ; sur iPhone, mention que les SMS sont sans effet (D-137) ;
 - « Alertes SOS » (historique, statuts des SMS, e-mails ; alertes encore en file hors connexion), « Assistance » (« Écrire à l'équipe NautiLink » vers la page de suivi du projet en attendant une adresse : D-138 ; avertissement bêta ; mémo), « Quota et abonnement » (« Souscrire l'abonnement » : achat Google Play et App Store pas encore ouvert, TODO-5.8, TODO-10.6) ;
-- mémo sécurité en mer : copie de `site/securite.html` dans `assets/memo/`, faite par `outils/copier-memo.sh` (lancé par le workflow avant les essais et les constructions ; `test/memo_test.dart` échoue si la copie est périmée) ; ouvert dans l'application sur Android et iPhone, dans les deux modes, et sur le site depuis la démonstration Web (RG-SOS-22).
+- mémo sécurité en mer : page autonome `assets/memo/securite.html`, tirée des sections `#securite` et `#avertissement` de `site/index.html` (entre les commentaires `memo:debut` et `memo:fin`) et de `site/memo.css` par `outils/copier-memo.sh` (D-192) (lancé par le workflow avant les essais et les constructions ; `test/memo_test.dart` échoue si la copie est périmée) ; ouvert dans l'application sur Android et iPhone, dans les deux modes, et sur le site depuis la démonstration Web (RG-SOS-22).
 
 ## Services externes : réglages de construction
 
@@ -82,7 +82,7 @@ L'APK de production (`nautilink.apk`) est signé par le workflow « Site GitHub 
 Flutter 3.47.9 (version fixée aussi dans `.github/workflows/pages.yml`).
 
 ```bash
-./outils/copier-memo.sh                       # après une modification de site/securite.html
+./outils/copier-memo.sh                       # après une modification du mémo (site/index.html, site/memo.css)
 flutter test                                  # démonstration, client de l'API, file d'attente, mode réel (faux serveur)
 flutter analyze
 flutter run --dart-define=NAUTILINK_MODE=reel --dart-define=NAUTILINK_API=http://10.0.2.2:8080/nautilink/api   # émulateur Android, serveur local
@@ -98,6 +98,6 @@ NAUTILINK_BASE_ESSAI='postgres://nautilink@127.0.0.1:5432/nautilink' \
   flutter test test/essai_serveur_test.dart
 ```
 
-Le workflow « Site GitHub Pages » construit et publie sur le site, sans passer par les stores : la démonstration Web V0 figée (`app/`, D-144), l'APK Android de la vraie application (`downloads/nautilink.apk`) et de la démonstration (`downloads/nautilink-demo.apk`), l'IPA iPhone non signée de la vraie application (`downloads/nautilink-ios-non-signe.ipa`, construite sur macOS, D-191 ; plus d'IPA de démonstration) et `downloads/SHA256SUMS.txt`. Mode d'emploi : `site/telecharger.html`.
+Le workflow « Site GitHub Pages » construit et publie sur le site, sans passer par les stores : la démonstration Web V0 figée (`app/`, D-144), l'APK Android de la vraie application (`downloads/nautilink.apk`) et de la démonstration (`downloads/nautilink-demo.apk`), l'IPA iPhone non signée de la vraie application (`downloads/nautilink-ios-non-signe.ipa`, construite sur macOS, D-191 ; plus d'IPA de démonstration) et `downloads/SHA256SUMS.txt`. Mode d'emploi : section « Installer » de `site/index.html` (`#installer`).
 
 Paramètres du workflow : en lancement manuel (« Actions » → « Site GitHub Pages » → « Run workflow »), les cases « website » (pages du site et démonstration Web), « android » et « iphone », cochées par défaut, choisissent les livrables à reconstruire ; sur un push dans `main`, le site est toujours reconstruit, les applications Android et iPhone seulement si `app/`, le mémo `site/securite.html` (intégré aux applications) ou le workflow ont changé. Un site non reconstruit reprend l'artefact `site-source` de la dernière exécution réussie (conservé 90 jours). Une application non reconstruite reprend le fichier déjà publié sur le site, avec son commit (`downloads/COMMITS.txt`). Versions ([docs/09-versions.md](../docs/09-versions.md), D-128) : application selon `version:` de `pubspec.yaml`, site selon `site/VERSION`, build = numéro d'exécution du workflow. Le pied de page de tous les écrans de l'application (`AppFrame` dans `lib/theme.dart`) et de chaque page du site donne : « Tous droits réservés · https://github.com/gmoulard/NautiLink · V0.0.1 · build n · commit abcdef0 » (`--dart-define=NAUTILINK_VERSION`, `NAUTILINK_BUILD`, `NAUTILINK_COMMIT` ; « version locale » en local) ; sur `telecharger.html`, la version, le build et le commit de chaque application sont sous son bouton.

@@ -203,12 +203,12 @@ String smsTypeLabel(AppLocalizations l, SmsType t) => switch (t) {
   SmsType.end => l.smsTypeEnd,
 };
 
-/// Page d'information sur l'abonnement du site de présentation (RG-ECO-10).
+/// Section « Tarifs » du site de présentation, page unique (RG-ECO-10, D-192).
 const subscriptionInfoUrl =
-    'https://gmoulard.github.io/NautiLink/abonnement.html';
+    'https://nautilink.moulard.org/index.html#tarifs';
 
-/// Mémo sécurité en mer du site de présentation (TODO-3.12 ; vraie application : RG-SOS-22).
-const securityMemoUrl = 'https://gmoulard.github.io/NautiLink/securite.html';
+/// Section « Sécurité en mer » du site de présentation (TODO-3.12 ; vraie application : RG-SOS-22 ; page unique : D-192).
+const securityMemoUrl = 'https://nautilink.moulard.org/index.html#securite';
 
 /// Site vitrine, cité en pied de page (TODO-3.13 ; lien « NautiLink » : D-149, D-178).
 const siteUrl = 'https://nautilink.moulard.org/index.html';

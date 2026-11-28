@@ -92,9 +92,10 @@ jobs:
             website="$WEBSITE"; android="$ANDROID"; iphone="$IPHONE"
           else
             website=true
-            # Applications reconstruites aussi quand le mémo sécurité change : il y est intégré (RG-SOS-22).
+            # Applications reconstruites aussi quand le mémo sécurité peut changer : il y est intégré,
+            # tiré de site/index.html et site/memo.css (RG-SOS-22, D-192).
             if [ -z "$AVANT" ] || ! git cat-file -e "$AVANT^{commit}" 2>/dev/null \
-               || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|site/securite\.html$|\.github/workflows/pages\.yml$)'; then
+               || git diff --name-only "$AVANT" HEAD | grep -qE '^(app/|site/index\.html$|site/memo\.css$|\.github/workflows/pages\.yml$)'; then
               android=true
             else
               android=false
@@ -133,7 +134,7 @@ jobs:
         env:
           DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
         run: |
-          ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
+          ./outils/copier-memo.sh   # mémo sécurité en mer, tiré de site/index.html (RG-SOS-22, D-192)
           flutter pub get
           # Mêmes définitions que l'APK de production.
           flutter build ios --release --no-codesign $DEFINES --dart-define=NAUTILINK_MODE=reel
@@ -187,7 +188,7 @@ jobs:
         if: needs.choix.outputs.flutter == 'true'
         working-directory: app
         run: |
-          ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
+          ./outils/copier-memo.sh   # mémo sécurité en mer, tiré de site/index.html (RG-SOS-22, D-192)
           flutter pub get
           flutter analyze
           flutter test
@@ -310,8 +311,8 @@ jobs:
           else
             reprendre "$IPA_PROD"
           fi
-          # Pieds de page : version, build et commit du site ; telecharger.html :
-          # ceux de chaque application.
+          # Pied de page : version, build et commit du site ; section « Installer »
+          # de index.html (page unique, D-192) : ceux de chaque application.
           champ() { v=$(awk -v f="$1" -v n="$2" '$1 == f { print $n }' _site/downloads/COMMITS.txt); echo "${v:-$3}"; }
           sed -i -e "s/@COMMIT_COURT@/${site_commit::7}/g" -e "s/@COMMIT@/$site_commit/g" \
                  -e "s/@VERSION@/$site_version/g" -e "s/@BUILD@/$site_build/g" _site/*.html

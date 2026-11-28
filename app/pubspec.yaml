@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.5.2+1
+version: 0.5.3+1
 
 environment:
   sdk: ^3.13.7
@@ -89,7 +89,7 @@ flutter:
     # Photo du bateau de l'utilisateur, réduite (docs/etudes/IMG_20230508_112008.jpg),
     # bandeau de l'accueil et de la connexion (D-178).
     - assets/bandeau-bateau.jpg
-    # Mémo sécurité en mer, copié de site/securite.html par outils/copier-memo.sh (RG-SOS-22).
+    # Mémo sécurité en mer, tiré de la section #securite de site/index.html par outils/copier-memo.sh (RG-SOS-22, D-192).
     - assets/memo/securite.html
   # Police de l'identité graphique du 2026-11-26 (D-157, docs/05-identite-marque.md §15),
   # sous licence OFL : assets/fonts/Inter-OFL.txt.

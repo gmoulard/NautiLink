@@ -11,7 +11,7 @@ import (
 // « Souscrire l'abonnement » par carte bancaire avec Stripe (RG-ECO-11,
 // stripe.go) ; lien vers la page d'information du site.
 
-const adresseInfoAbonnement = "https://gmoulard.github.io/NautiLink/abonnement.html"
+const adresseInfoAbonnement = "https://nautilink.moulard.org/index.html#tarifs" // section du site, page unique (D-192)
 
 var libellesCanal = map[string]string{"stripe": "carte bancaire sur le Web", "google_play": "Google Play", "app_store": "App Store"}
 

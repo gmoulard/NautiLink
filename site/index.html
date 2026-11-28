@@ -6,32 +6,40 @@
 <title>NautiLink</title>
 <meta name="description" content="NautiLink, le compagnon connecté du navigateur : partagez votre position en mer avec vos proches, tenez votre journal de bord, déclenchez une alerte SOS. Version bêta.">
 <link rel="icon" href="assets/logo-nautilink.png">
+<!-- Site vitrine sur une seule page à sections (D-192) : les anciennes pages (telecharger.html, abonnement.html,
+     securite.html, faq.html, a-propos.html, avertissement.html) renvoient à leur section.
+     Mise en page du site (D-161) : style.css ; mémo sécurité en mer : memo.css.
+     Les sections entre les commentaires « memo:debut » et « memo:fin » (mémo et avertissement) sont aussi copiées
+     dans l'application mobile par app/outils/copier-memo.sh (RG-SOS-22) : elles ne doivent dépendre
+     ni de style.css ni des images du site.
+     Section « Avertissement » : texte copié de docs/textes/avertissement-beta.md (source de référence). -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="memo.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="topnav">
   <div class="wrap">
-    <a class="brand" href="index.html">
+    <a class="brand" href="#accueil">
       <img src="assets/logo-nautilink.png" alt="" width="64" height="64">
       <span><span class="name">NautiLink<span class="badge">Version bêta</span></span><span class="sig">Your sea, your safety, your story.</span></span>
     </a>
     <nav aria-label="Navigation principale">
-      <a class="home" href="index.html" aria-label="Accueil" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg></a>
-      <a href="index.html#fonctions">Fonctionnalités</a>
-      <a href="abonnement.html">Tarifs</a>
-      <a href="faq.html">FAQ</a>
-      <a href="securite.html">Sécurité en mer</a>
-      <a href="a-propos.html">À propos</a>
-      <a class="button" href="telecharger.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4-5.7 5.7-5.7-5.7 1.4-1.4 3.3 3.3zM4 18h16v2H4z"/></svg>Télécharger</a>
+      <a class="home" href="#accueil" aria-label="Accueil"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg></a>
+      <a href="#fonctions">Fonctionnalités</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#faq">FAQ</a>
+      <a href="#securite">Sécurité en mer</a>
+      <a href="#a-propos">À propos</a>
+      <a class="button" href="#installer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 3h2v9.6l3.3-3.3 1.4 1.4-5.7 5.7-5.7-5.7 1.4-1.4 3.3 3.3zM4 18h16v2H4z"/></svg>Télécharger</a>
     </nav>
   </div>
 </header>
 
-<section class="hero" aria-labelledby="titre">
+<section class="hero" id="accueil" aria-labelledby="titre">
   <div class="wrap">
     <h1 id="titre"><span>Naviguez en sécurité.</span><span>Partagez vos logs de navigation.</span></h1>
     <div class="bar" aria-hidden="true"></div>
@@ -42,7 +50,7 @@
 
 <nav class="strip" aria-label="Fonctions de NautiLink">
   <ul class="wrap">
-    <li><a href="securite.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2 4 5v6c0 5.2 3.4 9.7 8 11 4.6-1.3 8-5.8 8-11V5zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.4-5.4 1.4 1.4z"/></svg><span>Sécurité en mer</span></a></li>
+    <li><a href="#securite"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2 4 5v6c0 5.2 3.4 9.7 8 11 4.6-1.3 8-5.8 8-11V5zm-1.2 14.2-4-4 1.4-1.4 2.6 2.6 5.4-5.4 1.4 1.4z"/></svg><span>Sécurité en mer</span></a></li>
     <li><a href="#partage"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 10.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-6.5 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm13 0a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM12 12c-3.3 0-6 1.6-6 4v2.5h12V16c0-2.4-2.7-4-6-4zm-7.4.9C2.5 13.2 1 14.3 1 16v2.5h3.5V16c0-1.2.4-2.2 1.1-3.1h-1zm14.8 0h-1c.7.9 1.1 1.9 1.1 3.1v2.5H23V16c0-1.7-1.5-2.8-3.6-3.1z"/></svg><span>Partage avec vos proches</span></a></li>
     <li><a href="#journal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M5 2h10l5 5v15H5zm9 1.8V8h4.2zM8 11v1.6h9V11zm0 3.5v1.6h9v-1.6zm0 3.5v1.6h6V18z"/></svg><span>Journal de bord</span></a></li>
     <li><a href="#sos"><span class="sos-dot" aria-hidden="true">SOS</span><span>Alerte SOS</span></a></li>
@@ -58,7 +66,7 @@
       <div class="body">
         <h2>Préparez votre navigation en toute sérénité</h2>
         <p>Numéros d'urgence, gilet de sauvetage, matériel obligatoire, météo, message MAYDAY, homme à la mer : notre mémo à garder à bord.</p>
-        <a class="button navy" href="securite.html">En savoir plus<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11h12.2l-5.6-5.6L12 4l8 8-8 8-1.4-1.4 5.6-5.6H4z"/></svg><span class="visually-hidden"> : mémo sécurité en mer</span></a>
+        <a class="button navy" href="#securite">En savoir plus<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11h12.2l-5.6-5.6L12 4l8 8-8 8-1.4-1.4 5.6-5.6H4z"/></svg><span class="visually-hidden"> : mémo sécurité en mer</span></a>
       </div>
     </article>
     <article class="card simple">
@@ -85,7 +93,7 @@
       <div class="features">
         <div class="feature" id="partage">
           <h3>Position partagée</h3>
-          <p>Votre position part à la fréquence choisie, de 15 minutes à 10 jours, ou à la demande. Vos proches suivent votre route sur une carte, en direct.</p>
+          <p>Votre position part à la fréquence choisie au démarrage de la navigation, de 15 minutes à 10 jours, ou à la demande. Vos proches suivent votre route sur une carte, en direct.</p>
         </div>
         <div class="feature" id="journal">
           <h3>Journal de bord</h3>
@@ -99,11 +107,11 @@
           <h3>Fonctionne sans Internet</h3>
           <p>Le GPS et les SMS ne dépendent pas d'Internet. Les positions enregistrées en mer partent vers le serveur dès que la connexion revient.</p>
         </div>
-        <div class="feature">
+        <div class="feature" id="acces">
           <h3>Vos proches, vos règles</h3>
           <p>Vous invitez qui vous voulez, pour une navigation ou pour toutes. Vous retirez un accès en un instant.</p>
         </div>
-        <div class="feature">
+        <div class="feature" id="bateaux">
           <h3>Plusieurs bateaux</h3>
           <p>Un compte, plusieurs bateaux, chacun avec sa fiche : type, longueur, immatriculation, port d'attache, caractéristiques techniques.</p>
         </div>
@@ -111,34 +119,7 @@
     </div>
   </section>
 
-  <section id="essayer">
-    <div class="wrap">
-      <div class="head">
-        <span class="kicker">Installer</span>
-        <h2>Sur Android, sur iPhone ou dans l'Application web</h2>
-        <p class="muted">NautiLink est en bêta, branchée sur le serveur, et continue d'évoluer : <a href="telecharger.html#application">Installer NautiLink</a>.</p>
-      </div>
-      <div class="features">
-        <div class="feature">
-          <h3>Application web</h3>
-          <p>Créez votre compte et suivez vos navigations depuis un navigateur Internet.</p>
-          <a class="button" href="https://vdl.moulard.org/nautilink/">Ouvrir l'Application web</a>
-        </div>
-        <div class="feature">
-          <h3>Install Android</h3>
-          <p>NautiLink n'est pas encore publiée sur Google Play : vous l'installez directement depuis ce site.</p>
-          <a class="button" href="telecharger.html#application">Installer NautiLink</a>
-        </div>
-        <div class="feature">
-          <h3>Install iPhone</h3>
-          <p>NautiLink n'est pas encore publiée sur l'App Store : vous l'installez directement depuis ce site.</p>
-          <a class="button" href="telecharger.html#application">Installer NautiLink</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="comment">
+  <section id="comment" data-menu="fonctions">
     <div class="wrap">
       <div class="head">
         <span class="kicker">Comment ça marche</span>
@@ -168,33 +149,537 @@
     </div>
   </section>
 
-  <section id="gratuit">
-    <div class="wrap">
+  <section id="installer">
+    <div class="wrap" id="application">
       <div class="head">
-        <span class="kicker">Gratuit</span>
-        <h2>Naviguer gratuitement, suivre toujours gratuitement</h2>
+        <span class="kicker">Installer</span>
+        <h2>Sur Android, sur iPhone ou dans l'Application web</h2>
+        <p class="muted">NautiLink n'est pas encore publiée sur Google Play ni sur l'App Store : vous l'installez directement depuis ce site. NautiLink est en bêta et continue d'évoluer : la dernière construction publiée ici est la version de production, branchée sur le serveur de production (votre compte, vos bateaux, vos navigations).</p>
       </div>
-      <div class="quota">
+      <div class="features">
         <div class="feature">
-          <span class="big">24 h</span>
-          <p>de navigation gratuites sur les 7 derniers jours glissants. Chaque minute utilisée redevient disponible 7 jours plus tard. Au-delà, un abonnement de 15 € pour 10 ans lève la limite.</p>
-          <a href="abonnement.html">Version gratuite - abonnement : tout savoir</a>
+          <h3>Application web</h3>
+          <p>Créez votre compte et suivez vos navigations depuis un navigateur Internet.</p>
+          <a class="button" href="https://vdl.moulard.org/nautilink/">Ouvrir l'Application web</a>
         </div>
-        <ul class="free">
-          <li>Suivre la navigation d'un proche : gratuit, sans limite.</li>
-          <li>Consulter vos navigations, traces, photos et journaux : gratuit, pour toujours.</li>
-          <li>Déclencher un SOS : toujours possible, quota épuisé ou non.</li>
-        </ul>
+        <div class="feature">
+          <h3>Install Android</h3>
+          <p>Fichier APK, à installer depuis le téléphone : <a href="#android">comment faire</a>.</p>
+          <a class="button" href="downloads/nautilink.apk">Télécharger NautiLink pour Android</a>
+          <p class="muted commit">Version V@VERSION_APK_PROD@, build @BUILD_APK_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK_PROD@">@COMMIT_APK_PROD_COURT@</a>.</p>
+        </div>
+        <div class="feature">
+          <h3>Install iPhone</h3>
+          <p>Fichier IPA, à installer depuis un ordinateur : <a href="#iphone">comment faire</a>.</p>
+          <a class="button" href="downloads/nautilink-ios-non-signe.ipa">Télécharger NautiLink pour iPhone</a>
+          <p class="muted commit">Version V@VERSION_IPA_PROD@, build @BUILD_IPA_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA_PROD@">@COMMIT_IPA_PROD_COURT@</a>.</p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="legal" id="version">
+          <span class="kicker">Production (bêta)</span>
+          <h3>Ce que fait cette version</h3>
+          <p>Créez votre compte dans l'application ou sur <a href="https://vdl.moulard.org/nautilink/">l'Application web</a>, puis connectez-vous sur le téléphone : il est associé à vos bateaux.</p>
+          <ul>
+            <li>compte, connexion, association du téléphone à vos bateaux ;</li>
+            <li>démarrage d'une navigation (destination en texte ou sur une carte, personnes à bord, personnes alertées, « Ajouter une personne »), positions automatiques écran éteint, position, NOTE, Photo, Vocal, fin de navigation ;</li>
+            <li>SMS par la carte SIM sur Android, envoyés automatiquement une fois l'envoi de SMS autorisé : SOS, positions, notes, photos (avec le lien, et le MMS prérempli si vous le voulez), notes vocales, début, fin et invitations ; sans autorisation, ils s'ouvrent préremplis dans l'application SMS ;</li>
+            <li>alerte SOS : e-mails envoyés par le serveur, SMS SOS sur Android ; sur iPhone, par Internet seulement ;</li>
+            <li>trace pour vous : chaque envoi vous parvient aussi par SMS (Android) et par e-mail, et le journal complet par e-mail à la fin de la navigation ;</li>
+            <li>contacts, invitations, paramètres, langue, historique des alertes SOS ;</li>
+            <li>« Mes amis en mer » : tableau de bord et page de la navigation avec la carte, le journal, les photos et les notes vocales.</li>
+          </ul>
+          <p class="note">Pas encore ouverts : connexion par Google et Apple, notifications push, achat de l'abonnement. Hors connexion, les envois sont gardés sur le téléphone et partent au retour du réseau.</p>
+        </div>
+
+        <div class="legal" id="android">
+          <span class="kicker">Android</span>
+          <h3>Installer NautiLink sur Android</h3>
+          <ol class="steps">
+            <li>Ouvrez cette page sur votre téléphone Android et touchez « Télécharger NautiLink pour Android » ci-dessus.</li>
+            <li>Ouvrez le fichier téléchargé. Android demande d'autoriser votre navigateur à installer des applications : touchez « Paramètres », activez « Autoriser cette source », puis revenez.</li>
+            <li>Touchez « Installer ». Google Play Protect peut prévenir que l'application n'est pas connue, car elle n'est pas publiée sur Google Play : choisissez d'installer quand même si vous faites confiance à ce site.</li>
+            <li>Ouvrez NautiLink et acceptez l'avertissement.</li>
+          </ol>
+          <p class="muted">NautiLink est signée avec une clé fixe : une nouvelle version s'installe par-dessus la précédente, sans perdre la session ni les envois en attente. Seule exception : la première version signée avec cette clé demande de désinstaller une dernière fois l'ancienne.</p>
+        </div>
+
+        <div class="legal" id="iphone">
+          <span class="kicker">iPhone</span>
+          <h3>Installer NautiLink sur iPhone, sans l'App Store</h3>
+          <p>NautiLink arrivera plus tard sur l'App Store. En attendant, vous l'installez vous-même depuis un ordinateur (Windows ou Mac), avec votre identifiant Apple habituel : pas besoin de compte payant.</p>
+          <p>Le fichier proposé ici n'est pas signé : c'est un outil d'installation gratuit, sur l'ordinateur, qui le signe à votre nom avec votre identifiant Apple, comme Apple l'exige.</p>
+          <ol class="steps">
+            <li>Sur l'ordinateur, installez <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a> ou <a href="https://altstore.io/" target="_blank" rel="noopener">AltStore</a> en suivant leurs instructions. Sur Windows, ils peuvent demander d'installer aussi iTunes et iCloud.</li>
+            <li>Sur l'ordinateur, téléchargez <a href="downloads/nautilink-ios-non-signe.ipa">NautiLink pour iPhone</a> (fichier IPA).</li>
+            <li>Branchez l'iPhone à l'ordinateur avec son câble, déverrouillez-le et touchez « Se fier » si l'iPhone le demande.</li>
+            <li>Dans l'outil, choisissez le fichier téléchargé, entrez votre identifiant Apple et son mot de passe, puis lancez l'installation.</li>
+            <li>Sur l'iPhone, autorisez le développeur : Réglages, Général, VPN et gestion de l'appareil, touchez votre identifiant Apple, puis « Faire confiance ».</li>
+            <li>Si l'iPhone le demande, activez le mode développeur : Réglages, Confidentialité et sécurité, Mode développeur, puis redémarrez l'iPhone.</li>
+            <li>Ouvrez NautiLink, acceptez l'avertissement, puis autorisez la localisation « Pendant l'utilisation de l'app » : une navigation démarrée continue écran éteint.</li>
+          </ol>
+          <p class="note"><b>À refaire tous les 7 jours.</b> Avec un identifiant Apple gratuit, Apple limite l'installation à 7 jours : passé ce délai, NautiLink ne s'ouvre plus. Rebranchez l'iPhone et refaites l'installation avec l'outil (AltStore peut la renouveler seul quand l'ordinateur et l'iPhone sont sur le même Wi-Fi). Pensez-y avant de partir en mer.</p>
+          <p class="muted">Une nouvelle version s'installe de la même façon, par-dessus la précédente. Sur iPhone, NautiLink n'envoie aucun SMS : le SOS et les messages passent par Internet. Le nombre d'applications installées ainsi est limité par Apple ; ces règles sont celles d'Apple et peuvent changer.</p>
+        </div>
+
+        <div class="legal" id="verifier">
+          <span class="kicker">Vérifier</span>
+          <h3>Empreintes des fichiers</h3>
+          <p>Le fichier <a href="downloads/SHA256SUMS.txt">SHA256SUMS.txt</a> donne l'empreinte SHA-256 de chaque fichier. Elle permet de vérifier que le fichier téléchargé est bien celui construit par le projet, par exemple avec <code>sha256sum nautilink.apk</code>.</p>
+          <p class="muted">Les applications sont construites automatiquement à partir du code du dépôt <a href="https://github.com/gmoulard/NautiLink" target="_blank" rel="noopener">gmoulard/NautiLink</a>, dossier <code>app/</code>.</p>
+        </div>
       </div>
     </div>
   </section>
+
+  <section id="tarifs">
+    <div class="wrap">
+      <div class="head">
+        <span class="kicker">Version gratuite - abonnement</span>
+        <h2>Naviguer gratuitement, ou sans limite</h2>
+        <p class="muted">NautiLink est gratuit pour découvrir et pour naviguer de temps en temps. Seul le temps passé à naviguer au-delà du quota gratuit demande un abonnement. Suivre vos proches et consulter votre historique restent toujours gratuits.</p>
+      </div>
+      <div class="quota">
+        <div class="feature">
+          <span class="kicker">Version gratuite</span>
+          <span class="big">24 h</span>
+          <p>de navigation cumulées sur les 7 derniers jours glissants, par compte, tous bateaux confondus.</p>
+          <p class="muted">Chaque minute utilisée redevient disponible 7 jours plus tard. Il n'y a pas de remise à zéro à date fixe.</p>
+        </div>
+        <div class="feature">
+          <span class="kicker">Abonnement</span>
+          <span class="big">Sans limite</span>
+          <p>Une seule formule : 15 € payés une fois, pour 10 ans, qui lèvent la limite de navigation pour votre compte.</p>
+          <p class="muted">Pas de période d'essai : la version gratuite en tient lieu. Pas de renouvellement automatique : au bout de 10 ans, retour à la version gratuite. Achat sur Google Play, sur l'App Store ou sur le site Web (carte bancaire) ; un seul abonnement reconnu partout.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <p class="note">Les prix ne sont pas encore fixés. Pendant la bêta, aucun paiement n'est demandé.</p>
+        <div class="legal">
+          <span class="kicker">Bon à savoir</span>
+          <h3>Ce qui reste toujours gratuit</h3>
+          <ul class="free">
+            <li>Suivre la navigation d'un proche : gratuit, sans limite de durée.</li>
+            <li>Consulter vos navigations, traces, photos, notes et journaux de bord : gratuit, pour toujours.</li>
+            <li>Déclencher un SOS : toujours possible, quota épuisé ou non.</li>
+          </ul>
+
+          <h3>Quand le quota gratuit est épuisé</h3>
+          <ul class="free">
+            <li><b>Avant de partir</b> : vous ne pouvez pas démarrer une nouvelle navigation. Vous pouvez vous abonner, ou attendre que des minutes redeviennent disponibles ; l'application indique à quelle heure.</li>
+            <li><b>En pleine navigation</b> : elle continue encore 24 heures au plus. Vous êtes prévenu à l'épuisement puis une heure avant la clôture automatique, qui est annulée si vous vous abonnez entre-temps.</li>
+          </ul>
+
+          <h3>Où voir mon quota ?</h3>
+          <p>Dans l'application, touchez « Version gratuite » (ou « Version abonné ») en bas de l'écran d'accueil : l'écran « Quota et abonnement » montre le temps consommé, le temps disponible et les prochaines minutes récupérables.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- memo:debut -->
+  <section id="securite" class="memo" aria-labelledby="h-securite">
+    <div class="band">
+      <div class="wrap narrow">
+        <span class="eyebrow">NautiLink · à garder à bord <a class="badge" href="#avertissement">Version bêta</a></span>
+        <h2 id="h-securite">Mémo sécurité en mer</h2>
+        <p class="lede">Les gestes et les numéros qui comptent avant de larguer les amarres et quand ça tourne mal. En mer, la VHF reste le premier réflexe.</p>
+        <div class="numbers">
+          <div class="num primary">
+            <span class="label">En mer · VHF</span>
+            <span class="value">Canal 16</span>
+            <span class="when">Relie directement le CROSS de votre zone et les navires proches.</span>
+          </div>
+          <div class="num">
+            <span class="label">Téléphone · CROSS</span>
+            <span class="value" id="n196">196</span>
+            <span class="when">Gratuit, 24 h/24. À utiliser si la VHF ne fonctionne pas, ou depuis la côte.</span>
+            <button class="copy" type="button" data-copy="196">Copier</button>
+          </div>
+          <div class="num">
+            <span class="label">Urgence européenne</span>
+            <span class="value" id="n112">112</span>
+            <span class="when">Depuis la côte, et ailleurs en Europe.</span>
+            <button class="copy" type="button" data-copy="112">Copier</button>
+          </div>
+        </div>
+        <p class="rappel">Le 196 ne remplace pas le canal 16 en mer : la VHF alerte en même temps le CROSS et tous les bateaux qui peuvent vous porter secours.</p>
+      </div>
+    </div>
+
+    <nav class="wrap narrow toc" aria-label="Sommaire">
+      <a href="#avant">Avant de partir</a>
+      <a href="#gilet">Gilet</a>
+      <a href="#materiel">Matériel obligatoire</a>
+      <a href="#meteo">Météo</a>
+      <a href="#alerte">Donner l'alerte</a>
+      <a href="#homme">Homme à la mer</a>
+      <a href="#froid">Eau froide</a>
+      <a href="#alcool">Alcool</a>
+      <a href="#sources">Sources</a>
+      <a href="#avertissement">Avertissement</a>
+    </nav>
+
+    <div class="wrap narrow chapitres">
+
+      <section id="avant" aria-labelledby="h-avant">
+        <span class="kicker">Préparer</span>
+        <h2 id="h-avant">Avant de partir</h2>
+        <p class="muted">Cochez au fur et à mesure. Vos coches restent dans ce navigateur.</p>
+        <div class="checklist" id="checklist">
+          <label class="check"><input type="checkbox" id="c-meteo"><span><b>Météo marine consultée</b> pour toute la durée de la sortie, avis de grand frais compris.</span></label>
+          <label class="check"><input type="checkbox" id="c-marees"><span><b>Horaires et coefficients de marée</b> vérifiés pour le départ et le retour.</span></label>
+          <label class="check"><input type="checkbox" id="c-proche"><span><b>Un proche prévenu</b> : destination, route prévue, heure approximative d'arrivée. C'est exactement ce que fait le suivi NautiLink.</span></label>
+          <label class="check"><input type="checkbox" id="c-gilets"><span><b>Un gilet adapté par personne</b>, à la bonne taille, et porté.</span></label>
+          <label class="check"><input type="checkbox" id="c-carbu"><span><b>Réservoirs pleins</b>, ou largement de quoi faire l'aller-retour avec une marge.</span></label>
+          <label class="check"><input type="checkbox" id="c-vhf"><span><b>VHF allumée et testée</b>, veille sur le canal 16.</span></label>
+          <label class="check"><input type="checkbox" id="c-tel"><span><b>Téléphone chargé</b> dans une pochette étanche, avec le 196 en tête.</span></label>
+          <label class="check"><input type="checkbox" id="c-materiel"><span><b>Matériel de sécurité</b> à bord et en état pour la zone de navigation prévue.</span></label>
+          <label class="check"><input type="checkbox" id="c-seul"><span><b>Pas seul à bord</b> si c'est possible ; sinon, prévenir et rester joignable.</span></label>
+          <label class="check"><input type="checkbox" id="c-route"><span><b>Route préparée</b> : repères, hauts-fonds, abris et mouillages de repli.</span></label>
+        </div>
+        <p class="progress" id="progress">0 sur 10 vérifiés</p>
+        <button class="reset" type="button" id="reset">Tout décocher</button>
+      </section>
+
+      <section id="gilet" aria-labelledby="h-gilet">
+        <span class="kicker">Flotter</span>
+        <h2 id="h-gilet">Le gilet : on le porte, on ne le range pas</h2>
+        <div class="callout">
+          <span class="stat">8 sur 10</span>
+          <p>Selon la SNSM, huit noyades sur dix pourraient être évitées si les victimes portaient un gilet. Un gilet rangé dans un coffre ne sert à rien quand on tombe à l'eau par surprise.</p>
+        </div>
+        <p>La flottabilité se mesure en newtons (N). Plus on s'éloigne d'un abri et plus la mer est dure, plus il en faut.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Flottabilité</th><th>Usage courant</th><th>À savoir</th></tr></thead>
+            <tbody>
+              <tr><td class="n">50 N</td><td>Aide à la flottabilité, eaux abritées, près d'un abri</td><td>Ne retourne pas une personne inconsciente</td></tr>
+              <tr><td class="n">100 N</td><td>Navigation côtière</td><td>Minimum conseillé dès qu'on quitte une baie abritée</td></tr>
+              <tr><td class="n">150 N</td><td>Navigation au large</td><td>Le choix courant en plaisance, souvent gonflable automatique</td></tr>
+              <tr><td class="n">275 N</td><td>Hauturier, conditions extrêmes</td><td>Pour vêtements lourds ou ciré de mer complet</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="plain">
+          <li>Réglez-le à la taille de chacun et fermez la sangle sous-cutale s'il en a une.</li>
+          <li>Gonflable automatique : contrôlez régulièrement la cartouche et la pastille selon la notice du fabricant, et faites-le réviser.</li>
+          <li>Ajoutez une lampe flash et un sifflet sur le gilet, et une longe pour vous attacher au bateau par mer formée ou de nuit.</li>
+        </ul>
+      </section>
+
+      <section id="materiel" aria-labelledby="h-materiel">
+        <span class="kicker">Réglementation</span>
+        <h2 id="h-materiel">Le matériel obligatoire dépend de la distance à un abri</h2>
+        <p>En France, la « division 240 » fixe l'armement de sécurité des bateaux de plaisance. Un <b>abri</b> est un endroit de la côte où le bateau et son équipage peuvent se mettre en sécurité.</p>
+        <div class="zones" role="img" aria-label="Trois zones : basique jusqu'à 2 milles d'un abri, côtier de 2 à 6 milles, semi-hauturier de 6 à 60 milles">
+          <div class="zone z1"><b>Basique</b><span>0 à 2 milles</span></div>
+          <div class="zone z2"><b>Côtier</b><span>2 à 6 milles</span></div>
+          <div class="zone z3"><b>Semi-hauturier</b><span>6 à 60 milles</span></div>
+        </div>
+        <ul class="plain">
+          <li>Chaque zone reprend le matériel de la précédente et en ajoute.</li>
+          <li>À partir de l'armement côtier, une bouée fer à cheval ou couronne est obligatoire pour repérer et aider une personne tombée à l'eau.</li>
+          <li>Ce matériel est un minimum : les sauveteurs en mer conseillent souvent d'en avoir davantage.</li>
+        </ul>
+        <p class="muted">Le texte est modifié régulièrement. Vérifiez la liste en vigueur sur le site du ministère de la Mer avant chaque saison.</p>
+      </section>
+
+      <section id="meteo" aria-labelledby="h-meteo">
+        <span class="kicker">Anticiper</span>
+        <h2 id="h-meteo">Lire la météo marine</h2>
+        <p>Le vent s'exprime en forces de l'échelle de Beaufort. Météo-France émet un bulletin météorologique spécial (BMS) dès que le vent atteint ou dépasse la force 7 près des côtes.</p>
+        <div class="beaufort" aria-label="Échelle de Beaufort de 1 à 12">
+          <div class="bf">1</div><div class="bf">2</div><div class="bf">3</div><div class="bf">4</div><div class="bf">5</div><div class="bf">6</div>
+          <div class="bf warn">7</div><div class="bf gale">8</div><div class="bf gale">9</div><div class="bf storm">10</div><div class="bf storm">11</div><div class="bf storm">12</div>
+        </div>
+        <div class="legend">
+          <span><b>Force 7</b> grand frais, 28 à 33 nœuds</span>
+          <span><b>Force 8</b> coup de vent</span>
+          <span><b>Force 10</b> tempête</span>
+        </div>
+        <ul class="plain">
+          <li><b>BMS côte</b> : dès la force 7, jusqu'à 20 milles des côtes. <b>BMS large</b> : dès la force 8.</li>
+          <li>Les bulletins sont gratuits sur le site de Météo-France, et les CROSS les diffusent à la VHF à heures fixes (horaires propres à chaque CROSS).</li>
+          <li>Un avis de grand frais en cours pour votre zone : on ne part pas, ou on rentre.</li>
+        </ul>
+      </section>
+
+      <section id="alerte" aria-labelledby="h-alerte">
+        <span class="kicker">Alerter</span>
+        <h2 id="h-alerte">Donner l'alerte à la VHF</h2>
+        <div class="levels">
+          <div class="level l1"><b>MAYDAY</b><span>Détresse : danger grave et imminent pour le bateau ou les personnes. Assistance immédiate.</span></div>
+          <div class="level l2"><b>PAN PAN</b><span>Urgence : problème grave sans danger immédiat pour la vie, par exemple panne moteur ou démâtage.</span></div>
+          <div class="level l3"><b>SÉCURITÉ</b><span>Information : danger pour la navigation, par exemple un objet flottant à la dérive.</span></div>
+        </div>
+
+        <div class="mayday" aria-labelledby="h-mayday">
+          <h3 id="h-mayday">Préparer son message MAYDAY</h3>
+          <p class="muted">Remplissez les champs : le texte à lire sur le canal 16 se met à jour. Mieux vaut le préparer au port que le chercher en pleine détresse.</p>
+          <div class="fields">
+            <div class="field"><label for="m-nom">Nom du bateau</label><input type="text" id="m-nom" value="Alizé" autocomplete="off"></div>
+            <div class="field"><label for="m-indic">Indicatif ou MMSI (facultatif)</label><input type="text" id="m-indic" value="" autocomplete="off"></div>
+            <div class="field wide"><label for="m-pos">Position</label><input type="text" id="m-pos" value="47° 35' N, 003° 05' W" autocomplete="off"></div>
+            <div class="field"><label for="m-nature">Nature de la détresse</label>
+              <select id="m-nature">
+                <option>voie d'eau</option><option>incendie à bord</option><option>homme à la mer</option><option>échouement</option><option>chavirage</option><option>blessé grave à bord</option>
+              </select>
+            </div>
+            <div class="field"><label for="m-pers">Personnes à bord</label><input type="number" id="m-pers" value="3" min="1" max="99"></div>
+            <div class="field wide"><label for="m-aide">Assistance demandée</label><input type="text" id="m-aide" value="assistance immédiate" autocomplete="off"></div>
+          </div>
+          <div class="script" id="script" aria-live="polite"></div>
+          <button class="btn" type="button" id="copy-script">Copier le message</button>
+          <p class="muted">Avec une VHF à appel sélectif numérique (ASN), déclenchez d'abord l'alerte de détresse, puis lisez le message une dizaine de secondes après. Une fausse alerte s'annule tout de suite, sur le même canal. Tout usage abusif du canal 16 est sanctionné.</p>
+        </div>
+      </section>
+
+      <section id="homme" aria-labelledby="h-homme">
+        <span class="kicker">Réagir</span>
+        <h2 id="h-homme">Homme à la mer</h2>
+        <p>Les premières minutes décident de tout. Dans l'ordre :</p>
+        <ol class="steps">
+          <li><b>Crier</b> « Un homme à la mer ! » pour alerter tout l'équipage.</li>
+          <li><b>Jeter</b> la bouée et tout objet flottant pour aider la personne et baliser le sillage.</li>
+          <li><b>Désigner un témoin</b> qui ne la quitte pas des yeux et la montre du bras jusqu'à la récupération.</li>
+          <li><b>Alerter</b> : MAYDAY sur le canal 16 de la VHF, ou le 196.</li>
+          <li><b>Revenir</b> près de la personne en se présentant au vent d'elle, moteur au point mort à l'approche.</li>
+          <li><b>Hisser</b> à bord : c'est souvent le plus difficile. Préparez à l'avance le moyen de le faire.</li>
+        </ol>
+        <div class="callout"><p><b>Mieux vaut ne pas tomber</b> : gilet porté, longe attachée par mer formée ou de nuit, une main pour soi et une pour le bateau.</p></div>
+      </section>
+
+      <section id="froid" aria-labelledby="h-froid">
+        <span class="kicker">Survivre</span>
+        <h2 id="h-froid">Dans l'eau froide : la règle 1-10-1</h2>
+        <p>Un repère à retenir, pas un chronomètre : les délais réels varient beaucoup d'une personne et d'une eau à l'autre.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Repère</th><th>Ce qui se passe</th><th>Que faire</th></tr></thead>
+            <tbody>
+              <tr><td class="n">1 minute</td><td>Choc thermique : grande inspiration réflexe, respiration haletante</td><td>Garder la tête hors de l'eau, reprendre son souffle, ne pas s'agiter</td></tr>
+              <tr><td class="n">10 minutes</td><td>Mouvements utiles avant que doigts, bras et jambes ne lâchent</td><td>Sortir de l'eau ou s'accrocher à quelque chose qui flotte</td></tr>
+              <tr><td class="n">1 heure</td><td>Hypothermie jusqu'à la perte de connaissance</td><td>Position fœtale (genoux contre la poitrine), ou se serrer les uns contre les autres</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="plain">
+          <li>Le gilet change tout : sans lui, peu de personnes tiennent plus de dix minutes dans une eau froide.</li>
+          <li>Nager pour se réchauffer accélère la perte de chaleur. Restez immobile si vous ne pouvez pas sortir vite.</li>
+          <li>Après le sauvetage, manipulez la personne doucement, retirez les vêtements mouillés, couvrez-la et faites-la examiner : le cœur peut lâcher dans les minutes qui suivent.</li>
+        </ul>
+      </section>
+
+      <section id="alcool" aria-labelledby="h-alcool">
+        <span class="kicker">Rester lucide</span>
+        <h2 id="h-alcool">Alcool : zéro à la barre</h2>
+        <p>Le soleil, le vent, la fatigue et le mouvement du bateau amplifient les effets de l'alcool. Celui qui tient la barre ne boit pas.</p>
+        <p>Depuis un décret du 5 juin 2026, conduire un bateau de plaisance à moteur en état d'ivresse manifeste est un délit, d'après la presse nautique. Les seuils d'alcoolémie cités varient selon les sources : référez-vous au texte officiel sur Légifrance.</p>
+      </section>
+
+      <section id="sources" aria-labelledby="h-sources">
+        <span class="kicker">Pour aller plus loin</span>
+        <h2 id="h-sources">Sources</h2>
+        <ol class="sources">
+          <li><a href="https://www.mer.gouv.fr/comment-alerter-les-secours-en-mer" target="_blank" rel="noopener">Ministère de la Mer : comment alerter les secours en mer</a></li>
+          <li><a href="https://mer.gouv.fr/gestes-et-conseils-la-radio-vhf-un-outil-pour-ameliorer-sa-securite" target="_blank" rel="noopener">Ministère de la Mer : la radio VHF, un outil pour améliorer sa sécurité</a></li>
+          <li><a href="https://www.prefectures-regions.gouv.fr/bretagne/Region-et-institutions/L-action-de-l-Etat/Mer-et-littoral/Pour-les-urgences-en-mer-appelez-le-196" target="_blank" rel="noopener">Préfecture de Bretagne : pour les urgences en mer, appelez le 196</a></li>
+          <li><a href="https://www.mer.gouv.fr/le-materiel-darmement-et-de-securite-et-les-limites-dutilisation" target="_blank" rel="noopener">Ministère de la Mer : matériel d'armement et de sécurité (division 240)</a></li>
+          <li><a href="https://meteofrance.fr/sites/meteofrance.fr/files/files/editorial/Guide_marine_octobre2022.pdf" target="_blank" rel="noopener">Météo-France : guide marine</a></li>
+          <li><a href="https://figaronautisme.meteoconsult.fr/actus-nautisme-lifestyle/2024-06-15/63965-les-conseils-de-la-snsm-en-mer-portez-toujours-votre-gilet-de-sauvetage" target="_blank" rel="noopener">Les conseils de la SNSM : portez toujours votre gilet</a></li>
+          <li><a href="https://figaronautisme.meteoconsult.fr/actus-nautisme-lifestyle/2024-08-11/63974-les-conseils-de-la-snsm-eviter-de-tomber-a-l-eau-recuperer-un-homme-a-la-mer" target="_blank" rel="noopener">Les conseils de la SNSM : éviter de tomber à l'eau, récupérer un homme à la mer</a></li>
+          <li><a href="https://www.snsm.org/app/uploads/2026/04/snsm-communique-presse-le-rdv-prevention-bien-preparer-sa-sortie-en-mer.pdf" target="_blank" rel="noopener">SNSM : bien préparer sa sortie en mer</a></li>
+          <li><a href="https://www.bateaux.com/article/26156/mayday-pan-pan-message-de-detresse-utiliser" target="_blank" rel="noopener">Bateaux.com : MAYDAY, PAN PAN, quel message utiliser</a></li>
+          <li><a href="https://csbc.ca/1-10-1-principle/" target="_blank" rel="noopener">Canadian Safe Boating Council : le principe 1-10-1</a></li>
+          <li><a href="https://www.actunautique.com/2026/06/alcool-en-mer-vitesse-permis-bateau-ce-qui-change-pour-les-plaisanciers-depuis-le-5-juin-2026.html" target="_blank" rel="noopener">Actunautique : alcool en mer, ce qui change depuis le 5 juin 2026</a></li>
+        </ol>
+      </section>
+    </div>
+
+    <script>
+    (() => {
+      // Copie des numéros et du message, avec repli sur la sélection du texte.
+      function copyText(text, button) {
+        const done = () => { const old = button.textContent; button.textContent = "Copié"; setTimeout(() => { button.textContent = old; }, 1500); };
+        const fallback = () => {
+          const target = button.dataset.copy === "196" ? document.getElementById("n196")
+            : button.dataset.copy === "112" ? document.getElementById("n112") : document.getElementById("script");
+          const range = document.createRange(); range.selectNodeContents(target);
+          const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+          button.textContent = "Sélectionné";
+        };
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+          else fallback();
+        } catch (e) { fallback(); }
+      }
+      document.querySelectorAll("#securite .copy").forEach(b => b.addEventListener("click", () => copyText(b.dataset.copy, b)));
+
+      // Générateur de message MAYDAY.
+      const ids = ["m-nom", "m-indic", "m-pos", "m-nature", "m-pers", "m-aide"];
+      const el = Object.fromEntries(ids.map(i => [i, document.getElementById(i)]));
+      const script = document.getElementById("script");
+      function val(i, fallback) { const v = (el[i].value || "").trim(); return v || fallback; }
+      function build() {
+        const nom = val("m-nom", "[nom du bateau]");
+        const indic = (el["m-indic"].value || "").trim();
+        const ident = indic ? `${nom}, ${indic}` : nom;
+        const lines = [
+          ["k", "MAYDAY, MAYDAY, MAYDAY"],
+          ["", `Ici ${nom}, ${nom}, ${nom}${indic ? ", " + indic : ""}`],
+          ["k", "MAYDAY"],
+          ["", ident],
+          ["", `Ma position : ${val("m-pos", "[latitude, longitude]")}`],
+          ["", `Nature de la détresse : ${val("m-nature", "[nature]")}`],
+          ["", `Personnes à bord : ${val("m-pers", "[nombre]")}`],
+          ["", `Je demande : ${val("m-aide", "[assistance]")}`],
+          ["", "À vous."]
+        ];
+        script.replaceChildren(...lines.flatMap(([cls, text], i) => {
+          const span = document.createElement("span"); if (cls) span.className = cls; span.textContent = text;
+          return i < lines.length - 1 ? [span, document.createTextNode("\n")] : [span];
+        }));
+      }
+      ids.forEach(i => el[i].addEventListener("input", build));
+      build();
+      const copyScript = document.getElementById("copy-script");
+      copyScript.addEventListener("click", () => copyText(script.textContent, copyScript));
+
+      // Liste de départ, mémorisée dans ce navigateur seulement.
+      const KEY = "nautilink-checklist";
+      const boxes = Array.from(document.querySelectorAll("#checklist input"));
+      const progress = document.getElementById("progress");
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { saved = {}; }
+      function render() {
+        let n = 0;
+        boxes.forEach(b => { b.closest(".check").classList.toggle("done", b.checked); if (b.checked) n++; });
+        progress.textContent = `${n} sur ${boxes.length} vérifiés`;
+      }
+      boxes.forEach(b => {
+        b.checked = !!saved[b.id];
+        b.addEventListener("change", () => {
+          saved[b.id] = b.checked;
+          try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+          render();
+        });
+      });
+      document.getElementById("reset").addEventListener("click", () => {
+        boxes.forEach(b => { b.checked = false; }); saved = {};
+        try { localStorage.removeItem(KEY); } catch (e) {}
+        render();
+      });
+      render();
+    })();
+    </script>
+  </section>
+  <!-- memo:fin -->
+
+  <section id="faq">
+    <div class="wrap narrow">
+      <div class="head">
+        <span class="kicker">FAQ</span>
+        <h2>Questions fréquentes</h2>
+      </div>
+      <div class="legal">
+        <details class="faq">
+          <summary>NautiLink remplace-t-il la VHF ou une balise de détresse ?</summary>
+          <p>Non : il ne remplace ni le matériel de sécurité obligatoire, ni les procédures officielles d'alerte (<a href="#avertissement">avertissement</a>).</p>
+        </details>
+        <details class="faq">
+          <summary>Faut-il une connexion Internet en mer ?</summary>
+          <p>Non : voir <a href="#hors-ligne">Fonctionne sans Internet</a>.</p>
+        </details>
+        <details class="faq">
+          <summary>L'iPhone envoie-t-il des SMS ?</summary>
+          <p>Non. L'envoi de positions et de SOS par SMS existe sur Android seulement. Sur iPhone, tout passe par Internet.</p>
+        </details>
+        <details class="faq">
+          <summary>À quelle fréquence ma position est-elle envoyée ?</summary>
+          <p>À celle que vous choisissez : voir <a href="#partage">Position partagée</a>.</p>
+        </details>
+        <details class="faq">
+          <summary>Qui voit ma navigation ?</summary>
+          <p>Les personnes que vous invitez : voir <a href="#acces">Vos proches, vos règles</a>.</p>
+        </details>
+        <details class="faq">
+          <summary>Mes proches doivent-ils payer pour me suivre ?</summary>
+          <p>Non : voir <a href="#tarifs">ce qui reste toujours gratuit</a>.</p>
+        </details>
+        <details class="faq">
+          <summary>Combien coûte NautiLink ?</summary>
+          <p>Voir <a href="#tarifs">Version gratuite - abonnement</a>.</p>
+        </details>
+        <details class="faq">
+          <summary>Le SOS marche-t-il quand mon quota gratuit est épuisé ?</summary>
+          <p>Oui : voir <a href="#tarifs">ce qui reste toujours gratuit</a>.</p>
+        </details>
+        <details class="faq">
+          <summary>Puis-je avoir plusieurs bateaux ?</summary>
+          <p>Oui : voir <a href="#bateaux">Plusieurs bateaux</a>.</p>
+        </details>
+        <details class="faq">
+          <summary>Où installer NautiLink ?</summary>
+          <p>Voir <a href="#installer">Installer</a>.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="a-propos">
+    <div class="wrap narrow">
+      <div class="head">
+        <span class="kicker">À propos</span>
+        <h2>NautiLink</h2>
+      </div>
+      <div class="legal">
+        <p>NautiLink est une solution connectée pour les plaisanciers : une application Android pour le navigateur à bord (positions, journal de bord, SOS par SMS), une application iPhone équivalente sans SMS, et une Application web pour suivre, consulter et gérer les navigations avec ses proches.</p>
+        <h3>Sponsor</h3>
+        <p>NautiLink est sponsorisée par la SRT (<a href="https://srtoulon.fr/" target="_blank" rel="noopener">srtoulon.fr</a>).</p>
+        <h3>Code source</h3>
+        <p>La spécification, le site, l'application et le serveur sont visibles sur <a href="https://github.com/gmoulard/NautiLink">GitHub</a>, pour information seulement : tous droits réservés, aucune licence n'est accordée. La version du site est indiquée en pied de page.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- memo:debut -->
+  <section id="avertissement" aria-labelledby="h-avertissement">
+    <div class="wrap narrow">
+      <div class="head">
+        <span class="kicker">Mentions</span>
+        <h2 id="h-avertissement">Avertissement : version bêta et responsabilité</h2>
+      </div>
+      <div class="legal">
+        <p class="note">En cas de détresse, alertez d'abord les secours par le <b>canal 16 de la VHF</b>, le <b>196</b> ou le <b>112</b>. NautiLink ne remplace pas ces moyens.</p>
+
+        <h3>1. Version bêta</h3>
+        <p>NautiLink est actuellement proposé en version bêta, c'est-à-dire en phase de test. Ses fonctions (suivi de position, envoi de SMS et d'e-mails, alertes SOS, journal de bord) peuvent présenter des erreurs, des retards ou des interruptions, liés notamment à la couverture du réseau mobile, à l'accès à Internet, à la réception GPS, à l'état ou aux réglages du téléphone. La continuité et l'exactitude du service ne sont pas garanties pendant cette phase.</p>
+
+        <h3>2. NautiLink n'est pas un équipement de sécurité</h3>
+        <p>NautiLink n'est pas un équipement de sécurité au sens de la réglementation maritime. Il ne remplace ni le matériel d'armement et de sécurité obligatoire (radio VHF, moyens de signalisation, balise de détresse, etc.), ni les procédures officielles d'alerte. En cas de détresse, alertez d'abord les secours par le canal 16 de la VHF, le 196 ou le 112. Une alerte transmise par NautiLink, ou son absence de transmission, ne peut pas être considérée comme une alerte des secours.</p>
+
+        <h3>3. Responsabilité du chef de bord</h3>
+        <p>Le chef de bord reste seul responsable de la conduite du navire, de la sécurité des personnes embarquées, de la préparation de la sortie et du respect de la réglementation en vigueur.</p>
+
+        <h3>4. Limitation de responsabilité</h3>
+        <p>Dans toute la mesure permise par la loi, l'éditeur de NautiLink ne saurait être tenu responsable des dommages indirects résultant d'un dysfonctionnement, d'une interruption ou d'une indisponibilité du service, ni d'une utilisation de l'application non conforme à sa destination ou au présent avertissement.</p>
+        <p>Cette limitation ne s'applique pas aux dommages corporels, ni en cas de faute lourde ou intentionnelle de l'éditeur. Elle ne prive pas l'utilisateur ayant la qualité de consommateur des droits que lui reconnaît la loi, notamment le Code de la consommation, auquel il ne peut être dérogé.</p>
+
+        <h3>5. Informations du mémo sécurité en mer</h3>
+        <p>Les informations du <a href="#securite">mémo sécurité en mer</a> sont fournies à titre indicatif et ne remplacent ni les textes réglementaires en vigueur, ni une formation à la sécurité en mer, ni le permis de conduire les bateaux de plaisance.</p>
+      </div>
+    </div>
+  </section>
+  <!-- memo:fin -->
 </main>
 
 
 <div class="wrap notice">
   <div class="beta" role="note">
     <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2 1 21h22zm-1 7h2v6h-2zm0 8h2v2h-2z"/></svg>
-    <p>NautiLink est en version bêta et n'est pas un équipement de sécurité : il ne remplace ni le matériel de sécurité obligatoire, ni les procédures officielles d'alerte. <a href="avertissement.html">Lire l'avertissement</a><b>En cas de détresse : canal 16 de la VHF, 196 ou 112.</b></p>
+    <p>NautiLink est en version bêta et n'est pas un équipement de sécurité : il ne remplace ni le matériel de sécurité obligatoire, ni les procédures officielles d'alerte. <a href="#avertissement">Lire l'avertissement</a><b>En cas de détresse : canal 16 de la VHF, 196 ou 112.</b></p>
   </div>
   <aside class="sponsor" aria-label="Sponsor">
     <img src="assets/sponsor-srt.png" alt="Guidon de la SRT" width="71" height="48">
@@ -211,10 +696,32 @@
 </div>
 <footer>
   <div class="wrap">
-    <p><b>NautiLink</b> · Your sea, your safety, your story. · <a href="index.html">Accueil</a> · <a href="avertissement.html">Avertissement</a> · <a href="https://github.com/gmoulard/NautiLink">Code source sur GitHub</a></p>
+    <p><b>NautiLink</b> · Your sea, your safety, your story. · <a href="#accueil">Accueil</a> · <a href="#avertissement">Avertissement</a> · <a href="https://github.com/gmoulard/NautiLink">Code source sur GitHub</a></p>
     <p class="commit">Tous droits réservés · <a href="https://github.com/gmoulard/NautiLink">https://github.com/gmoulard/NautiLink</a> · V@VERSION@ · build @BUILD@ · commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT@">@COMMIT_COURT@</a></p>
   </div>
 </footer>
 
+<script>
+// Menu : le lien de la section visible est mis en évidence au défilement (D-192).
+(() => {
+  const liens = Array.from(document.querySelectorAll(".topnav nav a[href^='#']"));
+  const sections = Array.from(document.querySelectorAll(".hero[id], main > section[id]"));
+  const entete = document.querySelector(".topnav");
+  let prevu = false;
+  function marquer() {
+    prevu = false;
+    const haut = (getComputedStyle(entete).position === "sticky" ? entete.offsetHeight : 0) + window.innerHeight / 3;
+    let active = sections[0];
+    for (const s of sections) if (s.getBoundingClientRect().top <= haut) active = s;
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) active = sections[sections.length - 1];
+    const cible = "#" + (active.dataset.menu || active.id);
+    liens.forEach(a => { if (a.getAttribute("href") === cible) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current"); });
+  }
+  window.addEventListener("scroll", () => { if (!prevu) { prevu = true; requestAnimationFrame(marquer); } }, { passive: true });
+  window.addEventListener("resize", marquer);
+  window.addEventListener("hashchange", marquer);
+  marquer();
+})();
+</script>
 </body>
 </html>
