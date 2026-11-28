@@ -1,6 +1,6 @@
 # NautiLink — Versions et compatibilité
 
-Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-128](07-decisions.md#d-128)). Mise à jour : 2026-11-27.
+Gestion des versions des trois composants de NautiLink et matrice de compatibilité ([D-128](07-decisions.md#d-128)). Mise à jour : 2026-11-28.
 
 ## 1. Composants et numéro de version
 
@@ -20,7 +20,7 @@ Les trois composants partent de la version **0.0.1** (2026-11-25).
 - **Build** : numéro d'exécution du workflow qui a construit le livrable (`github.run_number`), propre à chaque workflow. Deux constructions de la même version se distinguent par leur build et leur commit.
 - **Commit** : SHA du commit construit, affiché sur 7 caractères avec un lien vers GitHub.
 
-- **iPhone suspendu** ([D-155](07-decisions.md#d-155)) : l'IPA n'est plus reconstruite ; celle publiée sur le site garde la version, le build et le commit de sa dernière construction.
+- **iPhone** ([D-191](07-decisions.md#d-191), qui remplace [D-155](07-decisions.md#d-155)) : l'IPA non signée de la vraie application (`nautilink-ios-non-signe.ipa`) est reconstruite dans les mêmes cas que l'APK (changement de `app/` sur `main`), avec la même version et le même build ; plus d'IPA de démonstration.
 - **Production pendant la bêta** ([D-145](07-decisions.md#d-145)) : la dernière construction de la vraie application publiée sur le site (version de `app/pubspec.yaml`, build du workflow).
 - **Démonstration V0** ([D-144](07-decisions.md#d-144)) : terminée, figée au commit `8ac9c1a`, en version 0.0.1 ; le workflow « Site GitHub Pages » la reconstruit toujours depuis ce commit (`DEMO_V0_COMMIT`), quel que soit l'état de `app/`. Sa version ne change plus ; la version de `app/pubspec.yaml` est celle de la vraie application.
 
@@ -45,6 +45,7 @@ Une ligne par combinaison publiée ; la plus récente en haut. L'API est décrit
 
 | Date | Serveur | API | Application | Site | Compatibilité |
 |------|---------|-----|-------------|------|---------------|
+| 2026-11-28 | 0.2.0 | 0.2.0 (proposition) | 0.5.1 (vraie application, APK et IPA) ; démonstration 0.0.1 figée | 0.0.4 | Page « Télécharger » : installation de l'IPA sur iPhone sans compte Apple payant (Sideloadly ou AltStore, identifiant Apple gratuit, à renouveler tous les 7 jours), TODO-10.8, [D-191](07-decisions.md#d-191). L'IPA de la vraie application est de nouveau reconstruite à chaque changement de `app/` ; plus d'IPA de démonstration. |
 | 2026-11-27 | 0.2.0 | 0.2.0 (proposition) | 0.5.1 (vraie application) ; démonstration 0.0.1 figée | 0.0.3 | Que des amis ([D-186](07-decisions.md#d-186), [D-187](07-decisions.md#d-187), [D-188](07-decisions.md#d-188), TODO-4.15) : plus de compatibilité avec les applications d'avant la 0.5.1. API : champs de rôle des contacts refusés (422, tout champ inconnu l'est), ajout sans invitation par `inviter: false`, une liste `amis` (avec `suit`) sur la page d'une navigation, routes `/v1/navigations/{id}/amis…`, filtres `role=ami`, champ `ami` des accès ; migration 16 : colonnes renommées (`invite`, `avec_telephone`, `ami_id`), sans perte de données. Textes de l'application, de l'Application web et du site sans « suiveur » ni « contact SOS » ; menu « Mes amis en mer ». Le serveur 0.2.0 demande l'application 0.5.1 ; l'application 0.5.1 demande le serveur 0.2.0. |
 | 2026-11-27 | 0.1.1 | 0.1.0 (proposition) | 0.5.0 (vraie application, APK à reconstruire à la demande de l'utilisateur du 2026-11-27) ; démonstration 0.0.1 figée | 0.0.2 | Look du 2026-11-27 ([D-178](07-decisions.md#d-178), TODO-3.21, TODO-5.14) : bandeau photo du bateau, isobares, plus de bandeau bêta (lien « Version bêta » du pied de page), écrans d'accueil, de démarrage et de navigation revus ; amis sans cases « Suiveur » ni « Contact SOS » et rejoindre une navigation d'un autre téléphone du compte (TODO-5.15, [D-176](07-decisions.md#d-176), [D-177](07-decisions.md#d-177), [D-184](07-decisions.md#d-184)) : opération `rejoindre` et champs `appareilId`, `telephonesRejoints` du serveur 0.1.1 (TODO-4.14) ; plus d'anciens champs `suiveur` et `contactSos` envoyés. Application web du serveur : bandeau bêta retiré, lien « Version bêta » et lien « NautiLink » vers le site vitrine (même version du serveur, image `:latest`). IPA non reconstruite (D-155). |
 | 2026-11-27 | 0.1.1 | 0.1.0 (proposition) | 0.4.0 (vraie application) ; démonstration 0.0.1 figée | 0.0.2 | Correctif de l'écran « Réglages » : clé d'API de Météo-France acceptée sans en-tête (D-175). Mêmes routes de l'API ; compatible avec l'application 0.4.0. |

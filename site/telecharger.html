@@ -61,7 +61,7 @@
       <p class="note">Pas encore ouverts : connexion par Google et Apple, notifications push, achat de l'abonnement. Hors connexion, les envois sont gardés sur le téléphone et partent au retour du réseau.</p>
       <a class="button" href="downloads/nautilink.apk">Télécharger NautiLink pour Android</a>
       <p class="muted commit">Version V@VERSION_APK_PROD@, build @BUILD_APK_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_APK_PROD@">@COMMIT_APK_PROD_COURT@</a>.</p>
-      <a class="button" href="downloads/nautilink-ios-non-signe.ipa">Télécharger NautiLink pour iPhone (IPA non signé)</a>
+      <a class="button" href="downloads/nautilink-ios-non-signe.ipa">Télécharger NautiLink pour iPhone</a>
       <p class="muted commit">Version V@VERSION_IPA_PROD@, build @BUILD_IPA_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA_PROD@">@COMMIT_IPA_PROD_COURT@</a>.</p>
       <p class="muted">Comment l'installer : voir <a href="#android">Android</a> et <a href="#iphone">iPhone</a> ci-dessous.</p>
     </div>
@@ -85,14 +85,20 @@
     <div class="wrap narrow legal">
       <span class="kicker">iPhone</span>
       <h2>Installer NautiLink sur iPhone, sans l'App Store</h2>
-      <p>Apple n'autorise l'installation hors App Store qu'avec une signature. Le fichier proposé ici (« Télécharger NautiLink pour iPhone (IPA non signé) » ci-dessus) n'est pas signé : vous le signez vous-même avec votre identifiant Apple, grâce à un outil d'installation sur ordinateur comme AltStore ou Sideloadly.</p>
+      <p>NautiLink arrivera plus tard sur l'App Store. En attendant, vous l'installez vous-même depuis un ordinateur (Windows ou Mac), avec votre identifiant Apple habituel : pas besoin de compte payant.</p>
+      <p>Le fichier proposé ici n'est pas signé : c'est un outil d'installation gratuit, sur l'ordinateur, qui le signe à votre nom avec votre identifiant Apple, comme Apple l'exige.</p>
       <ol class="steps">
-        <li>Sur votre ordinateur, installez <a href="https://altstore.io/" target="_blank" rel="noopener">AltStore</a> ou <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a> en suivant leurs instructions.</li>
-        <li>Branchez l'iPhone, ouvrez l'outil, choisissez le fichier IPA téléchargé et connectez-vous avec votre identifiant Apple.</li>
-        <li>Sur l'iPhone, activez le mode développeur si iOS le demande : Réglages, Confidentialité et sécurité, Mode développeur, puis redémarrez.</li>
-        <li>Faites confiance au profil : Réglages, Général, VPN et gestion de l'appareil, votre identifiant Apple, « Faire confiance ».</li>
+        <li>Sur l'ordinateur, installez <a href="https://sideloadly.io/" target="_blank" rel="noopener">Sideloadly</a> ou <a href="https://altstore.io/" target="_blank" rel="noopener">AltStore</a> en suivant leurs instructions. Sur Windows, ils peuvent demander d'installer aussi iTunes et iCloud.</li>
+        <li>Sur l'ordinateur, téléchargez <a href="downloads/nautilink-ios-non-signe.ipa">NautiLink pour iPhone</a> (fichier IPA).</li>
+        <li>Branchez l'iPhone à l'ordinateur avec son câble, déverrouillez-le et touchez « Se fier » si l'iPhone le demande.</li>
+        <li>Dans l'outil, choisissez le fichier téléchargé, entrez votre identifiant Apple et son mot de passe, puis lancez l'installation.</li>
+        <li>Sur l'iPhone, autorisez le développeur : Réglages, Général, VPN et gestion de l'appareil, touchez votre identifiant Apple, puis « Faire confiance ».</li>
+        <li>Si l'iPhone le demande, activez le mode développeur : Réglages, Confidentialité et sécurité, Mode développeur, puis redémarrez l'iPhone.</li>
+        <li>Ouvrez NautiLink, acceptez l'avertissement, puis autorisez la localisation « Pendant l'utilisation de l'app » : une navigation démarrée continue écran éteint.</li>
       </ol>
-      <p class="muted">Avec un identifiant Apple gratuit, l'application cesse de s'ouvrir au bout de 7 jours : il faut la réinstaller ou la renouveler avec l'outil. Le nombre d'applications installées ainsi est aussi limité. Ces règles sont celles d'Apple et peuvent changer.</p>
+      <p class="note"><b>À refaire tous les 7 jours.</b> Avec un identifiant Apple gratuit, Apple limite l'installation à 7 jours : passé ce délai, NautiLink ne s'ouvre plus. Rebranchez l'iPhone et refaites l'installation avec l'outil (AltStore peut la renouveler seul quand l'ordinateur et l'iPhone sont sur le même Wi-Fi). Pensez-y avant de partir en mer.</p>
+      <p class="muted">Une nouvelle version s'installe de la même façon, par-dessus la précédente. Sur iPhone, NautiLink n'envoie aucun SMS : le SOS et les messages passent par Internet. Le nombre d'applications installées ainsi est limité par Apple ; ces règles sont celles d'Apple et peuvent changer.</p>
+      <p class="muted commit">Version V@VERSION_IPA_PROD@, build @BUILD_IPA_PROD@, construite à partir du commit <a href="https://github.com/gmoulard/NautiLink/commit/@COMMIT_IPA_PROD@">@COMMIT_IPA_PROD_COURT@</a>.</p>
     </div>
   </section>
 

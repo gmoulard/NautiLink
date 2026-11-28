@@ -5,11 +5,10 @@ name: Site GitHub Pages
 #   site/downloads/nautilink.apk               Android, vraie application (serveur vdl.moulard.org, D-129), signature de débogage
 #   site/downloads/nautilink-ios-non-signe.ipa iPhone, vraie application, non signé (AltStore, Sideloadly)
 #   site/downloads/nautilink-demo.apk          Android, démonstration, signature de débogage
-#   site/downloads/nautilink-demo-ios-non-signe.ipa  iPhone, démonstration, non signé
-# La démonstration V0 est terminée et figée (D-144) : démonstration Web, APK et
-# IPA de démonstration sont toujours construits depuis le commit DEMO_V0_COMMIT,
+# La démonstration V0 est terminée et figée (D-144) : démonstration Web et APK
+# de démonstration sont toujours construits depuis le commit DEMO_V0_COMMIT,
 # en version DEMO_V0_VERSION, quel que soit l'état de app/ ; la vraie
-# application suit le code courant.
+# application suit le code courant. Plus d'IPA de démonstration (D-191).
 #   site/downloads/SHA256SUMS.txt              empreintes des fichiers
 #   site/downloads/COMMITS.txt                 « fichier commit version build » de chaque application
 # Aucune publication dans les stores (D-61).
@@ -20,10 +19,10 @@ name: Site GitHub Pages
 #   - lancement manuel (Actions → Site GitHub Pages → Run workflow) : cases
 #     « website » (pages du site et démonstration Web), « android » et « iphone »,
 #     cochées par défaut, pour reconstruire ou non chaque livrable ;
-#   - push sur main : le site est toujours reconstruit, l'application Android
-#     seulement si app/ ou ce fichier ont changé.
-# Construction iPhone suspendue (D-155) : jamais sur un push, case « iphone »
-# décochée par défaut ; l'IPA déjà publiée reste téléchargeable.
+#   - push sur main : le site est toujours reconstruit, les applications
+#     Android et iPhone seulement si app/ ou ce fichier ont changé (D-191).
+# IPA non signée (pas de compte Apple Developer, D-191) : installée avec un
+# outil comme AltStore ou Sideloadly et un identifiant Apple.
 # Un livrable non reconstruit reprend la version déjà publiée, avec son commit :
 #   - APK et IPA : téléchargés depuis le site publié ;
 #   - site et démonstration Web : artefact « site-source » de la dernière
@@ -44,9 +43,9 @@ on:
         type: boolean
         default: true
       iphone:
-        description: "Reconstruire l'IPA iPhone (macOS, plus long ; suspendu, D-155)"
+        description: "Reconstruire l'IPA iPhone (macOS, plus long)"
         type: boolean
-        default: false
+        default: true
 
 permissions:
   contents: read
@@ -61,7 +60,6 @@ concurrency:
 env:
   FLUTTER_VERSION: "3.47.9"
   APK: nautilink-demo.apk
-  IPA: nautilink-demo-ios-non-signe.ipa
   # Vraie application (NAUTILINK_MODE=reel, D-129).
   APK_PROD: nautilink.apk
   IPA_PROD: nautilink-ios-non-signe.ipa
@@ -101,8 +99,8 @@ jobs:
             else
               android=false
             fi
-            # iPhone suspendu jusqu'à demande explicite de l'utilisateur (D-155).
-            iphone=false
+            # IPA reconstruite dans les mêmes cas que l'APK (D-191).
+            iphone=$android
           fi
           # Flutter sur Ubuntu (tests, Web, APK) seulement si le site ou l'APK est reconstruit.
           flutter=false
@@ -125,39 +123,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Démonstration V0 figée (D-144)
-        run: git worktree add demo-v0 "$DEMO_V0_COMMIT"
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
-      - name: Application iPhone non signée
+      - name: Application iPhone non signée (vraie application, D-191)
         working-directory: app
         env:
           DEFINES: --build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=${{ needs.choix.outputs.app_version }} --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=${{ github.sha }}
         run: |
-          ipa() {  # ipa <fichier> <mode> <définitions>
-            flutter build ios --release --no-codesign $3 --dart-define=NAUTILINK_MODE=$2
-            rm -rf ipa && mkdir -p ipa/Payload
-            cp -R build/ios/iphoneos/Runner.app ipa/Payload/
-            (cd ipa && zip -qr "../$1" Payload)
-          }
           ./outils/copier-memo.sh   # mémo sécurité en mer du site (RG-SOS-22)
           flutter pub get
-          ipa "$IPA_PROD" reel "$DEFINES"
-          # Démonstration V0 depuis son commit figé (D-144).
-          cd ../demo-v0/app
-          ./outils/copier-memo.sh
-          flutter pub get
-          ipa "$IPA" demo "--build-number=${{ github.run_number }} --dart-define=NAUTILINK_VERSION=$DEMO_V0_VERSION --dart-define=NAUTILINK_BUILD=${{ github.run_number }} --dart-define=NAUTILINK_COMMIT=$DEMO_V0_COMMIT"
-          cp "$IPA" ../../app/
+          # Mêmes définitions que l'APK de production.
+          flutter build ios --release --no-codesign $DEFINES --dart-define=NAUTILINK_MODE=reel
+          rm -rf ipa && mkdir -p ipa/Payload
+          cp -R build/ios/iphoneos/Runner.app ipa/Payload/
+          (cd ipa && zip -qr "../$IPA_PROD" Payload)
       - uses: actions/upload-artifact@v4
         with:
           name: ipa
-          path: |
-            app/${{ env.IPA }}
-            app/${{ env.IPA_PROD }}
+          path: app/${{ env.IPA_PROD }}
+          if-no-files-found: error
           retention-days: 7
 
   build:
@@ -305,7 +292,7 @@ jobs:
           }
           # Commit et version de chaque fichier : la démonstration vient du commit figé (D-144).
           ligne() {  # ligne <fichier>
-            if [ "$1" = "$APK" ] || [ "$1" = "$IPA" ]; then echo "$1 $DEMO_V0_COMMIT $DEMO_V0_VERSION $BUILD"
+            if [ "$1" = "$APK" ]; then echo "$1 $DEMO_V0_COMMIT $DEMO_V0_VERSION $BUILD"
             else echo "$1 $COMMIT $APP_VERSION $BUILD"; fi
           }
           for f in "$APK_PROD" "$APK"; do
@@ -316,14 +303,13 @@ jobs:
               reprendre "$f"
             fi
           done
-          for f in "$IPA_PROD" "$IPA"; do
-            if [ "$IPHONE" = true ]; then
-              cp "ipa/$f" _site/downloads/
-              ligne "$f" >> _site/downloads/COMMITS.txt
-            else
-              reprendre "$f"
-            fi
-          done
+          # IPA de la vraie application seulement (plus de démonstration, D-191).
+          if [ "$IPHONE" = true ]; then
+            cp "ipa/$IPA_PROD" _site/downloads/
+            ligne "$IPA_PROD" >> _site/downloads/COMMITS.txt
+          else
+            reprendre "$IPA_PROD"
+          fi
           # Pieds de page : version, build et commit du site ; telecharger.html :
           # ceux de chaque application.
           champ() { v=$(awk -v f="$1" -v n="$2" '$1 == f { print $n }' _site/downloads/COMMITS.txt); echo "${v:-$3}"; }
@@ -335,7 +321,7 @@ jobs:
             sed -i -e "s/@COMMIT_$1_COURT@/${c::7}/g" -e "s/@COMMIT_$1@/$c/g" \
                    -e "s/@VERSION_$1@/$(champ "$2" 3 inconnue)/g" -e "s/@BUILD_$1@/$(champ "$2" 4 inconnu)/g" _site/*.html
           }
-          remplir APK "$APK"; remplir IPA "$IPA"
+          remplir APK "$APK"
           remplir APK_PROD "$APK_PROD"; remplir IPA_PROD "$IPA_PROD"
           cat _site/downloads/COMMITS.txt
           cd _site/downloads
