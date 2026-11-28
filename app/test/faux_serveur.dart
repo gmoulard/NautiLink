@@ -87,6 +87,10 @@ class FauxServeurNautiLink {
   /// Navigations démarrées depuis le téléphone (identifiant → résumé).
   final demarrees = <String, Map<String, Object?>>{};
 
+  /// Journal reçu de chaque navigation démarrée depuis le téléphone, rendu
+  /// par `GET /v1/navigations/{id}/evenements` (récapitulatif, D-190).
+  final journaux = <String, List<Map<String, Object?>>>{};
+
   /// Téléphone associé à chaque bateau (RG-BAT-02).
   final associations = <String, String>{};
 
@@ -118,16 +122,42 @@ class FauxServeurNautiLink {
           'debut': (c['debut'] as Map)['heureAcquisition'],
           'frequenceMinutes': c['frequenceMinutes'],
           'personnesABord': c['personnesABord'],
+          'chefDeBord': 'Marin',
+          'lieuDepart': {'nom': 'Port-Haliguen'},
+          'meteoDepart': {
+            'releveeLe': '2026-11-25T10:00:00+01:00',
+            'heurePrevision': '2026-11-25T10:00:00+01:00',
+            'source': 'Météo-France',
+            'ventVitesseNoeuds': 12,
+            'ventDirectionDegres': 270,
+            'etatMer': 'peu agitée',
+          },
+          if (d != null) 'destination': {'texte': d},
         };
+        final debut = c['debut'];
+        journaux[id] = [
+          if (debut is Map) {...debut, 'id': 'debut-$id', 'type': 'debut'},
+        ];
       case 'evenement':
         final r = refusEvenements;
         if (r != null) return refus(r);
+        final c = e['contenu'];
+        if (c is Map) {
+          journaux[e['navigationId']]?.add({...c, 'id': id});
+        }
       case 'fin':
         final n = demarrees[id];
         if (n != null) {
           n['etat'] = 'terminee';
           n['fin'] = (e['contenu'] as Map)['heureAcquisition'];
+          n['dureeMinutes'] = 95;
+          n['distanceMetres'] = 11112;
         }
+        journaux[id]?.add({
+          ...(e['contenu'] as Map),
+          'id': 'fin-$id',
+          'type': 'fin',
+        });
         if (id == 'n1') navigationEnCours = false;
     }
     return {'id': id, 'statut': op == 'statuts_sms' ? 204 : 201};
@@ -340,6 +370,16 @@ class FauxServeurNautiLink {
         130,
       ], 200);
     }
+    if (r.method == 'GET' &&
+        chemin.startsWith('/v1/navigations/') &&
+        chemin.endsWith('/evenements') &&
+        journaux.containsKey(chemin.split('/')[3])) {
+      return reponse(200, {
+        'evenements': journaux[chemin.split('/')[3]],
+        'supprimes': [],
+        'curseur': '${journaux[chemin.split('/')[3]]!.length}',
+      });
+    }
     if (r.method == 'GET' && chemin.startsWith('/v1/navigations/')) {
       final id = chemin.split('/').last;
       final n = demarrees[id];
@@ -450,11 +490,7 @@ class FauxServeurNautiLink {
       case ('GET', '/v1/contacts'):
         return reponse(200, {
           'contacts': [
-            {
-              'id': 'c1',
-              'nom': 'Claire',
-              'telephone': '+33612345678',
-            },
+            {'id': 'c1', 'nom': 'Claire', 'telephone': '+33612345678'},
           ],
           'supprimes': [],
           'curseur': 'k1',

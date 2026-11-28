@@ -228,10 +228,16 @@ void main() {
     );
   });
 
-  Future<void> naviguer(WidgetTester tester) async {
+  Future<void> naviguer(WidgetTester tester, {String? destination}) async {
     await connecter(tester);
     await toucher(tester, 'Démarrer navigation');
     await toucher(tester, 'J\'ai compris');
+    if (destination != null) {
+      await tester.enterText(
+        find.byKey(const Key('start-destination')),
+        destination,
+      );
+    }
     await demarrer(tester);
     await toucher(tester, 'OK');
     serveur.elements.clear();
@@ -407,7 +413,7 @@ void main() {
   });
 
   testWidgets(
-    '« Terminer la navigation » : confirmation, résultat, page Web de la navigation (TODO-5.6, RG-NAV-13)',
+    '« Terminer la navigation » : confirmation, résultat, récapitulatif dans l\'application, retour à l\'accueil (TODO-5.16, RG-NAV-13, D-190)',
     (tester) async {
       final liens = <Uri>[];
       ouvrirLien = (u) async {
@@ -415,22 +421,74 @@ void main() {
         return true;
       };
       addTearDown(() => ouvrirLien = (_) async => false);
-      await naviguer(tester);
+      await naviguer(tester, destination: 'Houat');
+      await toucher(tester, 'NOTE');
+      await tester.enterText(find.byKey(const Key('note-text')), 'Bouée verte');
+      await toucher(tester, 'Valider l\'envoi');
+      await toucher(tester, 'OK');
       await toucher(tester, 'Terminer la navigation');
       expect(find.text('Terminer la navigation ?'), findsOneWidget);
       await toucher(tester, 'Terminer');
       expect(find.text('Navigation terminée'), findsOneWidget);
       expect(find.text('Serveur : envoyé'), findsOneWidget);
       await toucher(tester, 'OK');
+      await attendre(tester);
+      expect(serveur.elements.where((e) => e.$1 == 'fin'), hasLength(1));
+      // Aucun navigateur Internet : le récapitulatif reste dans l'application.
+      expect(liens, isEmpty);
+      expect(find.byKey(const Key('recap')), findsOneWidget);
+      expect(find.text('Alizé — Houat'), findsOneWidget);
+      expect(find.text('Bateau : Alizé'), findsOneWidget);
+      expect(find.text('Personnes à bord : 1'), findsOneWidget);
+      expect(find.text('Chef de bord : Marin'), findsOneWidget);
+      expect(find.text('Lieu de départ : Port-Haliguen'), findsOneWidget);
       expect(
-        liens.single.path,
-        endsWith('/navigations/${serveur.elements.last.$2}'),
-      );
-      expect(serveur.elements.last.$1, 'fin');
-      expect(
-        find.text('Démarrer navigation'),
+        find.text('Météo au départ : vent 12 nœuds (270°) · mer peu agitée'),
         findsOneWidget,
-      ); // retour à l'accueil
+      );
+      expect(find.text('Durée : 1 h 35 min'), findsOneWidget);
+      expect(find.text('Distance : 6.0 milles'), findsOneWidget);
+      expect(find.byKey(const Key('follow-map')), findsOneWidget);
+      expect(find.byKey(const Key('map-attribution')), findsOneWidget);
+      expect(find.byKey(const Key('recap-offline')), findsNothing);
+      await reveal(tester, find.text('Bouée verte'));
+      expect(find.text('Bouée verte'), findsOneWidget);
+      await toucher(tester, 'Retour à l\'accueil');
+      expect(find.byKey(const Key('recap')), findsNothing);
+      expect(find.text('Démarrer navigation'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'fin sans Internet : récapitulatif avec les données du téléphone (D-190, RG-NAV-14)',
+    (tester) async {
+      final liens = <Uri>[];
+      ouvrirLien = (u) async {
+        liens.add(u);
+        return true;
+      };
+      addTearDown(() => ouvrirLien = (_) async => false);
+      await naviguer(tester, destination: 'Houat');
+      serveur.coupe = true;
+      await toucher(tester, 'Terminer la navigation');
+      await toucher(tester, 'Terminer');
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await attendre(tester);
+      await toucher(tester, 'OK');
+      await attendre(tester);
+      expect(liens, isEmpty);
+      expect(find.byKey(const Key('recap')), findsOneWidget);
+      expect(find.byKey(const Key('recap-offline')), findsOneWidget);
+      expect(find.text('Alizé — Houat'), findsOneWidget);
+      expect(find.text('Personnes à bord : 1'), findsOneWidget);
+      expect(find.text('Distance : 0.0 milles'), findsOneWidget);
+      // Positions du téléphone : la carte reste affichée.
+      expect(find.byKey(const Key('follow-map')), findsOneWidget);
+      await reveal(tester, find.text('Retour à l\'accueil'));
+      await toucher(tester, 'Retour à l\'accueil');
+      expect(find.text('Démarrer navigation'), findsOneWidget);
     },
   );
 

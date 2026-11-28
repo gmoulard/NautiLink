@@ -2588,6 +2588,42 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Navigation rejointe : vous ajoutez positions, notes, photos, notes vocales et SOS ; les positions automatiques et la fin restent sur le téléphone qui l\'a démarrée.'**
   String get joinedInfo;
+
+  /// No description provided for @recapBackHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour à l\'accueil'**
+  String get recapBackHome;
+
+  /// No description provided for @recapSkipper.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chef de bord'**
+  String get recapSkipper;
+
+  /// No description provided for @recapOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récapitulatif fait avec les données du téléphone : la fin sera envoyée au serveur au retour de la connexion.'**
+  String get recapOffline;
+
+  /// No description provided for @weatherWind.
+  ///
+  /// In fr, this message translates to:
+  /// **'vent {speed} nœuds'**
+  String weatherWind(String speed);
+
+  /// No description provided for @weatherSea.
+  ///
+  /// In fr, this message translates to:
+  /// **'mer {state}'**
+  String weatherSea(String state);
+
+  /// No description provided for @weatherUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Météo indisponible'**
+  String get weatherUnavailable;
 }
 
 class _AppLocalizationsDelegate

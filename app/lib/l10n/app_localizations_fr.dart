@@ -1484,4 +1484,27 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get joinedInfo =>
       'Navigation rejointe : vous ajoutez positions, notes, photos, notes vocales et SOS ; les positions automatiques et la fin restent sur le téléphone qui l\'a démarrée.';
+
+  @override
+  String get recapBackHome => 'Retour à l\'accueil';
+
+  @override
+  String get recapSkipper => 'Chef de bord';
+
+  @override
+  String get recapOffline =>
+      'Récapitulatif fait avec les données du téléphone : la fin sera envoyée au serveur au retour de la connexion.';
+
+  @override
+  String weatherWind(String speed) {
+    return 'vent $speed nœuds';
+  }
+
+  @override
+  String weatherSea(String state) {
+    return 'mer $state';
+  }
+
+  @override
+  String get weatherUnavailable => 'Météo indisponible';
 }

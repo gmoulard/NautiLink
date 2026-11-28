@@ -1474,4 +1474,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get joinedInfo =>
       'Joined voyage: you add positions, notes, photos, voice notes and SOS; automatic positions and the end stay on the phone that started it.';
+
+  @override
+  String get recapBackHome => 'Back to home';
+
+  @override
+  String get recapSkipper => 'Skipper in charge';
+
+  @override
+  String get recapOffline =>
+      'Summary made with the phone\'s data: the end will be sent to the server when the connection is back.';
+
+  @override
+  String weatherWind(String speed) {
+    return 'wind $speed knots';
+  }
+
+  @override
+  String weatherSea(String state) {
+    return 'sea $state';
+  }
+
+  @override
+  String get weatherUnavailable => 'Weather unavailable';
 }

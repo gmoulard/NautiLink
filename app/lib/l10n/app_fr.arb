@@ -483,5 +483,13 @@
   "joinYes": "Oui",
   "joinNo": "Non, rejoindre seulement",
   "joinedInfo": "Navigation rejointe : vous ajoutez positions, notes, photos, notes vocales et SOS ; les positions automatiques et la fin restent sur le téléphone qui l'a démarrée.",
-  "@joinQuestion": {"placeholders": {"boat": {"type": "String"}}}
+  "@joinQuestion": {"placeholders": {"boat": {"type": "String"}}},
+  "recapBackHome": "Retour à l'accueil",
+  "recapSkipper": "Chef de bord",
+  "recapOffline": "Récapitulatif fait avec les données du téléphone : la fin sera envoyée au serveur au retour de la connexion.",
+  "weatherWind": "vent {speed} nœuds",
+  "@weatherWind": {"placeholders": {"speed": {"type": "String"}}},
+  "weatherSea": "mer {state}",
+  "@weatherSea": {"placeholders": {"state": {"type": "String"}}},
+  "weatherUnavailable": "Météo indisponible"
 }

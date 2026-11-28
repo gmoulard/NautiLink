@@ -100,6 +100,15 @@ class DetailNavigation {
   final int? personnesABord;
   final int? frequenceMinutes;
 
+  /// Chef de bord (RG-NAV-36), tel que rendu par le serveur.
+  String? get chefDeBord => brut['chefDeBord'] as String?;
+
+  /// Météo au départ et à l'arrivée (schéma `Meteo`, RG-NAV-28), si connues.
+  Map<String, Object?>? get meteoDepart => _meteo(brut['meteoDepart']);
+  Map<String, Object?>? get meteoArrivee => _meteo(brut['meteoArrivee']);
+  static Map<String, Object?>? _meteo(Object? m) =>
+      m is Map<String, Object?> ? m : null;
+
   static String? _lieu(Object? l) => l is Map
       ? (l['nom'] as String?) ?? (l['texte'] as String?)
       : (l is String ? l : null);

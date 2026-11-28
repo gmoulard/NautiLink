@@ -19,6 +19,7 @@ import '../reel/sms_navigation.dart';
 import '../reel/telephone.dart';
 import '../theme.dart';
 import 'pied.dart';
+import 'recapitulatif_reel.dart';
 import 'connexion.dart';
 import 'dashboard.dart' show SeaMap;
 import 'home.dart';
@@ -938,8 +939,9 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
   }
 
   /// « Terminer la navigation » : confirmation, fin envoyée (ou gardée sans
-  /// Internet, RG-NAV-14), résultat, puis page détaillée de la navigation
-  /// sur la plateforme Web (RG-NAV-13) ; hors connexion, message (RG-COM-06).
+  /// Internet, RG-NAV-14), résultat, puis récapitulatif de la navigation
+  /// dans l'application, sans ouvrir l'Application web (RG-NAV-13, D-190) ;
+  /// hors connexion, fait avec les données du téléphone.
   Future<void> _terminer(DepotReel depot, {bool confirme = false}) async {
     final l = AppLocalizations.of(context);
     final ok = confirme
@@ -975,7 +977,8 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
       });
       return;
     }
-    final (id, etat) = r;
+    final (_, etat) = r;
+    final fin = depot.conduite.maintenant;
     // SMS de fin, prérempli (RG-NAV-13, RG-SMS-03), avec la position de fin.
     final sms = avant != null && depot.canalSms.disponible && !etat.refuse
         ? await depot.sms.ordinaire(
@@ -991,14 +994,21 @@ class _NavigationReelScreenState extends State<NavigationReelScreen> {
       ...lignesResultat(l, etat, sms: sms),
       if (!etat.recu && !etat.refuse) l.pageOffline,
     ]);
-    if (etat.recu) {
-      try {
-        await ouvrirLien(Uri.parse(voyagePageUrl(id)));
-      } catch (e) {
-        debugPrint('Page de la navigation : $e');
-      }
+    if (!nav.mounted) return;
+    if (avant == null) {
+      nav.pop();
+      return;
     }
-    if (nav.mounted) nav.pop();
+    await nav.pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (_) => RecapitulatifScreen(
+          navigation: avant,
+          fin: fin,
+          positionFin: depot.conduite.derniereFin,
+          finRecue: etat.recu,
+        ),
+      ),
+    );
   }
 
   /// Note, photo ou note vocale du journal (RG-JRN-06) : modifier le texte,
