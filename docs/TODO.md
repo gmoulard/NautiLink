@@ -33,7 +33,7 @@ Groupes d'actions cohérents, réalisés chacun par le sous-agent `todo-lot` (un
 | LOT-21 | Demandes du 2026-11-27 : look et écrans de l'application mobile | TODO-3.21, TODO-5.14, TODO-5.15 | LOT-19 | [~] |
 | LOT-22 | Demandes du 2026-11-27 : site vitrine | TODO-3.22 | aucun | [~] |
 | LOT-23 | Fin de la compatibilité avec les applications d'avant la 0.5.0 | TODO-4.15 | LOT-19, LOT-21 | [x] |
-| LOT-24 | Deuxième atelier du look de l'application mobile | TODO-5.16 | LOT-21 | [ ] |
+| LOT-24 | Deuxième atelier du look de l'application mobile | TODO-5.16 | LOT-21 | [~] |
 
 ## 0. Ménage du dépôt
 
