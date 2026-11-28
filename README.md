@@ -21,11 +21,12 @@ Ce dépôt contient la **spécification fonctionnelle**, le **site de présentat
 | Maquettes de l'application Android et Web (design « Radar de pluie ») | <https://nautilink.moulard.org/designs/app.html> |
 | Variantes du design « Météo marine » (10 maquettes) | <https://nautilink.moulard.org/designs/meteo.html> |
 | Mémo sécurité en mer | <https://nautilink.moulard.org/index.html#securite> |
+| Mémo sécurité en mer, page à part des applications ([D-193](docs/07-decisions.md#d-193)) | <https://nautilink.moulard.org/memo.html> |
 | Questions fréquentes | <https://nautilink.moulard.org/index.html#faq> |
 | À propos | <https://nautilink.moulard.org/index.html#a-propos> |
 | Avertissement bêta | <https://nautilink.moulard.org/index.html#avertissement> |
 
-Le site tient sur une seule page à sections ([D-192](docs/07-decisions.md#d-192)) ; les anciennes adresses (`telecharger.html`, `abonnement.html`, `securite.html`, `faq.html`, `a-propos.html`, `avertissement.html`) restent valables et renvoient à leur section.
+Le site tient sur une seule page à sections ([D-192](docs/07-decisions.md#d-192)) ; les anciennes adresses (`telecharger.html`, `abonnement.html`, `securite.html`, `faq.html`, `a-propos.html`, `avertissement.html`) restent valables et renvoient à leur section (`securite.html` à `memo.html`).
 
 Aucune publication dans les stores. Le site est construit et publié par le workflow « Site GitHub Pages » à chaque modification de `site/` ou `app/` sur `main` ; il faut que GitHub Pages soit activé (Settings → Pages → Source : GitHub Actions).
 

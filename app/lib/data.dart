@@ -207,8 +207,8 @@ String smsTypeLabel(AppLocalizations l, SmsType t) => switch (t) {
 const subscriptionInfoUrl =
     'https://nautilink.moulard.org/index.html#tarifs';
 
-/// Section « Sécurité en mer » du site de présentation (TODO-3.12 ; vraie application : RG-SOS-22 ; page unique : D-192).
-const securityMemoUrl = 'https://nautilink.moulard.org/index.html#securite';
+/// Mémo sécurité en mer du site, page à part pour les applications, identique à la copie hors ligne (TODO-3.12, RG-SOS-22, D-193).
+const securityMemoUrl = 'https://nautilink.moulard.org/memo.html';
 
 /// Site vitrine, cité en pied de page (TODO-3.13 ; lien « NautiLink » : D-149, D-178).
 const siteUrl = 'https://nautilink.moulard.org/index.html';

@@ -4,9 +4,12 @@
 # Le script en tire les sections placées entre les commentaires « memo:debut » et
 # « memo:fin » (le mémo, puis l'avertissement) et leurs styles (site/memo.css),
 # pour une page autonome lisible hors connexion, sans style.css ni images du site.
+# La même page est la copie hors ligne de l'application (assets/memo/securite.html)
+# et la page du site ouverte par le lien « Mémo sécurité en mer » des applications
+# et de l'Application web (site/memo.html, D-193) ; les deux sont versionnées.
 # Lancé par le workflow « Site GitHub Pages » avant chaque construction ;
-# l'essai test/memo_test.dart échoue si la copie n'est plus à jour.
-# Usage : outils/copier-memo.sh [fichier de sortie]   (par défaut assets/memo/securite.html)
+# l'essai test/memo_test.dart échoue si une copie n'est plus à jour.
+# Usage : outils/copier-memo.sh [fichier de sortie]   (par défaut les deux copies)
 set -eu
 ici=$(cd "$(dirname "$0")/.." && pwd)
 site="$ici/../site"
@@ -44,3 +47,4 @@ FIN
 </html>
 FIN
 } > "$sortie"
+[ $# -gt 0 ] || cp "$sortie" "$site/memo.html"

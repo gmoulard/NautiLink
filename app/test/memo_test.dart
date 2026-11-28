@@ -23,6 +23,12 @@ void main() {
         reason:
             'Mémo de l\'application périmé : lancer app/outils/copier-memo.sh',
       );
+      // Même page publiée sur le site pour les liens des applications (D-193).
+      expect(
+        File('../site/memo.html').readAsStringSync() == site,
+        isTrue,
+        reason: 'site/memo.html périmé : lancer app/outils/copier-memo.sh',
+      );
       expect(integre, contains('Mémo sécurité en mer'));
       expect(integre, contains('196'));
       // Mémo, puis avertissement ; lisible hors ligne, sans les ressources du site.

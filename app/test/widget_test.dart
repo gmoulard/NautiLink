@@ -147,7 +147,7 @@ void main() {
     await openHome(tester);
     await reveal(tester, find.text('Mémo sécurité en mer'));
     expect(find.text('Mémo sécurité en mer'), findsOneWidget);
-    expect(securityMemoUrl, 'https://nautilink.moulard.org/index.html#securite');
+    expect(securityMemoUrl, 'https://nautilink.moulard.org/memo.html');
   });
 
   testWidgets('pied de page : lien « Site de NautiLink » sous le sponsor (TODO-3.13)', (tester) async {
