@@ -427,5 +427,11 @@
   "joinQuestion": "A voyage is in progress on {boat}. Send automatic positions from this phone?",
   "joinYes": "Yes",
   "joinNo": "No, just join",
-  "joinedInfo": "Joined voyage: you add positions, notes, photos, voice notes and SOS; automatic positions and the end stay on the phone that started it."
+  "joinedInfo": "Joined voyage: you add positions, notes, photos, voice notes and SOS; automatic positions and the end stay on the phone that started it.",
+  "recapBackHome": "Back to home",
+  "recapSkipper": "Skipper in charge",
+  "recapOffline": "Summary made with the phone's data: the end will be sent to the server when the connection is back.",
+  "weatherWind": "wind {speed} knots",
+  "weatherSea": "sea {state}",
+  "weatherUnavailable": "Weather unavailable"
 }

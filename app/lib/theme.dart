@@ -263,8 +263,14 @@ class RadarBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Vraie application (D-178) : fond des pages, avec les isobares.
-    if (DepotScope.reel(context)) return Isobares(child: child);
+    // Vraie application (D-178) : fond uni des pages (isobares retirées,
+    // D-190).
+    if (DepotScope.reel(context)) {
+      return Material(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: child,
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -280,76 +286,6 @@ class RadarBackground extends StatelessWidget {
       child: child,
     );
   }
-}
-
-/// Décor de la variante 1 « Isobares » de la planche météo (D-178,
-/// `site/designs/meteo.html`) : isobares fines autour d'un point, à droite,
-/// avec la pression en hectopascals, derrière le contenu.
-class Isobares extends StatelessWidget {
-  const Isobares({super.key, required this.child, this.centreY = 330});
-  final Widget child;
-
-  /// Hauteur du centre des isobares, depuis le haut de la zone.
-  final double centreY;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    return Material(
-      color: theme.scaffoldBackgroundColor,
-      child: CustomPaint(
-        painter: _IsobaresPainter(
-          couleur: dark ? NlColors.accentDark : const Color(0xFF0E6BA8),
-          centreY: centreY,
-        ),
-        child: child,
-      ),
-    );
-  }
-}
-
-class _IsobaresPainter extends CustomPainter {
-  const _IsobaresPainter({required this.couleur, required this.centreY});
-  final Color couleur;
-  final double centreY;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final centre = Offset(size.width * .88, centreY);
-    const rayons = [47.0, 85.0, 123.0, 161.0, 199.0];
-    const opacites = [.22, .17, .13, .09, .05];
-    for (var i = 0; i < rayons.length; i++) {
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: centre,
-          width: rayons[i] * 2.3,
-          height: rayons[i] * 2,
-        ),
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.4
-          ..color = couleur.withValues(alpha: opacites[i]),
-      );
-    }
-    final texte = TextPainter(
-      text: TextSpan(
-        text: '1012',
-        style: TextStyle(
-          fontFamily: kFont,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: couleur.withValues(alpha: .3),
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    texte.paint(canvas, centre - Offset(texte.width / 2, texte.height / 2));
-  }
-
-  @override
-  bool shouldRepaint(covariant _IsobaresPainter old) =>
-      old.couleur != couleur || old.centreY != centreY;
 }
 
 /// Bandeau photo du bateau, en haut de l'accueil et de la connexion (D-178,

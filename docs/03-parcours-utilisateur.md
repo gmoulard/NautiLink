@@ -63,7 +63,8 @@ L'écran affiche le temps depuis le début et le temps depuis le dernier envoi (
 2. Confirmation.
 3. SMS de fin si prévu.
 4. Envoi des informations de fin au serveur ; clôture côté serveur, même si un SMS échoue (RG-NAV-13, RG-NAV-14).
-5. La navigation est terminée et reste consultable sur le Web.
+5. Message d'envoi, puis récapitulatif de la navigation dans l'application (fiche, durée, distance, carte, journal de bord), sans ouvrir l'Application web ; sans Internet, avec les données du téléphone (RG-NAV-13).
+6. « Retour à l'accueil » ramène à l'accueil. La navigation terminée reste consultable sur le Web.
 
 ### 3.5 Quota épuisé pendant la navigation
 
